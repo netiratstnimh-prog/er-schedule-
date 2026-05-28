@@ -21,8 +21,12 @@
             --text-main: #333333;
             --text-muted: #777777;
             --error-color: #d9534f;
+            --border-color: #eef2f5;
+            --item-bg: #f8fafc;
+            --item-border: #e2e8f0;
+            --text-item: #334155;
             
-            /* สีของกะเวรตามภาพ image_2.png */
+            /* สีของกะเวร */
             --color-off: #d9534f;
             --color-off-light: #f5b7b1;
             --color-day: #f0ad4e;
@@ -30,11 +34,26 @@
             --color-de: #0056b3;
         }
 
+        /* โหมดมืด (Dark Mode) */
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --item-bg: #334155;
+            --item-border: #475569;
+            --text-item: #f1f5f9;
+            --primary-color: #38bdf8;
+            --secondary-color: #0ea5e9;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'Sarabun', sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
         body {
@@ -44,36 +63,62 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 12px;
         }
 
         .app-container {
             width: 100%;
-            max-width: 480px; /* ทรงสมาร์ตโฟน/แท็บเล็ต ใช้ง่าย สะอาดตา */
+            max-width: 450px; /* ปรับสัดส่วนให้กระชับพอดีหน้าจอมือถือขึ้น */
             background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             position: relative;
-            min-height: 650px;
+            min-height: 700px;
             display: flex;
             flex-direction: column;
         }
 
-        /* Header ส่วนกลาง */
+        /* Header ส่วนกลาง และแถบควบคุม */
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px 0 16px;
+        }
+
+        .control-btn {
+            background: var(--item-bg);
+            border: 1px solid var(--item-border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .control-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
         .hospital-header {
             text-align: center;
-            padding: 24px 20px 15px 20px;
-            border-bottom: 1px solid #eef2f5;
+            padding: 12px 20px 15px 20px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .logo-wrapper {
-            width: 85px;
-            height: 85px;
-            margin: 0 auto 12px auto;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px auto;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(11, 60, 93, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .logo-wrapper img {
@@ -83,8 +128,8 @@
         }
 
         .hospital-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             color: var(--primary-color);
             letter-spacing: 0.5px;
         }
@@ -93,7 +138,7 @@
         .page-view {
             display: none;
             flex-direction: column;
-            padding: 24px;
+            padding: 20px;
             flex-grow: 1;
             animation: fadeIn 0.4s ease-in-out forwards;
         }
@@ -103,14 +148,14 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         h2 {
-            font-size: 18px;
+            font-size: 17px;
             color: var(--primary-color);
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -130,10 +175,6 @@
             margin-bottom: 15px;
             align-self: flex-start;
             font-weight: 500;
-            transition: color 0.2s;
-        }
-        .back-btn:hover {
-            color: var(--primary-color);
         }
 
         /* ปุ่มทั่วไป */
@@ -142,18 +183,21 @@
             color: white;
             border: none;
             padding: 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(11, 60, 93, 0.2);
             text-align: center;
         }
 
+        [data-theme="dark"] .btn-primary {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
+            opacity: 0.95;
         }
 
         /* --- หน้าที่ 1: เลือกแผนก --- */
@@ -161,33 +205,30 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-top: 10px;
         }
 
         .dept-item {
             padding: 16px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
+            background: var(--item-bg);
+            border: 1px solid var(--item-border);
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s;
         }
 
         .dept-item:hover {
             border-color: var(--secondary-color);
-            background: #f0f7fc;
             transform: scale(1.01);
         }
 
         .dept-name {
             font-weight: 500;
-            color: #334155;
+            color: var(--text-item);
         }
 
-        /* --- หน้าที่ 2: กรอกรหัสพนักงานER --- */
+        /* --- หน้าที่ 2: กรอกรหัสพนักงาน --- */
         .input-group {
             margin-bottom: 20px;
         }
@@ -202,18 +243,18 @@
         .input-field {
             width: 100%;
             padding: 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 16px;
-            letter-spacing: 2px;
+            background: var(--item-bg);
+            border: 1px solid var(--item-border);
+            color: var(--text-main);
+            border-radius: 10px;
+            font-size: 18px;
+            letter-spacing: 4px;
             text-align: center;
             outline: none;
-            transition: border-color 0.2s;
         }
 
         .input-field:focus {
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(50, 140, 193, 0.15);
         }
 
         .error-message {
@@ -231,6 +272,54 @@
             75% { transform: translateX(6px); }
         }
 
+        /* --- หน้าโหลดเสมือนจริง 7 วินาที --- */
+        .loader-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .medical-pulse {
+            font-size: 45px;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.6; }
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: var(--item-border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            border-radius: 10px;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 8px;
+            color: var(--secondary-color);
+        }
+
         /* --- หน้าที่ 3: รายชื่อพนักงาน --- */
         .staff-list {
             display: flex;
@@ -238,34 +327,32 @@
             gap: 10px;
             max-height: 380px;
             overflow-y: auto;
-            padding-right: 4px;
         }
 
         .staff-item {
             padding: 12px 16px;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--item-border);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: all 0.2s;
         }
 
         .staff-item.clickable {
             cursor: pointer;
+            background: var(--item-bg);
         }
 
         .staff-item.clickable:hover {
-            background: #f0f7fc;
             border-color: var(--secondary-color);
         }
 
         .staff-number {
             width: 24px;
             height: 24px;
-            background: #e2e8f0;
-            color: #64748b;
+            background: var(--item-border);
+            color: var(--text-muted);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -281,11 +368,11 @@
 
         .staff-name {
             font-size: 14px;
-            color: #334155;
+            color: var(--text-item);
         }
 
         .staff-empty {
-            color: #94a3b8;
+            color: var(--text-muted);
             font-style: italic;
         }
 
@@ -294,33 +381,31 @@
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding-bottom: 5px;
-            border-bottom: 2px solid #333;
+            border-bottom: 2px solid var(--text-main);
         }
 
         .schedule-month {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
-            color: #000;
+            color: var(--text-main);
             text-decoration: underline;
         }
 
         .schedule-user {
             font-size: 14px;
             font-weight: bold;
-            color: #333;
+            color: var(--text-main);
             text-align: right;
-            max-width: 60%;
             text-decoration: underline;
         }
 
-        /* ตารางสไตล์ปฏิทินตามรูปภาพ */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
-            background: #fff;
+            background: var(--card-bg);
             padding: 5px 0;
         }
 
@@ -328,14 +413,14 @@
             font-size: 11px;
             text-align: center;
             padding-bottom: 5px;
-            color: #333;
-            font-weight: 500;
+            color: var(--text-main);
+            font-weight: 600;
         }
 
-        .calendar-header.sun { color: #d9534f; }
+        .calendar-header.sun { color: var(--color-off); }
 
         .calendar-day-box {
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--item-border);
             padding: 4px 2px;
             min-height: 52px;
             display: flex;
@@ -345,11 +430,11 @@
 
         .day-num {
             font-size: 11px;
-            color: #333;
+            color: var(--text-main);
             padding-left: 2px;
         }
-        .day-num.sun { color: #d9534f; }
-        .day-num.muted { color: #ccc; }
+        .day-num.sun { color: var(--color-off); }
+        .day-num.muted { color: var(--text-muted); opacity: 0.5; }
 
         .shift-tag {
             font-size: 9px;
@@ -364,19 +449,18 @@
             justify-content: center;
         }
 
-        /* สีแท็กเวร */
-        .shift-off-light { background-color: var(--color-off-light); color: #d9534f; }
-        .shift-off { background-color: var(--color-off); }
-        .shift-day { background-color: var(--color-day); }
-        .shift-eve { background-color: var(--color-eve); }
-        .shift-de { background-color: var(--color-de); font-size: 8px; }
+        .shift-off-light { background-color: var(--color-off-light); color: var(--color-off); }
+        .shift-off { background-color: var(--color-off); color: white; }
+        .shift-day { background-color: var(--color-day); color: white; }
+        .shift-eve { background-color: var(--color-eve); color: white; }
+        .shift-de { background-color: var(--color-de); color: white; font-size: 8px; }
 
         /* แผงปุ่มแอคชันด้านล่าง */
         .action-panel {
-            margin-top: 20px;
+            margin-top: 15px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .action-row {
@@ -388,33 +472,79 @@
             flex: 1;
             padding: 10px;
             border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             color: white;
-            transition: opacity 0.2s;
         }
 
-        .btn-action:hover { opacity: 0.9; }
         .btn-share { background-color: #6c757d; }
         .btn-image { background-color: #17a2b8; }
         .btn-pdf { background-color: #e04f5f; }
         .btn-call { background-color: #28a745; }
         .btn-line { background-color: #06C755; }
+
+        /* Pop-up หน้าต่างติดต่อ */
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .modal-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid var(--item-border);
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- โลโก้ และหัวข้อโรงพยาบาล (แสดงทุกหน้าเพื่อความน่าเชื่อถือ) -->
+        <!-- แถวปุ่มควบคุมด้านบนสุด -->
+        <div class="top-controls">
+            <button class="control-btn" onclick="toggleModal(true)">
+                <i class="fa-solid fa-headset"></i> ติดต่อโรงพยาบาล
+            </button>
+            <button class="control-btn" onclick="toggleTheme()">
+                <i class="fa-solid fa-moon" id="theme-icon"></i> <span id="theme-text">โหมดมืด</span>
+            </button>
+        </div>
+
+        <!-- โลโก้ และหัวข้อโรงพยาบาล -->
         <div class="hospital-header">
             <div class="logo-wrapper">
-                <!-- อ้างอิงรูปภาพโลโก้ตามชื่อไฟล์ image.png -->
                 <img src="image.png" alt="Hospital Logo" onerror="this.src='https://placehold.co/150x150/0b3c5d/ffffff?text=BCH'">
             </div>
             <div class="hospital-title">BANGKOK CHRISTIAN HOSPITAL</div>
@@ -428,13 +558,13 @@
                     <span class="dept-name">Emergency Room (ห้องฉุกเฉิน)</span>
                     <i class="fa-solid fa-chevron-right" style="color: var(--secondary-color)"></i>
                 </div>
-                <div class="dept-item" style="opacity: 0.5; cursor: not-allowed;">
+                <div class="dept-item" style="opacity: 0.4; cursor: not-allowed;">
                     <span class="dept-name">OPD (ผู้ป่วยนอก)</span>
-                    <i class="fa-solid fa-lock" style="color: #94a3b8"></i>
+                    <i class="fa-solid fa-lock" style="color: var(--text-muted)"></i>
                 </div>
-                <div class="dept-item" style="opacity: 0.5; cursor: not-allowed;">
+                <div class="dept-item" style="opacity: 0.4; cursor: not-allowed;">
                     <span class="dept-name">ICU (ผู้ป่วยหนัก)</span>
-                    <i class="fa-solid fa-lock" style="color: #94a3b8"></i>
+                    <i class="fa-solid fa-lock" style="color: var(--text-muted)"></i>
                 </div>
             </div>
         </div>
@@ -453,6 +583,17 @@
             <button class="btn-primary" onclick="verifyCode()">ตรวจสอบรหัส</button>
         </div>
 
+        <!-- หน้าจอ Loading 7 วินาที -->
+        <div id="page-loader" class="loader-container">
+            <div class="medical-pulse"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h3 style="font-size:16px;">กำลังตรวจสอบและเชื่อมต่อระบบฐานข้อมูล</h3>
+            <p style="font-size:12px; color: var(--text-muted); margin-top:5px;">โปรดรอสักครู่ ระบบกำลังประมวลผลตารางเวร...</p>
+            <div class="progress-bar-bg">
+                <div id="progress-fill" class="progress-bar-fill"></div>
+            </div>
+            <div id="progress-pct" class="progress-text">0%</div>
+        </div>
+
         <!-- หน้าที่ 3: รายชื่อพนักงาน -->
         <div id="page-staff" class="page-view">
             <button class="back-btn" onclick="navigateTo('page-login')">
@@ -461,31 +602,26 @@
             <h2><i class="fa-solid fa-users-gear"></i> แผนก Emergency Room</h2>
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">กรุณาเลือกรายชื่อเพื่อดูตารางเวร</div>
             <div class="staff-list" id="staff-container">
-                <!-- รายชื่อคนที่ 1 -->
                 <div class="staff-item clickable" onclick="navigateTo('page-schedule')">
                     <div class="staff-number">1</div>
                     <div class="staff-name" style="font-weight: 600;">เนติราช นิ่มเจริญวัฒนกุล</div>
                 </div>
-                <!-- รายชื่อที่เหลือเว้นว่างไว้ตามบรีฟ (รวมเป็น 13 คน) -->
-                <!-- วนลูปสร้างผ่าน JS ด้านล่าง -->
             </div>
         </div>
 
-        <!-- หน้าที่ 4: แสดงผลตารางเวรตามรูปภาพ -->
+        <!-- หน้าที่ 4: แสดงผลตารางเวร -->
         <div id="page-schedule" class="page-view">
             <button class="back-btn" onclick="navigateTo('page-staff')">
                 <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
             </button>
             
-            <!-- โครงสร้างข้อมูลตารางเวร (ถอดรหัสรูปแบบปฏิทินจริงจาก image_2.png) -->
-            <div id="capture-area" style="background: white; padding: 10px; border-radius: 8px;">
+            <div id="capture-area" style="background: var(--card-bg); padding: 8px; border-radius: 8px;">
                 <div class="schedule-meta">
                     <div class="schedule-month">Jun, 2026</div>
                     <div class="schedule-user">เนติราช นิ่มเจริญวัฒนกุล</div>
                 </div>
 
                 <div class="calendar-grid">
-                    <!-- วันในสัปดาห์ -->
                     <div class="calendar-header sun">31 Sun</div>
                     <div class="calendar-header">1 Mon</div>
                     <div class="calendar-header">2 Tue</div>
@@ -496,7 +632,7 @@
 
                     <!-- แถวที่ 1 -->
                     <div class="calendar-day-box"><span class="day-num sun muted">31</span><div class="shift-tag shift-off-light">Off</div></div>
-                    <div class="calendar-day-box" style="background-color: #eaeaea;"><span class="day-num">1</span><div class="shift-tag shift-off">Off</div></div>
+                    <div class="calendar-day-box" style="background-color: rgba(0,0,0,0.05);"><span class="day-num">1</span><div class="shift-tag shift-off">Off</div></div>
                     <div class="calendar-day-box"><span class="day-num">2</span><div class="shift-tag shift-day">Day</div></div>
                     <div class="calendar-day-box"><span class="day-num">3</span><div class="shift-tag shift-day">Day</div></div>
                     <div class="calendar-day-box"><span class="day-num">4</span><div class="shift-tag shift-eve">Eve</div></div>
@@ -541,7 +677,6 @@
                 </div>
             </div>
 
-            <!-- ชุดปุ่มกดแชร์, เซฟภาพ, PDF, โทร, ไลน์ -->
             <div class="action-panel">
                 <div class="action-row">
                     <button class="btn-action btn-share" onclick="shareLink()"><i class="fa-solid fa-share-nodes"></i> แชร์ลิ้งค์</button>
@@ -554,10 +689,28 @@
                 </div>
             </div>
         </div>
+
+        <!-- หน้าต่าง Pop-up ติดต่อโรงพยาบาล -->
+        <div id="contact-modal" class="modal-overlay" onclick="toggleModal(false)">
+            <div class="modal-card" onclick="event.stopPropagation()">
+                <h3><i class="fa-solid fa-hospital"></i> ข้อมูลการติดต่อ</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">โรงพยาบาลกรุงเทพคริสเตียน</p>
+                <a href="tel:022351000" class="contact-item">
+                    <i class="fa-solid fa-phone" style="color:#28a745;"></i> เบอร์โทรหลัก: 02-235-1000
+                </a>
+                <a href="https://line.me/R/" class="contact-item">
+                    <i class="fa-brands fa-line" style="color:#06C755;"></i> LINE Official Account
+                </a>
+                <div class="contact-item">
+                    <i class="fa-solid fa-map-location-dot" style="color:#0ea5e9;"></i> ฝ่ายบุคลากร / ส่วนงานแพทย์
+                </div>
+                <button class="btn-primary" style="width:100%; padding:10px; margin-top:15px; border-radius:8px;" onclick="toggleModal(false)">ปิดหน้าต่าง</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // สร้างรายชื่อพนักงานที่เหลือให้ครบ 13 คน (คนที่ 2-13 เว้นว่าง)
+        // สร้างรายชื่อพนักงานคนที่ 2-13 ให้เว้นว่างตามเงื่อนไขเดิม
         const staffContainer = document.getElementById('staff-container');
         for (let i = 2; i <= 13; i++) {
             const item = document.createElement('div');
@@ -569,53 +722,93 @@
             staffContainer.appendChild(item);
         }
 
-        // ระบบควบคุมการเปลี่ยนหน้าเว็บพร้อมเอฟเฟคไหลลื่น
+        // ระบบเปลี่ยนหน้า (Page Navigation)
         function navigateTo(pageId) {
-            // ปิดทุกหน้า
-            document.querySelectorAll('.page-view').forEach(page => {
-                page.classList.remove('active');
-            });
-            // เปิดหน้าเจาะจง
-            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-loader').style.display = 'none';
             
-            // รีเซ็ตค่าหากย้อนกลับมาหน้าล็อกอิน
+            const targetPage = document.getElementById(pageId);
+            if(targetPage) targetPage.classList.add('active');
+
             if(pageId === 'page-login') {
                 document.getElementById('emp-code').value = '';
                 document.getElementById('error-txt').style.display = 'none';
             }
         }
 
-        // ตรวจสอบรหัสพนักงานตามเงื่อนไข (ต้องเป็น 090869 เท่านั้น)
+        // ระบบแถบล็อกอินหน่วงเวลาโหลดเสมือนจริง 7 วินาที
         function verifyCode() {
             const codeInput = document.getElementById('emp-code').value;
             const errorTxt = document.getElementById('error-txt');
 
             if (codeInput === '090869') {
                 errorTxt.style.display = 'none';
-                navigateTo('page-staff');
+                
+                // ปิดหน้าล็อกอิน แล้วเปิดหน้าโหลดกระตุ้นชีพจร
+                document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+                const loader = document.getElementById('page-loader');
+                loader.style.display = 'flex';
+
+                let count = 0;
+                const progressFill = document.getElementById('progress-fill');
+                const progressPct = document.getElementById('progress-pct');
+                
+                // จับเวลาเฉลี่ยให้วิ่งเต็ม 100% ในเวลาประมาณ 7 วินาที (7000 มิลลิวินาที)
+                const interval = setInterval(() => {
+                    count += 1;
+                    progressFill.style.width = count + '%';
+                    progressPct.innerText = count + '%';
+
+                    if (count >= 100) {
+                        clearInterval(interval);
+                        // เมื่อครบ 7 วินาที ให้เด้งไปหน้าบัญชีรายชื่อพนักงานทันที
+                        navigateTo('page-staff');
+                    }
+                }, 70); // 70ms * 100 ครั้ง = 7000ms (7 วินาทีพอดีเป๊ะ)
+
             } else {
                 errorTxt.style.display = 'block';
-                // ล้างค่าเพื่อให้กรอกใหม่ได้อย่างสะดวกสบาย
                 document.getElementById('emp-code').value = '';
             }
         }
 
-        // ฟังก์ชันเสริม: ทำงานร่วมกับปุ่มกดต่างๆ
+        // ระบบสลับโหมด มืด / สว่าง (Dark/Light Mode)
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            
+            if(targetTheme === 'dark') {
+                icon.className = 'fa-solid fa-sun';
+                text.innerText = 'โหมดสว่าง';
+            } else {
+                icon.className = 'fa-solid fa-moon';
+                text.innerText = 'โหมดมืด';
+            }
+        }
+
+        // ระบบเปิด/ปิดหน้าต่างแจ้งติดต่อด้านบน
+        function toggleModal(show) {
+            document.getElementById('contact-modal').style.display = show ? 'flex' : 'none';
+        }
+
+        // ฟังก์ชันระบบปุ่มคำสั่งในตารางเวร
         function shareLink() {
             if (navigator.share) {
-                navigator.share({
-                    title: 'ตารางเวรแผนก ER',
-                    url: window.location.href
-                }).catch(console.error);
+                navigator.share({ title: 'ตารางเวรแผนก ER', url: window.location.href }).catch(console.error);
             } else {
-                alert('คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว (เบราว์เซอร์นี้ไม่รองรับ Web Share)');
+                alert('คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว');
                 navigator.clipboard.writeText(window.location.href);
             }
         }
 
         function saveAsImage() {
             const target = document.getElementById('capture-area');
-            html2canvas(target, { scale: 2 }).then(canvas => {
+            // ตรวจสอบโหมดเพื่อปรับแต่งพื้นหลังภาพขณะบันทึกให้เนียน
+            html2canvas(target, { scale: 2, backgroundColor: null }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'ER-Schedule-Jun2026.png';
                 link.href = canvas.toDataURL('image/png');
@@ -639,21 +832,11 @@
             });
         }
 
-        function triggerCall() {
-            // จำลองการโทรเข้าเบอร์ภายในของแผนกหรือฝ่ายบุคคล
-            window.location.href = 'tel:022351000';
-        }
-
-        function triggerLine() {
-            // ลิงก์ตรงเปิดแอปพลิเคชัน Line เพื่อแชร์ข้อมูล
-            window.location.href = 'https://line.me/R/';
-        }
+        function triggerCall() { window.location.href = 'tel:022351000'; }
+        function triggerLine() { window.location.href = 'https://line.me/R/'; }
         
-        // ผูกปุ่ม Enter ให้สามารถกดตรวจสอบรหัสผ่านได้ทันทีเพื่อความรวดเร็ว
         document.getElementById('emp-code').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                verifyCode();
-            }
+            if (e.key === 'Enter') verifyCode();
         });
     </script>
 </body>
