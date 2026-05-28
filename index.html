@@ -150,7 +150,7 @@
         <div class="hospital-navbar">
             <div class="nav-left-controls">
                 <button class="control-btn" id="admin-status-btn" onclick="openAdminModal()">
-                    <i class="fa-solid fa-user-shield"></i> เข้าสู่ระบบแอดมิน
+                    <i class="fa-solid fa-user-shield"></i> เข้าสู่ระบบจัดการฐานข้อมูล 
                 </button>
                 <button class="control-btn" onclick="toggleTheme()" style="padding: 3px 8px;">
                     <i class="fa-solid fa-moon" id="theme-icon"></i> ธีม
@@ -201,7 +201,7 @@
                 <input type="password" id="new-personal-pass" class="input-field" placeholder="ตั้งรหัสอย่างน้อย 4 หลัก">
                 <div id="new-pass-error" class="error-message">กรุณากรอกรหัสผ่านความยาวอย่างน้อย 4 ตัวอักษร</div>
             </div>
-            <button class="btn-primary" onclick="saveNewPersonalPassword()">เซฟและเปิดการเข้าถึงตารางเวร</button>
+            <button class="btn-primary" onclick="saveNewPersonalPassword()">ยืนยันและเปิดการเข้าถึงตารางเวร</button>
         </div>
 
         <div id="page-loader" class="loader-container">
@@ -231,7 +231,7 @@
 
             <div class="admin-edit-bar" id="editor-control-zone" style="margin-top: 10px; display: none;">
                 <button class="btn-primary" id="edit-trigger-btn" onclick="toggleEditMode()" style="background:var(--success-color);">
-                    <i class="fa-solid fa-user-pen"></i> ✏️ คลิกเปิดระบบจิ้มแก้ไขเวรสดบนจอ
+                    <i class="fa-solid fa-user-pen"></i> ✏️ เเก้ไขตารางเวร
                 </button>
                 <button class="btn-primary" id="save-edit-btn" onclick="saveLiveEdits()" style="background:#2563eb; display:none; margin-top:4px;">
                     <i class="fa-solid fa-square-check"></i> บันทึกข้อมูลเข้าฐานระบบเครื่องเรียบร้อย
