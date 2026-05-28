@@ -56,7 +56,7 @@
         .app-container {
             width: 100%; max-width: 430px; background: var(--card-bg); border-radius: 24px;
             box-shadow: 0 20px 50px rgba(12, 74, 110, 0.08); overflow: hidden; position: relative;
-            min-height: 680px; display: flex; flex-direction: column; border: 1px solid var(--border-color);
+            min-height: 660px; display: flex; flex-direction: column; border: 1px solid var(--border-color);
         }
 
         .top-controls { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px 2px 14px; gap: 8px; }
@@ -129,9 +129,9 @@
         .btn-line { background: #06C755; }
 
         /* Admin Management List */
-        .admin-list-container { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; margin-top: 8px; background: var(--card-bg); padding: 4px; border-radius: 8px; border: 1px solid var(--item-border); }
-        .admin-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: var(--item-bg); border-radius: 6px; font-size: 12px; border: 1px solid var(--item-border); }
-        .btn-delete-staff { background: var(--error-color); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; display: flex; align-items: center; gap: 4px; }
+        .admin-list-container { display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; margin-top: 4px; background: var(--card-bg); padding: 4px; border-radius: 8px; border: 1px solid var(--item-border); }
+        .admin-list-item { display: flex; justify-content: space-between; align-items: center; padding: 6px; background: var(--item-bg); border-radius: 6px; font-size: 12px; border: 1px solid var(--item-border); }
+        .btn-delete-staff { background: var(--error-color); color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
 
         /* Modals */
         .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 100; padding: 16px; }
@@ -143,12 +143,11 @@
 <body>
 
     <div class="app-container">
-        <!-- แถบเมนูด้านบนในทุกหน้า -->
         <div class="top-controls">
             <button class="control-btn" onclick="toggleModal('contact-modal', true)">
                 <i class="fa-solid fa-headset"></i> ติดต่อ
             </button>
-            <button class="control-btn" id="admin-status-btn" onclick="toggleModal('admin-login-modal', true)">
+            <button class="control-btn" id="admin-status-btn" onclick="openAdminModal()">
                 <i class="fa-solid fa-user-shield"></i> แอดมิน
             </button>
             <button class="control-btn" onclick="toggleTheme()">
@@ -161,7 +160,6 @@
             <div class="hospital-title">BANGKOK CHRISTIAN HOSPITAL</div>
         </div>
 
-        <!-- หน้าที่ 1: เลือกแผนก -->
         <div id="page-dept" class="page-view active">
             <h2><i class="fa-solid fa-hospital-user"></i> กรุณาเลือกแผนก</h2>
             <div class="dept-list">
@@ -170,13 +168,11 @@
                     <i class="fa-solid fa-chevron-right" style="color: var(--secondary-color)"></i>
                 </div>
             </div>
-            <!-- ปุ่มรีเซ็ตกรณีเกิดข้อมูลชนกันค้างในเครื่องเก่า -->
-            <button onclick="clearSystemCache()" style="background:none; border:none; color:var(--text-muted); font-size:10px; margin-top:16px; text-decoration:underline; cursor:pointer;">⚠️ หากกดปุ่มใดๆ ไม่ติด ให้คลิกตรงนี้เพื่อรีเซ็ตระบบ</button>
+            <button onclick="clearSystemCache()" style="background:none; border:none; color:var(--text-muted); font-size:10px; margin-top:20px; text-decoration:underline; cursor:pointer;">⚠️ คลิกตรงนี้เพื่อล้างระบบจำข้อมูลเดิม</button>
         </div>
 
-        <!-- หน้าที่ 2: หน้าล็อกอินของพนักงานทุกคน -->
         <div id="page-login" class="page-view">
-            <button class="back-btn" onclick="navigateTo('page-dept')"><i class="fa-solid fa-arrow-left"></i> ย้อนกลับ</button>
+            <button class="back-btn" onclick="forceLogoutAndGoBack('page-dept')"><i class="fa-solid fa-arrow-left"></i> ย้อนกลับ</button>
             <h2><i class="fa-solid fa-key"></i> ยืนยันสิทธิ์เข้าถึงข้อมูล</h2>
             <div class="input-group">
                 <label class="input-label">ชื่อผู้ใช้ (Username ส่วนกลาง)</label>
@@ -190,7 +186,6 @@
             <button class="btn-primary" onclick="verifyStaffLogin()">ตรวจสอบรหัสผ่าน</button>
         </div>
 
-        <!-- หน้าพิเศษ: เปลี่ยนรหัสผ่านส่วนตัวครั้งแรก -->
         <div id="page-force-password" class="page-view">
             <h2><i class="fa-solid fa-shield-halved"></i> ตั้งรหัสผ่านใหม่ส่วนตัวของคุณ</h2>
             <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">โปรดกำหนดรหัสผ่านส่วนตัว เพื่อใช้ล็อกอินเข้าจัดการระบบเฉพาะของตัวเองในครั้งถัดไป</p>
@@ -202,7 +197,6 @@
             <button class="btn-primary" onclick="saveNewPersonalPassword()">💾 ยืนยันและเข้าสู่ระบบตารางเวร</button>
         </div>
 
-        <!-- หน้าจอแถบโหลดประมวลผล (Loading Screen) -->
         <div id="page-loader" class="loader-container">
             <div class="medical-pulse"><i class="fa-solid fa-heart-pulse"></i></div>
             <h4 id="loader-title" style="font-size:13px; font-weight:600;">กำลังประมวลผลฐานข้อมูลความปลอดภัย...</h4>
@@ -210,19 +204,16 @@
             <div id="progress-pct" class="progress-text">0%</div>
         </div>
 
-        <!-- หน้าที่ 3: รายชื่อพนักงานในระบบเรียลไทม์ -->
         <div id="page-staff-list" class="page-view">
-            <button class="back-btn" onclick="logoutSession()"><i class="fa-solid fa-arrow-left"></i> ออกจากระบบ</button>
+            <button class="back-btn" onclick="forceLogoutAndGoBack('page-login')"><i class="fa-solid fa-arrow-left"></i> ออกจากระบบ</button>
             <h2><i class="fa-solid fa-users-gear"></i> รายชื่อพนักงาน แผนก ER</h2>
             <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">สามารถคลิกแก้ไขและจัดการเวรได้เฉพาะบัญชีรายชื่อของตัวเองเท่านั้น</div>
             <div class="staff-list" id="dynamic-staff-container">
-                <!-- รายชื่อจะเรนเดอร์สดผ่าน JS -->
-            </div>
+                </div>
         </div>
 
-        <!-- หน้าที่ 4: พรีเมียมตารางเวรรายบุคคล -->
         <div id="page-schedule" class="page-view">
-            <button class="back-btn" onclick="navigateTo('page-staff-list')"><i class="fa-solid fa-arrow-left"></i> ย้อนกลับหน้าชื่อ</button>
+            <button class="back-btn" onclick="forceLogoutAndGoBack('page-staff-list')"><i class="fa-solid fa-arrow-left"></i> ย้อนกลับและล็อกเอาท์</button>
             
             <div id="capture-area" style="background: var(--card-bg); padding: 6px; border-radius: 12px;">
                 <div class="schedule-meta">
@@ -230,11 +221,9 @@
                     <div class="schedule-user" id="active-schedule-name">ชื่อเจ้าหน้าที่</div>
                 </div>
                 <div class="calendar-grid" id="calendar-days-container">
-                    <!-- วันและกะเวรจะเรนเดอร์สดผ่าน JS -->
-                </div>
+                    </div>
             </div>
 
-            <!-- เมนูแผงปุ่มสำหรับกดแก้ไขกะเวรรายวัน -->
             <div class="admin-edit-bar" id="editor-control-zone" style="margin-top: 10px; display: none;">
                 <button class="btn-primary" id="edit-trigger-btn" onclick="toggleEditMode()" style="background:var(--success-color);">
                     <i class="fa-solid fa-pencil"></i> ✏️ คลิกเพื่อเริ่มแก้ไขตารางเวร
@@ -246,7 +235,7 @@
 
             <div class="action-panel">
                 <div class="action-row">
-                    <button class="btn-circle btn-share" onclick="shareLink()"><i class="fa-solid fa-share-nodes"></i></button>
+                    <button class="btn-circle btn-share" onclick="shareDynamicLink()" title="แชร์ลิงก์ข้อมูลส่งข้ามเครื่อง"><i class="fa-solid fa-share-nodes"></i></button>
                     <button class="btn-circle btn-image" onclick="saveAsImage()"><i class="fa-solid fa-image"></i></button>
                     <button class="btn-circle btn-pdf" onclick="saveAsPDF()"><i class="fa-solid fa-file-pdf"></i></button>
                     <button class="btn-circle btn-call" onclick="triggerCall()"><i class="fa-solid fa-phone"></i></button>
@@ -255,7 +244,6 @@
             </div>
         </div>
 
-        <!-- หน้าที่ 5: แดชบอร์ดสำหรับแอดมิน (เพิ่มพนักงาน / ตั้งจำนวนเวร / ลบพนักงาน) -->
         <div id="page-admin-dashboard" class="page-view">
             <button class="back-btn" onclick="logoutAdmin()"><i class="fa-solid fa-arrow-left"></i> ออกจากแอดมิน</button>
             <h2><i class="fa-solid fa-user-gear"></i> ระบบควบคุมจัดการแอดมิน</h2>
@@ -275,18 +263,14 @@
                 <button class="btn-primary" style="background:var(--success-color); padding:8px; font-size:12px;" onclick="addNewStaffRealtime()">บันทึกและเปิดตารางอัตโนมัติ</button>
             </div>
 
-            <!-- โซนรายการจัดการและลบรายชื่อพนักงานออกจากระบบ -->
             <div style="margin-bottom: 10px;">
                 <h4 style="font-size:12px; margin-bottom:4px; color:var(--error-color); text-align:left;"><i class="fa-solid fa-user-minus"></i> รายชื่อพนักงานปัจจุบัน (คลิกเพื่อลบ)</h4>
-                <div class="admin-list-container" id="admin-staff-delete-list">
-                    <!-- รายชื่อสำหรับกดลบจะเรนเดอร์สดผ่าน JS -->
-                </div>
+                <div class="admin-list-container" id="admin-staff-delete-list"></div>
             </div>
 
             <button class="btn-primary" onclick="navigateTo('page-staff-list')">👀 ไปหน้าดูรายชื่อเจ้าหน้าที่ทั้งหมด</button>
         </div>
 
-        <!-- หน้าต่างแอดมินล็อกอิน (ลบคำใบ้รหัสผ่านเพื่อความปลอดภัย) -->
         <div id="admin-login-modal" class="modal-overlay" onclick="toggleModal('admin-login-modal', false)">
             <div class="modal-card" onclick="event.stopPropagation()">
                 <h3><i class="fa-solid fa-user-shield"></i> สิทธิ์ผู้ดูแลระบบ (Admin)</h3>
@@ -303,7 +287,6 @@
             </div>
         </div>
 
-        <!-- หน้าต่างปุ่มติดต่อ -->
         <div id="contact-modal" class="modal-overlay" onclick="toggleModal('contact-modal', false)">
             <div class="modal-card" onclick="event.stopPropagation()">
                 <h3><i class="fa-solid fa-hospital"></i> ติดต่อส่วนงาน</h3>
@@ -314,7 +297,6 @@
     </div>
 
     <script>
-        // โครงสร้างปฏิทินตั้งต้น มิถุนายน 2026 ตามภาพบรีฟของคุณเนติราช
         const baseStructure = [
             { day: 31, type: 'off-light', label: 'Off', isMuted: true },
             { day: 1, type: 'off', label: 'Off', isMuted: false, highlight: true },
@@ -354,19 +336,19 @@
         ];
 
         function clearSystemCache() {
-            localStorage.removeItem('bch_staff_db_v4');
-            alert('🔄 ระบบล้างหน่วยความจำเดิมเรียบร้อยแล้ว! หน้าเว็บกำลังโหลดใหม่และพร้อมใช้งานครับ');
-            window.location.reload();
+            localStorage.removeItem('bch_staff_db_v5');
+            alert('🔄 รีเซ็ตระบบความจำเรียบร้อยแล้ว เว็บจะโหลดใหม่ครับ');
+            window.location.search = ''; 
         }
 
-        if (!localStorage.getItem('bch_staff_db_v4')) {
+        if (!localStorage.getItem('bch_staff_db_v5')) {
             const initialList = [
                 { id: "1", name: "เนติราช นิ่มเจริญวัฒนกุล", currentPass: "090869", isFirstTime: true, totalShifts: 23, shifts: JSON.parse(JSON.stringify(baseStructure)) }
             ];
-            localStorage.setItem('bch_staff_db_v4', JSON.stringify(initialList));
+            localStorage.setItem('bch_staff_db_v5', JSON.stringify(initialList));
         }
 
-        let database = JSON.parse(localStorage.getItem('bch_staff_db_v4'));
+        let database = JSON.parse(localStorage.getItem('bch_staff_db_v5'));
         let loggedInUser = null;
         let selectedUser = null;
         let isEditMode = false;
@@ -377,6 +359,20 @@
             document.getElementById('page-loader').style.display = 'none';
             const page = document.getElementById(pageId);
             if(page) page.classList.add('active');
+        }
+
+        // 🔒 ฟังก์ชันบังคับเคลียร์รหัสและล็อกเอาท์จริงจังเมื่อกดย้อนกลับ
+        function forceLogoutAndGoBack(targetPageId) {
+            loggedInUser = null; 
+            document.getElementById('staff-pass').value = ''; 
+            document.getElementById('admin-pass').value = '';
+            document.getElementById('staff-error-txt').style.display = 'none';
+            isEditMode = false;
+            
+            const area = document.getElementById('capture-area');
+            if(area) area.classList.remove('edit-active');
+            
+            navigateTo(targetPageId);
         }
 
         function triggerLoadingEffect(title, ms, callback) {
@@ -417,7 +413,7 @@
                     if(loggedInUser && loggedInUser.id === staff.id) item.classList.add('active-user');
                     item.onclick = () => openScheduleView(staff.id);
                 } else {
-                    item.style.opacity = '0.4';
+                    item.style.opacity = '0.3';
                     item.style.cursor = 'not-allowed';
                 }
 
@@ -431,12 +427,9 @@
                 `;
                 container.appendChild(item);
             });
-            
-            // อัปเดตรายชื่อพนักงานสำหรับแอดมินลบด้วย
             renderAdminDeleteList();
         }
 
-        // ฟังก์ชันวาดรายชื่อพร้อมปุ่มลบในแดชบอร์ดแอดมิน
         function renderAdminDeleteList() {
             const deleteContainer = document.getElementById('admin-staff-delete-list');
             if(!deleteContainer) return;
@@ -447,9 +440,7 @@
                 item.className = 'admin-list-item';
                 item.innerHTML = `
                     <div style="text-align:left; font-weight:600;">${staff.id}. ${staff.name}</div>
-                    <button class="btn-delete-staff" onclick="deleteStaffRealtime('${staff.id}', '${staff.name}')">
-                        <i class="fa-solid fa-trash-can"></i> ลบพนักงาน
-                    </button>
+                    <button class="btn-delete-staff" onclick="deleteStaffRealtime('${staff.id}', '${staff.name}')">❌ ลบ</button>
                 `;
                 deleteContainer.appendChild(item);
             });
@@ -485,18 +476,25 @@
                 return;
             }
             
-            document.getElementById('new-pass-error').style.display = 'none';
             const idx = database.findIndex(s => s.id === loggedInUser.id);
             database[idx].currentPass = newPass;
             database[idx].isFirstTime = false;
             
-            localStorage.setItem('bch_staff_db_v4', JSON.stringify(database));
+            localStorage.setItem('bch_staff_db_v5', JSON.stringify(database));
             loggedInUser = database[idx];
 
             triggerLoadingEffect('บันทึกรหัสผ่านส่วนตัวใหม่แล้ว ระบบกำลังเปิดข้อมูล...', 3000, () => {
                 renderStaffList();
                 navigateTo('page-staff-list');
             });
+        }
+
+        function openAdminModal() {
+            if(isAdminMode) {
+                navigateTo('page-admin-dashboard');
+            } else {
+                toggleModal('admin-login-modal', true);
+            }
         }
 
         function verifyAdminLogin() {
@@ -538,28 +536,20 @@
             };
 
             database.push(newStaff);
-            localStorage.setItem('bch_staff_db_v4', JSON.stringify(database));
+            localStorage.setItem('bch_staff_db_v5', JSON.stringify(database));
             
             document.getElementById('add-staff-name').value = '';
             document.getElementById('add-staff-init-pass').value = '';
             
-            alert(`🎉 บันทึกระบบสำเร็จ! เพิ่มรายชื่อ คุณ "${name}" เป็นเจ้าหน้าที่พนักงานลำดับที่ ${nextId} เรียบร้อยครับ`);
+            alert(`🎉 เพิ่มรายชื่อคุณ "${name}" สำเร็จ!`);
             renderStaffList();
         }
 
-        // ฟังก์ชันลบรายชื่อพนักงานเรียลไทม์ออกจากระบบความจำเครื่อง
         function deleteStaffRealtime(id, name) {
-            if(confirm(`❌ คุณแน่ใจหรือไม่ที่จะลบคุณ "${name}" ออกจากระบบตารางเวรของแผนก? ข้อมูลทั้งหมดของพนักงานคนนี้จะหายไปทันที`)) {
-                // กรองเอาเฉพาะรายชื่อคนอื่นไว้ ลบคนที่ไอดีตรงกันทิ้ง
+            if(confirm(`❌ ต้องการลบคุณ "${name}" หรือไม่?`)) {
                 database = database.filter(s => s.id !== id);
-                
-                // จัดเรียงไอดี (ID) ของพนักงานที่เหลืออยู่ใหม่ เพื่อให้ลำดับเลขเรียงกันสวยงามเสมอ
-                database.forEach((staff, index) => {
-                    staff.id = (index + 1).toString();
-                });
-
-                localStorage.setItem('bch_staff_db_v4', JSON.stringify(database));
-                alert(`ลบรายชื่อพนักงานออกจากระบบและจัดเรียงลำดับใหม่เรียบร้อยแล้วครับ!`);
+                database.forEach((staff, index) => { staff.id = (index + 1).toString(); });
+                localStorage.setItem('bch_staff_db_v5', JSON.stringify(database));
                 renderStaffList();
             }
         }
@@ -599,7 +589,7 @@
                         const shifts = [
                             { type: 'day', label: 'Day' },
                             { type: 'eve', label: 'Eve' },
-                            { type: 'de', label: 'D/E เช้าบ่าย' },
+                            { type: 'de', label: 'D/E' },
                             { type: 'off', label: 'Off' }
                         ];
                         let curr = shifts.findIndex(s => s.type === item.type);
@@ -622,13 +612,11 @@
             
             if(isEditMode) {
                 area.classList.add('edit-active');
-                trigBtn.innerHTML = '<i class="fa-solid fa-eye"></i> ดูหน้าพรีวิวตารางเวร';
-                trigBtn.style.background = '#64748b';
+                trigBtn.innerHTML = '<i class="fa-solid fa-eye"></i> ดูพรีวิวตารางเวร';
                 saveBtn.style.display = 'block';
             } else {
                 area.classList.remove('edit-active');
                 trigBtn.innerHTML = '<i class="fa-solid fa-pencil"></i> ✏️ คลิกเพื่อเริ่มแก้ไขตารางเวร';
-                trigBtn.style.background = 'var(--success-color)';
                 saveBtn.style.display = 'none';
             }
         }
@@ -637,21 +625,77 @@
             toggleEditMode();
             const idx = database.findIndex(s => s.id === selectedUser.id);
             database[idx].shifts = selectedUser.shifts;
-            localStorage.setItem('bch_staff_db_v4', JSON.stringify(database));
-            alert('💾 บันทึกการอัปเดตเวรเรียบร้อยแล้ว ข้อมูลจะคงอยู่ในระบบลิงก์นี้อย่างปลอดภัยครับ!');
+            localStorage.setItem('bch_staff_db_v5', JSON.stringify(database));
+            alert('💾 บันทึกตารางเวรเข้าบราวเซอร์แล้ว! อย่าลืมกดปุ่ม "แชร์ลิงก์" เพื่อส่งอัปเดตข้อมูลให้คนอื่นนะครับ');
         }
 
-        function logoutSession() { loggedInUser = null; navigateTo('page-login'); }
-        function logoutAdmin() { isAdminMode = false; const btn = document.getElementById('admin-status-btn'); btn.innerHTML = '<i class="fa-solid fa-user-shield"></i> แอดมิน'; btn.classList.remove('admin-active'); navigateTo('page-dept'); }
+        // 🔗 ระบบแปลงตารางเวรเป็นแอดเดรสโค้ด ยิงส่งข้ามเครื่องแบบไร้ฐานข้อมูล
+        function shareDynamicLink() {
+            try {
+                const packageData = {
+                    name: selectedUser.name,
+                    shifts: selectedUser.shifts.map(s => ({ t: s.type, l: s.label }))
+                };
+                // เข้ารหัสข้อมูลตารางเวรยัดใส่ URL ปลายทาง
+                const stringified = btoa(encodeURIComponent(JSON.stringify(packageData)));
+                const shareURL = window.location.origin + window.location.pathname + '?data=' + stringified;
+
+                if (navigator.share) {
+                    navigator.share({ title: `ตารางเวร ER - ${selectedUser.name}`, url: shareURL }).catch(console.error);
+                } else {
+                    navigator.clipboard.writeText(shareURL);
+                    alert('📋 คัดลอกลิงก์อัปเดตข้อมูลเสร็จสิ้น! สามารถส่งเข้าแชท LINE ให้เพื่อนเปิดดูเวอร์ชันอัปเดตนี้ได้ทันทีครับ');
+                }
+            } catch (e) {
+                alert('เกิดข้อผิดพลาดในการสร้างลิงก์ภายนอก');
+            }
+        }
+
+        // ระบบดึงข้อมูลจากลิงก์แชร์ของคนอื่นมาพ่นออกหน้าจอ
+        function checkIncomingSharedData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rawSharedData = urlParams.get('data');
+            
+            if(rawSharedData) {
+                try {
+                    const decrypted = JSON.parse(decodeURIComponent(atob(rawSharedData)));
+                    
+                    // บิลด์ข้อมูลพรีวิวจารกล่องโค้ดลิงก์แชร์
+                    let externalUser = {
+                        name: decrypted.name,
+                        shifts: JSON.parse(JSON.stringify(baseStructure))
+                    };
+                    
+                    decrypted.shifts.forEach((s, idx) => {
+                        externalUser.shifts[idx].type = s.t;
+                        externalUser.shifts[idx].label = s.l;
+                    });
+
+                    selectedUser = externalUser;
+                    document.getElementById('active-schedule-name').innerText = selectedUser.name;
+                    document.getElementById('editor-control-zone').style.display = 'none'; // ล็อกไม่ให้คนรับลิงก์แก้เล่น
+                    
+                    // กระโดดข้ามไปโชว์หน้าตารางเวรให้ผู้รับลิงก์เห็นข้อมูลอัปเดตทันที
+                    renderCalendarGrid();
+                    navigateTo('page-schedule');
+                } catch(e) {
+                    console.error("Shared data corrupted.");
+                }
+            }
+        }
+
+        function logoutSession() { forceLogoutAndGoBack('page-login'); }
+        function logoutAdmin() { isAdminMode = false; const btn = document.getElementById('admin-status-btn'); btn.innerHTML = '<i class="fa-solid fa-user-shield"></i> แอดมิน'; btn.classList.remove('admin-active'); forceLogoutAndGoBack('page-dept'); }
         function toggleModal(id, show) { document.getElementById(id).style.display = show ? 'flex' : 'none'; }
         function toggleTheme() { const current = document.documentElement.getAttribute('data-theme'); const target = current === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', target); document.getElementById('theme-icon').className = target === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; }
 
-        function shareLink() { if (navigator.share) { navigator.share({ title: 'ตารางเวร ER', url: window.location.href }).catch(console.error); } else { alert('คัดลอกลิงก์เรียบร้อย!'); navigator.clipboard.writeText(window.location.href); } }
         function saveAsImage() { const target = document.getElementById('capture-area'); html2canvas(target, { scale: 2.5 }).then(canvas => { const link = document.createElement('a'); link.download = `Schedule-${selectedUser.name}.png`; link.href = canvas.toDataURL('image/png'); link.click(); }); }
         function saveAsPDF() { const { jsPDF } = window.jspdf; const target = document.getElementById('capture-area'); html2canvas(target, { scale: 2.5 }).then(canvas => { const imgData = canvas.toDataURL('image/png'); const pdf = new jsPDF('p', 'mm', 'a4'); pdf.text(`BCH ER Schedule - ${selectedUser.name}`, 10, 15); pdf.addImage(imgData, 'PNG', 10, 24, 190, (canvas.height * 190) / canvas.width); pdf.save(`Schedule-${selectedUser.name}.pdf`); }); }
         function triggerCall() { window.location.href = 'tel:022351000'; }
         function triggerLine() { window.location.href = 'https://line.me/R/'; }
+
+        // สั่งตรวจสอบข้อมูลขาเข้าทันทีที่โหลดหน้าเว็บ
+        checkIncomingSharedData();
     </script>
 </body>
 </html>
-
