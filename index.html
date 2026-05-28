@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตารางเวรแพทย์ - Bangkok Christian Hospital</title>
+    <!-- ใช้ Font สไตล์สะอาดตาและ FontAwesome สำหรับไอคอนทางการแพทย์ -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- นำเข้าไลบรารีสำหรับปุ่มเซฟภาพและ PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #0b3c5d;
+            --primary-dark: #06273e;
+            --secondary-color: #328cc1;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #777777;
+            --error-color: #d9534f;
+            
+            /* สีของกะเวรตามภาพ image_2.png */
+            --color-off: #d9534f;
+            --color-off-light: #f5b7b1;
+            --color-day: #f0ad4e;
+            --color-eve: #2b8a3e;
+            --color-de: #0056b3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px; /* ทรงสมาร์ตโฟน/แท็บเล็ต ใช้ง่าย สะอาดตา */
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+            min-height: 650px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header ส่วนกลาง */
+        .hospital-header {
+            text-align: center;
+            padding: 24px 20px 15px 20px;
+            border-bottom: 1px solid #eef2f5;
+        }
+
+        .logo-wrapper {
+            width: 85px;
+            height: 85px;
+            margin: 0 auto 12px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(11, 60, 93, 0.15);
+        }
+
+        .logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hospital-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+        }
+
+        /* โครงสร้างหน้า (Page Views) */
+        .page-view {
+            display: none;
+            flex-direction: column;
+            padding: 24px;
+            flex-grow: 1;
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        .page-view.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ปุ่มย้อนกลับ */
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-color);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 15px;
+            align-self: flex-start;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .back-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* ปุ่มทั่วไป */
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(11, 60, 93, 0.2);
+            text-align: center;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* --- หน้าที่ 1: เลือกแผนก --- */
+        .dept-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .dept-item {
+            padding: 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .dept-item:hover {
+            border-color: var(--secondary-color);
+            background: #f0f7fc;
+            transform: scale(1.01);
+        }
+
+        .dept-name {
+            font-weight: 500;
+            color: #334155;
+        }
+
+        /* --- หน้าที่ 2: กรอกรหัสพนักงาน --- */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(50, 140, 193, 0.15);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 13px;
+            margin-top: 8px;
+            text-align: center;
+            display: none;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* --- หน้าที่ 3: รายชื่อพนักงาน --- */
+        .staff-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .staff-item {
+            padding: 12px 16px;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .staff-item.clickable {
+            cursor: pointer;
+        }
+
+        .staff-item.clickable:hover {
+            background: #f0f7fc;
+            border-color: var(--secondary-color);
+        }
+
+        .staff-number {
+            width: 24px;
+            height: 24px;
+            background: #e2e8f0;
+            color: #64748b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .staff-item.clickable .staff-number {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .staff-name {
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .staff-empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* --- หน้าที่ 4: ตารางเวร --- */
+        .schedule-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #333;
+        }
+
+        .schedule-month {
+            font-size: 22px;
+            font-weight: bold;
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .schedule-user {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            text-align: right;
+            max-width: 60%;
+            text-decoration: underline;
+        }
+
+        /* ตารางสไตล์ปฏิทินตามรูปภาพ */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            background: #fff;
+            padding: 5px 0;
+        }
+
+        .calendar-header {
+            font-size: 11px;
+            text-align: center;
+            padding-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .calendar-header.sun { color: #d9534f; }
+
+        .calendar-day-box {
+            border-top: 1px solid #e0e0e0;
+            padding: 4px 2px;
+            min-height: 52px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .day-num {
+            font-size: 11px;
+            color: #333;
+            padding-left: 2px;
+        }
+        .day-num.sun { color: #d9534f; }
+        .day-num.muted { color: #ccc; }
+
+        .shift-tag {
+            font-size: 9px;
+            text-align: center;
+            padding: 4px 1px;
+            color: white;
+            border-radius: 2px;
+            font-weight: bold;
+            min-height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* สีแท็กเวร */
+        .shift-off-light { background-color: var(--color-off-light); color: #d9534f; }
+        .shift-off { background-color: var(--color-off); }
+        .shift-day { background-color: var(--color-day); }
+        .shift-eve { background-color: var(--color-eve); }
+        .shift-de { background-color: var(--color-de); font-size: 8px; }
+
+        /* แผงปุ่มแอคชันด้านล่าง */
+        .action-panel {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: white;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover { opacity: 0.9; }
+        .btn-share { background-color: #6c757d; }
+        .btn-image { background-color: #17a2b8; }
+        .btn-pdf { background-color: #e04f5f; }
+        .btn-call { background-color: #28a745; }
+        .btn-line { background-color: #06C755; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- โลโก้ และหัวข้อโรงพยาบาล (แสดงทุกหน้าเพื่อความน่าเชื่อถือ) -->
+        <div class="hospital-header">
+            <div class="logo-wrapper">
+                <!-- อ้างอิงรูปภาพโลโก้ตามชื่อไฟล์ image.png -->
+                <img src="image.png" alt="Hospital Logo" onerror="this.src='https://placehold.co/150x150/0b3c5d/ffffff?text=BCH'">
+            </div>
+            <div class="hospital-title">BANGKOK CHRISTIAN HOSPITAL</div>
+        </div>
+
+        <!-- หน้าที่ 1: เลือกแผนก -->
+        <div id="page-dept" class="page-view active">
+            <h2><i class="fa-solid fa-hospital-user"></i> กรุณาเลือกแผนก</h2>
+            <div class="dept-list">
+                <div class="dept-item" onclick="navigateTo('page-login')">
+                    <span class="dept-name">Emergency Room (ห้องฉุกเฉิน)</span>
+                    <i class="fa-solid fa-chevron-right" style="color: var(--secondary-color)"></i>
+                </div>
+                <div class="dept-item" style="opacity: 0.5; cursor: not-allowed;">
+                    <span class="dept-name">OPD (ผู้ป่วยนอก)</span>
+                    <i class="fa-solid fa-lock" style="color: #94a3b8"></i>
+                </div>
+                <div class="dept-item" style="opacity: 0.5; cursor: not-allowed;">
+                    <span class="dept-name">ICU (ผู้ป่วยหนัก)</span>
+                    <i class="fa-solid fa-lock" style="color: #94a3b8"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- หน้าที่ 2: เข้าสู่ระบบ / รหัสพนักงาน -->
+        <div id="page-login" class="page-view">
+            <button class="back-btn" onclick="navigateTo('page-dept')">
+                <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+            </button>
+            <h2><i class="fa-solid fa-key"></i> ยืนยันสิทธิ์เข้าถึงข้อมูล</h2>
+            <div class="input-group">
+                <label class="input-label" for="emp-code">กรอกรหัสพนักงาน (6 หลัก)</label>
+                <input type="password" id="emp-code" class="input-field" placeholder="••••••" maxlength="6" inputmode="numeric">
+                <div id="error-txt" class="error-message">ไม่พบข้อมูล รหัสพนักงาน โปรดลองอีกครั้ง</div>
+            </div>
+            <button class="btn-primary" onclick="verifyCode()">ตรวจสอบรหัส</button>
+        </div>
+
+        <!-- หน้าที่ 3: รายชื่อพนักงาน -->
+        <div id="page-staff" class="page-view">
+            <button class="back-btn" onclick="navigateTo('page-login')">
+                <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+            </button>
+            <h2><i class="fa-solid fa-users-gear"></i> แผนก Emergency Room</h2>
+            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">กรุณาเลือกรายชื่อเพื่อดูตารางเวร</div>
+            <div class="staff-list" id="staff-container">
+                <!-- รายชื่อคนที่ 1 -->
+                <div class="staff-item clickable" onclick="navigateTo('page-schedule')">
+                    <div class="staff-number">1</div>
+                    <div class="staff-name" style="font-weight: 600;">เนติราช นิ่มเจริญวัฒนกุล</div>
+                </div>
+                <!-- รายชื่อที่เหลือเว้นว่างไว้ตามบรีฟ (รวมเป็น 13 คน) -->
+                <!-- วนลูปสร้างผ่าน JS ด้านล่าง -->
+            </div>
+        </div>
+
+        <!-- หน้าที่ 4: แสดงผลตารางเวรตามรูปภาพ -->
+        <div id="page-schedule" class="page-view">
+            <button class="back-btn" onclick="navigateTo('page-staff')">
+                <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+            </button>
+            
+            <!-- โครงสร้างข้อมูลตารางเวร (ถอดรหัสรูปแบบปฏิทินจริงจาก image_2.png) -->
+            <div id="capture-area" style="background: white; padding: 10px; border-radius: 8px;">
+                <div class="schedule-meta">
+                    <div class="schedule-month">Jun, 2026</div>
+                    <div class="schedule-user">เนติราช นิ่มเจริญวัฒนกุล</div>
+                </div>
+
+                <div class="calendar-grid">
+                    <!-- วันในสัปดาห์ -->
+                    <div class="calendar-header sun">31 Sun</div>
+                    <div class="calendar-header">1 Mon</div>
+                    <div class="calendar-header">2 Tue</div>
+                    <div class="calendar-header">3 Wed</div>
+                    <div class="calendar-header">4 Thu</div>
+                    <div class="calendar-header">5 Fri</div>
+                    <div class="calendar-header">6 Sat</div>
+
+                    <!-- แถวที่ 1 -->
+                    <div class="calendar-day-box"><span class="day-num sun muted">31</span><div class="shift-tag shift-off-light">Off</div></div>
+                    <div class="calendar-day-box" style="background-color: #eaeaea;"><span class="day-num">1</span><div class="shift-tag shift-off">Off</div></div>
+                    <div class="calendar-day-box"><span class="day-num">2</span><div class="shift-tag shift-day">Day</div></div>
+                    <div class="calendar-day-box"><span class="day-num">3</span><div class="shift-tag shift-day">Day</div></div>
+                    <div class="calendar-day-box"><span class="day-num">4</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">5</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">6</span><div class="shift-tag shift-de">D/E เช้าบ่าย</div></div>
+
+                    <!-- แถวที่ 2 -->
+                    <div class="calendar-day-box"><span class="day-num sun">7</span><div class="shift-tag shift-off">Off</div></div>
+                    <div class="calendar-day-box"><span class="day-num">8</span><div class="shift-tag shift-de">D/E เช้าบ่าย</div></div>
+                    <div class="calendar-day-box"><span class="day-num">9</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">10</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">11</span><div class="shift-tag shift-off">Off</div></div>
+                    <div class="calendar-day-box"><span class="day-num">12</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">13</span><div class="shift-tag shift-de">D/E เช้าบ่าย</div></div>
+
+                    <!-- แถวที่ 3 -->
+                    <div class="calendar-day-box"><span class="day-num sun">14</span><div class="shift-tag shift-off">Off</div></div>
+                    <div class="calendar-day-box"><span class="day-num">15</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">16</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">17</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">18</span><div class="shift-tag shift-de">D/E เช้าบ่าย</div></div>
+                    <div class="calendar-day-box"><span class="day-num">19</span><div class="shift-tag shift-off">Off</div></div>
+                    <div class="calendar-day-box"><span class="day-num">20</span><div class="shift-tag shift-off">Off</div></div>
+
+                    <!-- แถวที่ 4 -->
+                    <div class="calendar-day-box"><span class="day-num sun">21</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">22</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">23</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">24</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">25</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">26</span><div class="shift-tag shift-off">Off</div></div>
+                    <div class="calendar-day-box"><span class="day-num">27</span><div class="shift-tag shift-eve">Eve</div></div>
+
+                    <!-- แถวที่ 5 -->
+                    <div class="calendar-day-box"><span class="day-num sun">28</span><div class="shift-tag shift-de">D/E เช้าบ่าย</div></div>
+                    <div class="calendar-day-box"><span class="day-num">29</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num">30</span><div class="shift-tag shift-eve">Eve</div></div>
+                    <div class="calendar-day-box"><span class="day-num muted">1</span></div>
+                    <div class="calendar-day-box"><span class="day-num muted">2</span></div>
+                    <div class="calendar-day-box"><span class="day-num muted">3</span></div>
+                    <div class="calendar-day-box"><span class="day-num muted">4</span></div>
+                </div>
+            </div>
+
+            <!-- ชุดปุ่มกดแชร์, เซฟภาพ, PDF, โทร, ไลน์ -->
+            <div class="action-panel">
+                <div class="action-row">
+                    <button class="btn-action btn-share" onclick="shareLink()"><i class="fa-solid fa-share-nodes"></i> แชร์ลิ้งค์</button>
+                    <button class="btn-action btn-image" onclick="saveAsImage()"><i class="fa-solid fa-image"></i> เซฟรูป</button>
+                    <button class="btn-action btn-pdf" onclick="saveAsPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                </div>
+                <div class="action-row">
+                    <button class="btn-action btn-call" onclick="triggerCall()"><i class="fa-solid fa-phone"></i> โทร</button>
+                    <button class="btn-action btn-line" onclick="triggerLine()"><i class="fa-brands fa-line"></i> ไลน์</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // สร้างรายชื่อพนักงานที่เหลือให้ครบ 13 คน (คนที่ 2-13 เว้นว่าง)
+        const staffContainer = document.getElementById('staff-container');
+        for (let i = 2; i <= 13; i++) {
+            const item = document.createElement('div');
+            item.className = 'staff-item';
+            item.innerHTML = `
+                <div class="staff-number">${i}</div>
+                <div class="staff-name staff-empty">-- ไม่พบข้อมูลเจ้าหน้าที่ --</div>
+            `;
+            staffContainer.appendChild(item);
+        }
+
+        // ระบบควบคุมการเปลี่ยนหน้าเว็บพร้อมเอฟเฟคไหลลื่น
+        function navigateTo(pageId) {
+            // ปิดทุกหน้า
+            document.querySelectorAll('.page-view').forEach(page => {
+                page.classList.remove('active');
+            });
+            // เปิดหน้าเจาะจง
+            document.getElementById(pageId).classList.add('active');
+            
+            // รีเซ็ตค่าหากย้อนกลับมาหน้าล็อกอิน
+            if(pageId === 'page-login') {
+                document.getElementById('emp-code').value = '';
+                document.getElementById('error-txt').style.display = 'none';
+            }
+        }
+
+        // ตรวจสอบรหัสพนักงานตามเงื่อนไข (ต้องเป็น 090869 เท่านั้น)
+        function verifyCode() {
+            const codeInput = document.getElementById('emp-code').value;
+            const errorTxt = document.getElementById('error-txt');
+
+            if (codeInput === '090869') {
+                errorTxt.style.display = 'none';
+                navigateTo('page-staff');
+            } else {
+                errorTxt.style.display = 'block';
+                // ล้างค่าเพื่อให้กรอกใหม่ได้อย่างสะดวกสบาย
+                document.getElementById('emp-code').value = '';
+            }
+        }
+
+        // ฟังก์ชันเสริม: ทำงานร่วมกับปุ่มกดต่างๆ
+        function shareLink() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'ตารางเวรแผนก ER',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                alert('คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว (เบราว์เซอร์นี้ไม่รองรับ Web Share)');
+                navigator.clipboard.writeText(window.location.href);
+            }
+        }
+
+        function saveAsImage() {
+            const target = document.getElementById('capture-area');
+            html2canvas(target, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'ER-Schedule-Jun2026.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function saveAsPDF() {
+            const { jsPDF } = window.jspdf;
+            const target = document.getElementById('capture-area');
+            
+            html2canvas(target, { scale: 2 }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 190; 
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.text("Bangkok Christian Hospital - ER Schedule", 10, 15);
+                pdf.addImage(imgData, 'PNG', 10, 25, imgWidth, imgHeight);
+                pdf.save('ER-Schedule-Jun2026.pdf');
+            });
+        }
+
+        function triggerCall() {
+            // จำลองการโทรเข้าเบอร์ภายในของแผนกหรือฝ่ายบุคคล
+            window.location.href = 'tel:022351000';
+        }
+
+        function triggerLine() {
+            // ลิงก์ตรงเปิดแอปพลิเคชัน Line เพื่อแชร์ข้อมูล
+            window.location.href = 'https://line.me/R/';
+        }
+        
+        // ผูกปุ่ม Enter ให้สามารถกดตรวจสอบรหัสผ่านได้ทันทีเพื่อความรวดเร็ว
+        document.getElementById('emp-code').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyCode();
+            }
+        });
+    </script>
+</body>
+</html>
