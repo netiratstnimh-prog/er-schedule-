@@ -3,507 +3,575 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ระบบจัดการหนังสือสัญญากู้ยืมเงิน</title>
+<title>NETIRAT - Hospital Management Portal</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Noto Sans Thai',sans-serif;
-}
-
-body{
-    background:#f1f5f9;
-    min-height:100vh;
-    overflow-x:hidden;
-}
-
-/* HEADER */
-
-.header{
-    width:100%;
-    background:linear-gradient(135deg,#0f172a,#1e293b);
-    padding:30px;
-    color:white;
-    position:relative;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
-
-.header::before{
-    content:'⚖';
-    position:absolute;
-    right:40px;
-    top:-10px;
-    font-size:130px;
-    opacity:.08;
-    animation:float 5s infinite ease-in-out;
-}
-
-@keyframes float{
-    0%{transform:translateY(0px);}
-    50%{transform:translateY(10px);}
-    100%{transform:translateY(0px);}
-}
-
-.header h1{
-    font-size:34px;
-    font-weight:700;
-}
-
-.header p{
-    margin-top:8px;
-    opacity:.8;
-}
-
-/* MAIN */
-
-.container{
-    max-width:1200px;
-    margin:auto;
-    padding:30px 20px;
-}
-
-.card{
-    background:white;
-    border-radius:22px;
-    padding:30px;
-    margin-bottom:25px;
-    box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.section-title{
-    font-size:22px;
-    color:#0f172a;
-    margin-bottom:25px;
-    border-left:5px solid #1d4ed8;
-    padding-left:15px;
-}
-
-/* FORM */
-
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:20px;
-}
-
-.form-group{
-    display:flex;
-    flex-direction:column;
-}
-
-label{
-    margin-bottom:8px;
-    color:#334155;
-    font-weight:600;
-}
-
-input, textarea, select{
-    padding:14px;
-    border:1px solid #cbd5e1;
-    border-radius:12px;
-    font-size:15px;
-    transition:.2s;
-}
-
-textarea{
-    resize:vertical;
-    min-height:120px;
-}
-
-input:focus,
-textarea:focus{
-    outline:none;
-    border-color:#2563eb;
-    box-shadow:0 0 0 4px rgba(37,99,235,.12);
-}
-
-/* BUTTON */
-
-.button-group{
-    display:flex;
-    flex-wrap:wrap;
-    gap:15px;
-    margin-top:30px;
-}
-
-.btn{
-    padding:15px 25px;
-    border:none;
-    border-radius:14px;
-    cursor:pointer;
-    font-size:15px;
-    font-weight:700;
-    transition:.25s;
-}
-
-.btn-primary{
-    background:#1d4ed8;
-    color:white;
-}
-
-.btn-primary:hover{
-    background:#1e40af;
-    transform:translateY(-2px);
-}
-
-.btn-success{
-    background:#059669;
-    color:white;
-}
-
-.btn-success:hover{
-    background:#047857;
-    transform:translateY(-2px);
-}
-
-.btn-dark{
-    background:#0f172a;
-    color:white;
-}
-
-.btn-dark:hover{
-    background:#020617;
-}
-
-/* CONTRACT */
-
-.contract-preview{
-    background:#fff;
-    border:2px solid #e2e8f0;
-    padding:40px;
-    border-radius:18px;
-    line-height:2;
-    color:#111827;
-}
-
-.contract-preview h2{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-.signature-area{
-    display:flex;
-    justify-content:space-between;
-    margin-top:70px;
-    gap:20px;
-}
-
-.signature-box{
-    width:45%;
-    text-align:center;
-}
-
-/* ADMIN */
-
-.admin-box{
-    background:#f8fafc;
-    border-radius:16px;
-    padding:20px;
-    margin-top:20px;
-}
-
-.phone-item{
-    background:white;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:12px;
-    border-left:5px solid #2563eb;
-    box-shadow:0 5px 10px rgba(0,0,0,.05);
-}
-
-.badge{
-    display:inline-block;
-    background:#dbeafe;
-    color:#1d4ed8;
-    padding:5px 12px;
-    border-radius:999px;
-    font-size:13px;
-    margin-bottom:10px;
-}
-
-footer{
-    text-align:center;
-    padding:20px;
-    color:#64748b;
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-    .signature-area{
-        flex-direction:column;
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family: "Segoe UI", sans-serif;
     }
 
-    .signature-box{
+    body{
+        background:#020617;
+        color:white;
+        overflow:hidden;
+    }
+
+    .glass{
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(18px);
+        border:1px solid rgba(255,255,255,0.1);
+        box-shadow:0 0 40px rgba(0,255,200,0.08);
+    }
+
+    .center-screen{
         width:100%;
+        height:100vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex-direction:column;
+        padding:20px;
     }
 
-    .header h1{
-        font-size:26px;
+    .hidden{
+        display:none !important;
     }
 
-}
+    .fade{
+        animation:fade .5s ease;
+    }
 
+    @keyframes fade{
+        from{
+            opacity:0;
+            transform:translateY(10px);
+        }
+        to{
+            opacity:1;
+            transform:translateY(0);
+        }
+    }
+
+    .pulse-dot{
+        width:12px;
+        height:12px;
+        background:#00ff88;
+        border-radius:50%;
+        box-shadow:0 0 10px #00ff88;
+        animation:pulse 1s infinite;
+    }
+
+    @keyframes pulse{
+        0%{opacity:1;}
+        50%{opacity:.4;}
+        100%{opacity:1;}
+    }
+
+    .ecg{
+        position:relative;
+        width:100%;
+        height:120px;
+        overflow:hidden;
+        border-radius:10px;
+        background:#000;
+    }
+
+    .ecg::before{
+        content:'';
+        position:absolute;
+        width:200%;
+        height:100%;
+        background:
+        linear-gradient(90deg,
+        transparent 0%,
+        transparent 45%,
+        #00ff88 50%,
+        transparent 55%,
+        transparent 100%);
+        animation:moveECG 1.3s linear infinite;
+    }
+
+    @keyframes moveECG{
+        0%{transform:translateX(-50%);}
+        100%{transform:translateX(0);}
+    }
+
+    .menu-popup{
+        transform:translateY(30px);
+        opacity:0;
+        animation:popup .4s forwards;
+    }
+
+    @keyframes popup{
+        to{
+            transform:translateY(0);
+            opacity:1;
+        }
+    }
+
+    canvas{
+        border-radius:20px;
+    }
+
+    .topbar{
+        width:100%;
+        padding:14px 18px;
+        background:#06111f;
+        border-bottom:1px solid rgba(255,255,255,0.1);
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }
+
+    .btn{
+        width:100%;
+        padding:16px;
+        border-radius:16px;
+        background:linear-gradient(135deg,#0f172a,#1e293b);
+        border:1px solid rgba(255,255,255,0.08);
+        transition:.2s;
+    }
+
+    .btn:hover{
+        transform:scale(1.02);
+        border-color:#00ff88;
+    }
+
+    .back-btn{
+        background:#0f172a;
+        border:1px solid rgba(255,255,255,0.1);
+        padding:10px 18px;
+        border-radius:14px;
+    }
+
+    .loader-bar{
+        width:100%;
+        height:12px;
+        border-radius:50px;
+        background:#111827;
+        overflow:hidden;
+    }
+
+    .loader-fill{
+        height:100%;
+        width:0%;
+        background:linear-gradient(90deg,#00ff88,#00bfff);
+    }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <h1>ระบบจัดการหนังสือสัญญากู้ยืมเงิน</h1>
-    <p>Loan Agreement Management System • ระบบเอกสารทางกฎหมายแบบดิจิทัล</p>
+<!-- INTRO -->
+<div id="intro" class="center-screen fade">
+    <div class="text-center">
+        <h1 class="text-5xl font-bold tracking-[10px] text-cyan-400">
+            NETIRAT
+        </h1>
+
+        <p class="mt-4 text-gray-400">
+            Advanced Hospital Management System
+        </p>
+
+        <div class="mt-10 w-72 h-72 rounded-full border border-cyan-500/20 absolute blur-3xl bg-cyan-500/10"></div>
+
+        <button onclick="openLogin()" class="mt-10 px-8 py-4 rounded-2xl bg-cyan-500 text-black font-bold">
+            ENTER SYSTEM
+        </button>
+    </div>
 </div>
 
-<div class="container">
+<!-- PASSWORD -->
+<div id="login" class="hidden center-screen fade">
+    <div class="glass p-8 rounded-3xl w-full max-w-md">
+        <h2 class="text-3xl font-bold mb-2">
+            Secure Access
+        </h2>
 
-    <!-- FORM -->
-    <div class="card">
+        <p class="text-gray-400 mb-6">
+            กรุณากรอกรหัสเข้าใช้งานระบบ
+        </p>
 
-        <div class="section-title">
-            กรอกรายละเอียดสัญญา
+        <input
+            id="mainPass"
+            type="password"
+            placeholder="Access Code"
+            class="w-full p-4 rounded-2xl bg-slate-900 outline-none mb-5"
+        />
+
+        <button onclick="checkMainPass()" class="btn">
+            LOGIN
+        </button>
+    </div>
+</div>
+
+<!-- EMPLOYEE -->
+<div id="employee" class="hidden center-screen fade">
+    <div class="glass p-8 rounded-3xl w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-5">
+            Employee Authentication
+        </h2>
+
+        <input
+            id="employeeCode"
+            type="password"
+            placeholder="Employee Code"
+            class="w-full p-4 rounded-2xl bg-slate-900 outline-none mb-5"
+        />
+
+        <button onclick="checkEmployee()" class="btn">
+            VERIFY EMPLOYEE
+        </button>
+    </div>
+</div>
+
+<!-- USER SELECT -->
+<div id="userSelect" class="hidden center-screen fade">
+    <div class="glass p-8 rounded-3xl w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-5">
+            Select User
+        </h2>
+
+        <button onclick="openDashboard()" class="btn">
+            เนติราช นิ่มเจริญวัฒนกุล
+        </button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden h-screen flex flex-col">
+
+    <div class="topbar">
+        <div>
+            <h1 class="font-bold text-lg">
+                NETIRAT HOSPITAL SYSTEM
+            </h1>
+            <p class="text-sm text-gray-400">
+                Active Session
+            </p>
         </div>
 
-        <div class="form-grid">
+        <div class="flex items-center gap-3">
+            <div class="pulse-dot"></div>
 
-            <div class="form-group">
-                <label>ชื่อผู้ให้กู้</label>
-                <input type="text" id="lenderName">
+            <div class="text-right">
+                <p class="text-sm">
+                    เนติราช นิ่มเจริญวัฒนกุล
+                </p>
+
+                <p class="text-xs text-green-400">
+                    ONLINE
+                </p>
             </div>
-
-            <div class="form-group">
-                <label>ชื่อผู้กู้</label>
-                <input type="text" id="borrowerName">
-            </div>
-
-            <div class="form-group">
-                <label>จำนวนเงินกู้ (บาท)</label>
-                <input type="number" id="loanAmount">
-            </div>
-
-            <div class="form-group">
-                <label>อัตราดอกเบี้ย (%)</label>
-                <input type="number" id="interestRate">
-            </div>
-
-            <div class="form-group">
-                <label>วันที่ทำสัญญา</label>
-                <input type="date" id="contractDate">
-            </div>
-
-            <div class="form-group">
-                <label>วันครบกำหนดชำระ</label>
-                <input type="date" id="dueDate">
-            </div>
-
-            <div class="form-group">
-                <label>หมายเลขโทรศัพท์ผู้กู้</label>
-                <input type="tel" id="phoneNumber">
-            </div>
-
         </div>
-
-        <div class="form-group" style="margin-top:20px;">
-            <label>รายละเอียดเพิ่มเติม</label>
-            <textarea id="additionalDetail"></textarea>
-        </div>
-
-        <div class="button-group">
-            <button class="btn btn-primary" onclick="generateContract()">
-                สร้างหนังสือสัญญา
-            </button>
-
-            <button class="btn btn-success" onclick="downloadContract()">
-                บันทึกเอกสาร
-            </button>
-
-            <button class="btn btn-dark" onclick="savePhoneToAdmin()">
-                บันทึกเข้าสู่ระบบแอดมิน
-            </button>
-        </div>
-
     </div>
 
-    <!-- PREVIEW -->
-    <div class="card">
+    <div class="p-5 overflow-auto flex-1">
 
-        <div class="section-title">
-            ตัวอย่างหนังสือสัญญากู้ยืมเงิน
-        </div>
-
-        <div class="contract-preview" id="contractPreview">
-
-            <h2>หนังสือสัญญากู้ยืมเงิน</h2>
-
-            <p>
-                ระบบจะแสดงรายละเอียดสัญญาที่นี่...
+        <div class="glass p-5 rounded-3xl mb-5">
+            <p class="text-gray-400 text-sm">
+                Real-Time Visitors
             </p>
 
+            <h1 id="visitors" class="text-4xl font-bold mt-2">
+                0
+            </h1>
         </div>
 
+        <div class="space-y-4 mt-6">
+
+            <div onclick="openSchedule()" class="menu-popup btn cursor-pointer" style="animation-delay:.2s">
+                <h2 class="text-xl font-bold">
+                    📋 Duty Schedule
+                </h2>
+            </div>
+
+            <div onclick="openPayment()" class="menu-popup btn cursor-pointer" style="animation-delay:.4s">
+                <h2 class="text-xl font-bold">
+                    💳 Create Payment
+                </h2>
+            </div>
+
+            <a href="tel:0635164271" class="menu-popup btn block text-center" style="animation-delay:.6s">
+                <h2 class="text-xl font-bold">
+                    ☎ Contact Channel
+                </h2>
+            </a>
+
+        </div>
     </div>
-
-    <!-- ADMIN -->
-    <div class="card">
-
-        <div class="section-title">
-            ระบบจัดการของแอดมิน
-        </div>
-
-        <span class="badge">Admin Dashboard</span>
-
-        <div class="admin-box" id="adminPhoneList">
-            ยังไม่มีข้อมูลหมายเลขโทรศัพท์
-        </div>
-
-    </div>
-
 </div>
 
-<footer>
-    ระบบเอกสารสัญญากู้ยืมเงินดิจิทัล © 2026
-</footer>
+<!-- SCHEDULE -->
+<div id="schedulePage" class="hidden h-screen flex flex-col">
+
+    <div class="topbar">
+        <button onclick="backDashboard()" class="back-btn">
+            ← Back
+        </button>
+
+        <h2 class="font-bold">
+            Duty Schedule
+        </h2>
+    </div>
+
+    <div class="p-5 overflow-auto">
+
+        <div class="glass p-5 rounded-3xl">
+            <h1 class="text-2xl font-bold mb-5">
+                Department Access
+            </h1>
+
+            <div class="ecg mb-6"></div>
+
+            <div class="loader-bar">
+                <div class="loader-fill" id="loaderFill"></div>
+            </div>
+
+            <p id="loadingText" class="mt-3 text-gray-400">
+                Loading Department Data... 0%
+            </p>
+        </div>
+
+        <div id="departmentBox" class="hidden mt-6 glass p-5 rounded-3xl fade">
+            <h2 class="text-2xl font-bold">
+                Accident & Emergency Department
+            </h2>
+
+            <button onclick="openER()" class="btn mt-5">
+                OPEN DEPARTMENT
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- ER -->
+<div id="erPage" class="hidden h-screen flex flex-col">
+
+    <div class="topbar">
+        <button onclick="backSchedule()" class="back-btn">
+            ← Back
+        </button>
+
+        <h2 class="font-bold">
+            A&E Department
+        </h2>
+    </div>
+
+    <div class="p-5">
+
+        <div class="glass p-6 rounded-3xl">
+
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold">
+                        Duty Schedule
+                    </h1>
+
+                    <p class="text-gray-400 mt-2">
+                        System will display schedule information soon.
+                    </p>
+                </div>
+
+                <div class="flex gap-3 text-2xl">
+                    <button>✏️</button>
+                    <button>➕</button>
+                    <button>🗑️</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- PAYMENT -->
+<div id="paymentPage" class="hidden h-screen flex flex-col">
+
+    <div class="topbar">
+        <button onclick="backDashboard()" class="back-btn">
+            ← Back
+        </button>
+
+        <h2 class="font-bold">
+            PromptPay Payment
+        </h2>
+    </div>
+
+    <div class="p-5 overflow-auto">
+
+        <div class="glass p-6 rounded-3xl">
+
+            <h1 class="text-2xl font-bold mb-6">
+                Create PromptPay QR
+            </h1>
+
+            <input
+                id="amount"
+                type="number"
+                placeholder="Enter Amount"
+                class="w-full p-4 rounded-2xl bg-slate-900 outline-none mb-5"
+            />
+
+            <button onclick="generateQR()" class="btn">
+                Generate QR Code
+            </button>
+
+            <div class="mt-8 flex justify-center">
+                <div id="qrcode"></div>
+            </div>
+
+            <button
+                onclick="downloadQR()"
+                class="btn mt-6"
+            >
+                Save QR Image
+            </button>
+
+        </div>
+
+    </div>
+</div>
 
 <script>
 
-let adminPhones = JSON.parse(localStorage.getItem("adminPhones")) || [];
+let visit = localStorage.getItem("visit-count");
 
-function generateContract(){
-
-    const lender = document.getElementById('lenderName').value;
-    const borrower = document.getElementById('borrowerName').value;
-    const amount = document.getElementById('loanAmount').value;
-    const interest = document.getElementById('interestRate').value;
-    const contractDate = document.getElementById('contractDate').value;
-    const dueDate = document.getElementById('dueDate').value;
-    const detail = document.getElementById('additionalDetail').value;
-
-    const preview = document.getElementById('contractPreview');
-
-    preview.innerHTML = `
-        <h2>หนังสือสัญญากู้ยืมเงิน</h2>
-
-        <p>
-            หนังสือฉบับนี้ทำขึ้นเมื่อวันที่ <b>${contractDate}</b>
-        </p>
-
-        <p>
-            ระหว่าง <b>${lender}</b> ซึ่งต่อไปในสัญญานี้เรียกว่า "ผู้ให้กู้"
-            กับ <b>${borrower}</b> ซึ่งต่อไปในสัญญานี้เรียกว่า "ผู้กู้"
-        </p>
-
-        <p>
-            ผู้ให้กู้ตกลงให้กู้ยืมเงินจำนวน <b>${amount}</b> บาท
-            โดยคิดอัตราดอกเบี้ย <b>${interest}%</b> ต่อปี
-            และผู้กู้ตกลงจะชำระคืนภายในวันที่ <b>${dueDate}</b>
-        </p>
-
-        <p>
-            ทั้งสองฝ่ายตกลงยินยอมตามเงื่อนไขแห่งสัญญาฉบับนี้โดยสมัครใจ
-            และรับรองว่าข้อมูลทั้งหมดเป็นความจริงทุกประการ
-        </p>
-
-        <p>
-            รายละเอียดเพิ่มเติม:
-            <br>
-            ${detail || '-'}
-        </p>
-
-        <div class="signature-area">
-
-            <div class="signature-box">
-                ........................................
-                <br><br>
-                ลายมือชื่อผู้ให้กู้
-            </div>
-
-            <div class="signature-box">
-                ........................................
-                <br><br>
-                ลายมือชื่อผู้กู้
-            </div>
-
-        </div>
-    `;
-
+if(!visit){
+    visit = 1;
+}else{
+    visit = parseInt(visit)+1;
 }
 
-function downloadContract(){
+localStorage.setItem("visit-count", visit);
 
-    const content = document.getElementById('contractPreview').innerText;
-
-    const blob = new Blob([content], {type:"text/plain"});
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-
-    a.href = url;
-    a.download = 'หนังสือสัญญากู้ยืมเงิน.txt';
-
-    a.click();
-
-    URL.revokeObjectURL(url);
-
+function openLogin(){
+    intro.classList.add("hidden");
+    login.classList.remove("hidden");
 }
 
-function savePhoneToAdmin(){
+function checkMainPass(){
 
-    const phone = document.getElementById('phoneNumber').value;
+    const pass = document.getElementById("mainPass").value;
 
-    if(!phone){
-        alert("กรุณากรอกหมายเลขโทรศัพท์");
-        return;
+    if(pass === "1323"){
+        login.classList.add("hidden");
+        employee.classList.remove("hidden");
+    }else{
+        alert("Invalid Access Code");
     }
-
-    const data = {
-        phone: phone,
-        time: new Date().toLocaleString('th-TH')
-    };
-
-    adminPhones.push(data);
-
-    localStorage.setItem(
-        "adminPhones",
-        JSON.stringify(adminPhones)
-    );
-
-    renderAdminPhones();
-
-    alert("บันทึกข้อมูลเข้าสู่ระบบแอดมินเรียบร้อย");
-
 }
 
-function renderAdminPhones(){
+function checkEmployee(){
 
-    const container = document.getElementById('adminPhoneList');
+    const code = document.getElementById("employeeCode").value;
 
-    if(adminPhones.length === 0){
-        container.innerHTML = "ยังไม่มีข้อมูลหมายเลขโทรศัพท์";
-        return;
+    if(code === "090869"){
+        employee.classList.add("hidden");
+        userSelect.classList.remove("hidden");
+    }else{
+        alert("Employee Authentication Failed");
     }
+}
 
-    container.innerHTML = "";
+function openDashboard(){
 
-    adminPhones.reverse().forEach(item => {
+    userSelect.classList.add("hidden");
+    dashboard.classList.remove("hidden");
 
-        container.innerHTML += `
-            <div class="phone-item">
-                <strong>เบอร์โทรศัพท์:</strong> ${item.phone}
-                <br>
-                <small>วันที่บันทึก: ${item.time}</small>
-            </div>
-        `;
+    document.getElementById("visitors").innerText = visit;
+}
 
+function openSchedule(){
+
+    dashboard.classList.add("hidden");
+    schedulePage.classList.remove("hidden");
+
+    let percent = 0;
+
+    const interval = setInterval(()=>{
+
+        percent++;
+
+        document.getElementById("loaderFill").style.width = percent + "%";
+
+        document.getElementById("loadingText").innerText =
+        "Loading Department Data... " + percent + "%";
+
+        if(percent >= 100){
+            clearInterval(interval);
+
+            document.getElementById("departmentBox").classList.remove("hidden");
+        }
+
+    },35);
+}
+
+function backDashboard(){
+
+    paymentPage.classList.add("hidden");
+    schedulePage.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+}
+
+function backSchedule(){
+
+    erPage.classList.add("hidden");
+    schedulePage.classList.remove("hidden");
+}
+
+function openER(){
+
+    schedulePage.classList.add("hidden");
+    erPage.classList.remove("hidden");
+}
+
+function openPayment(){
+
+    dashboard.classList.add("hidden");
+    paymentPage.classList.remove("hidden");
+}
+
+function generateQR(){
+
+    const amount = document.getElementById("amount").value;
+
+    document.getElementById("qrcode").innerHTML = "";
+
+    const payload =
+    `https://promptpay.io/0635164271/${amount}`;
+
+    new QRCode(document.getElementById("qrcode"),{
+        text: payload,
+        width:240,
+        height:240
     });
-
 }
 
-renderAdminPhones();
+function downloadQR(){
+
+    const canvas = document.querySelector("#qrcode canvas");
+
+    if(!canvas){
+        alert("Please generate QR first.");
+        return;
+    }
+
+    const link = document.createElement("a");
+
+    link.download = "NETIRAT_PROMPTPAY_QR.png";
+
+    link.href = canvas.toDataURL();
+
+    link.click();
+}
 
 </script>
 
