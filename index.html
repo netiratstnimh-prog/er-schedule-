@@ -1,579 +1,484 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>NETIRAT - Hospital Management Portal</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-<style>
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-        font-family: "Segoe UI", sans-serif;
-    }
-
-    body{
-        background:#020617;
-        color:white;
-        overflow:hidden;
-    }
-
-    .glass{
-        background: rgba(255,255,255,0.05);
-        backdrop-filter: blur(18px);
-        border:1px solid rgba(255,255,255,0.1);
-        box-shadow:0 0 40px rgba(0,255,200,0.08);
-    }
-
-    .center-screen{
-        width:100%;
-        height:100vh;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        flex-direction:column;
-        padding:20px;
-    }
-
-    .hidden{
-        display:none !important;
-    }
-
-    .fade{
-        animation:fade .5s ease;
-    }
-
-    @keyframes fade{
-        from{
-            opacity:0;
-            transform:translateY(10px);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NETIRAT SYSTEM</title>
+    <!-- Tailwind CSS & FontAwesome Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chakrapetch:wght@300;500;700&family=Sarabun:wght@300;500;700&display=swap');
+        
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #0b132b;
+            color: #ffffff;
+            overflow-x: hidden;
         }
-        to{
-            opacity:1;
-            transform:translateY(0);
+        .tech-font {
+            font-family: 'Chakrapetch', sans-serif;
         }
-    }
-
-    .pulse-dot{
-        width:12px;
-        height:12px;
-        background:#00ff88;
-        border-radius:50%;
-        box-shadow:0 0 10px #00ff88;
-        animation:pulse 1s infinite;
-    }
-
-    @keyframes pulse{
-        0%{opacity:1;}
-        50%{opacity:.4;}
-        100%{opacity:1;}
-    }
-
-    .ecg{
-        position:relative;
-        width:100%;
-        height:120px;
-        overflow:hidden;
-        border-radius:10px;
-        background:#000;
-    }
-
-    .ecg::before{
-        content:'';
-        position:absolute;
-        width:200%;
-        height:100%;
-        background:
-        linear-gradient(90deg,
-        transparent 0%,
-        transparent 45%,
-        #00ff88 50%,
-        transparent 55%,
-        transparent 100%);
-        animation:moveECG 1.3s linear infinite;
-    }
-
-    @keyframes moveECG{
-        0%{transform:translateX(-50%);}
-        100%{transform:translateX(0);}
-    }
-
-    .menu-popup{
-        transform:translateY(30px);
-        opacity:0;
-        animation:popup .4s forwards;
-    }
-
-    @keyframes popup{
-        to{
-            transform:translateY(0);
-            opacity:1;
+        /* ECG Animation */
+        @keyframes ecg-loop {
+            0% { stroke-dashoffset: 1000; }
+            100% { stroke-dashoffset: 0; }
         }
-    }
-
-    canvas{
-        border-radius:20px;
-    }
-
-    .topbar{
-        width:100%;
-        padding:14px 18px;
-        background:#06111f;
-        border-bottom:1px solid rgba(255,255,255,0.1);
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-    }
-
-    .btn{
-        width:100%;
-        padding:16px;
-        border-radius:16px;
-        background:linear-gradient(135deg,#0f172a,#1e293b);
-        border:1px solid rgba(255,255,255,0.08);
-        transition:.2s;
-    }
-
-    .btn:hover{
-        transform:scale(1.02);
-        border-color:#00ff88;
-    }
-
-    .back-btn{
-        background:#0f172a;
-        border:1px solid rgba(255,255,255,0.1);
-        padding:10px 18px;
-        border-radius:14px;
-    }
-
-    .loader-bar{
-        width:100%;
-        height:12px;
-        border-radius:50px;
-        background:#111827;
-        overflow:hidden;
-    }
-
-    .loader-fill{
-        height:100%;
-        width:0%;
-        background:linear-gradient(90deg,#00ff88,#00bfff);
-    }
-</style>
+        .ecg-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: ecg-loop 3s linear infinite;
+        }
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+            animation: glitch 1s linear infinite;
+        }
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px, 0) skew(0deg); }
+            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
+            62% { transform: translate(0, 0) skew(5deg); }
+        }
+        /* Grid Background overlay */
+        .grid-bg {
+            background-image: linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
 </head>
+<body class="w-full min-h-screen flex flex-col justify-between grid-bg">
 
-<body>
-
-<!-- INTRO -->
-<div id="intro" class="center-screen fade">
-    <div class="text-center">
-        <h1 class="text-5xl font-bold tracking-[10px] text-cyan-400">
-            NETIRAT
-        </h1>
-
-        <p class="mt-4 text-gray-400">
-            Advanced Hospital Management System
-        </p>
-
-        <div class="mt-10 w-72 h-72 rounded-full border border-cyan-500/20 absolute blur-3xl bg-cyan-500/10"></div>
-
-        <button onclick="openLogin()" class="mt-10 px-8 py-4 rounded-2xl bg-cyan-500 text-black font-bold">
-            ENTER SYSTEM
-        </button>
-    </div>
-</div>
-
-<!-- PASSWORD -->
-<div id="login" class="hidden center-screen fade">
-    <div class="glass p-8 rounded-3xl w-full max-w-md">
-        <h2 class="text-3xl font-bold mb-2">
-            Secure Access
-        </h2>
-
-        <p class="text-gray-400 mb-6">
-            กรุณากรอกรหัสเข้าใช้งานระบบ
-        </p>
-
-        <input
-            id="mainPass"
-            type="password"
-            placeholder="Access Code"
-            class="w-full p-4 rounded-2xl bg-slate-900 outline-none mb-5"
-        />
-
-        <button onclick="checkMainPass()" class="btn">
-            LOGIN
-        </button>
-    </div>
-</div>
-
-<!-- EMPLOYEE -->
-<div id="employee" class="hidden center-screen fade">
-    <div class="glass p-8 rounded-3xl w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-5">
-            Employee Authentication
-        </h2>
-
-        <input
-            id="employeeCode"
-            type="password"
-            placeholder="Employee Code"
-            class="w-full p-4 rounded-2xl bg-slate-900 outline-none mb-5"
-        />
-
-        <button onclick="checkEmployee()" class="btn">
-            VERIFY EMPLOYEE
-        </button>
-    </div>
-</div>
-
-<!-- USER SELECT -->
-<div id="userSelect" class="hidden center-screen fade">
-    <div class="glass p-8 rounded-3xl w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-5">
-            Select User
-        </h2>
-
-        <button onclick="openDashboard()" class="btn">
-            เนติราช นิ่มเจริญวัฒนกุล
-        </button>
-    </div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden h-screen flex flex-col">
-
-    <div class="topbar">
-        <div>
-            <h1 class="font-bold text-lg">
-                NETIRAT HOSPITAL SYSTEM
-            </h1>
-            <p class="text-sm text-gray-400">
-                Active Session
-            </p>
+    <!-- Top Status Bar (แสดงเมื่อเข้ารหัสหลักผ่านแล้ว) -->
+    <header id="statusBar" class="hidden bg-[#1c2541] border-b border-[#3a506b] px-4 py-2.5 flex justify-between items-center text-xs sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+            </span>
+            <span class="text-gray-400">User: <span id="userDisplay" class="text-emerald-400 font-bold">Guest</span></span>
         </div>
+        <div class="text-right text-gray-400">
+            <i class="fa-solid fa-eye mr-1"></i> Visitors: <span id="visitorCount" class="text-cyan-400 font-bold tech-font">1,428</span>
+        </div>
+    </header>
 
-        <div class="flex items-center gap-3">
-            <div class="pulse-dot"></div>
-
-            <div class="text-right">
-                <p class="text-sm">
-                    เนติราช นิ่มเจริญวัฒนกุล
-                </p>
-
-                <p class="text-xs text-green-400">
-                    ONLINE
-                </p>
+    <!-- Main Container -->
+    <main class="flex-grow flex flex-col items-center justify-center p-4 w-full max-w-md mx-auto">
+        
+        <!-- 1. INTRO & LOADING EFFECT -->
+        <section id="introSec" class="text-center w-full py-10">
+            <h1 class="text-5xl font-bold tracking-widest text-cyan-400 tech-font glitch mb-2">NETIRAT</h1>
+            <p class="text-xs tracking-wider text-gray-400 mb-8 uppercase">Medical Information System</p>
+            <div id="initMechanism" class="flex flex-col items-center gap-4">
+                <div class="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-xs text-cyan-300 animate-pulse tech-font">ESTABLISHING SECURE CONNECTION...</p>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <div class="p-5 overflow-auto flex-1">
-
-        <div class="glass p-5 rounded-3xl mb-5">
-            <p class="text-gray-400 text-sm">
-                Real-Time Visitors
-            </p>
-
-            <h1 id="visitors" class="text-4xl font-bold mt-2">
-                0
-            </h1>
-        </div>
-
-        <div class="space-y-4 mt-6">
-
-            <div onclick="openSchedule()" class="menu-popup btn cursor-pointer" style="animation-delay:.2s">
-                <h2 class="text-xl font-bold">
-                    📋 Duty Schedule
-                </h2>
+        <!-- 2. MAIN PASSCODE LOCK (1323) -->
+        <section id="mainLockSec" class="hidden w-full bg-[#111827]/90 border border-red-500/30 p-6 rounded-xl shadow-2xl backdrop-blur">
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-shield-halved text-4xl text-red-500 mb-2"></i>
+                <h2 class="text-lg font-bold text-gray-200">RESTRICTED ACCESS</h2>
+                <p class="text-xs text-gray-400">กรุณากรอกรหัสผ่านระบบเพื่อเข้าถึงเนื้อหา</p>
             </div>
-
-            <div onclick="openPayment()" class="menu-popup btn cursor-pointer" style="animation-delay:.4s">
-                <h2 class="text-xl font-bold">
-                    💳 Create Payment
-                </h2>
+            <div class="space-y-4">
+                <input type="password" id="mainPass" placeholder="••••" class="w-full text-center text-2xl tracking-widest bg-gray-900 border border-gray-700 rounded-lg p-3 text-cyan-400 focus:outline-none focus:border-cyan-500 tech-font">
+                <button onclick="checkMainPass()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 rounded-lg transition text-sm tracking-wide">
+                    AUTHENTICATE
+                </button>
             </div>
+        </section>
 
-            <a href="tel:0635164271" class="menu-popup btn block text-center" style="animation-delay:.6s">
-                <h2 class="text-xl font-bold">
-                    ☎ Contact Channel
-                </h2>
-            </a>
-
-        </div>
-    </div>
-</div>
-
-<!-- SCHEDULE -->
-<div id="schedulePage" class="hidden h-screen flex flex-col">
-
-    <div class="topbar">
-        <button onclick="backDashboard()" class="back-btn">
-            ← Back
-        </button>
-
-        <h2 class="font-bold">
-            Duty Schedule
-        </h2>
-    </div>
-
-    <div class="p-5 overflow-auto">
-
-        <div class="glass p-5 rounded-3xl">
-            <h1 class="text-2xl font-bold mb-5">
-                Department Access
-            </h1>
-
-            <div class="ecg mb-6"></div>
-
-            <div class="loader-bar">
-                <div class="loader-fill" id="loaderFill"></div>
-            </div>
-
-            <p id="loadingText" class="mt-3 text-gray-400">
-                Loading Department Data... 0%
-            </p>
-        </div>
-
-        <div id="departmentBox" class="hidden mt-6 glass p-5 rounded-3xl fade">
-            <h2 class="text-2xl font-bold">
-                Accident & Emergency Department
-            </h2>
-
-            <button onclick="openER()" class="btn mt-5">
-                OPEN DEPARTMENT
+        <!-- 3. MENU LIST (จะเด้งมาทีละรายการ 0.2วิ) -->
+        <section id="menuSec" class="hidden w-full space-y-4">
+            <h2 class="text-sm font-bold text-cyan-400 tracking-wider uppercase mb-2 border-b border-cyan-900 pb-1">Main Console</h2>
+            
+            <button id="menu1" onclick="openDutySection()" class="opacity-0 translate-y-4 transition-all duration-500 w-full bg-[#1c2541] hover:bg-[#233154] border-l-4 border-cyan-500 p-4 rounded-r-lg flex justify-between items-center shadow-lg">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-calendar-check text-cyan-400 text-lg"></i>
+                    <span class="font-medium text-sm text-gray-200">ตารางเวรปฏิบัติงาน (Duty Schedule)</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
             </button>
-        </div>
 
-    </div>
-</div>
+            <button id="menu2" onclick="openPaymentSection()" class="opacity-0 translate-y-4 transition-all duration-500 w-full bg-[#1c2541] hover:bg-[#233154] border-l-4 border-emerald-500 p-4 rounded-r-lg flex justify-between items-center shadow-lg">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-qrcode text-emerald-400 text-lg"></i>
+                    <span class="font-medium text-sm text-gray-200">สร้างการชำระเงิน (Generate QR)</span>
+                </div>
+                <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
+            </button>
 
-<!-- ER -->
-<div id="erPage" class="hidden h-screen flex flex-col">
+            <button id="menu3" onclick="triggerCall()" class="opacity-0 translate-y-4 transition-all duration-500 w-full bg-[#1c2541] hover:bg-[#233154] border-l-4 border-amber-500 p-4 rounded-r-lg flex justify-between items-center shadow-lg">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-phone text-amber-400 text-lg"></i>
+                    <span class="font-medium text-sm text-gray-200">ช่องทางการติดต่อ (Emergency Contact)</span>
+                </div>
+                <i class="fa-solid fa-phone-flip text-gray-500 text-xs"></i>
+            </button>
+        </section>
 
-    <div class="topbar">
-        <button onclick="backSchedule()" class="back-btn">
-            ← Back
-        </button>
+        <!-- 4. DUTY LOCK SECTION (090869) -->
+        <section id="dutyLockSec" class="hidden w-full bg-[#111827] border border-cyan-500/20 p-6 rounded-xl shadow-xl">
+            <div class="mb-4 flex items-center gap-2 text-gray-400 text-xs">
+                <button onclick="goBack('menuSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
+            </div>
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-id-card text-4xl text-cyan-400 mb-2"></i>
+                <h2 class="text-base font-bold text-gray-200">STAFF VERIFICATION</h2>
+                <p class="text-xs text-gray-400">กรุณากรอกรหัสประจำตัวพนักงาน</p>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="staffIdInput" placeholder="รหัสพนักงาน" class="w-full text-center text-lg bg-gray-900 border border-gray-700 rounded-lg p-3 text-cyan-400 focus:outline-none focus:border-cyan-500 tech-font">
+                <button onclick="checkStaffId()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-lg text-sm transition">
+                    ตรวจสอบสิทธิ์
+                </button>
+                
+                <!-- ผลลัพธ์เมื่อกดรหัสถูก -->
+                <div id="staffResult" class="hidden bg-gray-900 p-3 rounded-lg border border-emerald-500/30 text-center animate-fadeIn">
+                    <p class="text-xs text-gray-400 mb-2">พบข้อมูลผู้ใช้งานในระบบ</p>
+                    <button onclick="confirmStaffLogin()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-4 rounded transition">
+                        <i class="fa-solid fa-user-check mr-2"></i> กดเพื่อยืนยัน: <span id="staffNameTarget" class="underline"></span>
+                    </button>
+                </div>
+            </div>
+        </section>
 
-        <h2 class="font-bold">
-            A&E Department
-        </h2>
-    </div>
+        <!-- 5. ECG LOADING EFFECT -->
+        <section id="ecgLoadingSec" class="hidden w-full text-center py-10 bg-[#111827] rounded-xl border border-cyan-500/20 p-6">
+            <div class="w-full h-24 mb-4 flex items-center justify-center">
+                <!-- SVG ECG Line -->
+                <svg class="w-full h-full" viewBox="0 0 400 100">
+                    <path class="ecg-line" d="M 0 50 L 120 50 L 130 30 L 140 70 L 150 10 L 160 90 L 170 45 L 180 55 L 190 50 L 400 50" fill="none" stroke="#00f2fe" stroke-width="3" />
+                </svg>
+            </div>
+            <div class="text-2xl font-bold text-cyan-400 tech-font id-loading-text mb-1">0%</div>
+            <p class="text-xs text-gray-400 tracking-widest uppercase">Fetching Hospital Database...</p>
+        </section>
 
-    <div class="p-5">
+        <!-- 6. DEPARTMENT LIST (Hospital Official Style) -->
+        <section id="deptSec" class="hidden w-full bg-[#111827] border border-cyan-500/20 p-4 rounded-xl shadow-xl">
+            <div class="mb-4 flex items-center justify-between text-gray-400 text-xs">
+                <button onclick="goBack('menuSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
+                <span class="text-cyan-500 tech-font font-bold">HOSPITAL DEPARTMENTS</span>
+            </div>
+            <div class="space-y-3">
+                <!-- แผนกแรก อุบัติเหตุและฉุกเฉิน -->
+                <button onclick="openDutyTable()" class="w-full bg-[#1c2541] border border-red-500/30 hover:bg-red-950/20 p-4 rounded-lg flex items-center gap-4 text-left transition">
+                    <div class="bg-red-500/20 p-2.5 rounded-lg text-red-500">
+                        <i class="fa-solid fa-truck-medical text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-gray-200 tracking-wide">DEPARTMENT OF EMERGENCY MEDICINE</h3>
+                        <p class="text-[10px] text-red-400 uppercase tracking-wider font-semibold">Accident and Emergency (A&E)</p>
+                    </div>
+                </button>
+                
+                <!-- ส่วนที่เหลือระบุไว้ว่าไว้พัฒนาต่อในอนาคต -->
+                <div class="w-full bg-gray-900/50 border border-gray-800 p-4 rounded-lg flex items-center gap-4 text-left opacity-40 select-none">
+                    <div class="bg-gray-800 p-2.5 rounded-lg text-gray-500">
+                        <i class="fa-solid fa-stethoscope text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-gray-400">DEPARTMENT OF OUTPATIENT (OPD)</h3>
+                        <p class="text-[10px] text-gray-500 uppercase">Future Expansion</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="glass p-6 rounded-3xl">
+        <!-- 7. DUTY TABLE SECTION -->
+        <section id="dutyTableSec" class="hidden w-full bg-[#111827] border border-cyan-500/20 p-4 rounded-xl shadow-xl">
+            <div class="mb-4 flex items-center justify-between text-gray-400 text-xs">
+                <button onclick="goBack('deptSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
+                <span class="text-red-400 text-[10px] font-bold tracking-widest">EMERGENCY MEDICINE</span>
+            </div>
+            
+            <!-- ตารางจำลองข้อความแจ้งเตือน -->
+            <div class="bg-gray-900 border border-dashed border-cyan-500/30 rounded-lg p-8 text-center my-6">
+                <i class="fa-solid fa-hourglass-half text-3xl text-cyan-400 mb-3 animate-pulse"></i>
+                <p class="text-sm font-medium text-gray-300">ระบบจะแสดงข้อมูลเร็วๆนี้</p>
+                <p class="text-[10px] text-gray-500 mt-1">Hospital Scheduling Data Synchronization Pending</p>
+            </div>
 
-            <div class="flex justify-between items-center">
+            <!-- แท็บควบคุมด้านล่าง/ข้าง (ปุ่มสัญลักษณ์ทางการแพทย์/ธุรการ) -->
+            <div class="grid grid-cols-3 gap-2 border-t border-gray-800 pt-4 text-center">
+                <button class="bg-[#1c2541] hover:bg-[#233154] text-amber-400 p-2.5 rounded-lg text-xs flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-user-pen text-sm"></i>
+                    <span>แก้ไขเวร</span>
+                </button>
+                <button class="bg-[#1c2541] hover:bg-[#233154] text-emerald-400 p-2.5 rounded-lg text-xs flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-calendar-plus text-sm"></i>
+                    <span>เพิ่มเวร</span>
+                </button>
+                <button class="bg-[#1c2541] hover:bg-[#233154] text-rose-500 p-2.5 rounded-lg text-xs flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-calendar-minus text-sm"></i>
+                    <span>ลบเวร</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 8. PAYMENT SECTION (PromptPay Only) -->
+        <section id="paymentSec" class="hidden w-full bg-[#111827] border border-emerald-500/20 p-5 rounded-xl shadow-xl">
+            <div class="mb-4 flex items-center text-gray-400 text-xs">
+                <button onclick="goBack('menuSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
+            </div>
+            
+            <div class="text-center mb-4">
+                <h2 class="text-base font-bold text-emerald-400 uppercase tracking-wider">Official Payment Gateway</h2>
+                <p class="text-[10px] text-gray-400">ระบบสร้างคิวอาร์โค้ดรับเงินผ่านระบบพร้อมเพย์</p>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl space-y-4">
                 <div>
-                    <h1 class="text-2xl font-bold">
-                        Duty Schedule
-                    </h1>
-
-                    <p class="text-gray-400 mt-2">
-                        System will display schedule information soon.
-                    </p>
+                    <label class="block text-[10px] text-emerald-500 font-bold uppercase tracking-wider mb-1">ช่องทางชำระเงิน (Method)</label>
+                    <div class="w-full bg-[#1c2541] border border-emerald-500/30 rounded-lg p-2.5 flex items-center justify-between text-xs">
+                        <span class="font-bold text-gray-200">PROMPTPAY (พร้อมเพย์)</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">ACTIVE</span>
+                    </div>
                 </div>
 
-                <div class="flex gap-3 text-2xl">
-                    <button>✏️</button>
-                    <button>➕</button>
-                    <button>🗑️</button>
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">หมายเลขพร้อมเพย์ (Account No.)</label>
+                    <div class="text-sm font-bold text-gray-300 tracking-wider bg-gray-950 p-2 rounded border border-gray-800 text-center">
+                        063-516-4271
+                    </div>
                 </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 mb-1">ระบุจำนวนเงินบาท (Amount THB)</label>
+                    <input type="number" id="amountInput" placeholder="0.00" step="0.01" min="0" class="w-full text-center text-xl font-bold bg-gray-950 border border-gray-700 rounded-lg p-2 text-emerald-400 focus:outline-none focus:border-emerald-500 tech-font">
+                </div>
+
+                <button onclick="generateQRCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wider transition">
+                    <i class="fa-solid fa-qrcode mr-2"></i> สร้างคิวอาร์โค้ด (GENERATE QR)
+                </button>
             </div>
 
-        </div>
-
-    </div>
-</div>
-
-<!-- PAYMENT -->
-<div id="paymentPage" class="hidden h-screen flex flex-col">
-
-    <div class="topbar">
-        <button onclick="backDashboard()" class="back-btn">
-            ← Back
-        </button>
-
-        <h2 class="font-bold">
-            PromptPay Payment
-        </h2>
-    </div>
-
-    <div class="p-5 overflow-auto">
-
-        <div class="glass p-6 rounded-3xl">
-
-            <h1 class="text-2xl font-bold mb-6">
-                Create PromptPay QR
-            </h1>
-
-            <input
-                id="amount"
-                type="number"
-                placeholder="Enter Amount"
-                class="w-full p-4 rounded-2xl bg-slate-900 outline-none mb-5"
-            />
-
-            <button onclick="generateQR()" class="btn">
-                Generate QR Code
-            </button>
-
-            <div class="mt-8 flex justify-center">
+            <!-- Area สำหรับแสดง QR Code -->
+            <div id="qrContainer" class="hidden mt-6 bg-white p-4 rounded-xl flex flex-col items-center justify-center mx-auto w-48 h-48 shadow-inner relative">
                 <div id="qrcode"></div>
             </div>
 
-            <button
-                onclick="downloadQR()"
-                class="btn mt-6"
-            >
-                Save QR Image
+            <button id="saveQrBtn" onclick="downloadQR()" class="hidden mt-3 w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg text-xs transition">
+                <i class="fa-solid fa-download mr-1"></i> บันทึกรูปคิวอาร์โค้ด
             </button>
+        </section>
 
-        </div>
+    </main>
 
-    </div>
-</div>
+    <!-- Footer Credit -->
+    <footer class="w-full text-center py-4 text-[10px] text-gray-600 border-t border-gray-900 bg-[#070c1e]">
+        &copy; 2026 NETIRAT MEDICAL SYSTEM. ALL RIGHTS RESERVED.
+    </footer>
 
-<script>
+    <!-- JavaScript Controls -->
+    <script>
+        // ระบบจำลองตัวนับจำนวนผู้เข้าชมแบบ Real-time
+        let currentVisitors = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
+        document.getElementById('visitorCount').innerText = currentVisitors.toLocaleString();
+        setInterval(() => {
+            currentVisitors += Math.floor(Math.random() * 3) - 1; // เพิ่มลดทีละนิดให้ดูเรียลไทม์
+            document.getElementById('visitorCount').innerText = currentVisitors.toLocaleString();
+        }, 4000);
 
-let visit = localStorage.getItem("visit-count");
+        // หน้าเริ่มต้น โชว์ เอฟเฟกต์ 1.5 วินาที ก่อนเด้งให้ใส่รหัสเข้าเว็บบริเวณหลัก (1323)
+        setTimeout(() => {
+            document.getElementById('initMechanism').classList.add('hidden');
+            document.getElementById('introSec').classList.add('hidden');
+            document.getElementById('mainLockSec').classList.remove('hidden');
+        }, 1800);
 
-if(!visit){
-    visit = 1;
-}else{
-    visit = parseInt(visit)+1;
-}
-
-localStorage.setItem("visit-count", visit);
-
-function openLogin(){
-    intro.classList.add("hidden");
-    login.classList.remove("hidden");
-}
-
-function checkMainPass(){
-
-    const pass = document.getElementById("mainPass").value;
-
-    if(pass === "1323"){
-        login.classList.add("hidden");
-        employee.classList.remove("hidden");
-    }else{
-        alert("Invalid Access Code");
-    }
-}
-
-function checkEmployee(){
-
-    const code = document.getElementById("employeeCode").value;
-
-    if(code === "090869"){
-        employee.classList.add("hidden");
-        userSelect.classList.remove("hidden");
-    }else{
-        alert("Employee Authentication Failed");
-    }
-}
-
-function openDashboard(){
-
-    userSelect.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-
-    document.getElementById("visitors").innerText = visit;
-}
-
-function openSchedule(){
-
-    dashboard.classList.add("hidden");
-    schedulePage.classList.remove("hidden");
-
-    let percent = 0;
-
-    const interval = setInterval(()=>{
-
-        percent++;
-
-        document.getElementById("loaderFill").style.width = percent + "%";
-
-        document.getElementById("loadingText").innerText =
-        "Loading Department Data... " + percent + "%";
-
-        if(percent >= 100){
-            clearInterval(interval);
-
-            document.getElementById("departmentBox").classList.remove("hidden");
+        // ตรวจสอบรหัสเข้าใช้งานเว็บหลัก (1323)
+        function checkMainPass() {
+            const pass = document.getElementById('mainPass').value;
+            if (pass === '1323') {
+                document.getElementById('mainLockSec').classList.add('hidden');
+                document.getElementById('statusBar').classList.remove('hidden');
+                showMenuItemsSequentially();
+            } else {
+                alert('รหัสเข้าใช้งานระบบไม่ถูกต้อง ไม่สามารถเข้าถึงข้อมูลได้');
+            }
         }
 
-    },35);
-}
+        // เอฟเฟกต์เด้งเมนูลิสต์มาทีละรายการ ห่างกัน 0.2 วินาที
+        function showMenuItemsSequentially() {
+            document.getElementById('menuSec').classList.remove('hidden');
+            const menu1 = document.getElementById('menu1');
+            const menu2 = document.getElementById('menu2');
+            const menu3 = document.getElementById('menu3');
 
-function backDashboard(){
+            setTimeout(() => {
+                menu1.classList.remove('opacity-0', 'translate-y-4');
+            }, 200);
+            
+            setTimeout(() => {
+                menu2.classList.remove('opacity-0', 'translate-y-4');
+            }, 400);
 
-    paymentPage.classList.add("hidden");
-    schedulePage.classList.add("hidden");
-    dashboard.classList.remove("hidden");
-}
+            setTimeout(() => {
+                menu3.classList.remove('opacity-0', 'translate-y-4');
+            }, 600);
+        }
 
-function backSchedule(){
+        // ฟังก์ชันกดย้อนกลับแบบ Dynamic
+        function goBack(targetSectionId) {
+            // ซ่อนเซกชันทั้งหมดในระดับตัวเลือกย่อย
+            document.getElementById('dutyLockSec').classList.add('hidden');
+            document.getElementById('deptSec').classList.add('hidden');
+            document.getElementById('dutyTableSec').classList.add('hidden');
+            document.getElementById('paymentSec').classList.add('hidden');
+            document.getElementById('ecgLoadingSec').classList.add('hidden');
+            
+            // แสดงหน้าจอเป้าหมาย
+            document.getElementById(targetSectionId).classList.remove('hidden');
+        }
 
-    erPage.classList.add("hidden");
-    schedulePage.classList.remove("hidden");
-}
+        // --- ระบบตารางเวร ---
+        function openDutySection() {
+            document.getElementById('menuSec').classList.add('hidden');
+            document.getElementById('dutyLockSec').classList.remove('hidden');
+            document.getElementById('staffIdInput').value = '';
+            document.getElementById('staffResult').classList.add('hidden');
+        }
 
-function openER(){
+        // ตรวจสอบรหัสพนักงาน (090869)
+        function checkStaffId() {
+            const staffId = document.getElementById('staffIdInput').value;
+            if (staffId === '090869') {
+                document.getElementById('staffNameTarget').innerText = 'เนติราช นิ่มเจริญวัฒนกุล';
+                document.getElementById('staffResult').classList.remove('hidden');
+            } else {
+                alert('ไม่พบรหัสพนักงานดังกล่าวในฐานข้อมูลส่วนกลาง');
+            }
+        }
 
-    schedulePage.classList.add("hidden");
-    erPage.classList.remove("hidden");
-}
+        // ยืนยันตัวตนพนักงาน และเข้าสู่เอฟเฟกต์เส้นกราฟ ECG โหลดข้อมูล
+        function confirmStaffLogin() {
+            document.getElementById('userDisplay').innerText = 'เนติราช นิ่มเจริญวัฒนกุล';
+            document.getElementById('dutyLockSec').classList.add('hidden');
+            document.getElementById('ecgLoadingSec').classList.remove('hidden');
+            
+            let progress = 0;
+            const progressText = document.querySelector('.id-loading-text');
+            
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 4;
+                if(progress > 100) progress = 100;
+                progressText.innerText = progress + '%';
+                
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('ecgLoadingSec').classList.add('hidden');
+                        document.getElementById('deptSec').classList.remove('hidden');
+                    }, 400);
+                }
+            }, 100);
+        }
 
-function openPayment(){
+        function openDutyTable() {
+            document.getElementById('deptSec').classList.add('hidden');
+            document.getElementById('dutyTableSec').classList.remove('hidden');
+        }
 
-    dashboard.classList.add("hidden");
-    paymentPage.classList.remove("hidden");
-}
 
-function generateQR(){
+        // --- ระบบสร้างการชำระเงิน (PromptPay) ---
+        function openPaymentSection() {
+            document.getElementById('menuSec').classList.add('hidden');
+            document.getElementById('paymentSec').classList.remove('hidden');
+            document.getElementById('qrcode').innerHTML = '';
+            document.getElementById('qrContainer').classList.add('hidden');
+            document.getElementById('saveQrBtn').classList.add('hidden');
+            document.getElementById('amountInput').value = '';
+        }
 
-    const amount = document.getElementById("amount").value;
+        // ฟังก์ชันสร้าง QR Code พร้อมเพย์จริง
+        function generateQRCode() {
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            if(amount <= 0) {
+                alert("กรุณากรอกจำนวนเงินที่ถูกต้องและมากกว่า 0 บาท");
+                return;
+            }
+            
+            document.getElementById('qrcode').innerHTML = '';
+            document.getElementById('qrContainer').classList.remove('hidden');
+            document.getElementById('saveQrBtn').classList.remove('hidden');
 
-    document.getElementById("qrcode").innerHTML = "";
+            // ใช้โครงสร้าง URL พร้อมเพย์มาตรฐาน (CRC16) สำหรับสแกนจ่ายจริง
+            // 00020101121129370016A00000067701011102130066635164271... (CRC บังคับสำหรับแอปธนาคารไทย)
+            // เพื่อความปลอดภัยและทำงานได้เสถียรที่สุดในการใช้งานทั่วไปบนหน้าเว็บ จะแปลงเป็นข้อความจำลอง หรือ สคริปต์ QR พร้อมเพย์สากล
+            // สำหรับฟังก์ชันทางการนี้ จะใช้วิธีแปลงสายอักขระ (Payload) พร้อมเพย์แบบ Dynamic :
+            const ppNumber = "0635164271";
+            const payload = generatePromptPayPayload(ppNumber, amount);
 
-    const payload =
-    `https://promptpay.io/0635164271/${amount}`;
+            new QRCode(document.getElementById("qrcode"), {
+                text: payload,
+                width: 160,
+                height: 160,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+        }
 
-    new QRCode(document.getElementById("qrcode"),{
-        text: payload,
-        width:240,
-        height:240
-    });
-}
+        // ฟังก์ชันช่วยในการประกอบตัวแปร พร้อมเพย์ Payload ตามมาตรฐาน EMVCo
+        function generatePromptPayPayload(target, amount) {
+            let targetType = target.length >= 13 ? "0213" : "0113"; // ID Card หรือเบอร์โทร
+            let formattedTarget = target.length >= 13 ? target : "0066" + target.substring(1); // เบอร์โทรไทยแปลงเป็น 66
+            
+            let payload = "000201011211";
+            let merchantInfo = "0016A000000677010111" + targetType + formattedTarget;
+            payload += "29" + merchantInfo.length + merchantInfo;
+            payload += "5303764"; // THB Currency
+            
+            let amountStr = amount.toFixed(2);
+            payload += "54" + ("0" + amountStr.length).slice(-2) + amountStr;
+            payload += "5802TH";
+            
+            // ส่วนท้ายคำนวณหาค่า CRC16 (เพื่อความกระชับโค้ด สามารถเรียกใช้ผ่าน API หรือ Static Payload ในกรณีไม่มีเศษสตางค์ได้)
+            // ในที่นี้ระบบใช้อัลกอริทึม CRC16 XMODEM มาตรฐาน
+            payload += "6304";
+            payload += crc16(payload);
+            return payload;
+        }
 
-function downloadQR(){
+        function crc16(str) {
+            let crc = 0xFFFF;
+            for (let c = 0; c < str.length; c++) {
+                crc ^= str.charCodeAt(c) << 8;
+                for (let i = 0; i < 8; i++) {
+                    if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
+                    else crc = crc << 1;
+                }
+            }
+            return ('0000' + (crc & 0xFFFF).toString(16).toUpperCase()).slice(-4);
+        }
 
-    const canvas = document.querySelector("#qrcode canvas");
+        // ฟังชันบันทึกรูปภาพ QR Code ลงเครื่องมือถือ
+        function downloadQR() {
+            const qrImg = document.querySelector('#qrcode img');
+            if (qrImg) {
+                const link = document.createElement('a');
+                link.href = qrImg.src;
+                link.download = 'PromptPay_Netirat.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("ไม่สามารถตรวจพบรูปภาพ คิวอาร์โค้ด ได้");
+            }
+        }
 
-    if(!canvas){
-        alert("Please generate QR first.");
-        return;
-    }
-
-    const link = document.createElement("a");
-
-    link.download = "NETIRAT_PROMPTPAY_QR.png";
-
-    link.href = canvas.toDataURL();
-
-    link.click();
-}
-
-</script>
-
+        // --- ระบบการติดต่อด่วน (Emergency Contact) ---
+        function triggerCall() {
+            // ระบบจะเด้งไปหน้าโทรศัพท์อัตโนมัติทันทีเมื่อกดปุ่มเมนู 3
+            window.location.href = 'tel:0635164271';
+        }
+    </script>
 </body>
 </html>
