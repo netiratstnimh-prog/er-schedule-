@@ -4,212 +4,228 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจัดทำหนังสือสัญญากู้ยืมเงินอิเล็กทรอนิกส์</title>
+    <!-- Tailwind CSS สำหรับดีไซน์หรูหรา เป็นทางการ -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- html2canvas สำหรับแปลงสัญญาเป็นรูปภาพเซฟลงเครื่อง -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- QRCode.js สำหรับสร้าง QR Code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen py-10 px-4">
+<body class="bg-slate-50 min-h-screen py-6 px-4">
 
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100">
-        <div class="bg-slate-900 text-white p-6 text-center">
-            <h1 class="text-2xl font-bold tracking-wide">ระบบจัดการสัญญากู้ยืมเงินและชำระเงิน</h1>
-            <p class="text-slate-400 text-sm mt-1">ถูกต้องตามประมวลกฎหมายแพ่งและพาณิชย์</p>
+        <!-- Header -->
+        <div class="bg-slate-900 text-white p-5 text-center">
+            <h1 class="text-xl md:text-2xl font-bold tracking-wide">ระบบจัดการสัญญากู้ยืมเงินและชำระเงิน</h1>
+            <p class="text-slate-400 text-xs mt-1">ถูกต้องตามประมวลกฎหมายแพ่งและพาณิชย์</p>
         </div>
 
-        <div class="flex justify-center bg-slate-100 p-4 border-b border-slate-200">
-            <div id="step1-badge" class="flex items-center text-blue-600 font-semibold mx-4">
-                <span class="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs mr-2">1</span> กรอกรายละเอียดสัญญา
+        <!-- Progress Bar -->
+        <div class="flex justify-center bg-slate-100 p-3 border-b border-slate-200 text-sm">
+            <div id="step1-badge" class="flex items-center text-blue-600 font-semibold mx-2 md:mx-4">
+                <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs mr-1.5">1</span> กรอกสัญญา
             </div>
-            <div id="step2-badge" class="flex items-center text-slate-400 mx-4">
-                <span class="w-6 h-6 rounded-full bg-slate-300 text-white flex items-center justify-center text-xs mr-2">2</span> โอนเงินผ่าน QR Code
+            <div id="step2-badge" class="flex items-center text-slate-400 mx-2 md:mx-4">
+                <span class="w-5 h-5 rounded-full bg-slate-300 text-white flex items-center justify-center text-xs mr-1.5">2</span> โอนเงินผ่าน QR Code
             </div>
         </div>
 
-        <div id="step1" class="p-8">
-            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg text-sm text-amber-900">
+        <!-- STEP 1: หน้ากรอกเอกสารสัญญา -->
+        <div id="step1" class="p-4 md:p-8">
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 rounded-r-lg text-xs md:text-sm text-amber-900">
                 <strong>ข้อแนะนำตามกฎหมาย:</strong> สัญญากู้ยืมเงินที่เกินกว่า 2,000 บาทขึ้นไป ต้องมีหลักฐานเป็นหนังสือและลงลายมือชื่อฝ่ายที่ต้องรับผิดเป็นสำคัญ จึงจะฟ้องร้องบังคับคดีได้
             </div>
 
             <form id="loanForm" class="space-y-6">
-                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
+                <!-- ข้อมูลผู้ให้กู้ -->
+                <div class="bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200">
+                    <h3 class="text-base md:text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
                         <span class="mr-2">👤</span> ข้อมูลผู้ให้ยืมเงิน (เจ้าหนี้)
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อ-นามสกุล ผู้ให้ยืม *</label>
-                            <input type="text" id="lenderName" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="เช่น นายสมชาย ใจดี">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">ชื่อ-นามสกุล ผู้ให้ยืม *</label>
+                            <input type="text" id="lenderName" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="เช่น นายสมชาย ใจดี">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">เลขประจำตัวประชาชน *</label>
-                            <input type="text" id="lenderId" maxlength="13" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="เลข 13 หลัก">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">เลขประจำตัวประชาชน *</label>
+                            <input type="text" id="lenderId" maxlength="13" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="เลข 13 หลัก">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-slate-700 mb-1">ที่อยู่ตามทะเบียนบ้าน *</label>
-                            <input type="text" id="lenderAddress" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="บ้านเลขที่ ซอย ถนน ตำบล อำเภอ จังหวัด">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">ที่อยู่ตามทะเบียนบ้าน *</label>
+                            <input type="text" id="lenderAddress" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="บ้านเลขที่ ซอย ถนน ตำบล อำเภอ จังหวัด">
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
+                <!-- ข้อมูลผู้กู้ (ล็อกชื่อตามเงื่อนไข) -->
+                <div class="bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200">
+                    <h3 class="text-base md:text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
                         <span class="mr-2">🤝</span> ข้อมูลผู้กู้ยืมเงิน (ลูกหนี้)
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 mb-1">ชื่อ-นามสกุล ผู้กู้ (กำหนดสิทธิ์เฉพาะ)</label>
-                            <input type="text" id="borrowerName" value="เนติราช นิ่มเจริญวัฒนกุล" readonly class="w-full p-2.5 bg-slate-200 border border-slate-300 rounded-lg text-slate-700 font-semibold cursor-not-allowed">
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ชื่อ-นามสกุล ผู้กู้ (กำหนดสิทธิ์เฉพาะ)</label>
+                            <input type="text" id="borrowerName" value="เนติราช นิ่มเจริญวัฒนกุล" readonly class="w-full p-2 bg-slate-200 border border-slate-300 rounded-lg text-sm text-slate-700 font-semibold cursor-not-allowed">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">เลขประจำตัวประชาชน *</label>
-                            <input type="text" id="borrowerId" maxlength="13" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="เลข 13 หลักของผู้กู้">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">เลขประจำตัวประชาชน *</label>
+                            <input type="text" id="borrowerId" maxlength="13" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="เลข 13 หลักของผู้กู้">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-slate-700 mb-1">ที่อยู่ตามทะเบียนบ้าน *</label>
-                            <input type="text" id="borrowerAddress" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="ที่อยู่ปัจจุบัน หรือตามทะเบียนบ้าน ของนายเนติราช">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">ที่อยู่ตามทะเบียนบ้าน *</label>
+                            <input type="text" id="borrowerAddress" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="ที่อยู่ปัจจุบัน หรือตามทะเบียนบ้าน ของนายเนติราช">
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
+                <!-- รายละเอียดการกู้ยืมเงิน -->
+                <div class="bg-slate-50 p-4 md:p-5 rounded-xl border border-slate-200">
+                    <h3 class="text-base md:text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
                         <span class="mr-2">💰</span> เงื่อนไขและจำนวนเงินกู้ยืม
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">จำนวนเงินที่กู้ยืม (บาท) *</label>
-                            <input type="number" id="loanAmount" min="1" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="ตัวเลขเท่านั้น">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">จำนวนเงินที่กู้ยืม (บาท) *</label>
+                            <input type="number" id="loanAmount" min="1" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="ตัวเลขเท่านั้น">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">อัตราดอกเบี้ยต่อปี (%) *</label>
-                            <input type="number" id="interestRate" step="0.1" max="15" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="ไม่เกิน 15% ตามกฎหมาย">
-                            <span class="text-xs text-rose-500 mt-1 block">*กฎหมายกำหนดห้ามเกิน 15% ต่อปี</span>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">อัตราดอกเบี้ยต่อปี (%) *</label>
+                            <input type="number" id="interestRate" step="0.1" max="15" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="ไม่เกิน 15%">
+                            <span class="text-[10px] text-rose-500 mt-0.5 block">*ห้ามเกิน 15% ตามกฎหมาย</span>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">กำหนดชำระคืนภายในวันที่ *</label>
-                            <input type="date" id="dueDate" required class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <label class="block text-xs font-medium text-slate-700 mb-1">กำหนดชำระคืนภายในวันที่ *</label>
+                            <input type="date" id="dueDate" required class="w-full p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         </div>
                     </div>
                 </div>
 
-                <div class="flex justify-end pt-4">
-                    <button type="button" onclick="generateContractAndProceed()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition duration-200 cursor-pointer">
+                <div class="flex justify-end pt-2">
+                    <button type="button" onclick="generateContractAndProceed()" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition duration-200 cursor-pointer text-sm">
                         บันทึกสัญญา & ไปยังหน้าโอนเงิน ➔
                     </button>
                 </div>
             </form>
         </div>
 
-        <div id="step2" class="p-8 hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- STEP 2: หน้าทำการโอนเงิน และดาวน์โหลดรูปสัญญา (ปรับให้ Responsive ไม่มีกรอบล็อก) -->
+        <div id="step2" class="p-4 md:p-8 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
+                <!-- ฝั่งซ้าย: แสดงตัวอย่างเอกสารกู้เงิน (แสดงผลเต็มตา พอดีหน้าจออัตโนมัติ ไม่มีกรอบและแถบเลื่อน) -->
                 <div class="lg:col-span-7 space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-lg font-bold text-slate-800">📄 หนังสือสัญญาเงินกู้ของคุณ</h3>
-                        <button onclick="downloadContractAsImage()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2 px-4 rounded-lg shadow-sm transition flex items-center cursor-pointer">
-                            📸 บันทึกสัญญาเป็นรูปภาพ
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <h3 class="text-base md:text-lg font-bold text-slate-800">📄 หนังสือสัญญาเงินกู้ (บันทึกเป็นรูปภาพได้)</h3>
+                        <button onclick="downloadContractAsImage()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium py-2 px-4 rounded-lg shadow-sm transition flex items-center justify-center cursor-pointer">
+                            📸 บันทึกสัญญาเป็นรูปภาพ (.png)
                         </button>
                     </div>
                     
-                    <div id="contractCaptureArea" class="bg-white p-8 border border-slate-300 shadow-sm text-slate-900 text-xs leading-relaxed space-y-4 rounded-lg">
-                        <div class="text-center font-bold text-sm mb-4">หนังสือสัญญากู้ยืมเงิน</div>
-                        <div class="text-right">ทำที่...........................................................</div>
-                        <div class="text-right">วันที่ <span id="pdfCurrentDate" class="underline font-semibold"></span></div>
-                        
-                        <p class="indent-12 text-justify">
-                            สัญญาฉบับนี้ทำขึ้นระหว่าง <span id="pdfLenderName" class="font-bold underline"></span> ถือบัตรประจำตัวประชาชนเลขที่ <span id="pdfLenderId" class="underline"></span> อยู่บ้านเลขที่ <span id="pdfLenderAddress" class="underline"></span> ซึ่งต่อไปในสัญญานี้เรียกว่า <b>“ผู้ให้กู้ยืม”</b> ฝ่ายหนึ่ง กับ
-                        </p>
-                        <p class="indent-12 text-justify">
-                            <b>นายเนติราช นิ่มเจริญวัฒนกุล</b> ถือบัตรประจำตัวประชาชนเลขที่ <span id="pdfBorrowerId" class="underline"></span> อยู่บ้านเลขที่ <span id="pdfBorrowerAddress" class="underline"></span> ซึ่งต่อไปในสัญญานี้เรียกว่า <b>“ผู้กู้ยืม”</b> อีกฝ่ายหนึ่ง
-                        </p>
-                        <p class="indent-12">คู่สัญญาทั้งสองฝ่ายตกลงทำสัญญากันมีข้อความดังต่อไปนี้</p>
-                        <p class="text-justify">
-                            <b>ข้อ 1.</b> ผู้กู้ยืมได้กู้ยืมเงินจากผู้ให้กู้ยืมเป็นจำนวนเงิน <span id="pdfAmount" class="font-bold underline text-blue-700"></span> บาท ซึ่งผู้กู้ยืมได้รับเงินจำนวนดังกล่าวไปครบถ้วนแล้วในขณะทำสัญญานี้
-                        </p>
-                        <p class="text-justify">
-                            <b>ข้อ 2.</b> ผู้กู้ยืมตกลงจะให้ดอกเบี้ยแก่ผู้ให้กู้ยืม ในอัตราร้อยละ <span id="pdfRate" class="font-bold underline"></span> ต่อปี นับตั้งแต่วันที่ทำสัญญาฉบับนี้เป็นต้นไปจนกว่าจะชำระเงินเสร็จสิ้นชำระครบถ้วน ซึ่งไม่เกินอัตราที่กฎหมายกำหนดไว้
-                        </p>
-                        <p class="text-justify">
-                            <b>ข้อ 3.</b> ผู้กู้ยืมตกลงจะชำระเงินกู้ยืมคืนทั้งหมดพร้อมดอกเบี้ยให้เสร็จสิ้นภายในวันที่ <span id="pdfDueDate" class="font-bold underline"></span>
-                        </p>
-                        <p class="indent-12 text-justify">
-                            เพื่อเป็นหลักฐานในการนี้ คู่สัญญาทั้งสองฝ่ายได้อ่านและเข้าใจข้อความในสัญญานี้โดยตลอดแล้วเห็นว่าถูกต้องตรงตามเจตนา จึงได้ลงลายมือชื่อไว้เป็นสำคัญต่อหน้าพยาน
-                        </p>
-                        
-                        <div class="grid grid-cols-2 gap-4 pt-6 text-center">
-                            <div class="space-y-6">
-                                <div>ลงชื่อ.........................................................ผู้ให้กู้ยืม<br>( <span id="pdfSignLender"></span> )</div>
-                                <div>ลงชื่อ.........................................................พยาน<br>(.........................................................)</div>
-                            </div>
-                            <div class="space-y-6">
-                                <div>ลงชื่อ.........................................................ผู้กู้ยืม<br>( นายเนติราช นิ่มเจริญวัฒนกุล )</div>
-                                <div>ลงชื่อ.........................................................พยาน<br>(.........................................................)</div>
+                    <!-- ส่วนโครงสร้างสัญญา: ไร้กรอบล็อก ไร้ Scrollbar ขยายพอดีหน้าจออัตโนมัติ -->
+                    <div class="bg-white p-2 md:p-4 rounded-lg">
+                        <div id="contractCaptureArea" class="bg-white p-6 md:p-8 text-slate-900 text-[11px] md:text-xs leading-relaxed space-y-4 rounded-lg">
+                            <div class="text-center font-bold text-sm md:text-base mb-4">หนังสือสัญญากู้ยืมเงิน</div>
+                            <div class="text-right">ทำที่...........................................................</div>
+                            <div class="text-right">วันที่ <span id="pdfCurrentDate" class="underline font-semibold"></span></div>
+                            
+                            <p class="indent-8 md:indent-12 text-justify">
+                                สัญญาฉบับนี้ทำขึ้นระหว่าง <span id="pdfLenderName" class="font-bold underline"></span> ถือบัตรประจำตัวประชาชนเลขที่ <span id="pdfLenderId" class="underline"></span> อยู่บ้านเลขที่ <span id="pdfLenderAddress" class="underline"></span> ซึ่งต่อไปในสัญญานี้เรียกว่า <b>“ผู้ให้กู้ยืม”</b> ฝ่ายหนึ่ง กับ
+                            </p>
+                            <p class="indent-8 md:indent-12 text-justify">
+                                <b>นายเนติราช นิ่มเจริญวัฒนกุล</b> ถือบัตรประจำตัวประชาชนเลขที่ <span id="pdfBorrowerId" class="underline"></span> อยู่บ้านเลขที่ <span id="pdfBorrowerAddress" class="underline"></span> ซึ่งต่อไปในสัญญานี้เรียกว่า <b>“ผู้กู้ยืม”</b> อีกฝ่ายหนึ่ง
+                            </p>
+                            <p class="indent-8 md:indent-12">คู่สัญญาทั้งสองฝ่ายตกลงทำสัญญากันมีข้อความดังต่อไปนี้</p>
+                            <p class="text-justify">
+                                <b>ข้อ 1.</b> ผู้กู้ยืมได้กู้ยืมเงินจากผู้ให้กู้ยืมเป็นจำนวนเงิน <span id="pdfAmount" class="font-bold underline text-blue-700"></span> บาท ซึ่งผู้กู้ยืมได้รับเงินจำนวนดังกล่าวไปครบถ้วนแล้วในขณะทำสัญญานี้
+                            </p>
+                            <p class="text-justify">
+                                <b>ข้อ 2.</b> ผู้กู้ยืมตกลงจะให้ดอกเบี้ยแก่ผู้ให้กู้ยืม ในอัตราร้อยละ <span id="pdfRate" class="font-bold underline"></span> ต่อปี นับตั้งแต่วันที่ทำสัญญาฉบับนี้เป็นต้นไปจนกว่าจะชำระเงินเสร็จสิ้นชำระครบถ้วน ซึ่งไม่เกินอัตราที่กฎหมายกำหนดไว้
+                            </p>
+                            <p class="text-justify">
+                                <b>ข้อ 3.</b> ผู้กู้ยืมตกลงจะชำระเงินกู้ยืมคืนทั้งหมดพร้อมดอกเบี้ยให้เสร็จสิ้นภายในวันที่ <span id="pdfDueDate" class="font-bold underline"></span>
+                            </p>
+                            <p class="indent-8 md:indent-12 text-justify">
+                                เพื่อเป็นหลักฐานในการนี้ คู่สัญญาทั้งสองฝ่ายได้อ่านและเข้าใจข้อความในสัญญานี้โดยตลอดแล้วเห็นว่าถูกต้องตรงตามเจตนา จึงได้ลงลายมือชื่อไว้เป็นสำคัญต่อหน้าพยาน
+                            </p>
+                            
+                            <div class="grid grid-cols-2 gap-2 pt-6 text-center text-[10px] md:text-xs">
+                                <div class="space-y-6">
+                                    <div>ลงชื่อ.....................................................ผู้ให้กู้ยืม<br>( <span id="pdfSignLender"></span> )</div>
+                                    <div>ลงชื่อ.....................................................พยาน<br>(.....................................................)</div>
+                                </div>
+                                <div class="space-y-6">
+                                    <div>ลงชื่อ.....................................................ผู้กู้ยืม<br>( นายเนติราช นิ่มเจริญวัฒนกุล )</div>
+                                    <div>ลงชื่อ.....................................................พยาน<br>(.....................................................)</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-between">
+                <!-- ฝั่งขวา: ระบบการโอนเงินและสร้าง QR Code จริง -->
+                <div class="lg:col-span-5 bg-slate-50 p-5 rounded-xl border border-slate-200 h-fit space-y-6">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
-                            <span class="mr-2">💳</span> ระบบโอนเงินเข้าบัญชีผู้กู้
+                        <h3 class="text-base md:text-lg font-bold text-slate-800 mb-4 border-b pb-2 flex items-center">
+                            <span class="mr-2">💳</span> ช่องทางการโอนเงินจริง
                         </h3>
                         
-                        <div class="space-y-4">
+                        <div class="space-y-3">
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">ธนาคารปลายทาง</label>
-                                <select disabled class="w-full p-2.5 bg-white border border-slate-300 rounded-lg font-semibold text-green-700 cursor-not-allowed">
+                                <label class="block text-xs font-medium text-slate-700 mb-1">ธนาคารปลายทาง</label>
+                                <select disabled class="w-full p-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-green-700 cursor-not-allowed">
                                     <option>ธนาคารกสิกรไทย (Kasikornbank)</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อบัญชีปลายทาง</label>
-                                <input type="text" value="นาย เนติราช นิ่มเจริญวัฒนกุล" readonly class="w-full p-2.5 bg-slate-200 border border-slate-300 rounded-lg text-slate-800 font-semibold cursor-not-allowed">
+                                <label class="block text-xs font-medium text-slate-700 mb-1">ชื่อบัญชีปลายทาง</label>
+                                <input type="text" value="นาย เนติราช นิ่มเจริญวัฒนกุล" readonly class="w-full p-2 bg-slate-200 border border-slate-300 rounded-lg text-xs text-slate-800 font-semibold cursor-not-allowed">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">หมายเลขบัญชีธนาคาร</label>
-                                <input type="text" value="085-3105775" readonly class="w-full p-2.5 bg-slate-200 border border-slate-300 rounded-lg text-slate-800 font-mono font-bold cursor-not-allowed">
+                                <label class="block text-xs font-medium text-slate-700 mb-1">หมายเลขบัญชีธนาคาร</label>
+                                <input type="text" value="085-3105775" readonly class="w-full p-2 bg-slate-200 border border-slate-300 rounded-lg text-xs text-slate-800 font-mono font-bold cursor-not-allowed">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">ระบุจำนวนเงินที่ต้องการโอนจริง (บาท)</label>
-                                <input type="number" id="transferAmount" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none font-bold text-lg text-slate-800" placeholder="0.00">
+                                <label class="block text-xs font-medium text-slate-700 mb-1">ระบุจำนวนเงินที่ต้องการโอนจริง (บาท)</label>
+                                <input type="number" id="transferAmount" class="w-full p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none font-bold text-base text-slate-800" placeholder="0.00">
                             </div>
                             
-                            <button onclick="generateKBankThaiQR()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg shadow transition cursor-pointer">
+                            <button onclick="generateKBankThaiQR()" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg shadow transition cursor-pointer text-xs">
                                 🔄 สร้าง Thai QR Code สำหรับสแกนเงินเข้าบัญชี
                             </button>
                         </div>
 
-                        <div id="qrArea" class="mt-6 hidden flex flex-col items-center p-5 bg-white border rounded-xl shadow-inner">
-                            <div class="w-full bg-[#002e5d] text-white py-2 px-4 rounded-t-lg text-center font-bold text-xs tracking-wider flex items-center justify-center gap-2">
-                                <span>THAI QR PAYMENT</span>
+                        <!-- พื้นที่แสดง QR Code จริงตามไฟล์อ้างอิง image.png -->
+                        <div id="qrArea" class="mt-6 hidden flex flex-col items-center p-4 bg-white border rounded-xl shadow-inner">
+                            <div class="w-full bg-[#002e5d] text-white py-1.5 px-3 rounded-t-lg text-center font-bold text-[10px] tracking-wider">
+                                THAI QR PAYMENT
                             </div>
-                            <div class="w-full bg-slate-100 py-1 text-center text-[10px] font-bold text-slate-600 border-b">
-                                คิวอาร์โค้ดสแกนเพื่อโอนเข้าบัญชี (กสิกรไทย)
+                            <div class="w-full bg-slate-50 py-1 text-center text-[9px] font-bold text-slate-500 border-b">
+                                สแกน QR เพื่อโอนเข้าบัญชี (กสิกรไทย)
                             </div>
                             
                             <div class="p-4 bg-white">
                                 <div id="qrcode"></div>
                             </div>
                             
-                            <div class="text-center border-t w-full pt-2">
-                                <div class="text-xs text-slate-500">ชื่อบัญชี: นาย เนติราช นิ่มเจริญวัฒนกุล</div>
-                                <div class="text-sm font-bold text-slate-800 mt-1">ยอดเงิน: <span id="qrAmountText" class="text-green-600 text-base">0.00</span> บาท</div>
+                            <div class="text-center border-t w-full pt-2 text-[11px]">
+                                <div class="text-slate-500">ชื่อ: นาย เนติราช นิ่มเจริญวัฒนกุล</div>
+                                <div class="font-bold text-slate-800 mt-0.5">ยอดเงิน: <span id="qrAmountText" class="text-green-600 text-sm">0.00</span> บาท</div>
                             </div>
                             
-                            <button onclick="saveQRCode()" class="mt-4 bg-slate-800 hover:bg-slate-900 text-white text-xs py-2 px-4 rounded-md transition cursor-pointer w-full font-medium">
-                                💾 บันทึกรูป QR Code ลงโทรศัพท์/เครื่อง
+                            <button onclick="saveQRCode()" class="mt-3 bg-slate-800 hover:bg-slate-900 text-white text-[10px] py-2 px-3 rounded-md transition cursor-pointer w-full font-medium">
+                                💾 บันทึกรูป QR Code ลงเครื่อง
                             </button>
                         </div>
                     </div>
 
-                    <div class="pt-6 border-t border-slate-200 mt-6">
-                        <button onclick="goToStep1()" class="text-sm text-slate-500 hover:text-slate-800 transition">
-                            ⬅ ย้อนกลับไปแก้ไขข้อความสัญญา
+                    <div class="pt-4 border-t border-slate-200">
+                        <button onclick="goToStep1()" class="text-xs text-slate-400 hover:text-slate-700 transition">
+                            ⬅ ย้อนกลับไปแก้ไขสัญญา
                         </button>
                     </div>
                 </div>
@@ -219,8 +235,8 @@
 
     </div>
 
+    <!-- ลอจิกการทำงานของระบบ -->
     <script>
-        // ฟังก์ชันเมื่อกดบันทึกสัญญาใน Step 1
         function generateContractAndProceed() {
             const form = document.getElementById('loanForm');
             if (!form.checkValidity()) {
@@ -228,40 +244,28 @@
                 return;
             }
 
-            // ดึงข้อมูล
-            const lenderName = document.getElementById('lenderName').value;
-            const lenderId = document.getElementById('lenderId').value;
-            const lenderAddress = document.getElementById('lenderAddress').value;
-            const borrowerId = document.getElementById('borrowerId').value;
-            const borrowerAddress = document.getElementById('borrowerAddress').value;
-            const loanAmount = document.getElementById('loanAmount').value;
-            const interestRate = document.getElementById('interestRate').value;
-            const dueDate = document.getElementById('dueDate').value;
-
-            // ฝังข้อมูลลงในใบสัญญา
-            document.getElementById('pdfLenderName').innerText = lenderName;
-            document.getElementById('pdfSignLender').innerText = lenderName;
-            document.getElementById('pdfLenderId').innerText = lenderId;
-            document.getElementById('pdfLenderAddress').innerText = lenderAddress;
-            document.getElementById('pdfBorrowerId').innerText = borrowerId;
-            document.getElementById('pdfBorrowerAddress').innerText = borrowerAddress;
-            document.getElementById('pdfAmount').innerText = Number(loanAmount).toLocaleString('th-TH');
-            document.getElementById('pdfRate').innerText = interestRate;
+            // นำข้อมูลไปแสดงผลบนตัวใบสัญญา
+            document.getElementById('pdfLenderName').innerText = document.getElementById('lenderName').value;
+            document.getElementById('pdfSignLender').innerText = document.getElementById('lenderName').value;
+            document.getElementById('pdfLenderId').innerText = document.getElementById('lenderId').value;
+            document.getElementById('pdfLenderAddress').innerText = document.getElementById('lenderAddress').value;
+            document.getElementById('pdfBorrowerId').innerText = document.getElementById('borrowerId').value;
+            document.getElementById('pdfBorrowerAddress').innerText = document.getElementById('borrowerAddress').value;
+            document.getElementById('pdfAmount').innerText = Number(document.getElementById('loanAmount').value).toLocaleString('th-TH');
+            document.getElementById('pdfRate').innerText = document.getElementById('interestRate').value;
             
-            // แปลงฟอร์แมตวันที่
-            const dateObj = new Date(dueDate);
+            const dateObj = new Date(document.getElementById('dueDate').value);
             document.getElementById('pdfDueDate').innerText = dateObj.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
             document.getElementById('pdfCurrentDate').innerText = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
 
-            // นำยอดกู้ยืมมาตั้งเป็นค่ายอดโอนเริ่มต้นในหน้าถัดไปให้เลย
-            document.getElementById('transferAmount').value = loanAmount;
+            document.getElementById('transferAmount').value = document.getElementById('loanAmount').value;
 
             // สลับหน้าจอ
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             
-            document.getElementById('step1-badge').className = "flex items-center text-slate-400 mx-4";
-            document.getElementById('step2-badge').className = "flex items-center text-green-600 font-semibold mx-4";
+            document.getElementById('step1-badge').className = "flex items-center text-slate-400 mx-2 md:mx-4";
+            document.getElementById('step2-badge').className = "flex items-center text-green-600 font-semibold mx-2 md:mx-4";
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -269,26 +273,26 @@
         function goToStep1() {
             document.getElementById('step2').classList.add('hidden');
             document.getElementById('step1').classList.remove('hidden');
-            document.getElementById('step1-badge').className = "flex items-center text-blue-600 font-semibold mx-4";
-            document.getElementById('step2-badge').className = "flex items-center text-slate-400 mx-4";
+            document.getElementById('step1-badge').className = "flex items-center text-blue-600 font-semibold mx-2 md:mx-4";
+            document.getElementById('step2-badge').className = "flex items-center text-slate-400 mx-2 md:mx-4";
         }
 
-        // ฟังก์ชันแปลงตัวเอกสารสัญญาให้กลายเป็นไฟล์รูปภาพ .png ดาวน์โหลดลงเครื่อง
+        // ฟังก์ชันแปลงเอกสารสัญญาให้กลายเป็นภาพถ่าย PNG บันทึกลงเครื่องอัตโนมัติ
         function downloadContractAsImage() {
             const element = document.getElementById('contractCaptureArea');
             
-            // สั่งทำสำเนาภาพความละเอียดสูงจาก Element HTML
+            // สั่ง Render ตัวสัญญาเป็นภาพคมชัดสูงโดยไม่อิงกับขนาดหน้าจอขณะนั้น
             html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
                 const link = document.createElement('a');
                 link.href = canvas.toDataURL("image/png");
-                link.download = 'หนังสือสัญญากู้ยืมเงิน_เนติราช_นิ่มเจริญวัฒนกุล.png';
+                link.download = 'หนังสือสัญญากู้ยืมเงิน_เนติราช.png';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             });
         }
 
-        // ฟังก์ชันสร้าง Thai QR Payment สำหรับบัญชีธนาคารกสิกรไทยโดยตรงตามโครงสร้างมาตรฐานสากล
+        // ฟังก์ชันสร้าง QR Code โอนเงินจริงเข้าบัญชี KBank
         function generateKBankThaiQR() {
             const amountInput = document.getElementById('transferAmount').value;
             if(!amountInput || amountInput <= 0) {
@@ -297,17 +301,14 @@
             }
 
             const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = ""; // ล้างค่าเก่าออกก่อน
+            qrContainer.innerHTML = "";
             
-            // หมายเลขบัญชีกสิกรไทยที่กำหนด (แปลงเป็นฟอร์แมต String สำหรับนำไปเข้าชุด Payload)
             const kbankAccount = "0853105775"; 
             const amountStr = parseFloat(amountInput).toFixed(2);
             
-            // การคำนวณความยาวสตริงและจัดโครงสร้างแท็กข้อมูล (EMVCo Spec สำหรับธนาคารไทยแบบกำหนดจำนวนเงิน)
             const merchantInfo = `0016A0000006770101110210${kbankAccount}`;
             let rawData = `0002010102122938${merchantInfo}530376454${String(amountStr.length).padStart(2, '0')}${amountStr}5802TH6304`;
             
-            // ฟังก์ชันจำลองค่าเช็คซัมเสมือนเพื่อให้แอปสแกนเนอร์ปลายทางยอมรับข้อมูล (CRC16 มาตรฐาน)
             function calculateCRC16(str) {
                 let crc = 0xFFFF;
                 for (let i = 0; i < str.length; i++) {
@@ -320,11 +321,10 @@
             
             const fullQrText = rawData + calculateCRC16(rawData);
 
-            // เจนภาพ QR Code ขนาดเหมาะสมคมชัด
             new QRCode(qrContainer, {
                 text: fullQrText,
-                width: 200,
-                height: 200,
+                width: 170,
+                height: 170,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M
@@ -334,13 +334,12 @@
             document.getElementById('qrArea').classList.remove('hidden');
         }
 
-        // ฟังก์ชันเซฟรูปภาพ QR Code
         function saveQRCode() {
             const qrImage = document.querySelector('#qrcode img');
             if (qrImage) {
                 const link = document.createElement('a');
                 link.href = qrImage.src;
-                link.download = 'KBank_ThaiQR_Payment.png';
+                link.download = 'KBank_QR_Payment.png';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -349,7 +348,7 @@
                 if (canvas) {
                     const link = document.createElement('a');
                     link.href = canvas.toDataURL("image/png");
-                    link.download = 'KBank_ThaiQR_Payment.png';
+                    link.download = 'KBank_QR_Payment.png';
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
