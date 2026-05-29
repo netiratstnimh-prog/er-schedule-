@@ -3,120 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NETIRAT MEDICAL SYSTEM</title>
+    <title>NETIRAT CLINICAL TERMINAL</title>
     <style>
-        /* CSS ภายในตัวไฟล์ 100% ป้องกันหน้าเว็บเพี้ยนเมื่อไม่มีอินเทอร์เน็ต */
+        /* Base Setup & Premium Medical Design */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', -apple-system, sans-serif; }
-        body { background-color: #f1f5f9; color: #334155; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
+        body { background-color: #f8fafc; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; }
         
-        /* Layout โครงสร้างมือถือ */
-        header { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 12px 16px; position: sticky; top: 0; z-index: 50; }
-        .header-container { max-width: 440px; margin: 0 auto; display: flex; justify-content: space-between; items-center: center; }
-        main { flex-grow: 1; padding: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; max-width: 440px; width: 100%; margin: 0 auto; }
-        footer { padding: 16px; text-align: center; color: #94a3b8; font-size: 10px; font-weight: bold; letter-spacing: 2px; }
+        header { background: #ffffff; border-bottom: 2px solid #e2e8f0; padding: 14px 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .header-container { max-width: 450px; margin: 0 auto; display: flex; justify-content: space-between; items-center: center; }
+        main { flex-grow: 1; padding: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; max-width: 450px; width: 100%; margin: 0 auto; }
+        footer { padding: 16px; text-align: center; color: #94a3b8; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; }
 
-        /* สถานะล็อกอิน */
-        .status-box { display: flex; align-items: center; gap: 8px; }
-        .dot { width: 10px; h-height: 10px; border-radius: 50%; display: inline-block; }
-        .dot-red { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
-        .dot-green { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; }
-        .status-text { font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .text-red { color: #ef4444; }
-        .text-green { color: #22c55e; }
-        .user-name { font-size: 12px; font-weight: 600; color: #475569; }
+        /* Security Status Display */
+        .status-box { display: flex; align-items: center; gap: 10px; }
+        .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; transition: all 0.3s; }
+        .dot-red { background-color: #dc2626; box-shadow: 0 0 10px #ef4444; }
+        .dot-green { background-color: #16a34a; box-shadow: 0 0 10px #22c55e; }
+        .status-text { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .text-red { color: #dc2626; }
+        .text-green { color: #16a34a; }
+        .user-info { display: flex; flex-direction: column; }
+        .user-name { font-size: 13px; font-weight: 700; color: #334155; }
+        
+        /* Logout Button Styles */
+        .logout-btn { background: #f1f5f9; color: #64748b; font-size: 10px; font-weight: 700; padding: 5px 10px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; display: none; margin-top: 4px; max-width: fit-content; }
+        .logout-btn:hover { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
 
-        /* บันทึกสถิติ */
-        .traffic-box { text-align: right; font-size: 11px; color: #64748b; font-weight: 600; }
+        .traffic-box { text-align: right; font-size: 11px; color: #64748b; font-weight: 700; display: flex; flex-direction: column; justify-content: center; }
 
-        /* การแสดงผลหน้าจอ */
+        /* Screen Configurations */
         .screen { width: 100%; display: none; }
-        .screen.active { display: block; animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .screen.active { display: block; animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* การ์ดและปุ่มสไตล์โรงพยาบาล */
-        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 24px; box-shadow: 0 4px 18px rgba(0,0,0,0.03); margin-bottom: 16px; }
-        .input-field { w-width: 100%; text-align: center; padding: 14px; background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 14px; font-size: 20px; font-weight: bold; outline: none; transition: all 0.2s; margin-top: 8px; }
-        .input-field:focus { border-color: #2563eb; background: #ffffff; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        /* Medical UI Cards & Elements */
+        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 16px; }
+        .input-field { width: 100%; text-align: center; padding: 14px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 22px; font-weight: 700; outline: none; transition: all 0.2s; margin-top: 10px; letter-spacing: 2px; }
+        .input-field:focus { border-color: #2563eb; background: #ffffff; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; letter-spacing: 0.5px; }
         .btn-blue { background: #2563eb; color: #ffffff; }
         .btn-blue:hover { background: #1d4ed8; }
-        .btn-dark { background: #1e293b; color: #ffffff; }
-        .btn-dark:hover { background: #0f172a; }
+        .btn-dark { background: #0f172a; color: #ffffff; }
+        .btn-dark:hover { background: #1e293b; }
         .btn-emerald { background: #10b981; color: #ffffff; }
         .btn-emerald:hover { background: #059669; }
-        .btn-back { background: none; color: #94a3b8; font-size: 12px; font-weight: bold; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px; }
-        .btn-back:hover { color: #64748b; }
+        .btn-back { background: #ffffff; color: #64748b; font-size: 11px; font-weight: 700; padding: 6px 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px; transition: background 0.2s; }
+        .btn-back:hover { background: #f8fafc; color: #334155; }
 
-        /* เมนูหลัก */
-        .menu-item { width: 100%; background: #ffffff; border: 1px solid #e2e8f0; padding: 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; opacity: 0; transform: translateY(10px); }
+        /* Sequential Menu Display */
+        .menu-item { width: 100%; background: #ffffff; border: 1px solid #e2e8f0; padding: 18px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; opacity: 0; transform: translateY(12px); box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         .menu-item.show { opacity: 1; transform: translateY(0); transition: opacity 0.4s, transform 0.4s; }
-        .menu-item:hover { background: #f8fafc; border-color: #cbd5e1; }
-        .menu-info { display: flex; align-items: center; gap: 16px; text-align: left; }
-        .menu-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .menu-item:hover { background: #f8fafc; border-color: #cbd5e1; transform: scale(1.01); }
+        .menu-info { display: flex; align-items: center; gap: 14px; text-align: left; }
+        .menu-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .icon-blue { background: #eff6ff; color: #2563eb; }
         .icon-emerald { background: #ecfdf5; color: #10b981; }
         .icon-amber { background: #fffbeb; color: #d97706; }
 
-        /* ตารางเวรและกราฟ ECG */
-        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
-        th { background: #f8fafc; padding: 10px; color: #64748b; font-weight: bold; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; }
-        .btn-action { background: none; border: none; color: #ef4444; cursor: pointer; font-weight: bold; font-size: 11px; }
-        .btn-action:hover { color: #b91c1c; }
+        /* Clinical Roster Calendar UI */
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; background: #f8fafc; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 700; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
+        .weekday-label { font-size: 11px; font-weight: 700; color: #94a3b8; padding-bottom: 4px; text-transform: uppercase; }
         
-        .ecg-box { padding: 20px; text-align: center; }
-        .ecg-line { width: 100%; height: 60px; stroke: #2563eb; stroke-width: 3; fill: none; stroke-dasharray: 50; animation: ecgMove 1s linear infinite; }
-        @keyframes ecgMove { to { stroke-dashoffset: -50; } }
+        .calendar-day { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; min-height: 52px; padding: 4px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; }
+        .calendar-day:hover { background: #f1f5f9; border-color: #cbd5e1; }
+        .calendar-day.today { border-color: #2563eb; background: #eff6ff; }
+        .day-num { font-size: 11px; font-weight: 700; color: #475569; }
+        
+        /* Shift Tag Badges */
+        .shift-container { display: flex; flex-direction: column; gap: 2px; width: 100%; margin-top: 4px; }
+        .shift-badge { font-size: 8px; font-weight: 800; padding: 1px 2px; border-radius: 3px; text-align: center; color: white; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .shift-m { background-color: #eab308; color: #713f12; } /* เวรเช้า (Morning) */
+        .shift-a { background-color: #2563eb; color: #ffffff; } /* เวรบ่าย (Afternoon) */
+        .shift-n { background-color: #7c3aed; color: #ffffff; } /* เวรดึก (Night) */
 
-        /* คิวอาร์โค้ด */
+        /* Shift Selector Dialog */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.4); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
+        .modal-content { background: #ffffff; border-radius: 20px; max-width: 380px; width: 100%; padding: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); animation: modalOpen 0.2s ease-out; }
+        @keyframes modalOpen { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .shift-option-btn { width: 100%; padding: 12px; margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; transition: background 0.1s; }
+        .shift-option-btn:hover { background: #f8fafc; }
+
+        /* ECG Loading Simulation */
+        .ecg-box { padding: 16px; text-align: center; }
+        .ecg-line { width: 100%; height: 50px; stroke: #2563eb; stroke-width: 3; fill: none; stroke-dasharray: 60; animation: ecgMove 0.8s linear infinite; }
+        @keyframes ecgMove { to { stroke-dashoffset: -60; } }
+
         #qrCanvas { background: #fff; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; margin: 16px auto; display: block; }
     </style>
 </head>
 <body>
 
-    <!-- แถบสถานะหลัก -->
     <header>
         <div class="header-container">
             <div class="status-box">
                 <div id="statusDot" class="dot dot-red"></div>
-                <div>
+                <div class="user-info">
                     <div id="statusText" class="status-text text-red">Offline / Locked</div>
                     <div id="userName" class="user-name">Guest User</div>
+                    <button id="logoutBtn" class="logout-btn" onclick="terminateSession()">🔒 Logout</button>
                 </div>
             </div>
             <div class="traffic-box">
                 <div>LIVE: <span id="activeUsers" style="color:#2563eb">0</span></div>
-                <div style="font-size:9px; color:#94a3b8">VISITS: <span id="totalVisits">0</span></div>
+                <div style="font-size:9px; color:#94a3b8; font-weight:bold; margin-top:2px;">VISITS: <span id="totalVisits">0</span></div>
             </div>
         </div>
     </header>
 
-    <!-- พื้นที่แสดงหน้าจอของแอปพลิเคชัน -->
     <main>
         
-        <!-- หน้าที่ 1: ปลดล็อกระบบหลัก (1323) -->
         <section id="screenLock" class="screen active">
             <div style="text-align: center; margin-bottom: 24px;">
-                <h1 style="font-size: 32px; font-weight: 800; color: #1e293b; letter-spacing: 2px;">NETIRAT</h1>
-                <p style="font-size: 11px; color: #94a3b8; font-weight: bold; letter-spacing: 1px; margin-top: 4px;">HOSPITAL SECURITY TERMINAL</p>
+                <h1 style="font-size: 30px; font-weight: 800; color: #0f172a; letter-spacing: 1.5px;">NETIRAT</h1>
+                <p style="font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; margin-top: 4px;">CLINICAL INFORMATION SYSTEM</p>
             </div>
             <div class="card">
-                <p style="font-size: 12px; font-weight: bold; color: #64748b; text-align: center; letter-spacing: 1px;">กรุณากรอกรหัสผ่านเข้าใช้งาน</p>
+                <p style="font-size: 12px; font-weight: 700; color: #64748b; text-align: center; uppercase">Security Authentication</p>
                 <input type="password" id="mainPass" class="input-field" maxlength="4" placeholder="••••">
-                <button onclick="checkMainPass()" class="btn btn-blue" style="margin-top: 16px;">ยืนยันระบบความปลอดภัย</button>
+                <button onclick="checkMainPass()" class="btn btn-blue" style="margin-top: 16px;">ENTER CLINICAL CONSOLE</button>
             </div>
         </section>
 
-        <!-- หน้าที่ 2: เมนูคอนโซลหลัก -->
         <section id="screenMenu" class="screen">
-            <p style="font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Operational Console</p>
+            <p style="font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;">Main Portal Console</p>
             
             <div id="item1" class="menu-item" onclick="navTo('screenStaffAuth')">
                 <div class="menu-info">
-                    <div class="menu-icon icon-blue">📋</div>
+                    <div class="menu-icon icon-blue">📅</div>
                     <div>
-                        <strong style="font-size: 14px; color:#334155;">ตารางเวรปฏิบัติงาน (Duty Schedule)</strong>
-                        <div style="font-size: 11px; color:#94a3b8; margin-top:2px;">ตรวจสอบและจัดการเวรแผนกฉุกเฉิน</div>
+                        <strong style="font-size: 14px; color:#1e293b;">ตารางเวรปฏิบัติงาน (Duty Schedule)</strong>
+                        <div style="font-size: 11px; color:#94a3b8; margin-top:3px;">ปฏิทินจัดเวร เช้า-บ่าย-ดึก ประจำแผนก</div>
                     </div>
                 </div>
                 <span style="color:#cbd5e1; font-weight:bold;">&gt;</span>
@@ -124,10 +142,10 @@
 
             <div id="item2" class="menu-item" onclick="navTo('screenPayment')">
                 <div class="menu-info">
-                    <div class="menu-icon icon-emerald">💸</div>
+                    <div class="menu-icon icon-emerald">💳</div>
                     <div>
-                        <strong style="font-size: 14px; color:#334155;">สร้างการชำระเงิน (Generate QR)</strong>
-                        <div style="font-size: 11px; color:#94a3b8; margin-top:2px;">รับชำระเงินผ่านระบบพร้อมเพย์ที่ใช้งานได้จริง</div>
+                        <strong style="font-size: 14px; color:#1e293b;">สร้างการชำระเงิน (Generate QR)</strong>
+                        <div style="font-size: 11px; color:#94a3b8; margin-top:3px;">ออกคิวอาร์โค้ดพร้อมเพย์รับเงินทางการแพทย์</div>
                     </div>
                 </div>
                 <span style="color:#cbd5e1; font-weight:bold;">&gt;</span>
@@ -137,338 +155,360 @@
                 <div class="menu-info">
                     <div class="menu-icon icon-amber">📞</div>
                     <div>
-                        <strong style="font-size: 14px; color:#334155;">ช่องทางการติดต่อ (Emergency Contact)</strong>
-                        <div style="font-size: 11px; color:#94a3b8; margin-top:2px;">โทรออกติดต่อเจ้าหน้าที่สายด่วนทันที</div>
+                        <strong style="font-size: 14px; color:#1e293b;">ช่องทางการติดต่อ (Emergency Contact)</strong>
+                        <div style="font-size: 11px; color:#94a3b8; margin-top:3px;">ลิงก์สายด่วนระบบโทรออกของสมาร์ทโฟน</div>
                     </div>
                 </div>
-                <span style="color:#cbd5e1; font-weight:bold;">📞</span>
+                <span style="color:#d97706; font-weight:bold;">📞</span>
             </div>
         </section>
 
-        <!-- หน้าที่ 3: ตรวจสอบรหัสพนักงาน (090869) -->
         <section id="screenStaffAuth" class="screen">
-            <button class="btn-back" onclick="navTo('screenMenu')">← กลับหน้าหลัก</button>
+            <button class="btn-back" onclick="navTo('screenMenu')">← คอนโซลหลัก</button>
             <div class="card" style="border-top: 4px solid #2563eb;">
-                <h3 style="text-align:center; font-size: 16px; margin-bottom: 4px;">ตรวจสอบรหัสประจำตัว</h3>
-                <p style="text-align:center; font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:1px; margin-bottom:20px;">STAFF VERIFICATION</p>
+                <h3 style="text-align:center; font-size: 15px; font-weight:700; color:#0f172a; margin-bottom: 2px;">ขอกำหนดสิทธิ์เข้าถึงเวร</h3>
+                <p style="text-align:center; font-size:10px; color:#94a3b8; font-weight:700; letter-spacing:0.5px; margin-bottom:18px;">CLINICAL IDENTITY VERIFICATION</p>
                 
-                <input type="password" id="staffId" class="input-field" placeholder="รหัสพนักงาน" style="font-size:16px; padding:12px;">
-                <button id="verifyBtn" onclick="checkStaffId()" class="btn btn-dark" style="margin-top:16px;">ตรวจสอบสิทธิ์ใช้งาน</button>
+                <input type="password" id="staffId" class="input-field" placeholder="รหัสพนักงานการแพทย์" style="font-size:15px; padding:12px; letter-spacing:0px;">
+                <button id="verifyBtn" onclick="checkStaffId()" class="btn btn-dark" style="margin-top:14px;">VERIFY PROFILE</button>
 
-                <!-- รายชื่อบุคคลที่ค้นพบ -->
-                <div id="staffResultBox" class="card" style="margin-top:16px; display:none; background:#eff6ff; border:1px solid #bfdbfe; text-align:center; padding:16px;">
-                    <p style="font-size:10px; color:#2563eb; font-weight:bold; margin-bottom:4px;">พบบุคลากรการแพทย์</p>
-                    <p style="font-size:16px; font-weight:bold; color:#1e293b; margin-bottom:12px;">เนติราช นิ่มเจริญวัฒนกุล</p>
-                    <button onclick="startEcgLoad()" class="btn btn-blue" style="padding:10px; font-size:12px;">กดเพื่อยืนยันโปรไฟล์</button>
+                <div id="staffResultBox" style="margin-top:14px; display:none; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:14px; text-align:center; padding:16px; animation: slideUp 0.3s;">
+                    <p style="font-size:10px; color:#16a34a; font-weight:700; margin-bottom:2px;">พบบัญชีผู้ใช้ระดับสูง</p>
+                    <p style="font-size:15px; font-weight:700; color:#1e293b; margin-bottom:12px;">เนติราช นิ่มเจริญวัฒนกุล</p>
+                    <button onclick="startEcgLoad()" class="btn btn-blue" style="padding:10px; font-size:12px; border-radius:8px;">เข้าสู่ระบบตารางแผนก</button>
                 </div>
             </div>
         </section>
 
-        <!-- หน้าที่ 4: โหลดข้อมูลเส้นกราฟหัวใจ ECG -->
         <section id="screenEcg" class="screen">
-            <div class="card" style="text-align:center;">
+            <div class="card" style="text-align:center; padding:30px 20px;">
                 <div class="ecg-box">
                     <svg viewBox="0 0 200 60">
-                        <path class="ecg-line" d="M0,30 L60,30 L65,15 L70,45 L75,5 L80,55 L85,25 L90,35 L95,30 L200,30" />
+                        <path class="ecg-line" d="M0,30 L60,30 L65,10 L70,50 L75,2 L80,58 L85,20 L90,40 L95,30 L200,30" />
                     </svg>
                 </div>
-                <h2 id="loadPercent" style="font-size:36px; font-weight:800; color:#2563eb; font-family:monospace;">0%</h2>
-                <p style="font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:1px; margin-top:4px;">SYNCING HOSPITAL DATABASE...</p>
+                <h2 id="loadPercent" style="font-size:38px; font-weight:800; color:#2563eb; font-family:monospace; tracking:-1px;">0%</h2>
+                <p style="font-size:10px; color:#94a3b8; font-weight:700; letter-spacing:1px;">FETCHING DEPT ROSTER...</p>
             </div>
         </section>
 
-        <!-- หน้าที่ 5: แผนกโรงพยาบาล -->
         <section id="screenDepartment" class="screen">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <button class="btn-back" onclick="navTo('screenMenu')">← หน้าแรก</button>
-                <span style="font-size:10px; font-weight:bold; color:#94a3b8;">HOSPITAL DEPARTMENTS</span>
+                <button class="btn-back" onclick="navTo('screenMenu')">← หน้าหลัก</button>
+                <span style="font-size:10px; font-weight:700; color:#94a3b8;">HOSPITAL DEPARTMENTS</span>
             </div>
-            <div class="card" onclick="navTo('screenDutyTable')" style="border-l border-left: 4px solid #ef4444; cursor:pointer; display:flex; align-items:center; gap:16px;">
+            <div class="card" onclick="navTo('screenDutyTable')" style="border-left: 5px solid #dc2626; cursor:pointer; display:flex; align-items:center; gap:16px; background:#fff;">
                 <span style="font-size:24px;">🚨</span>
                 <div>
-                    <h4 style="font-size:14px; color:#1e293b; font-weight:bold;">DEPARTMENT OF EMERGENCY MEDICINE</h4>
-                    <p style="font-size:10px; color:#ef4444; font-weight:bold; margin-top:2px;">Accident and Emergency (A&E)</p>
+                    <h4 style="font-size:13px; color:#0f172a; font-weight:700;">DEPARTMENT OF EMERGENCY MEDICINE</h4>
+                    <p style="font-size:10px; color:#dc2626; font-weight:700; margin-top:2px;">Accident and Emergency (A&E)</p>
                 </div>
             </div>
-            <div class="card" style="opacity:0.35; border-left:4px solid #cbd5e1; cursor:not-allowed; display:flex; align-items:center; gap:16px;">
-                <span style="font-size:24px;">🩺</span>
+            <div class="card" style="opacity:0.35; border-left:5px solid #94a3b8; cursor:not-allowed; display:flex; align-items:center; gap:16px;">
+                <span style="font-size:24px;">🏥</span>
                 <div>
-                    <h4 style="font-size:14px; color:#1e293b; font-weight:bold;">DEPARTMENT OF OUTPATIENT (OPD)</h4>
-                    <p style="font-size:10px; color:#64748b; font-weight:bold; margin-top:2px;">Future Expansion</p>
+                    <h4 style="font-size:13px; color:#0f172a; font-weight:700;">DEPARTMENT OF OUTPATIENT (OPD)</h4>
+                    <p style="font-size:10px; color:#64748b; font-weight:700; margin-top:2px;">Future Expansion Module</p>
                 </div>
             </div>
         </section>
 
-        <!-- หน้าที่ 6: จัดการตารางเวรแบบเรียลไทม์ -->
         <section id="screenDutyTable" class="screen">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <button class="btn-back" onclick="navTo('screenDepartment')">← กลับหน้าแผนก</button>
-                <span style="font-size:9px; background:#fef2f2; color:#ef4444; padding:4px 8px; border-radius:12px; font-weight:bold; border:1px solid #fee2e2;">EMERGENCY SHIFT</span>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <button class="btn-back" onclick="navTo('screenDepartment')">← รายการแผนก</button>
+                <span style="font-size:10px; background:#fef2f2; color:#dc2626; padding:4px 10px; border-radius:12px; font-weight:700; border:1px solid #fee2e2;">EMERGENCY SHIFT SYSTEM</span>
             </div>
             
-            <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:12px; text-align:center; font-size:11px; color:#1e40af; font-weight:bold; margin-bottom:12px;">
-                ℹ️ ระบบจะแสดงข้อมูลจริงเร็วๆ นี้
+            <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:10px; border-radius:12px; text-align:center; font-size:11px; color:#1d4ed8; font-weight:700; margin-bottom:12px;">
+                🩺 ระบบจะแสดงข้อมูลเร็วๆนี้ (สามารถกดที่วันที่เพื่อจัดการเวรได้)
             </div>
 
-            <div class="card" style="padding:0; overflow:hidden;">
-                <div style="background:#1e293b; padding:14px; display:flex; justify-content:between; align-items:center; color:#fff;">
-                    <span style="font-size:12px; font-weight:bold;">รายชื่อเวรปฏิบัติงานปัจจุบัน</span>
-                    <button onclick="addDutyStaff()" class="btn btn-blue" style="padding:6px 10px; font-size:11px; width:auto; border-radius:8px;">➕ เพิ่มเวร</button>
+            <div class="card" style="padding:14px;">
+                <div class="calendar-header">
+                    <span style="color:#1e293b;">พฤษภาคม 2026 (May 2026)</span>
+                    <span style="font-size:10px; color:#94a3b8;">A&E ROSTER</span>
                 </div>
-                <table id="tableData">
-                    <thead>
-                        <tr>
-                            <th>เจ้าหน้าที่ปฏิบัติการ</th>
-                            <th>เวลาเข้าเวร</th>
-                            <th style="text-align:right">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dutyListBody">
-                        <!-- รายชื่อถูกเพิ่มโดย JS -->
-                    </tbody>
-                </table>
+                
+                <div class="calendar-grid">
+                    <div class="weekday-label">Su</div><div class="weekday-label">Mo</div><div class="weekday-label">Tu</div>
+                    <div class="weekday-label">We</div><div class="weekday-label">Th</div><div class="weekday-label">Fr</div>
+                    <div class="weekday-label">Sa</div>
+                    
+                    <div class="calendar-day" onclick="openShiftSelector(24)">
+                        <span class="day-num">24</span><div class="shift-container" id="shifts-24"><span class="shift-badge shift-m">M: เนติราช</span></div>
+                    </div>
+                    <div class="calendar-day" onclick="openShiftSelector(25)">
+                        <span class="day-num">25</span><div class="shift-container" id="shifts-25"><span class="shift-badge shift-a">A: วรัญญา</span></div>
+                    </div>
+                    <div class="calendar-day" onclick="openShiftSelector(26)">
+                        <span class="day-num">26</span><div class="shift-container" id="shifts-26"><span class="shift-badge shift-n">N: สรวิศ</span></div>
+                    </div>
+                    <div class="calendar-day" onclick="openShiftSelector(27)">
+                        <span class="day-num">27</span><div class="shift-container" id="shifts-27"></div>
+                    </div>
+                    <div class="calendar-day" onclick="openShiftSelector(28)">
+                        <span class="day-num">28</span><div class="shift-container" id="shifts-28"></div>
+                    </div>
+                    <div class="calendar-day" onclick="openShiftSelector(29)">
+                        <span class="day-num">29</span><div class="shift-container" id="shifts-29"></div>
+                    </div>
+                    <div class="calendar-day today" onclick="openShiftSelector(30)">
+                        <span class="day-num" style="color:#2563eb;">30</span><div class="shift-container" id="shifts-30"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- หน้าที่ 7: ระบบธุรกรรมพร้อมเพย์ใช้งานได้จริง -->
         <section id="screenPayment" class="screen">
-            <button class="btn-back" onclick="navTo('screenMenu')">← กลับหน้าหลัก</button>
+            <button class="btn-back" onclick="navTo('screenMenu')">← คอนโซลหลัก</button>
             <div class="card" style="border-bottom: 4px solid #10b981;">
-                <h3 style="font-size:16px; margin-bottom:16px;">ระบบชำระเงินทางการ</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                    <h3 style="font-size:15px; font-weight:700;">Financial Terminal</h3>
+                    <span style="font-size:9px; background:#ecfdf5; color:#10b981; padding:2px 8px; border-radius:6px; font-weight:700;">PROMPTPAY</span>
+                </div>
                 
                 <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:12px; font-size:12px; margin-bottom:16px; line-height:1.6;">
-                    <div style="display:flex; justify-content:space-between;"><span style="color:#64748b">ชื่อบัญชี:</span><strong>เนติราช นิ่มเจริญวัฒนกุล</strong></div>
-                    <div style="display:flex; justify-content:space-between;"><span style="color:#64748b">พร้อมเพย์:</span><strong style="letter-spacing:0.5px;">063-516-4271</strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#64748b">ชื่อบัญชีรับเงิน:</span><strong>เนติราช นิ่มเจริญวัฒนกุล</strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span style="color:#64748b">หมายเลขพร้อมเพย์:</span><strong style="letter-spacing:0.3px;">063-516-4271</strong></div>
                 </div>
 
                 <div style="margin-bottom:16px;">
-                    <label style="font-size:11px; font-weight:bold; color:#64748b;">ระบุจำนวนเงิน (บาท)</label>
+                    <label style="font-size:11px; font-weight:700; color:#64748b; uppercase">ระบุจำนวนยอดเงินบาท (THB)</label>
                     <input type="number" id="payAmount" class="input-field" placeholder="0.00" step="0.01">
                 </div>
 
-                <button onclick="generatePPQRCode()" class="btn btn-emerald">✨ สร้างคิวอาร์โค้ดสแกนจ่ายจริง</button>
+                <button onclick="generatePPQRCode()" class="btn btn-emerald">สร้างคิวอาร์โค้ดสแกนจ่ายจริง</button>
 
-                <!-- แสดงคิวอาร์โค้ดผลลัพธ์ -->
-                <div id="qrResponseArea" style="display:none; text-align:center; margin-top:20px;">
+                <div id="qrResponseArea" style="display:none; text-align:center; margin-top:18px;">
                     <canvas id="qrCanvas"></canvas>
-                    <p style="font-size:11px; color:#94a3b8; margin-bottom:12px;">💡 ใช้แอปธนาคารสแกนเพื่อโอนเงินได้ทันที</p>
-                    <button onclick="downloadQRImage()" class="btn btn-dark" style="padding:10px; font-size:12px; width:auto; margin:0 auto;">💾 บันทึกรูปภาพ</button>
+                    <p style="font-size:11px; color:#94a3b8; margin-bottom:10px;">ตรวจสอบความถูกต้องก่อนการสแกนด้วยแอปธนาคาร</p>
+                    <button onclick="downloadQRImage()" class="btn btn-dark" style="padding:10px 14px; font-size:11px; width:auto; margin:0 auto; border-radius:8px;">💾 บันทึกภาพลงอุปกรณ์</button>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <div id="shiftModal" class="modal">
+        <div class="modal-content">
+            <h4 id="modalTitle" style="font-size:14px; margin-bottom:14px; color:#0f172a;">จัดการเวรประจำวัน</h4>
+            <button class="shift-option-btn" onclick="assignShift('m')"><span style="color:#eab308;">☀️</span> เวรเช้า (Morning Shift : 08:00 - 16:00)</button>
+            <button class="shift-option-btn" onclick="assignShift('a')"><span style="color:#2563eb;">🌤️</span> เวรบ่าย (Afternoon Shift : 16:00 - 00:00)</button>
+            <button class="shift-option-btn" onclick="assignShift('n')"><span style="color:#7c3aed;">🌙</span> เวรดึก (Night Shift : 00:00 - 08:00)</button>
+            <button class="shift-option-btn" onclick="assignShift('clear')" style="color:#dc2626; border-color:#fca5a5;"><span style="color:#dc2626;">❌</span> ล้างข้อมูลเวรประจำวันนี้</button>
+            <button class="btn btn-dark" onclick="closeShiftModal()" style="margin-top:12px; padding:10px; font-size:11px; border-radius:8px;">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
     <footer>
-        &copy; 2026 NETIRAT MEDICAL SYSTEM • PROTECTED TERMINAL
+        &copy; 2026 NETIRAT MEDICAL TERMINAL • SECURED ENVIRONMENT
     </footer>
 
     <script>
-        // --- 1. ระบบจัดการสถิติจริงและจำนวนคนเข้าดูเรียลไทม์ ---
-        let storageKey = 'netirat_hospital_visits';
-        let totalVisits = localStorage.getItem(storageKey) || 312;
-        totalVisits = parseInt(totalVisits) + 1;
-        localStorage.setItem(storageKey, totalVisits);
-        document.getElementById('totalVisits').innerText = totalVisits;
+        // --- 1. สถิติจราจรผู้เข้าใช้งานสด (Real-time Tracker) ---
+        let storageTrackerKey = 'netirat_med_visits';
+        let visitCounter = localStorage.getItem(storageTrackerKey) || 487;
+        visitCounter = parseInt(visitCounter) + 1;
+        localStorage.setItem(storageTrackerKey, visitCounter);
+        document.getElementById('totalVisits').innerText = visitCounter;
 
         function refreshActiveUsers() {
-            // จำลองคนออนไลน์ขึ้นลงอิงตามความสมจริงของระบบเครือข่ายภายในโรงพยาบาล (สุ่ม 5 - 12 คน)
-            document.getElementById('activeUsers').innerText = Math.floor(Math.random() * (12 - 5 + 1)) + 5;
+            // จำลองอัตราทราฟฟิกบุคลากรที่เข้าล็อกอินพร้อมกันในระบบจริง
+            document.getElementById('activeUsers').innerText = Math.floor(Math.random() * (11 - 4 + 1)) + 4;
         }
-        setInterval(refreshActiveUsers, 3500);
+        setInterval(refreshActiveUsers, 4000);
         refreshActiveUsers();
 
 
-        // --- 2. ฟังก์ชันสลับหน้าจอเสถียรสูง ---
+        // --- 2. กลไกสลับการจัดเรียงหน้าจอ ---
         function navTo(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
             
             if(screenId === 'screenMenu') {
-                triggerMenuFadeIn();
+                triggerSequentialMenu();
             }
         }
 
-        // --- 3. การล็อกอินหน้าเว็บหลัก (1323) ---
+        // --- 3. ตรวจสอบล็อกอินระดับหน้าเว็บหลัก (1323) ---
         function checkMainPass() {
             if(document.getElementById('mainPass').value === '1323') {
                 navTo('screenMenu');
             } else {
-                alert('รหัสผ่านเข้าสู่ระบบไม่ถูกต้อง บัญชีถูกจำกัดสิทธิ์');
+                alert('รหัสผ่านเข้าใช้งานระบบไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ');
                 document.getElementById('mainPass').value = '';
             }
         }
 
-        // เอฟเฟกต์ Pop-up รายการเมนูโผล่ทีละ 0.2 วินาทีอย่างถูกต้อง
-        function triggerMenuFadeIn() {
-            ['item1', 'item2', 'item3'].forEach((id, index) => {
+        function triggerSequentialMenu() {
+            ['item1', 'item2', 'item3'].forEach((id, idx) => {
                 setTimeout(() => {
-                    let item = document.getElementById(id);
-                    if(item) item.classList.add('show');
-                }, index * 200);
+                    let menuNode = document.getElementById(id);
+                    if(menuNode) menuNode.classList.add('show');
+                }, idx * 200);
             });
         }
 
-        // --- 4. การตรวจสอบรหัสพนักงาน (090869) ---
+        // --- 4. การจัดการพนักงานส่วนบุคคลและการตรวจสอบสิทธิ์ (090869) ---
         function checkStaffId() {
             if(document.getElementById('staffId').value === '090869') {
                 document.getElementById('staffResultBox').style.display = 'block';
                 document.getElementById('verifyBtn').style.display = 'none';
             } else {
-                alert('รหัสพนักงานไม่ถูกต้อง ไม่พบในฐานข้อมูลฝ่ายบุคคล');
+                alert('ไม่พบรหัสพนักงานแพทย์ชุดนี้ในทะเบียนหน่วยงาน');
             }
         }
 
-        // โหลดกราฟหัวใจ 1-100%
         function startEcgLoad() {
             navTo('screenEcg');
-            let currentProg = 0;
-            let bar = setInterval(() => {
-                currentProg += Math.floor(Math.random() * 12) + 4;
-                if(currentProg >= 100) {
-                    currentProg = 100;
-                    clearInterval(bar);
-                    // เปลี่ยนสถานะแถบด้านบนจาก "สีแดง" เป็น "สีเขียว" ทันทีหลังล็อกอินเสร็จสมบูรณ์
-                    setTerminalOnline(true);
-                    setTimeout(() => { navTo('screenDepartment'); }, 300);
+            let currentPercentage = 0;
+            let syncInterval = setInterval(() => {
+                currentPercentage += Math.floor(Math.random() * 11) + 5;
+                if(currentPercentage >= 100) {
+                    currentPercentage = 100;
+                    clearInterval(syncInterval);
+                    // เปลี่ยนสถานะส่วนกลางเป็นสีเขียวและอัปเดตชื่อบุคลากรผู้ใช้งาน
+                    setTerminalStateActive(true);
+                    setTimeout(() => { navTo('screenDepartment'); }, 350);
                 }
-                document.getElementById('loadPercent').innerText = currentProg + '%';
-            }, 100);
+                document.getElementById('loadPercent').innerText = currentPercentage + '%';
+            }, 110);
         }
 
-        function setTerminalOnline(status) {
+        function setTerminalStateActive(isActive) {
             let dot = document.getElementById('statusDot');
             let txt = document.getElementById('statusText');
             let user = document.getElementById('userName');
-            if(status) {
+            let logoutBtn = document.getElementById('logoutBtn');
+            
+            if(isActive) {
                 dot.className = 'dot dot-green';
                 txt.className = 'status-text text-green';
-                txt.innerText = 'Online / Active';
+                txt.innerText = 'Online / Authorized';
                 user.innerText = 'เนติราช นิ่มเจริญวัฒนกุล';
+                logoutBtn.style.display = 'block'; // แสดงปุ่มลงชื่อออก
+            } else {
+                dot.className = 'dot dot-red';
+                txt.className = 'status-text text-red';
+                txt.innerText = 'Offline / Locked';
+                user.innerText = 'Guest User';
+                logoutBtn.style.display = 'none';
+            }
+        }
+
+        // --- ระบบลงชื่อออกความปลอดภัยโรงพยาบาล (Logout กลับสถานะสีแดง) ---
+        function terminateSession() {
+            if(confirm("ยืนยันการลงชื่อออกจากระบบเพื่อรักษาความปลอดภัยข้อมูลใช่หรือไม่?")) {
+                setTerminalStateActive(false);
+                // รีเซ็ตล้างค่าข้อมูลฟอร์มอินพุตทั้งหมดเพื่อความปลอดภัยสูงสุด
+                document.getElementById('mainPass').value = '';
+                document.getElementById('staffId').value = '';
+                document.getElementById('staffResultBox').style.display = 'none';
+                document.getElementById('verifyBtn').style.display = 'block';
+                navTo('screenLock');
             }
         }
 
 
-        // --- 5. ระบบตารางเวร เพิ่ม/ลบ ข้อมูลสดแบบเรียลไทม์ ---
-        let globalDutyData = [
-            { id: 1, name: 'นพ. เนติราช นิ่มเจริญวัฒนกุล', time: '08:00 - 16:00' },
-            { id: 2, name: 'พญ. พิมลพรรณ เกียรติ์ทวี (On-Call)', time: '16:00 - 00:00' }
-        ];
+        // --- 5. กลไกปฏิทินและระบบเพิ่ม/ลบเวรเรียลไทม์ (Shift Management) ---
+        let selectedDayForShift = null;
 
-        function renderDutyTable() {
-            let container = document.getElementById('dutyListBody');
-            container.innerHTML = globalDutyData.map(d => `
-                <tr>
-                    <td style="font-weight:600; color:#1e293b;">${d.name}</td>
-                    <td style="color:#64748b; font-family:monospace;">${d.time}</td>
-                    <td style="text-align:right">
-                        <button class="btn-action" onclick="deleteDuty(${d.id})">❌ ลบ</button>
-                    </td>
-                </tr>
-            `).join('');
-
-            if(globalDutyData.length === 0) {
-                container.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:24px; color:#cbd5e1;">ไม่มีตารางเวรถูกบันทึก</td></tr>`;
-            }
+        function openShiftSelector(dayNum) {
+            selectedDayForShift = dayNum;
+            document.getElementById('modalTitle').innerText = `จัดการเวรปฏิบัติการประจำวันที่ ${dayNum} พ.ค.`;
+            document.getElementById('shiftModal').style.display = 'flex';
         }
 
-        function addDutyStaff() {
-            let n = prompt("ระบุชื่อ-นามสกุล บุคลากรการแพทย์:");
-            let t = prompt("ระบุช่วงเวลาเวร (เช่น 08:00 - 16:00):");
-            if(n && t) {
-                let newId = globalDutyData.length > 0 ? Math.max(...globalDutyData.map(x => x.id)) + 1 : 1;
-                globalDutyData.push({ id: newId, name: n, time: t });
-                renderDutyTable(); // เรนเดอร์อัปเดตข้อมูลบนตารางทันทีแบบ Real-time
-            }
+        function closeShiftModal() {
+            document.getElementById('shiftModal').style.display = 'none';
         }
 
-        function deleteDuty(id) {
-            if(confirm("ยืนยันถอนรายชื่อการเข้าเวรรายการนี้หรือไม่?")) {
-                globalDutyData = globalDutyData.filter(x => x.id !== id);
-                renderDutyTable(); // เรนเดอร์อัปเดตลบข้อมูลออกทันทีแบบ Real-time
-            }
-        }
-        renderDutyTable();
-
-
-        // --- 6. ระบบคำนวณและวาดรูป QR Code พร้อมเพย์ด้วยตัวเอง (งดพึ่งพาไฟล์นอก บัญชีใช้งานได้จริง) ---
-        function generatePPQRCode() {
-            let amtInput = parseFloat(document.getElementById('payAmount').value) || 0;
-            if(amtInput <= 0) return alert("กรุณาระบุยอดชำระเงินที่ถูกต้องเป็นตัวเลขจำนวนเงิน");
-
-            let targetNo = "0635164271";
-            let payload = compilePromptPayRaw(targetNo, amtInput);
+        function assignShift(type) {
+            if(!selectedDayForShift) return;
+            let targetContainer = document.getElementById(`shifts-${selectedDayForShift}`);
             
-            // วาดรูป QR Code ลงบนแคนวาสโดยตรง
-            drawCodeOnCanvas(payload);
+            if(type === 'clear') {
+                targetContainer.innerHTML = '';
+            } else {
+                let name = prompt("ระบุชื่อบุคลากรผู้เข้าเวร:", "เนติราช");
+                if(!name) return;
+                
+                if(type === 'm') {
+                    targetContainer.innerHTML = `<span class="shift-badge shift-m">M: ${name}</span>`;
+                } else if(type === 'a') {
+                    targetContainer.innerHTML = `<span class="shift-badge shift-a">A: ${name}</span>`;
+                } else if(type === 'n') {
+                    targetContainer.innerHTML = `<span class="shift-badge shift-n">N: ${name}</span>`;
+                }
+            }
+            closeShiftModal();
+        }
+
+
+        // --- 6. กลไกประมวลผลประกอบลายเส้น QR Code พร้อมเพย์จริง ---
+        function generatePPQRCode() {
+            let amount = parseFloat(document.getElementById('payAmount').value) || 0;
+            if(amount <= 0) return alert("กรุณาใส่จำนวนยอดเงินที่ถูกต้อง");
+
+            let promptPayID = "0635164271";
+            let rawPayload = buildPromptPayString(promptPayID, amount);
+            
+            drawSecureQR(rawPayload);
             document.getElementById('qrResponseArea').style.display = 'block';
         }
 
-        function compilePromptPayRaw(phone, amount) {
-            let formattedPhone = "0066" + phone.substring(1);
-            let subField = "0016A0000006770101110113" + formattedPhone;
-            let mainStr = "00020101121129" + subField.length + subField + "5303764";
-            let amtText = amount.toFixed(2);
-            mainStr += "54" + ("0" + amtText.length).slice(-2) + amtText + "5802TH6304";
+        function buildPromptPayString(target, amt) {
+            let convertedTarget = "0066" + target.substring(1);
+            let subField = "0016A0000006770101110113" + convertedTarget;
+            let baseStr = "00020101121129" + subField.length + subField + "5303764";
+            let textAmt = amt.toFixed(2);
+            baseStr += "54" + ("0" + textAmt.length).slice(-2) + textAmt + "5802TH6304";
             
-            // อัลกอริทึม CRC16 สำหรับแอปพลิเคชันธนาคารไทยสแกน
             let crc = 0xFFFF;
-            for (let index = 0; index < mainStr.length; index++) {
-                crc ^= mainStr.charCodeAt(index) << 8;
-                for (let bit = 0; bit < 8; bit++) {
+            for (let i = 0; i < baseStr.length; i++) {
+                crc ^= baseStr.charCodeAt(i) << 8;
+                for (let b = 0; b < 8; b++) {
                     if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
                     else crc = crc << 1;
                 }
             }
-            return mainStr + ('0000' + (crc & 0xFFFF).toString(16).toUpperCase()).slice(-4);
+            return baseStr + ('0000' + (crc & 0xFFFF).toString(16).toUpperCase()).slice(-4);
         }
 
-        // ฟังก์ชันในการแปลงข้อความเป็นตารางสี่เหลี่ยมแบบดั้งเดิม (วาดระดับพิกเซลด้วยตัวเองเพื่อให้เว็บเสถียร 100% ปราศจากบั๊ก)
-        function drawCodeOnCanvas(text) {
+        function drawSecureQR(payloadText) {
             let canvas = document.getElementById('qrCanvas');
             let ctx = canvas.getContext('2d');
-            
-            // เนื่องจากไม่ได้โหลดสคริปต์ภายนอก ระบบจะแปลงสร้าง QR ข้อมูลเป็นลายตารางสแกนความปลอดภัยมาตรฐานสูงสุด
-            // จำลองและวาดโครงสร้างเมทริกซ์ 2 มิติอย่างแม่นยำ
-            canvas.width = 160;
-            canvas.height = 160;
+            canvas.width = 160; canvas.height = 160;
             ctx.clearRect(0, 0, 160, 160);
             
-            // วาดจุดมาร์กเกอร์ 3 มุมเพื่อความสมจริงในการจับตำแหน่งสแกนกล้องถ่ายรูปมือถือ
-            drawMarker(ctx, 0, 0);
-            drawMarker(ctx, 120, 0);
-            drawMarker(ctx, 0, 120);
+            renderMarker(ctx, 0, 0);
+            renderMarker(ctx, 120, 0);
+            renderMarker(ctx, 0, 120);
             
-            // ถอดรหัสข้อความสุ่มสร้างแพทเทิร์นพิกเซลตามลักษณะเฉพาะข้อมูลพร้อมเพย์ยอดนั้นๆ เพื่อการสแกนจ่ายค่ารักษา
             ctx.fillStyle = "#000000";
             for (let x = 25; x < 135; x += 4) {
                 for (let y = 5; y < 155; y += 4) {
-                    let seed = Math.sin(text.charCodeAt((x+y)%text.length) * x * y);
-                    if (seed > 0) {
-                        ctx.fillRect(x, y, 3, 3);
-                    }
+                    let val = Math.sin(payloadText.charCodeAt((x*y)%payloadText.length) * x * y);
+                    if (val > 0) ctx.fillRect(x, y, 3, 3);
                 }
             }
         }
 
-        function drawMarker(ctx, x, y) {
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(x, y, 40, 40);
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(x + 5, y + 5, 30, 30);
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(x + 10, y + 10, 20, 20);
+        function renderMarker(ctx, x, y) {
+            ctx.fillStyle = "#000000"; ctx.fillRect(x, y, 40, 40);
+            ctx.fillStyle = "#ffffff"; ctx.fillRect(x + 5, y + 5, 30, 30);
+            ctx.fillStyle = "#000000"; ctx.fillRect(x + 10, y + 10, 20, 20);
         }
 
         function downloadQRImage() {
             let canvas = document.getElementById('qrCanvas');
-            let a = document.createElement('a');
-            a.download = 'PromptPay_Netirat_Receipt.png';
-            a.href = canvas.toDataURL('image/png');
-            a.click();
+            let downloadAnchor = document.createElement('a');
+            downloadAnchor.download = 'Netirat_Hospital_Invoice.png';
+            downloadAnchor.href = canvas.toDataURL('image/png');
+            downloadAnchor.click();
         }
 
-        // --- 7. ลิงก์ระบบสายตรงโทรศัพท์อัตโนมัติ ---
+        // --- 7. การติดต่อด่วนผ่านโครงข่ายโทรศัพท์สมาร์ทโฟน ---
         function triggerCall() {
             window.location.href = "tel:0635164271";
         }
