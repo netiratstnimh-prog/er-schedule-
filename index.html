@@ -3,482 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NETIRAT SYSTEM</title>
-    <!-- Tailwind CSS & FontAwesome Icons -->
+    <title>NETIRAT MEDICAL SYSTEM</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QR Code Generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Chakrapetch:wght@300;500;700&family=Sarabun:wght@300;500;700&display=swap');
-        
         body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #0b132b;
-            color: #ffffff;
-            overflow-x: hidden;
+            font-family: 'Sarabun', 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
-        .tech-font {
-            font-family: 'Chakrapetch', sans-serif;
+        .medical-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
-        /* ECG Animation */
-        @keyframes ecg-loop {
-            0% { stroke-dashoffset: 1000; }
-            100% { stroke-dashoffset: 0; }
-        }
-        .ecg-line {
+        /* ECG Loading Animation */
+        .ecg-path {
+            stroke: #2563eb;
+            stroke-width: 3;
+            fill: none;
             stroke-dasharray: 1000;
             stroke-dashoffset: 1000;
-            animation: ecg-loop 3s linear infinite;
+            animation: dash 3s linear infinite;
         }
-        /* Glitch Effect */
-        .glitch {
-            position: relative;
-            animation: glitch 1s linear infinite;
-        }
-        @keyframes glitch {
-            2%, 64% { transform: translate(2px, 0) skew(0deg); }
-            4%, 60% { transform: translate(-2px, 0) skew(0deg); }
-            62% { transform: translate(0, 0) skew(5deg); }
-        }
-        /* Grid Background overlay */
-        .grid-bg {
-            background-image: linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
+        @keyframes dash { to { stroke-dashoffset: 0; } }
+        
+        /* Smooth Page Transitions */
+        .page-fade { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="w-full min-h-screen flex flex-col justify-between grid-bg">
+<body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Top Status Bar (แสดงเมื่อเข้ารหัสหลักผ่านแล้ว) -->
-    <header id="statusBar" class="hidden bg-[#1c2541] border-b border-[#3a506b] px-4 py-2.5 flex justify-between items-center text-xs sticky top-0 z-50">
-        <div class="flex items-center gap-2">
-            <span class="relative flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-            </span>
-            <span class="text-gray-400">User: <span id="userDisplay" class="text-emerald-400 font-bold">Guest</span></span>
-        </div>
-        <div class="text-right text-gray-400">
-            <i class="fa-solid fa-eye mr-1"></i> Visitors: <span id="visitorCount" class="text-cyan-400 font-bold tech-font">1,428</span>
+    <header class="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div id="statusDot" class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)] animate-pulse"></div>
+                <div class="flex flex-col">
+                    <span id="statusText" class="text-[10px] font-bold text-red-500 uppercase tracking-widest">Offline / Locked</span>
+                    <span id="userName" class="text-xs font-semibold text-slate-700">Guest User</span>
+                </div>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Live Traffic</span>
+                <div class="flex gap-3 text-[11px] font-semibold text-slate-600">
+                    <span><i class="fa-solid fa-users text-blue-500 mr-1"></i><span id="activeUsers">0</span></span>
+                    <span><i class="fa-solid fa-eye text-slate-400 mr-1"></i><span id="totalVisits">0</span></span>
+                </div>
+            </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="flex-grow flex flex-col items-center justify-center p-4 w-full max-w-md mx-auto">
+    <main class="flex-grow p-4 flex flex-col items-center justify-center max-w-md mx-auto w-full">
         
-        <!-- 1. INTRO & LOADING EFFECT -->
-        <section id="introSec" class="text-center w-full py-10">
-            <h1 class="text-5xl font-bold tracking-widest text-cyan-400 tech-font glitch mb-2">NETIRAT</h1>
-            <p class="text-xs tracking-wider text-gray-400 mb-8 uppercase">Medical Information System</p>
-            <div id="initMechanism" class="flex flex-col items-center gap-4">
-                <div class="w-12 h-12 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-xs text-cyan-300 animate-pulse tech-font">ESTABLISHING SECURE CONNECTION...</p>
+        <section id="systemLock" class="w-full page-fade">
+            <div class="text-center mb-8">
+                <div class="inline-block p-4 bg-blue-50 rounded-full mb-3 shadow-inner">
+                    <i class="fa-solid fa-hospital-user text-4xl text-blue-600"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">NETIRAT</h1>
+                <p class="text-xs text-slate-400 uppercase tracking-widest font-semibold mt-1">Hospital Information Terminal</p>
             </div>
-        </section>
-
-        <!-- 2. MAIN PASSCODE LOCK (1323) -->
-        <section id="mainLockSec" class="hidden w-full bg-[#111827]/90 border border-red-500/30 p-6 rounded-xl shadow-2xl backdrop-blur">
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-shield-halved text-4xl text-red-500 mb-2"></i>
-                <h2 class="text-lg font-bold text-gray-200">RESTRICTED ACCESS</h2>
-                <p class="text-xs text-gray-400">กรุณากรอกรหัสผ่านระบบเพื่อเข้าถึงเนื้อหา</p>
-            </div>
-            <div class="space-y-4">
-                <input type="password" id="mainPass" placeholder="••••" class="w-full text-center text-2xl tracking-widest bg-gray-900 border border-gray-700 rounded-lg p-3 text-cyan-400 focus:outline-none focus:border-cyan-500 tech-font">
-                <button onclick="checkMainPass()" class="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3 rounded-lg transition text-sm tracking-wide">
-                    AUTHENTICATE
-                </button>
-            </div>
-        </section>
-
-        <!-- 3. MENU LIST (จะเด้งมาทีละรายการ 0.2วิ) -->
-        <section id="menuSec" class="hidden w-full space-y-4">
-            <h2 class="text-sm font-bold text-cyan-400 tracking-wider uppercase mb-2 border-b border-cyan-900 pb-1">Main Console</h2>
             
-            <button id="menu1" onclick="openDutySection()" class="opacity-0 translate-y-4 transition-all duration-500 w-full bg-[#1c2541] hover:bg-[#233154] border-l-4 border-cyan-500 p-4 rounded-r-lg flex justify-between items-center shadow-lg">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-calendar-check text-cyan-400 text-lg"></i>
-                    <span class="font-medium text-sm text-gray-200">ตารางเวรปฏิบัติงาน (Duty Schedule)</span>
-                </div>
-                <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-            </button>
-
-            <button id="menu2" onclick="openPaymentSection()" class="opacity-0 translate-y-4 transition-all duration-500 w-full bg-[#1c2541] hover:bg-[#233154] border-l-4 border-emerald-500 p-4 rounded-r-lg flex justify-between items-center shadow-lg">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-qrcode text-emerald-400 text-lg"></i>
-                    <span class="font-medium text-sm text-gray-200">สร้างการชำระเงิน (Generate QR)</span>
-                </div>
-                <i class="fa-solid fa-chevron-right text-gray-500 text-xs"></i>
-            </button>
-
-            <button id="menu3" onclick="triggerCall()" class="opacity-0 translate-y-4 transition-all duration-500 w-full bg-[#1c2541] hover:bg-[#233154] border-l-4 border-amber-500 p-4 rounded-r-lg flex justify-between items-center shadow-lg">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-phone text-amber-400 text-lg"></i>
-                    <span class="font-medium text-sm text-gray-200">ช่องทางการติดต่อ (Emergency Contact)</span>
-                </div>
-                <i class="fa-solid fa-phone-flip text-gray-500 text-xs"></i>
-            </button>
+            <div class="medical-card p-6 rounded-3xl bg-white">
+                <label class="block text-xs font-bold text-slate-400 mb-3 uppercase text-center tracking-widest">กรุณากรอกรหัสผ่านเข้าใช้งาน</label>
+                <input type="password" maxlength="4" id="mainPass" class="w-full text-center text-3xl font-bold tracking-[0.5em] py-3.5 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:bg-white focus:outline-none transition-all shadow-inner" placeholder="••••">
+                <button onclick="validateSystem()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-100 transition-all active:scale-[0.99]">
+                    <i class="fa-solid fa-shield-stroke"></i> ยืนยันรหัสผ่านความปลอดภัย
+                </button>
+            </div>
         </section>
 
-        <!-- 4. DUTY LOCK SECTION (090869) -->
-        <section id="dutyLockSec" class="hidden w-full bg-[#111827] border border-cyan-500/20 p-6 rounded-xl shadow-xl">
-            <div class="mb-4 flex items-center gap-2 text-gray-400 text-xs">
-                <button onclick="goBack('menuSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
+        <section id="mainMenu" class="hidden w-full space-y-4 page-fade">
+            <div class="flex items-center gap-2 mb-4">
+                <div class="h-6 w-1 bg-blue-600 rounded-full"></div>
+                <h2 class="text-base font-bold text-slate-800 uppercase tracking-wide">Operational Console</h2>
             </div>
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-id-card text-4xl text-cyan-400 mb-2"></i>
-                <h2 class="text-base font-bold text-gray-200">STAFF VERIFICATION</h2>
-                <p class="text-xs text-gray-400">กรุณากรอกรหัสประจำตัวพนักงาน</p>
-            </div>
-            <div class="space-y-4">
-                <input type="password" id="staffIdInput" placeholder="รหัสพนักงาน" class="w-full text-center text-lg bg-gray-900 border border-gray-700 rounded-lg p-3 text-cyan-400 focus:outline-none focus:border-cyan-500 tech-font">
-                <button onclick="checkStaffId()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2.5 rounded-lg text-sm transition">
-                    ตรวจสอบสิทธิ์
+            
+            <div id="btn-duty" class="opacity-0 translate-y-4 transition-all duration-500">
+                <button onclick="navTo('staffAuth')" class="w-full medical-card p-4 rounded-2xl flex items-center justify-between hover:bg-blue-50/50 transition-colors group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                            <i class="fa-solid fa-calendar-days text-lg"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-sm text-slate-700">ตารางเวรปฏิบัติงาน (Duty Schedule)</h3>
+                            <p class="text-[11px] text-slate-400">ตรวจสอบและจัดการรายชื่อเวรแพทย์-พยาบาล</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-blue-500 text-xs"></i>
                 </button>
+            </div>
+
+            <div id="btn-pay" class="opacity-0 translate-y-4 transition-all duration-500">
+                <button onclick="navTo('payment')" class="w-full medical-card p-4 rounded-2xl flex items-center justify-between hover:bg-emerald-50/50 transition-colors group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+                            <i class="fa-solid fa-qrcode text-lg"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-sm text-slate-700">สร้างการชำระเงิน (Generate QR)</h3>
+                            <p class="text-[11px] text-slate-400">ธุรกรรมทางการเงินผ่านระบบพร้อมเพย์ QR Code</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-emerald-500 text-xs"></i>
+                </button>
+            </div>
+
+            <div id="btn-call" class="opacity-0 translate-y-4 transition-all duration-500">
+                <button onclick="triggerCall()" class="w-full medical-card p-4 rounded-2xl flex items-center justify-between hover:bg-amber-50/50 transition-colors group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all shadow-sm">
+                            <i class="fa-solid fa-phone text-lg"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-sm text-slate-700">ช่องทางการติดต่อ (Emergency Contact)</h3>
+                            <p class="text-[11px] text-slate-400">ติดต่อเจ้าหน้าที่หรือโทรออกสายด่วนทันที</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-phone-flip text-amber-500 text-xs animate-pulse"></i>
+                </button>
+            </div>
+        </section>
+
+        <section id="staffAuth" class="hidden w-full page-fade">
+            <button onclick="navTo('mainMenu')" class="mb-4 text-slate-400 text-xs font-bold flex items-center gap-1.5 hover:text-slate-600">
+                <i class="fa-solid fa-arrow-left"></i> ย้อนกลับหน้าหลัก
+            </button>
+            <div class="medical-card p-6 rounded-3xl border-t-4 border-blue-600 bg-white">
+                <h3 class="text-base font-bold text-slate-800 text-center mb-1">ยืนยันรหัสบุคลากร</h3>
+                <p class="text-[10px] text-slate-400 text-center mb-6 uppercase font-bold tracking-widest">Staff Identity Verification</p>
                 
-                <!-- ผลลัพธ์เมื่อกดรหัสถูก -->
-                <div id="staffResult" class="hidden bg-gray-900 p-3 rounded-lg border border-emerald-500/30 text-center animate-fadeIn">
-                    <p class="text-xs text-gray-400 mb-2">พบข้อมูลผู้ใช้งานในระบบ</p>
-                    <button onclick="confirmStaffLogin()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-4 rounded transition">
-                        <i class="fa-solid fa-user-check mr-2"></i> กดเพื่อยืนยัน: <span id="staffNameTarget" class="underline"></span>
+                <div class="relative mb-4">
+                    <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="password" id="staffId" class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-blue-600 focus:bg-white focus:outline-none font-bold text-slate-700 tracking-wider text-sm" placeholder="กรอกรหัสพนักงานของคุณ">
+                </div>
+                
+                <button id="verifyBtn" onclick="validateStaff()" class="w-full bg-slate-800 text-white font-bold py-3 rounded-xl text-xs tracking-wider hover:bg-slate-900 transition-all">
+                    ตรวจสอบข้อมูลบุคคล
+                </button>
+
+                <div id="staffMatch" class="hidden mt-4 p-4 bg-blue-50 border border-blue-100 rounded-2xl text-center page-fade">
+                    <p class="text-[10px] text-blue-500 font-bold mb-1 tracking-wider">พบบุคลากรในระบบ</p>
+                    <p class="font-bold text-slate-800 text-base mb-3">เนติราช นิ่มเจริญวัฒนกุล</p>
+                    <button onclick="startEcg()" class="w-full bg-blue-600 text-white text-xs font-bold py-2.5 rounded-lg shadow-sm">
+                        <i class="fa-solid fa-circle-check mr-1"></i> ยืนยันข้อมูลถูกต้อง
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- 5. ECG LOADING EFFECT -->
-        <section id="ecgLoadingSec" class="hidden w-full text-center py-10 bg-[#111827] rounded-xl border border-cyan-500/20 p-6">
-            <div class="w-full h-24 mb-4 flex items-center justify-center">
-                <!-- SVG ECG Line -->
-                <svg class="w-full h-full" viewBox="0 0 400 100">
-                    <path class="ecg-line" d="M 0 50 L 120 50 L 130 30 L 140 70 L 150 10 L 160 90 L 170 45 L 180 55 L 190 50 L 400 50" fill="none" stroke="#00f2fe" stroke-width="3" />
-                </svg>
-            </div>
-            <div class="text-2xl font-bold text-cyan-400 tech-font id-loading-text mb-1">0%</div>
-            <p class="text-xs text-gray-400 tracking-widest uppercase">Fetching Hospital Database...</p>
-        </section>
-
-        <!-- 6. DEPARTMENT LIST (Hospital Official Style) -->
-        <section id="deptSec" class="hidden w-full bg-[#111827] border border-cyan-500/20 p-4 rounded-xl shadow-xl">
-            <div class="mb-4 flex items-center justify-between text-gray-400 text-xs">
-                <button onclick="goBack('menuSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
-                <span class="text-cyan-500 tech-font font-bold">HOSPITAL DEPARTMENTS</span>
-            </div>
-            <div class="space-y-3">
-                <!-- แผนกแรก อุบัติเหตุและฉุกเฉิน -->
-                <button onclick="openDutyTable()" class="w-full bg-[#1c2541] border border-red-500/30 hover:bg-red-950/20 p-4 rounded-lg flex items-center gap-4 text-left transition">
-                    <div class="bg-red-500/20 p-2.5 rounded-lg text-red-500">
-                        <i class="fa-solid fa-truck-medical text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-gray-200 tracking-wide">DEPARTMENT OF EMERGENCY MEDICINE</h3>
-                        <p class="text-[10px] text-red-400 uppercase tracking-wider font-semibold">Accident and Emergency (A&E)</p>
-                    </div>
-                </button>
-                
-                <!-- ส่วนที่เหลือระบุไว้ว่าไว้พัฒนาต่อในอนาคต -->
-                <div class="w-full bg-gray-900/50 border border-gray-800 p-4 rounded-lg flex items-center gap-4 text-left opacity-40 select-none">
-                    <div class="bg-gray-800 p-2.5 rounded-lg text-gray-500">
-                        <i class="fa-solid fa-stethoscope text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-sm text-gray-400">DEPARTMENT OF OUTPATIENT (OPD)</h3>
-                        <p class="text-[10px] text-gray-500 uppercase">Future Expansion</p>
-                    </div>
+        <section id="ecgLoading" class="hidden w-full text-center page-fade">
+            <div class="medical-card p-8 rounded-3xl bg-white flex flex-col items-center">
+                <div class="w-full h-16 overflow-hidden mb-4">
+                    <svg viewBox="0 0 400 100" class="w-full h-full">
+                        <path class="ecg-path" d="M0,50 L120,50 L130,25 L140,75 L150,5 L160,95 L170,40 L180,60 L190,50 L400,50" />
+                    </svg>
                 </div>
+                <div class="text-4xl font-bold text-blue-600 font-mono tracking-tighter mb-1" id="loadPercent">0%</div>
+                <p class="text-[10px] font-bold text-slate-400 tracking-[0.15em] uppercase">กำลังเรียกดูฐานข้อมูลเวรปฏิบัติงาน...</p>
             </div>
         </section>
 
-        <!-- 7. DUTY TABLE SECTION -->
-        <section id="dutyTableSec" class="hidden w-full bg-[#111827] border border-cyan-500/20 p-4 rounded-xl shadow-xl">
-            <div class="mb-4 flex items-center justify-between text-gray-400 text-xs">
-                <button onclick="goBack('deptSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
-                <span class="text-red-400 text-[10px] font-bold tracking-widest">EMERGENCY MEDICINE</span>
+        <section id="department" class="hidden w-full page-fade">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="navTo('mainMenu')" class="text-slate-400 text-xs font-bold flex items-center gap-1 hover:text-slate-600">
+                    <i class="fa-solid fa-arrow-left"></i> ย้อนกลับ
+                </button>
+                <span class="text-[11px] font-bold text-slate-400">HOSPITAL DEPARTMENTS</span>
             </div>
             
-            <!-- ตารางจำลองข้อความแจ้งเตือน -->
-            <div class="bg-gray-900 border border-dashed border-cyan-500/30 rounded-lg p-8 text-center my-6">
-                <i class="fa-solid fa-hourglass-half text-3xl text-cyan-400 mb-3 animate-pulse"></i>
-                <p class="text-sm font-medium text-gray-300">ระบบจะแสดงข้อมูลเร็วๆนี้</p>
-                <p class="text-[10px] text-gray-500 mt-1">Hospital Scheduling Data Synchronization Pending</p>
-            </div>
-
-            <!-- แท็บควบคุมด้านล่าง/ข้าง (ปุ่มสัญลักษณ์ทางการแพทย์/ธุรการ) -->
-            <div class="grid grid-cols-3 gap-2 border-t border-gray-800 pt-4 text-center">
-                <button class="bg-[#1c2541] hover:bg-[#233154] text-amber-400 p-2.5 rounded-lg text-xs flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-user-pen text-sm"></i>
-                    <span>แก้ไขเวร</span>
-                </button>
-                <button class="bg-[#1c2541] hover:bg-[#233154] text-emerald-400 p-2.5 rounded-lg text-xs flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-calendar-plus text-sm"></i>
-                    <span>เพิ่มเวร</span>
-                </button>
-                <button class="bg-[#1c2541] hover:bg-[#233154] text-rose-500 p-2.5 rounded-lg text-xs flex flex-col items-center gap-1">
-                    <i class="fa-solid fa-calendar-minus text-sm"></i>
-                    <span>ลบเวร</span>
-                </button>
-            </div>
-        </section>
-
-        <!-- 8. PAYMENT SECTION (PromptPay Only) -->
-        <section id="paymentSec" class="hidden w-full bg-[#111827] border border-emerald-500/20 p-5 rounded-xl shadow-xl">
-            <div class="mb-4 flex items-center text-gray-400 text-xs">
-                <button onclick="goBack('menuSec')" class="hover:text-white"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</button>
-            </div>
-            
-            <div class="text-center mb-4">
-                <h2 class="text-base font-bold text-emerald-400 uppercase tracking-wider">Official Payment Gateway</h2>
-                <p class="text-[10px] text-gray-400">ระบบสร้างคิวอาร์โค้ดรับเงินผ่านระบบพร้อมเพย์</p>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 p-4 rounded-xl space-y-4">
-                <div>
-                    <label class="block text-[10px] text-emerald-500 font-bold uppercase tracking-wider mb-1">ช่องทางชำระเงิน (Method)</label>
-                    <div class="w-full bg-[#1c2541] border border-emerald-500/30 rounded-lg p-2.5 flex items-center justify-between text-xs">
-                        <span class="font-bold text-gray-200">PROMPTPAY (พร้อมเพย์)</span>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-bold">ACTIVE</span>
-                    </div>
+            <button onclick="navTo('dutyTable')" class="w-full medical-card p-5 rounded-2xl flex items-center gap-4 border-l-4 border-red-500 hover:shadow-md transition-shadow text-left bg-white">
+                <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-red-500 shadow-sm">
+                    <i class="fa-solid fa-heart-pulse text-xl"></i>
                 </div>
-
                 <div>
-                    <label class="block text-[10px] text-gray-400 mb-1">หมายเลขพร้อมเพย์ (Account No.)</label>
-                    <div class="text-sm font-bold text-gray-300 tracking-wider bg-gray-950 p-2 rounded border border-gray-800 text-center">
-                        063-516-4271
-                    </div>
+                    <h4 class="font-bold text-sm text-slate-800">DEPARTMENT OF EMERGENCY MEDICINE</h4>
+                    <p class="text-[10px] text-red-500 font-bold tracking-wide mt-0.5">Accident and Emergency (A&E)</p>
                 </div>
-
-                <div>
-                    <label class="block text-[10px] text-gray-400 mb-1">ระบุจำนวนเงินบาท (Amount THB)</label>
-                    <input type="number" id="amountInput" placeholder="0.00" step="0.01" min="0" class="w-full text-center text-xl font-bold bg-gray-950 border border-gray-700 rounded-lg p-2 text-emerald-400 focus:outline-none focus:border-emerald-500 tech-font">
-                </div>
-
-                <button onclick="generateQRCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg text-xs tracking-wider transition">
-                    <i class="fa-solid fa-qrcode mr-2"></i> สร้างคิวอาร์โค้ด (GENERATE QR)
-                </button>
-            </div>
-
-            <!-- Area สำหรับแสดง QR Code -->
-            <div id="qrContainer" class="hidden mt-6 bg-white p-4 rounded-xl flex flex-col items-center justify-center mx-auto w-48 h-48 shadow-inner relative">
-                <div id="qrcode"></div>
-            </div>
-
-            <button id="saveQrBtn" onclick="downloadQR()" class="hidden mt-3 w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg text-xs transition">
-                <i class="fa-solid fa-download mr-1"></i> บันทึกรูปคิวอาร์โค้ด
             </button>
+            
+            <div class="mt-3 p-5 border-2 border-dashed border-slate-200 rounded-2xl text-center opacity-40 select-none">
+                <p class="text-[11px] font-bold text-slate-400 tracking-wider">DEPARTMENT OF OUTPATIENT (FUTURE EXPANSION)</p>
+            </div>
         </section>
 
-    </main>
+        <section id="dutyTable" class="hidden w-full page-fade">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="navTo('department')" class="text-slate-400 text-xs font-bold flex items-center gap-1 hover:text-slate-600">
+                    <i class="fa-solid fa-arrow-left"></i> แผนกทั้งหมด
+                </button>
+                <div class="bg-red-50 text-red-500 text-[9px] font-bold px-2.5 py-1 rounded-full border border-red-100">EMERGENCY SHIFT</div>
+            </div>
 
-    <!-- Footer Credit -->
-    <footer class="w-full text-center py-4 text-[10px] text-gray-600 border-t border-gray-900 bg-[#070c1e]">
-        &copy; 2026 NETIRAT MEDICAL SYSTEM. ALL RIGHTS RESERVED.
-    </footer>
+            <div class="bg-blue-50/50 border border-blue-100 p-3 rounded-xl text-center mb-3">
+                <p class="text-xs font-bold text-blue-600"><i class="fa-solid fa-circle-info mr-1"></i> ระบบจะแสดงข้อมูลจริงเร็วๆ นี้</p>
+            </div>
 
-    <!-- JavaScript Controls -->
-    <script>
-        // ระบบจำลองตัวนับจำนวนผู้เข้าชมแบบ Real-time
-        let currentVisitors = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
-        document.getElementById('visitorCount').innerText = currentVisitors.toLocaleString();
-        setInterval(() => {
-            currentVisitors += Math.floor(Math.random() * 3) - 1; // เพิ่มลดทีละนิดให้ดูเรียลไทม์
-            document.getElementById('visitorCount').innerText = currentVisitors.toLocaleString();
-        }, 4000);
+            <div class="medical-card rounded-2xl overflow-hidden bg-white shadow-sm mb-4">
+                <div class="bg-slate-800 p-3.5 flex justify-between items-center">
+                    <h4 class="text-white font-bold text-xs"><i class="fa-solid fa-clipboard-user mr-1"></i> รายชื่อเวรปฏิบัติงานปัจจุบัน</h4>
+                    <button onclick="addStaffPrompt()" class="bg-blue-600 hover:bg-blue-500 text-white text-[10px] px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 transition-all">
+                        <i class="fa-solid fa-calendar-plus text-xs"></i> เพิ่มเวร
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
+                            <tr>
+                                <th class="px-4 py-2.5">เจ้าหน้าที่ปฏิบัติการ</th>
+                                <th class="px-4 py-2.5">เวลาปฏิบัติงาน</th>
+                                <th class="px-4 py-2.5 text-right">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dutyBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-        // หน้าเริ่มต้น โชว์ เอฟเฟกต์ 1.5 วินาที ก่อนเด้งให้ใส่รหัสเข้าเว็บบริเวณหลัก (1323)
-        setTimeout(() => {
-            document.getElementById('initMechanism').classList.add('hidden');
-            document.getElementById('introSec').classList.add('hidden');
-            document.getElementById('mainLockSec').classList.remove('hidden');
-        }, 1800);
-
-        // ตรวจสอบรหัสเข้าใช้งานเว็บหลัก (1323)
-        function checkMainPass() {
-            const pass = document.getElementById('mainPass').value;
-            if (pass === '1323') {
-                document.getElementById('mainLockSec').classList.add('hidden');
-                document.getElementById('statusBar').classList.remove('hidden');
-                showMenuItemsSequentially();
-            } else {
-                alert('รหัสเข้าใช้งานระบบไม่ถูกต้อง ไม่สามารถเข้าถึงข้อมูลได้');
-            }
-        }
-
-        // เอฟเฟกต์เด้งเมนูลิสต์มาทีละรายการ ห่างกัน 0.2 วินาที
-        function showMenuItemsSequentially() {
-            document.getElementById('menuSec').classList.remove('hidden');
-            const menu1 = document.getElementById('menu1');
-            const menu2 = document.getElementById('menu2');
-            const menu3 = document.getElementById('menu3');
-
-            setTimeout(() => {
-                menu1.classList.remove('opacity-0', 'translate-y-4');
-            }, 200);
-            
-            setTimeout(() => {
-                menu2.classList.remove('opacity-0', 'translate-y-4');
-            }, 400);
-
-            setTimeout(() => {
-                menu3.classList.remove('opacity-0', 'translate-y-4');
-            }, 600);
-        }
-
-        // ฟังก์ชันกดย้อนกลับแบบ Dynamic
-        function goBack(targetSectionId) {
-            // ซ่อนเซกชันทั้งหมดในระดับตัวเลือกย่อย
-            document.getElementById('dutyLockSec').classList.add('hidden');
-            document.getElementById('deptSec').classList.add('hidden');
-            document.getElementById('dutyTableSec').classList.add('hidden');
-            document.getElementById('paymentSec').classList.add('hidden');
-            document.getElementById('ecgLoadingSec').classList.add('hidden');
-            
-            // แสดงหน้าจอเป้าหมาย
-            document.getElementById(targetSectionId).classList.remove('hidden');
-        }
-
-        // --- ระบบตารางเวร ---
-        function openDutySection() {
-            document.getElementById('menuSec').classList.add('hidden');
-            document.getElementById('dutyLockSec').classList.remove('hidden');
-            document.getElementById('staffIdInput').value = '';
-            document.getElementById('staffResult').classList.add('hidden');
-        }
-
-        // ตรวจสอบรหัสพนักงาน (090869)
-        function checkStaffId() {
-            const staffId = document.getElementById('staffIdInput').value;
-            if (staffId === '090869') {
-                document.getElementById('staffNameTarget').innerText = 'เนติราช นิ่มเจริญวัฒนกุล';
-                document.getElementById('staffResult').classList.remove('hidden');
-            } else {
-                alert('ไม่พบรหัสพนักงานดังกล่าวในฐานข้อมูลส่วนกลาง');
-            }
-        }
-
-        // ยืนยันตัวตนพนักงาน และเข้าสู่เอฟเฟกต์เส้นกราฟ ECG โหลดข้อมูล
-        function confirmStaffLogin() {
-            document.getElementById('userDisplay').innerText = 'เนติราช นิ่มเจริญวัฒนกุล';
-            document.getElementById('dutyLockSec').classList.add('hidden');
-            document.getElementById('ecgLoadingSec').classList.remove('hidden');
-            
-            let progress = 0;
-            const progressText = document.querySelector('.id-loading-text');
-            
-            const interval = setInterval(() => {
-                progress += Math.floor(Math.random() * 8) + 4;
-                if(progress > 100) progress = 100;
-                progressText.innerText = progress + '%';
+        <section id="payment" class="hidden w-full page-fade">
+            <button onclick="navTo('mainMenu')" class="mb-4 text-slate-400 text-xs font-bold flex items-center gap-1 hover:text-slate-600">
+                <i class="fa-solid fa-arrow-left"></i> ย้อนกลับหน้าหลัก
+            </button>
+            <div class="medical-card p-6 rounded-3xl border-b-4 border-emerald-500 bg-white">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-base font-bold text-slate-800">ช่องทางการชำระเงิน</h3>
+                    <span class="text-[9px] bg-emerald-100 text-emerald-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">PromptPay Only</span>
+                </div>
                 
-                if (progress === 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('ecgLoadingSec').classList.add('hidden');
-                        document.getElementById('deptSec').classList.remove('hidden');
-                    }, 400);
-                }
-            }, 100);
-        }
+                <div class="space-y-3 mb-5 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">ชื่อบัญชีรับเงิน:</span>
+                        <span class="font-bold text-slate-700">เนติราช นิ่มเจริญวัฒนกุล</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">เบอร์พร้อมเพย์:</span>
+                        <span class="font-bold text-slate-700 tracking-wider">063-516-4271</span>
+                    </div>
+                </div>
 
-        function openDutyTable() {
-            document.getElementById('deptSec').classList.add('hidden');
-            document.getElementById('dutyTableSec').classList.remove('hidden');
-        }
-
-
-        // --- ระบบสร้างการชำระเงิน (PromptPay) ---
-        function openPaymentSection() {
-            document.getElementById('menuSec').classList.add('hidden');
-            document.getElementById('paymentSec').classList.remove('hidden');
-            document.getElementById('qrcode').innerHTML = '';
-            document.getElementById('qrContainer').classList.add('hidden');
-            document.getElementById('saveQrBtn').classList.add('hidden');
-            document.getElementById('amountInput').value = '';
-        }
-
-        // ฟังก์ชันสร้าง QR Code พร้อมเพย์จริง
-        function generateQRCode() {
-            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
-            if(amount <= 0) {
-                alert("กรุณากรอกจำนวนเงินที่ถูกต้องและมากกว่า 0 บาท");
-                return;
-            }
-            
-            document.getElementById('qrcode').innerHTML = '';
-            document.getElementById('qrContainer').classList.remove('hidden');
-            document.getElementById('saveQrBtn').classList.remove('hidden');
-
-            // ใช้โครงสร้าง URL พร้อมเพย์มาตรฐาน (CRC16) สำหรับสแกนจ่ายจริง
-            // 00020101121129370016A00000067701011102130066635164271... (CRC บังคับสำหรับแอปธนาคารไทย)
-            // เพื่อความปลอดภัยและทำงานได้เสถียรที่สุดในการใช้งานทั่วไปบนหน้าเว็บ จะแปลงเป็นข้อความจำลอง หรือ สคริปต์ QR พร้อมเพย์สากล
-            // สำหรับฟังก์ชันทางการนี้ จะใช้วิธีแปลงสายอักขระ (Payload) พร้อมเพย์แบบ Dynamic :
-            const ppNumber = "0635164271";
-            const payload = generatePromptPayPayload(ppNumber, amount);
-
-            new QRCode(document.getElementById("qrcode"), {
-                text: payload,
-                width: 160,
-                height: 160,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.M
-            });
-        }
-
-        // ฟังก์ชันช่วยในการประกอบตัวแปร พร้อมเพย์ Payload ตามมาตรฐาน EMVCo
-        function generatePromptPayPayload(target, amount) {
-            let targetType = target.length >= 13 ? "0213" : "0113"; // ID Card หรือเบอร์โทร
-            let formattedTarget = target.length >= 13 ? target : "0066" + target.substring(1); // เบอร์โทรไทยแปลงเป็น 66
-            
-            let payload = "000201011211";
-            let merchantInfo = "0016A000000677010111" + targetType + formattedTarget;
-            payload += "29" + merchantInfo.length + merchantInfo;
-            payload += "5303764"; // THB Currency
-            
-            let amountStr = amount.toFixed(2);
-            payload += "54" + ("0" + amountStr.length).slice(-2) + amountStr;
-            payload += "5802TH";
-            
-            // ส่วนท้ายคำนวณหาค่า CRC16 (เพื่อความกระชับโค้ด สามารถเรียกใช้ผ่าน API หรือ Static Payload ในกรณีไม่มีเศษสตางค์ได้)
-            // ในที่นี้ระบบใช้อัลกอริทึม CRC16 XMODEM มาตรฐาน
-            payload += "6304";
-            payload += crc16(payload);
-            return payload;
-        }
-
-        function crc16(str) {
-            let crc = 0xFFFF;
-            for (let c = 0; c < str.length; c++) {
-                crc ^= str.charCodeAt(c) << 8;
-                for (let i = 0; i < 8; i++) {
-                    if (crc & 0x8000) crc = (crc << 1) ^ 0x1021;
-                    else crc = crc << 1;
-                }
-            }
-            return ('0000' + (crc & 0xFFFF).toString(16).toUpperCase()).slice(-4);
-        }
-
-        // ฟังชันบันทึกรูปภาพ QR Code ลงเครื่องมือถือ
-        function downloadQR() {
-            const qrImg = document.querySelector('#qrcode img');
-            if (qrImg) {
-                const link = document.createElement('a');
-                link.href = qrImg.src;
-                link.download = 'PromptPay_Netirat.png';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                alert("ไม่สามารถตรวจพบรูปภาพ คิวอาร์โค้ด ได้");
-            }
-        }
-
-        // --- ระบบการติดต่อด่วน (Emergency Contact) ---
-        function triggerCall() {
-            // ระบบจะเด้งไปหน้าโทรศัพท์อัตโนมัติทันทีเมื่อกดปุ่มเมนู 3
-            window.location.href = 'tel:0635164271';
-        }
-    </script>
-</body>
-</html>
+                <div class="mb-5">
+                    <label class="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase">จำนวนเงิน (บาท / THB)</label>
