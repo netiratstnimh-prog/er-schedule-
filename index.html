@@ -1,109 +1,194 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List, Dict
-from ortools.sat.python import cp_model
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการตารางเวรพยาบาล (Mobile Enterprise)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 15px;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 100%;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2, h3 { text-align: center; color: #007bff; }
+        .btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover { background-color: #218838; }
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th { background-color: #007bff; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        /* สีของแต่ละกะ */
+        .shift-M { background-color: #fff3cd; color: #856404; font-weight: bold; } /* เช้า */
+        .shift-A { background-color: #cce5ff; color: #004085; font-weight: bold; } /* บ่าย */
+        .shift-N { background-color: #f8d7da; color: #721c24; font-weight: bold; } /* ดึก */
+        .shift-O { background-color: #d4edda; color: #155724; } /* Off */
+        .config-group {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
 
-app = FastAPI(title="Enterprise Nurse Scheduling API", version="1.0")
-
-# --- Data Models ---
-class Nurse(BaseModel):
-    id: int
-    name: str
-    grade: str # เช่น Senior, Junior (ใช้ควบคุมสัดส่วนในเวรได้)
-
-class SchedulingConfig(BaseModel):
-    num_days: int = 7  # จัดตารางล่วงหน้ากี่วัน (เช่น 7 วัน, 30 วัน)
-    nurses: List[Nurse]
-    # กำหนดความต้องการขั้นต่ำของพยาบาลในแต่ละกะ [เช้า, บ่าย, ดึก]
-    shift_requirements: Dict[str, int] = {"M": 2, "A": 2, "N": 1} 
-
-# --- Solver Core Logic ---
-def generate_schedule_logic(config: SchedulingConfig):
-    num_nurses = len(config.nurses)
-    num_days = config.num_days
-    shifts = ["M", "A", "N", "O"] # M: Morning, A: Afternoon, N: Night, O: Off
-    num_shifts = len(shifts)
-
-    model = cp_model.CpModel()
-
-    # 1. สร้างตัวแปรการตัดสินใจ (Decision Variables)
-    # work[n, d, s] จะเป็น 1 ถ้าพยาบาล n ทำงานในวัน d กะ s, นอกนั้นเป็น 0
-    work = {}
-    for n in range(num_nurses):
-        for d in range(num_days):
-            for s in range(num_shifts):
-                work[n, d, s] = model.NewBoolVar(f'work_{n}_{d}_{shifts[s]}')
-
-    # 2. Hard Constraints (เงื่อนไขที่ "ต้อง" ปฏิบัติตามอย่างเคร่งครัด)
+<div class="container">
+    <h2>🏥 ระบบจัดตารางเวรพยาบาล</h2>
+    <p style="text-align:center; font-size:12px; color:gray;">เวอร์ชันประมวลผลบนมือถือ รองรับเงื่อนไขความปลอดภัยคนไข้</p>
     
-    # เงื่อนไขข้อที่ 1: พยาบาล 1 คน เข้าได้แค่ 1 กะต่อวันเท่านั้น (รวมวันหยุดด้วย)
-    for n in range(num_nurses):
-        for d in range(num_days):
-            model.Add(sum(work[n, d, s] for s in range(num_shifts)) == 1)
+    <div class="config-group">
+        <strong>⚙️ ตั้งค่าความต้องการขั้นต่ำต่อกะ:</strong><br>
+        เวรเช้า (M): 2 คน | เวรบ่าย (A): 2 คน | เวรดึก (N): 1 คน
+    </div>
 
-    # เงื่อนไขข้อที่ 2: ควบคุมความปลอดภัยของคนไข้และพยาบาล (Shift Transition Constraints)
-    # ห้ามเข้าเวร ดึก (N) แล้วต่อด้วย เช้า (M) หรือ บ่าย (A) ในวันถัดไปทันที เพื่อป้องกันการล้า
-    for n in range(num_nurses):
-        for d in range(num_days - 1):
-            # เข้าเวรดึก (index 2: N) วันนี้ วันพรุ่งนี้ห้ามเข้าเช้า (index 0: M) หรือบ่าย (index 1: A)
-            model.Add(work[n, d, 2] + work[n, d + 1, 0] <= 1)
-            model.Add(work[n, d, 2] + work[n, d + 1, 1] <= 1)
+    <button class="btn" onclick="generateSchedule()">⚡ กดคำนวณตารางเวร (7 วัน)</button>
 
-    # เงื่อนไขข้อที่ 3: จำนวนพยาบาลในแต่ละกะต้องครบตามที่แผนกต้องการ
-    for d in range(num_days):
-        # กะเช้า (M)
-        model.Add(sum(work[n, d, 0] for n in range(num_nurses)) >= config.shift_requirements["M"])
-        # กะบ่าย (A)
-        model.Add(sum(work[n, d, 1] for n in range(num_nurses)) >= config.shift_requirements["A"])
-        # กะดึก (N)
-        model.Add(sum(work[n, d, 2] for n in range(num_nurses)) >= config.shift_requirements["N"])
+    <div id="resultArea" class="table-responsive">
+        </div>
+</div>
 
-    # 3. Soft Constraints / Objectives (เงื่อนไขที่พยายามทำให้ดีที่สุด เช่น ความเป็นธรรม)
-    # ตัวอย่าง: กระจายเวรดึกให้ทุกคนเท่าๆ กันมากที่สุด
-    # ในระดับ Enterprise จะใช้การตั้ง Objective Function เพื่อ Minimize ความเหลื่อมล้ำ
-    min_shifts_per_nurse = (num_days * config.shift_requirements["N"]) // num_nurses
-    max_shifts_per_nurse = min_shifts_per_nurse + 1
+<script>
+// ข้อมูลพยาบาลจำลองระดับองค์กร (สามารถเพิ่ม/ลดตรงนี้ได้เลย)
+const nurses = [
+    { id: 1, name: "พว. สมศรี (Senior)" },
+    { id: 2, name: "พว. พรเพ็ญ (Senior)" },
+    { id: 3, name: "พว. นภา (Junior)" },
+    { id: 4, name: "พว. สุดา (Junior)" },
+    { id: 5, name: "พว. สร้อย (Junior)" },
+    { id: 6, name: "พว. เกด (Junior)" }
+];
+
+const NUM_DAYS = 7;
+const SHIFTS = ['M', 'A', 'N', 'O']; // เช้า, บ่าย, ดึก, หยุด
+
+function generateSchedule() {
+    let schedule = {}; // เก็บข้อมูลการจัดเวร [nurse_id][day]
     
-    for n in range(num_nurses):
-        num_night_shifts = sum(work[n, d, 2] for d in range(num_days))
-        model.Add(num_night_shifts >= min_shifts_per_nurse)
-        model.Add(num_night_shifts <= max_shifts_per_nurse)
+    // ตัวติดตามสถานะเพื่อเช็คเงื่อนไข (Constraints)
+    let lastShift = {}; // เก็บกะล่าสุดของพยาบาลเพื่อป้องกัน Back-to-back
+    let nightShiftCount = {}; // นับจำนวนเวรดึกเพื่อความเท่าเทียม
+    
+    // ตั้งค่าเริ่มต้น
+    nurses.forEach(n => {
+        schedule[n.id] = Array(NUM_DAYS).fill('O');
+        lastShift[n.id] = 'O';
+        nightShiftCount[n.id] = 0;
+    });
 
-    # 4. สั่งให้ Solver ทำงาน
-    solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 30.0 # จำกัดเวลาคำนวณไว้ที่ 30 วินาที (สเกลใหญ่ต้องคุมเวลา)
-    status = solver.Solve(model)
+    // วนลูปจัดเวรทีละวัน
+    for (let d = 0; d < NUM_DAYS; d++) {
+        // ก๊อปปี้รายชื่อพยาบาลมาสลับลำดับ (สุ่มเพื่อความยุติธรรมในแต่ละวัน)
+        let availableNurses = [...nurses].sort(() => Math.random() - 0.5);
+        
+        let assignedMorning = 0;
+        let assignedAfternoon = 0;
+        let assignedNight = 0;
 
-    # 5. รวบรวมผลลัพธ์
-    if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-        schedule_result = []
-        for d in range(num_days):
-            day_schedule = {"day": d + 1, "assignments": []}
-            for n in range(num_nurses):
-                for s in range(num_shifts):
-                    if solver.BooleanValue(work[n, d, s]):
-                        if shifts[s] != "O": # ไม่แสดงวันหยุดในตารางทำงานหลัก หรือแสดงเป็น OFF ก็ได้
-                            day_schedule["assignments"].append({
-                                "nurse_id": config.nurses[n].id,
-                                "nurse_name": config.nurses[n].name,
-                                "shift": shifts[s]
-                            })
-            schedule_result.append(day_schedule)
-        return {"status": "Success", "schedule": schedule_result}
-    else:
-        return {"status": "Infeasible", "message": "ไม่สามารถจัดตารางตามเงื่อนไขที่กำหนดได้เนื่องจากทรัพยากรไม่พอ"}
+        // 1. จัดเวรดึกก่อน (N) - ต้องการ 1 คน และเป็นกะที่เงื่อนไขเยอะสุด
+        for (let n of availableNurses) {
+            if (assignedNight < 1 && lastShift[n.id] !== 'N') { 
+                // เงื่อนไของค์กร: ไม่ให้ขึ้นเวรดึกติดต่อกันเกินไป หรือเพิ่งลงดึกมา
+                schedule[n.id][d] = 'N';
+                lastShift[n.id] = 'N';
+                nightShiftCount[n.id]++;
+                assignedNight++;
+                // เอาออกจากลิสต์ว่างของวันนี้
+                availableNurses = availableNurses.filter(nurse => nurse.id !== n.id);
+                break;
+            }
+        }
 
-# --- API Endpoint ---
-@app.post("/api/v1/schedule/generate")
-def generate_schedule(config: SchedulingConfig):
-    try:
-        result = generate_schedule_logic(config)
-        if result["status"] == "Infeasible":
-            raise HTTPException(status_code=400, detail=result["message"])
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        // 2. จัดเวรบ่าย (A) - ต้องการ 2 คน
+        for (let n of availableNurses) {
+            if (assignedAfternoon < 2) {
+                // เงื่อนไของค์กร: ถ้าเมื่อวานเป็นเวรดึก (N) วันนี้ห้ามต่อบ่าย (A) เพื่อความปลอดภัย
+                if (lastShift[n.id] !== 'N') {
+                    schedule[n.id][d] = 'A';
+                    lastShift[n.id] = 'A';
+                    assignedAfternoon++;
+                    availableNurses = availableNurses.filter(nurse => nurse.id !== n.id);
+                }
+            }
+        }
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        // 3. จัดเวรเช้า (M) - ต้องการ 2 คน
+        for (let n of availableNurses) {
+            if (assignedMorning < 2) {
+                // เงื่อนไของค์กร: ถ้าเมื่อวานเป็นเวรดึก (N) วันนี้ห้ามต่อเช้า (M) เด็ดขาด (Ergonomic Rule)
+                if (lastShift[n.id] !== 'N') {
+                    schedule[n.id][d] = 'M';
+                    lastShift[n.id] = 'M';
+                    assignedMorning++;
+                    availableNurses = availableNurses.filter(nurse => nurse.id !== n.id);
+                }
+            }
+        }
+
+        // พยาบาลที่เหลือในวันนั้นจะได้รับสถานะ 'O' (Off/วันหยุด) โดยอัตโนมัติ
+        availableNurses.forEach(n => {
+            schedule[n.id][d] = 'O';
+            lastShift[n.id] = 'O';
+        });
+    }
+
+    renderTable(schedule);
+}
+
+function renderTable(schedule) {
+    let html = `<table>`;
+    html += `<tr><th>รายชื่อพยาบาล</th>`;
+    for(let d=1; d<=NUM_DAYS; d++) {
+        html += `<th>วันี่ ${d}</th>`;
+    }
+    html += `</tr>`;
+
+    nurses.forEach(n => {
+        html += `<tr><td style="text-align:left; font-weight:bold;">${n.name}</td>`;
+        for(let d=0; d<NUM_DAYS; d++) {
+            let shift = schedule[n.id][d];
+            let shiftLabel = shift === 'M' ? 'เช้า (M)' : shift === 'A' ? 'บ่าย (A)' : shift === 'N' ? 'ดึก (N)' : 'หยุด (Off)';
+            html += `<td class="shift-${shift}">${shiftLabel}</td>`;
+        }
+        html += `</tr>`;
+    });
+
+    html += `</table>`;
+    document.getElementById('resultArea').innerHTML = html;
+}
+</script>
+
+</body>
+</html>
