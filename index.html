@@ -1,12 +1,66 @@
+<?php
+// ==========================================
+// ส่วนที่ 1: ระบบหลังบ้าน (PHP Backend) สำหรับยิง SMS
+// ==========================================
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'send_sms') {
+    header('Content-Type: application/json');
+    
+    $buyer_phone = isset($_POST['phone']) ? $_POST['phone'] : '';
+    $amount = isset($_POST['amount']) ? $_POST['amount'] : '0.00';
+
+    if (empty($buyer_phone) || empty($amount)) {
+        echo json_encode(['success' => false, 'message' => 'ข้อมูลไม่ครบถ้วน']);
+        exit;
+    }
+
+    // ⚙️ ตั้งค่าข้อมูลของคุณตรงนี้
+    $receiver_name = "นาย สมศักดิ์ มั่นคง"; // เปลี่ยนเป็นชื่อผู้รับเงินของคุณ
+    $api_token = "ใส่_TOKEN_ตรงนี้"; // ⚠️ เอา Access Token Key จากหน้าเว็บ THSMS มาใส่ตรงนี้แทนคำนี้
+    
+    $message_content = "ผู้โอนเบอร์ $buyer_phone ได้ทำการโอนเงินให้ $receiver_name จำนวน $amount บาท ตามสลิปเรียบร้อยแล้ว";
+
+    // เริ่มการส่ง SMS ด้วย cURL ตามคู่เว็บ THSMS V2
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => 'https://thsms.com/api/send-sms',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => json_encode([
+            "sender" => "NOTICE",
+            "msisdn" => [$buyer_phone],
+            "message" => $message_content
+        ]),
+        CURLOPT_HTTPHEADER => array(
+            'Authorization: Bearer ' . $api_token,
+            'Content-Type: application/json'
+        ),
+    ));
+
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+    curl_close($curl);
+
+    if ($err) {
+        echo json_encode(['success' => false, 'message' => 'cURL Error: ' . $err]);
+    } else {
+        echo json_encode(['success' => true, 'raw_response' => json_decode($response)]);
+    }
+    exit; // จบการทำงานของ PHP ฝั่งส่ง SMS ไม่ให้โหลดหน้า HTML ด้านล่างซ้ำ
+}
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบชำระเงินผ่าน PromptPay ปลอดภัย</title>
-    <!-- ใช้ PromptPay QR Code Generator Library เพื่อความแม่นยำ -->
     <script src="https://cdn.jsdelivr.net/npm/promptpay-qr-code@0.1.2/dist/promptpay-qr-code.min.js"></script>
-    <!-- ใช้ QR Code renderer -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
@@ -132,7 +186,6 @@
     </div>
 
     <form id="paymentForm" onsubmit="generatePayment(event)">
-        <!-- เลือกธนาคารต้นทางเพื่อความน่าเชื่อถือ -->
         <div class="form-group">
             <label for="bank">เลือกธนาคารผู้โอนของคุณ</label>
             <select id="bank" required>
@@ -146,13 +199,11 @@
             </select>
         </div>
 
-        <!-- กรอกจำนวนเงิน -->
         <div class="form-group">
             <label for="amount">จำนวนเงินที่ต้องการชำระ (บาท)</label>
             <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" required>
         </div>
 
-        <!-- กรอกเบอร์โทรศัพท์สำหรับรับ SMS แจ้งเตือน -->
         <div class="form-group">
             <label for="phone">เบอร์โทรศัพท์มือถือผู้โอน (เพื่อรับ SMS ยืนยัน)</label>
             <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="เช่น 089xxxxxxx" required>
@@ -161,12 +212,10 @@
         <button type="submit" class="btn-pay">สร้าง QR Code เพื่อชำระเงิน</button>
     </form>
 
-    <!-- หน้าต่างรอกระบวนการ -->
     <div id="loading" class="loading">
         ⏳ กรุณารอสักครู่ ระบบกำลังทำรายการชำระเงิน...
     </div>
 
-    <!-- ผลลัพธ์ QR Code -->
     <div id="qr-section">
         <h4 style="color:var(--primary-color); margin-bottom:5px;">สแกนเพื่อจ่ายเงินผ่านแอปธนาคาร</h4>
         <p style="font-size:12px; color:#666; margin-top:0;">พร้อมเพย์: 063-516-4271</p>
@@ -198,14 +247,13 @@
             document.getElementById('loading').style.display = 'none';
             document.getElementById('qr-section').style.display = 'block';
 
-            // ล้าง QR Code เก่า (ถ้ามี)
+            // ล้าง QR Code เก่า
             document.getElementById('qrcode').innerHTML = "";
 
-            // ใช้ระบบคำนวณสายอักขระของ PromptPay ตามมาตรฐานสากล
-            // โครงสร้างสำหรับเบอร์มือถือพร้อมเพย์โอนเงินระบุจำนวนเงิน
+            // คำนวณสายอักขระของ PromptPay
             const qrText = generatePromptPayPayload(promptpayNumber, amount);
 
-            // สร้างภาพ QR Code
+            // สร้างภาพ QR Code ลงในหน้าเว็บ
             new QRCode(document.getElementById("qrcode"), {
                 text: qrText,
                 width: 200,
@@ -215,12 +263,10 @@
                 correctLevel : QRCode.CorrectLevel.M
             });
 
-        }, 1500); // ดีเลย์ทำฟอร์มเนียนๆ 1.5 วินาทีให้ดูเหมือนระบบกำลังประมวลผลเซิร์ฟเวอร์ความปลอดภัย
+        }, 1500); 
     }
 
-    // ฟังก์ชันช่วยจัดรูปแบบ Payload พลอมเพย์ขั้นพื้นฐาน (แปลงตามข้อกำหนด EMVCo)
     function generatePromptPayPayload(target, amount) {
-        // ทำความสะอาดเบอร์โทร
         target = target.replace(/[- ]/g, "");
         if (target.length === 10 && target.startsWith("0")) {
             target = "66" + target.substring(1);
@@ -228,7 +274,7 @@
         target = target.padStart(13, '0');
 
         let payload = "00020101021129370016A0000006770101110113" + target;
-        payload += "5303764"; // สกุลเงินบาท (THB)
+        payload += "5303764"; 
         
         if (amount) {
             let amtStr = amount.toString();
@@ -236,7 +282,6 @@
         }
         payload += "6304";
         
-        // คำนวณหาค่า CRC16 โค้ดส่วนนี้เพื่อความถูกต้องแม่นยำในการใช้งานจริงบนแอพธนาคาร
         let crc = crc16(payload);
         return payload + crc.toUpperCase();
     }
@@ -256,31 +301,30 @@
         return crc.toString(16).padStart(4, '0');
     }
 
-    // ฟังก์ชันเชื่อมต่อไปยัง Backend PHP เพื่อยิง SMS ส่งข้อความจริง
+    // ยิงเรียกหา PHP ในไฟล์เดียวกันเพื่อสั่งส่ง SMS จริง
     function confirmPaymentAndSendSMS() {
         const phone = document.getElementById('phone').value;
         const amount = document.getElementById('amount').value;
         
-        // ส่งข้อมูลไปยังไฟล์หลังบ้าน php ด้วยวิธี Fetch (AJAX)
-        fetch('send_sms.php', {
+        fetch('', {  // ยิงกลับมาที่ไฟล์เดิม (index.php)
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: `phone=${phone}&amount=${amount}`
+            body: `action=send_sms&phone=${phone}&amount=${amount}`
         })
         .then(response => response.json())
         .then(data => {
             if(data.success) {
                 alert("ยืนยันรายการสำเร็จ! ระบบได้ส่งข้อความยืนยันการรับเงินไปยังเบอร์โทรของคุณเรียบร้อยแล้ว");
-                location.reload(); // รีเซ็ตหน้าใหม่
+                location.reload(); 
             } else {
                 alert("เกิดข้อผิดพลาดในการส่งข้อความ: " + data.message);
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert("ไม่สามารถติดต่อเซิร์ฟเวอร์ส่งข้อความได้");
+            alert("ไม่สามารถติดต่อระบบส่งข้อความได้ โปรดเช็ค Token หรือเครดิตของคุณ");
         });
     }
 </script>
