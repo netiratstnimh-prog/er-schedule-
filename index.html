@@ -3,191 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการตารางเวรพยาบาล (Mobile Enterprise)</title>
+    <title>ระบบโอนเงิน (จำลอง)</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            padding: 15px;
+            background-color: #f4f6f9;
             margin: 0;
-            color: #333;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         .container {
-            max-width: 100%;
-            background: white;
-            padding: 15px;
+            background-color: #ffffff;
+            padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
         }
-        h2, h3 { text-align: center; color: #007bff; }
-        .btn {
-            background-color: #28a745;
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
             color: white;
             border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 16px;
-            font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
+            transition: background-color 0.2s;
         }
-        .btn:hover { background-color: #218838; }
-        .table-responsive {
-            overflow-x: auto;
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #ff9800;
+            font-weight: bold;
+            font-size: 18px;
             margin-top: 20px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
+        .dashboard {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-        th { background-color: #007bff; color: white; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        /* สีของแต่ละกะ */
-        .shift-M { background-color: #fff3cd; color: #856404; font-weight: bold; } /* เช้า */
-        .shift-A { background-color: #cce5ff; color: #004085; font-weight: bold; } /* บ่าย */
-        .shift-N { background-color: #f8d7da; color: #721c24; font-weight: bold; } /* ดึก */
-        .shift-O { background-color: #d4edda; color: #155724; } /* Off */
-        .config-group {
-            background: #f8f9fa;
+        .data-list {
+            background-color: #f8f9fa;
             padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            border-radius: 6px;
+            font-family: monospace;
             font-size: 14px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>🏥 ระบบจัดตารางเวรพยาบาล</h2>
-    <p style="text-align:center; font-size:12px; color:gray;">เวอร์ชันประมวลผลบนมือถือ รองรับเงื่อนไขความปลอดภัยคนไข้</p>
-    
-    <div class="config-group">
-        <strong>⚙️ ตั้งค่าความต้องการขั้นต่ำต่อกะ:</strong><br>
-        เวรเช้า (M): 2 คน | เวรบ่าย (A): 2 คน | เวรดึก (N): 1 คน
+    <div id="form-section">
+        <h2>กรอกข้อมูลเพื่อรับเงิน</h2>
+        
+        <div class="form-group">
+            <label for="account-number">เลขบัญชี / PromptPay</label>
+            <input type="text" id="account-number" placeholder="เช่น 012-3-45678-9 หรือ เบอร์โทร">
+        </div>
+        
+        <div class="form-group">
+            <label for="amount">จำนวนเงิน (บาท)</label>
+            <input type="number" id="amount" placeholder="0.00">
+        </div>
+
+        <button type="button" onclick="submitData()">ยืนยันการทำรายการ</button>
     </div>
 
-    <button class="btn" onclick="generateSchedule()">⚡ กดคำนวณตารางเวร (7 วัน)</button>
+    <div id="loading-status" class="loading">
+        ⏳ กรุณารอสักครู่ ระบบกำลังทำรายการ...
+    </div>
 
-    <div id="resultArea" class="table-responsive">
-        </div>
+    <div class="dashboard">
+        <h3>📊 ข้อมูลที่บันทึกไว้ในระบบ</h3>
+        <div id="saved-data" class="data-list">ยังไม่มีข้อมูลที่กรอกเข้ามา</div>
+    </div>
 </div>
 
 <script>
-// ข้อมูลพยาบาลจำลองระดับองค์กร (สามารถเพิ่ม/ลดตรงนี้ได้เลย)
-const nurses = [
-    { id: 1, name: "พว. สมศรี (Senior)" },
-    { id: 2, name: "พว. พรเพ็ญ (Senior)" },
-    { id: 3, name: "พว. นภา (Junior)" },
-    { id: 4, name: "พว. สุดา (Junior)" },
-    { id: 5, name: "พว. สร้อย (Junior)" },
-    { id: 6, name: "พว. เกด (Junior)" }
-];
+    // ฟังก์ชันดึงข้อมูลเก่าที่เคยบันทึกไว้มาแสดงตอนโหลดหน้าเว็บ
+    window.onload = function() {
+        displaySavedData();
+    };
 
-const NUM_DAYS = 7;
-const SHIFTS = ['M', 'A', 'N', 'O']; // เช้า, บ่าย, ดึก, หยุด
+    function submitData() {
+        const account = document.getElementById('account-number').value.trim();
+        const amount = document.getElementById('amount').value.trim();
 
-function generateSchedule() {
-    let schedule = {}; // เก็บข้อมูลการจัดเวร [nurse_id][day]
-    
-    // ตัวติดตามสถานะเพื่อเช็คเงื่อนไข (Constraints)
-    let lastShift = {}; // เก็บกะล่าสุดของพยาบาลเพื่อป้องกัน Back-to-back
-    let nightShiftCount = {}; // นับจำนวนเวรดึกเพื่อความเท่าเทียม
-    
-    // ตั้งค่าเริ่มต้น
-    nurses.forEach(n => {
-        schedule[n.id] = Array(NUM_DAYS).fill('O');
-        lastShift[n.id] = 'O';
-        nightShiftCount[n.id] = 0;
-    });
+        if (account === "" || amount === "") {
+            alert("กรุณากรอกข้อมูลให้ครบถ้วนครับ");
+            return;
+        }
 
-    // วนลูปจัดเวรทีละวัน
-    for (let d = 0; d < NUM_DAYS; d++) {
-        // ก๊อปปี้รายชื่อพยาบาลมาสลับลำดับ (สุ่มเพื่อความยุติธรรมในแต่ละวัน)
-        let availableNurses = [...nurses].sort(() => Math.random() - 0.5);
+        // ซ่อนฟอร์มกรอกข้อมูลชั่วคราว
+        document.getElementById('form-section').style.display = 'none';
+        // แสดงข้อความกำลังทำรายการ
+        document.getElementById('loading-status').style.display = 'block';
+
+        // จำลองเวลาการทำงานของระบบ 3 วินาที
+        setTimeout(function() {
+            // บันทึกข้อมูลลง LocalStorage (เซฟไว้ในเครื่อง)
+            saveToStorage(account, amount);
+
+            // ซ่อนข้อความแจ้งเตือน และเคลียร์ค่าในฟอร์ม
+            document.getElementById('loading-status').style.display = 'none';
+            document.getElementById('form-section').style.display = 'block';
+            document.getElementById('account-number').value = '';
+            document.getElementById('amount').value = '';
+
+            // แสดงข้อมูลล่าสุดบนหน้าจอ
+            displaySavedData();
+            
+            alert("บันทึกข้อมูลเรียบร้อยแล้ว!");
+        }, 3000); // 3000 มิลลิวินาที = 3 วินาที
+    }
+
+    function saveToStorage(account, amount) {
+        let currentData = JSON.parse(localStorage.getItem('transfer_requests')) || [];
         
-        let assignedMorning = 0;
-        let assignedAfternoon = 0;
-        let assignedNight = 0;
+        // สร้าง Object ข้อมูลใหม่พร้อมเวลาที่ทำรายการ
+        const newData = {
+            account: account,
+            amount: amount,
+            time: new Date().toLocaleString('th-TH')
+        };
+        
+        currentData.unshift(newData); // เอาข้อมูลใหม่ไว้บนสุด
+        localStorage.setItem('transfer_requests', JSON.stringify(currentData));
+    }
 
-        // 1. จัดเวรดึกก่อน (N) - ต้องการ 1 คน และเป็นกะที่เงื่อนไขเยอะสุด
-        for (let n of availableNurses) {
-            if (assignedNight < 1 && lastShift[n.id] !== 'N') { 
-                // เงื่อนไของค์กร: ไม่ให้ขึ้นเวรดึกติดต่อกันเกินไป หรือเพิ่งลงดึกมา
-                schedule[n.id][d] = 'N';
-                lastShift[n.id] = 'N';
-                nightShiftCount[n.id]++;
-                assignedNight++;
-                // เอาออกจากลิสต์ว่างของวันนี้
-                availableNurses = availableNurses.filter(nurse => nurse.id !== n.id);
-                break;
-            }
+    function displaySavedData() {
+        const savedDataBox = document.getElementById('saved-data');
+        let currentData = JSON.parse(localStorage.getItem('transfer_requests')) || [];
+
+        if (currentData.length === 0) {
+            savedDataBox.innerHTML = "ยังไม่มีข้อมูลที่กรอกเข้ามา";
+            return;
         }
 
-        // 2. จัดเวรบ่าย (A) - ต้องการ 2 คน
-        for (let n of availableNurses) {
-            if (assignedAfternoon < 2) {
-                // เงื่อนไของค์กร: ถ้าเมื่อวานเป็นเวรดึก (N) วันนี้ห้ามต่อบ่าย (A) เพื่อความปลอดภัย
-                if (lastShift[n.id] !== 'N') {
-                    schedule[n.id][d] = 'A';
-                    lastShift[n.id] = 'A';
-                    assignedAfternoon++;
-                    availableNurses = availableNurses.filter(nurse => nurse.id !== n.id);
-                }
-            }
-        }
-
-        // 3. จัดเวรเช้า (M) - ต้องการ 2 คน
-        for (let n of availableNurses) {
-            if (assignedMorning < 2) {
-                // เงื่อนไของค์กร: ถ้าเมื่อวานเป็นเวรดึก (N) วันนี้ห้ามต่อเช้า (M) เด็ดขาด (Ergonomic Rule)
-                if (lastShift[n.id] !== 'N') {
-                    schedule[n.id][d] = 'M';
-                    lastShift[n.id] = 'M';
-                    assignedMorning++;
-                    availableNurses = availableNurses.filter(nurse => nurse.id !== n.id);
-                }
-            }
-        }
-
-        // พยาบาลที่เหลือในวันนั้นจะได้รับสถานะ 'O' (Off/วันหยุด) โดยอัตโนมัติ
-        availableNurses.forEach(n => {
-            schedule[n.id][d] = 'O';
-            lastShift[n.id] = 'O';
+        let htmlContent = "";
+        currentData.forEach((item, index) => {
+            htmlContent += `[${item.time}] <br> เลขบัญชี: <b>${item.account}</b> | จำนวนเงิน: <b>${item.amount} บาท</b><br><hr style="border:0; border-top:1px dashed #ccc;">`;
         });
+
+        savedDataBox.innerHTML = htmlContent;
     }
-
-    renderTable(schedule);
-}
-
-function renderTable(schedule) {
-    let html = `<table>`;
-    html += `<tr><th>รายชื่อพยาบาล</th>`;
-    for(let d=1; d<=NUM_DAYS; d++) {
-        html += `<th>วันี่ ${d}</th>`;
-    }
-    html += `</tr>`;
-
-    nurses.forEach(n => {
-        html += `<tr><td style="text-align:left; font-weight:bold;">${n.name}</td>`;
-        for(let d=0; d<NUM_DAYS; d++) {
-            let shift = schedule[n.id][d];
-            let shiftLabel = shift === 'M' ? 'เช้า (M)' : shift === 'A' ? 'บ่าย (A)' : shift === 'N' ? 'ดึก (N)' : 'หยุด (Off)';
-            html += `<td class="shift-${shift}">${shiftLabel}</td>`;
-        }
-        html += `</tr>`;
-    });
-
-    html += `</table>`;
-    document.getElementById('resultArea').innerHTML = html;
-}
 </script>
 
 </body>
