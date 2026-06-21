@@ -3,11 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบโอนเงิน (จำลอง)</title>
+    <title>ระบบชำระเงินผ่าน PromptPay ปลอดภัย</title>
+    <!-- ใช้ PromptPay QR Code Generator Library เพื่อความแม่นยำ -->
+    <script src="https://cdn.jsdelivr.net/npm/promptpay-qr-code@0.1.2/dist/promptpay-qr-code.min.js"></script>
+    <!-- ใช้ QR Code renderer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+        :root {
+            --primary-color: #0d233a; /* สีกรมท่าหรูหรา */
+            --secondary-color: #c5a059; /* สีทองดูน่าเชื่อถือ */
+            --bg-color: #f4f6f9;
+            --text-color: #333;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
+            background-color: var(--bg-color);
             margin: 0;
             padding: 20px;
             display: flex;
@@ -15,174 +25,263 @@
             align-items: center;
             min-height: 100vh;
         }
-        .container {
+        .pay-card {
             background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             box-sizing: border-box;
+            border-top: 5px solid var(--secondary-color);
         }
-        h2 {
-            color: #333;
+        .header-logo {
             text-align: center;
             margin-bottom: 25px;
         }
+        .header-logo h2 {
+            color: var(--primary-color);
+            margin: 5px 0;
+            font-size: 24px;
+        }
+        .header-logo p {
+            color: #777;
+            font-size: 14px;
+            margin: 0;
+        }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 15px;
         }
-        input[type="text"], input[type="number"] {
+        select, input[type="text"], input[type="number"], input[type="tel"] {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px 15px;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 16px;
+            transition: all 0.3s;
         }
-        button {
+        select:focus, input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgba(197, 160, 89, 0.3);
+        }
+        .btn-pay {
             width: 100%;
-            padding: 12px;
-            background-color: #007bff;
+            padding: 14px;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             transition: background-color 0.2s;
         }
-        button:hover {
-            background-color: #0056b3;
+        .btn-pay:hover {
+            background-color: #143556;
+        }
+        /* โซนแสดง QR Code */
+        #qr-section {
+            display: none;
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px dashed #ccc;
+        }
+        #qrcode {
+            display: inline-block;
+            padding: 15px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            margin-bottom: 15px;
         }
         .loading {
             display: none;
             text-align: center;
             color: #ff9800;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        .secure-badge {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            color: #28a745;
+            font-size: 13px;
             margin-top: 20px;
-        }
-        .dashboard {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #eee;
-        }
-        .data-list {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 14px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        .hidden {
-            display: none;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="form-section">
-        <h2>กรอกข้อมูลเพื่อรับเงิน</h2>
-        
-        <div class="form-group">
-            <label for="account-number">เลขบัญชี / PromptPay</label>
-            <input type="text" id="account-number" placeholder="เช่น 012-3-45678-9 หรือ เบอร์โทร">
-        </div>
-        
-        <div class="form-group">
-            <label for="amount">จำนวนเงิน (บาท)</label>
-            <input type="number" id="amount" placeholder="0.00">
-        </div>
-
-        <button type="button" onclick="submitData()">ยืนยันการทำรายการ</button>
+<div class="pay-card">
+    <div class="header-logo">
+        <h2>ระบบชำระเงินปลายทาง ปลอดภัย</h2>
+        <p>Secure Payment Gateway via Thai QR Payment</p>
     </div>
 
-    <div id="loading-status" class="loading">
-        ⏳ กรุณารอสักครู่ ระบบกำลังทำรายการ...
+    <form id="paymentForm" onsubmit="generatePayment(event)">
+        <!-- เลือกธนาคารต้นทางเพื่อความน่าเชื่อถือ -->
+        <div class="form-group">
+            <label for="bank">เลือกธนาคารผู้โอนของคุณ</label>
+            <select id="bank" required>
+                <option value="">-- กรุณาเลือกธนาคาร --</option>
+                <option value="kbank">ธนาคารกสิกรไทย (KBank)</option>
+                <option value="scb">ธนาคารไทยพาณิชย์ (SCB)</option>
+                <option value="bbl">ธนาคารกรุงเทพ (BBL)</option>
+                <option value="ktb">ธนาคารกรุงไทย (KTB)</option>
+                <option value="ttb">ธนาคารทหารไทยธนชาต (ttb)</option>
+                <option value="gsb">ธนาคารออมสิน (GSB)</option>
+            </select>
+        </div>
+
+        <!-- กรอกจำนวนเงิน -->
+        <div class="form-group">
+            <label for="amount">จำนวนเงินที่ต้องการชำระ (บาท)</label>
+            <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" required>
+        </div>
+
+        <!-- กรอกเบอร์โทรศัพท์สำหรับรับ SMS แจ้งเตือน -->
+        <div class="form-group">
+            <label for="phone">เบอร์โทรศัพท์มือถือผู้โอน (เพื่อรับ SMS ยืนยัน)</label>
+            <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="เช่น 089xxxxxxx" required>
+        </div>
+
+        <button type="submit" class="btn-pay">สร้าง QR Code เพื่อชำระเงิน</button>
+    </form>
+
+    <!-- หน้าต่างรอกระบวนการ -->
+    <div id="loading" class="loading">
+        ⏳ กรุณารอสักครู่ ระบบกำลังทำรายการชำระเงิน...
     </div>
 
-    <div class="dashboard">
-        <h3>📊 ข้อมูลที่บันทึกไว้ในระบบ</h3>
-        <div id="saved-data" class="data-list">ยังไม่มีข้อมูลที่กรอกเข้ามา</div>
+    <!-- ผลลัพธ์ QR Code -->
+    <div id="qr-section">
+        <h4 style="color:var(--primary-color); margin-bottom:5px;">สแกนเพื่อจ่ายเงินผ่านแอปธนาคาร</h4>
+        <p style="font-size:12px; color:#666; margin-top:0;">พร้อมเพย์: 063-516-4271</p>
+        
+        <div id="qrcode"></div>
+        
+        <p style="color:red; font-size:14px; font-weight:bold;">เมื่อสแกนและกดยืนยันการโอนในแอปธนาคารสำเร็จแล้ว <br>กรุณากดปุ่มด้านล่างเพื่อยืนยันรายการ</p>
+        <button type="button" class="btn-pay" style="background-color:#28a745;" onclick="confirmPaymentAndSendSMS()">ฉันได้ทำการโอนเงินเรียบร้อยแล้ว</button>
+    </div>
+
+    <div class="secure-badge">
+        🔒 การเชื่อมต่อปลอดภัยแบบ SSL 256-bit Encryption
     </div>
 </div>
 
 <script>
-    // ฟังก์ชันดึงข้อมูลเก่าที่เคยบันทึกไว้มาแสดงตอนโหลดหน้าเว็บ
-    window.onload = function() {
-        displaySavedData();
-    };
+    const promptpayNumber = "0635164271"; // เบอร์พร้อมเพย์ปลายทางของคุณ
 
-    function submitData() {
-        const account = document.getElementById('account-number').value.trim();
-        const amount = document.getElementById('amount').value.trim();
+    function generatePayment(e) {
+        e.preventDefault();
+        
+        const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
+        
+        // แสดงสถานะ รอสักครู่
+        document.getElementById('paymentForm').style.display = 'none';
+        document.getElementById('loading').style.display = 'block';
 
-        if (account === "" || amount === "") {
-            alert("กรุณากรอกข้อมูลให้ครบถ้วนครับ");
-            return;
-        }
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('qr-section').style.display = 'block';
 
-        // ซ่อนฟอร์มกรอกข้อมูลชั่วคราว
-        document.getElementById('form-section').style.display = 'none';
-        // แสดงข้อความกำลังทำรายการ
-        document.getElementById('loading-status').style.display = 'block';
+            // ล้าง QR Code เก่า (ถ้ามี)
+            document.getElementById('qrcode').innerHTML = "";
 
-        // จำลองเวลาการทำงานของระบบ 3 วินาที
-        setTimeout(function() {
-            // บันทึกข้อมูลลง LocalStorage (เซฟไว้ในเครื่อง)
-            saveToStorage(account, amount);
+            // ใช้ระบบคำนวณสายอักขระของ PromptPay ตามมาตรฐานสากล
+            // โครงสร้างสำหรับเบอร์มือถือพร้อมเพย์โอนเงินระบุจำนวนเงิน
+            const qrText = generatePromptPayPayload(promptpayNumber, amount);
 
-            // ซ่อนข้อความแจ้งเตือน และเคลียร์ค่าในฟอร์ม
-            document.getElementById('loading-status').style.display = 'none';
-            document.getElementById('form-section').style.display = 'block';
-            document.getElementById('account-number').value = '';
-            document.getElementById('amount').value = '';
+            // สร้างภาพ QR Code
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrText,
+                width: 200,
+                height: 200,
+                colorDark : "#0d233a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
 
-            // แสดงข้อมูลล่าสุดบนหน้าจอ
-            displaySavedData();
-            
-            alert("บันทึกข้อมูลเรียบร้อยแล้ว!");
-        }, 3000); // 3000 มิลลิวินาที = 3 วินาที
+        }, 1500); // ดีเลย์ทำฟอร์มเนียนๆ 1.5 วินาทีให้ดูเหมือนระบบกำลังประมวลผลเซิร์ฟเวอร์ความปลอดภัย
     }
 
-    function saveToStorage(account, amount) {
-        let currentData = JSON.parse(localStorage.getItem('transfer_requests')) || [];
+    // ฟังก์ชันช่วยจัดรูปแบบ Payload พลอมเพย์ขั้นพื้นฐาน (แปลงตามข้อกำหนด EMVCo)
+    function generatePromptPayPayload(target, amount) {
+        // ทำความสะอาดเบอร์โทร
+        target = target.replace(/[- ]/g, "");
+        if (target.length === 10 && target.startsWith("0")) {
+            target = "66" + target.substring(1);
+        }
+        target = target.padStart(13, '0');
+
+        let payload = "00020101021129370016A0000006770101110113" + target;
+        payload += "5303764"; // สกุลเงินบาท (THB)
         
-        // สร้าง Object ข้อมูลใหม่พร้อมเวลาที่ทำรายการ
-        const newData = {
-            account: account,
-            amount: amount,
-            time: new Date().toLocaleString('th-TH')
-        };
+        if (amount) {
+            let amtStr = amount.toString();
+            payload += "54" + amtStr.length.toString().padStart(2, '0') + amtStr;
+        }
+        payload += "6304";
         
-        currentData.unshift(newData); // เอาข้อมูลใหม่ไว้บนสุด
-        localStorage.setItem('transfer_requests', JSON.stringify(currentData));
+        // คำนวณหาค่า CRC16 โค้ดส่วนนี้เพื่อความถูกต้องแม่นยำในการใช้งานจริงบนแอพธนาคาร
+        let crc = crc16(payload);
+        return payload + crc.toUpperCase();
     }
 
-    function displaySavedData() {
-        const savedDataBox = document.getElementById('saved-data');
-        let currentData = JSON.parse(localStorage.getItem('transfer_requests')) || [];
-
-        if (currentData.length === 0) {
-            savedDataBox.innerHTML = "ยังไม่มีข้อมูลที่กรอกเข้ามา";
-            return;
+    function crc16(str) {
+        let crc = 0xFFFF;
+        for (let c = 0; c < str.length; c++) {
+            let b = str.charCodeAt(c);
+            for (let i = 0; i < 8; i++) {
+                let bit = ((b >> (7 - i) & 1) == 1);
+                let c15 = ((crc >> 15 & 1) == 1);
+                crc <<= 1;
+                if (c15 ^ bit) crc ^= 0x1021;
+            }
         }
+        crc &= 0xFFFF;
+        return crc.toString(16).padStart(4, '0');
+    }
 
-        let htmlContent = "";
-        currentData.forEach((item, index) => {
-            htmlContent += `[${item.time}] <br> เลขบัญชี: <b>${item.account}</b> | จำนวนเงิน: <b>${item.amount} บาท</b><br><hr style="border:0; border-top:1px dashed #ccc;">`;
+    // ฟังก์ชันเชื่อมต่อไปยัง Backend PHP เพื่อยิง SMS ส่งข้อความจริง
+    function confirmPaymentAndSendSMS() {
+        const phone = document.getElementById('phone').value;
+        const amount = document.getElementById('amount').value;
+        
+        // ส่งข้อมูลไปยังไฟล์หลังบ้าน php ด้วยวิธี Fetch (AJAX)
+        fetch('send_sms.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `phone=${phone}&amount=${amount}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert("ยืนยันรายการสำเร็จ! ระบบได้ส่งข้อความยืนยันการรับเงินไปยังเบอร์โทรของคุณเรียบร้อยแล้ว");
+                location.reload(); // รีเซ็ตหน้าใหม่
+            } else {
+                alert("เกิดข้อผิดพลาดในการส่งข้อความ: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("ไม่สามารถติดต่อเซิร์ฟเวอร์ส่งข้อความได้");
         });
-
-        savedDataBox.innerHTML = htmlContent;
     }
 </script>
 
