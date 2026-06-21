@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสร้างคิวอาร์โค้ดชำระเงิน - Digital Invoice Gateway</title>
+    <title>ระบบสร้างคิวอาร์โค้ดชำระเงิน - Official E-Receipt Gateway</title>
     <!-- Libraries ที่จำเป็นสำหรับระบบมืออาชีพ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -13,11 +13,11 @@
             --bg-base: #f8fafc;
             --card-surface: #ffffff;
             --primary-navy: #0f172a;
-            --accent-blue: #1d4ed8;
+            --accent-blue: #2563eb;
             --border-subtle: #cbd5e1;
             --text-primary: #1e293b;
             --text-secondary: #64748b;
-            --success: #15803d;
+            --success: #16a34a;
             --overlay-bg: rgba(15, 23, 42, 0.6);
         }
 
@@ -49,6 +49,7 @@
             font-weight: 700;
             color: var(--primary-navy);
             margin: 0;
+            letter-spacing: -0.5px;
         }
 
         .brand-logo p {
@@ -87,23 +88,23 @@
 
         .gateway-container {
             background: var(--card-surface);
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 16px;
+            padding: 35px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03);
         }
 
-        /* จัดแถวหน้ากระดาน (Responsive Grid สำหรับ 4 คอลัมน์) */
+        /* จัดแถวหน้ากระดานแบบสากล */
         .form-grid-row {
             display: grid;
             grid-template-columns: 1.2fr 1.2fr 1fr 1fr 0.8fr; 
-            gap: 12px;
+            gap: 14px;
             align-items: flex-end;
         }
 
         @media (max-width: 992px) {
             .form-grid-row {
-                grid-template-columns: 1fr; /* ยุบเป็นแนวตั้งอัตโนมัติบนจอมือถือ */
+                grid-template-columns: 1fr; /* ยุบเป็นแนวตั้งบนจอมือถือ */
             }
         }
 
@@ -116,68 +117,90 @@
             font-size: 13px;
             font-weight: 600;
             color: var(--primary-navy);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         select, input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 14px;
             background: #ffffff;
             border: 1px solid var(--border-subtle);
-            border-radius: 6px;
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 14px;
             color: var(--text-primary);
             font-family: 'Sarabun', sans-serif;
+            transition: all 0.2s;
         }
 
         select:focus, input:focus {
             border-color: var(--accent-blue);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .btn-action {
             width: 100%;
-            padding: 11px;
+            padding: 13px;
             background: var(--primary-navy);
             color: #ffffff;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             font-family: 'Sarabun', sans-serif;
+            transition: background 0.2s, transform 0.1s;
         }
 
         .btn-action:hover {
             background: #1e293b;
         }
+        
+        .btn-action:active {
+            transform: scale(0.98);
+        }
 
-        /* พรีเมียมโหลดเดอร์ */
+        /* แถบรอสร้างสลิป (Premium Linear Loader) */
         .premium-loader {
             display: none;
             text-align: center;
-            padding: 50px 0;
+            padding: 40px 0;
+            max-width: 400px;
+            margin: 0 auto;
         }
 
-        .spinner-box {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 15px auto;
-            border: 3px solid rgba(15, 23, 42, 0.05);
-            border-top: 3px solid var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .loader-bar-bg {
+            width: 100%;
+            height: 5px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .loader-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-blue);
+            transition: width 0.02s linear;
+        }
+
+        .loader-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
         .loader-counter {
             font-family: 'Inter', sans-serif;
-            font-size: 22px;
-            font-weight: 600;
+            font-weight: 700;
+            color: var(--primary-navy);
         }
 
-        /* โครงสร้างใบแจ้งชำระเงิน (Official Invoice Document) */
+        /* โครงสร้างสลิปใบเสร็จทางการ (E-Receipt Slip) */
         #invoice-zone {
             display: none;
             margin-top: 30px;
@@ -186,43 +209,96 @@
 
         .invoice-paper {
             background: #ffffff;
-            max-width: 500px;
+            max-width: 420px;
             margin: 0 auto 25px auto;
-            padding: 35px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
             text-align: left;
-            position: relative;
         }
 
-        .invoice-header {
+        .slip-success-header {
             text-align: center;
-            border-bottom: 2px solid var(--primary-navy);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        .invoice-header h2 {
+        .success-icon {
+            width: 44px;
+            height: 44px;
+            background: #e6f4ea;
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0 auto 12px auto;
+        }
+
+        .slip-success-header h2 {
             margin: 0;
             font-size: 18px;
-            letter-spacing: 0.5px;
-            color: var(--primary-navy);
+            color: var(--success);
+            font-weight: 600;
         }
 
-        .invoice-header p {
-            margin: 5px 0 0 0;
+        .slip-success-header p {
+            margin: 4px 0 0 0;
             font-size: 11px;
             color: var(--text-secondary);
+            letter-spacing: 0.5px;
+        }
+
+        .transfer-party {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .party-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .party-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .party-info .title-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .party-info .name-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        .slip-details-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 15px;
         }
 
         .invoice-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 14px;
-            border-bottom: 1px dashed #e2e8f0;
-            padding-bottom: 6px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .invoice-row:last-child {
+            margin-bottom: 0;
         }
 
         .invoice-row .label {
@@ -232,35 +308,51 @@
         .invoice-row .value {
             font-weight: 500;
             color: var(--text-primary);
+            text-align: right;
         }
 
-        .invoice-statement {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 13.5px;
-            line-height: 1.6;
-            margin: 20px 0;
-            border-left: 4px solid var(--accent-blue);
+        .amount-highlight-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        .amount-highlight-row .label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--primary-navy);
+        }
+
+        .amount-highlight-row .value {
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-blue);
         }
 
         .invoice-qr-area {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #cbd5e1;
         }
 
         #qrcode {
             display: inline-block;
-            padding: 10px;
+            padding: 8px;
             background: #ffffff;
             border: 1px solid #e2e8f0;
+            border-radius: 6px;
         }
 
         .action-button-group {
             display: flex;
             justify-content: center;
             gap: 12px;
-            max-width: 500px;
+            max-width: 420px;
             margin: 0 auto;
         }
 
@@ -274,20 +366,20 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            padding: 16px; /* บังคับเว้นขอบคอนเฟิร์มสัดส่วนมือถือ */
+            padding: 16px;
             box-sizing: border-box;
         }
 
         .modal-content {
             background: var(--card-surface);
             width: 100%;
-            max-width: 480px; /* บีบหน้าต่างให้กว้างพอดีกับขนาดหน้าจอมือถือมาตรฐานทั่วไป */
+            max-width: 460px; 
             border-radius: 12px;
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            max-height: 90vh; /* ไม่ให้สูงเกินหน้าจอมือถือ */
+            max-height: 85vh;
         }
 
         .modal-header {
@@ -307,10 +399,9 @@
 
         .modal-body {
             padding: 16px;
-            overflow-y: auto; /* เพิ่ม Scrollbar ถ้ารายการยาวในมือถือ */
+            overflow-y: auto;
         }
 
-        /* ตารางแบบยืดหยุ่นรองรับจอมือถือ */
         .mobile-friendly-table {
             width: 100%;
             border-collapse: collapse;
@@ -328,7 +419,7 @@
         .mobile-friendly-table td {
             padding: 10px;
             border-bottom: 1px solid #edf2f7;
-            word-break: break-all; /* ป้องกันข้อความล้นแถวบนมือถือ */
+            word-break: break-all;
         }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -340,7 +431,7 @@
 <div class="top-navbar">
     <div class="brand-logo">
         <h1>ระบบสร้างคิวอาร์โค้ดชำระเงิน</h1>
-        <p>Official Digital Invoice Gateway</p>
+        <p>Official Digital Receipt Gateway</p>
     </div>
     <button type="button" class="btn-admin-nav" onclick="requestAdminAuth()">🔒 ระบบแอดมิน</button>
 </div>
@@ -348,7 +439,7 @@
 <div class="main-content">
     <div class="gateway-container">
         
-        <!-- ฟอร์มกรอกข้อมูลหน้ากระดานแบบเพิ่มชื่อผู้โอน -->
+        <!-- ฟอร์มกรอกข้อมูลหน้ากระดาน -->
         <form id="gatewayForm" onsubmit="executePaymentPipeline(event)">
             <div class="form-grid-row">
                 <div class="input-wrapper">
@@ -383,50 +474,75 @@
             </div>
         </form>
 
-        <!-- พรีเมียมโหลดเดอร์นับเปอร์เซ็นต์ทางการ -->
+        <!-- แถบรอสร้างสลิปสไตล์พรีเมียม -->
         <div id="premiumLoader" class="premium-loader">
-            <div class="spinner-box"></div>
-            <div id="loaderCounter" class="loader-counter">0%</div>
-            <div class="loader-subtitle" style="font-size:12px; color:var(--text-secondary);">กำลังออกเอกสารและเข้ารหัสคิวอาร์โค้ด...</div>
+            <div class="loader-bar-bg">
+                <div id="loaderBarFill" class="loader-bar-fill"></div>
+            </div>
+            <div class="loader-status">
+                <span>ระบบกำลังสร้างใบเสร็จรับเงินอิเล็กทรอนิกส์...</span>
+                <span id="loaderCounter" class="loader-counter">0%</span>
+            </div>
         </div>
 
-        <!-- หน้าต่างแสดงผลลัพธ์ใบแจ้งหนี้ชำระเงิน -->
+        <!-- หน้าต่างสลิปใบเสร็จ (E-Receipt Slip) -->
         <div id="invoice-zone">
-            <!-- ตัวเอกสารที่จะถูกเซฟเป็นภาพ -->
             <div class="invoice-paper" id="invoiceCaptureArea">
-                <div class="invoice-header">
-                    <h2>ใบแจ้งความจำนงชำระเงิน</h2>
-                    <p>ELECTRONIC INVOICE / DIGITAL STATEMENT</p>
+                <div class="slip-success-header">
+                    <div class="success-icon">✓</div>
+                    <h2>สร้างใบเสร็จรับเงินสำเร็จ</h2>
+                    <p>E-RECEIPT SLIP VALID DOCUMENT</p>
                 </div>
                 
-                <div class="invoice-row">
-                    <span class="label">วันที่ทำรายการ</span>
-                    <span class="value" id="invDate">-</span>
-                </div>
-                <div class="invoice-row">
-                    <span class="label">ช่องทางชำระเงิน</span>
-                    <span class="value" id="invBank">-</span>
-                </div>
-                <div class="invoice-row">
-                    <span class="label">ผู้ดำเนินการโอน</span>
-                    <span class="value" id="invSender">-</span>
+                <!-- ข้อมูลผู้โอน -->
+                <div class="transfer-party">
+                    <div class="party-dot" style="background-color: var(--accent-blue);"></div>
+                    <div class="party-info">
+                        <span class="title-label">ผู้โอนเงิน (จาก)</span>
+                        <span class="name-value" id="invSender">-</span>
+                    </div>
                 </div>
 
-                <div class="invoice-statement">
-                    ระบบได้รับข้อมูลความจำนงทางธุรกรรมเรียบร้อยแล้ว โดย 
-                    <b id="invStatementUser">-</b> ได้ชำระเงินให้กับ <b>นายนิติรัฐ</b> 
-                    เป็นจำนวนเงินสุทธิทั้งสิ้น <b id="invStatementAmount" style="color:var(--accent-blue);">-</b> บาท
+                <!-- ข้อมูลผู้รับเงินอัปเดตเป็นทางการ -->
+                <div class="transfer-party">
+                    <div class="party-dot" style="background-color: var(--success);"></div>
+                    <div class="party-info">
+                        <span class="title-label">ผู้รับเงิน (เข้า)</span>
+                        <span class="name-value" style="color: var(--primary-navy);">เนติราช นิ่มเจริญวัฒนกุล</span>
+                    </div>
                 </div>
 
+                <!-- รายละเอียดสลิปเพิ่มเติม -->
+                <div class="slip-details-box">
+                    <div class="invoice-row">
+                        <span class="label">ธนาคารต้นทาง</span>
+                        <span class="value" id="invBank">-</span>
+                    </div>
+                    <div class="invoice-row">
+                        <span class="label">วัน-เวลาที่ทำรายการ</span>
+                        <span class="value" id="invDate">-</span>
+                    </div>
+                    <div class="invoice-row">
+                        <span class="label">เลขที่อ้างอิงธุรกรรม</span>
+                        <span class="value" id="invRef" style="font-family:'Inter'; font-size:12px;">-</span>
+                    </div>
+                    
+                    <div class="amount-highlight-row">
+                        <span class="label">จำนวนเงินสุทธิ</span>
+                        <span class="value"><span id="invStatementAmount">-</span> THB</span>
+                    </div>
+                </div>
+
+                <!-- QR Code ประจำสลิปใบเสร็จ -->
                 <div class="invoice-qr-area">
                     <div id="qrcode"></div>
-                    <p style="font-size:11px; color:var(--text-secondary); margin:10px 0 0 0;">สแกนผ่านแอปพลิเคชันธนาคารเพื่อทำรายการ</p>
+                    <p style="font-size:11px; color:var(--text-secondary); margin:8px 0 0 0;">สแกนตรวจสอบความถูกต้องผ่านแอปธนาคาร</p>
                 </div>
             </div>
             
-            <!-- ปุ่มควบคุมด้านล่างเอกสาร -->
+            <!-- กลุ่มปุ่มสั่งการด้านล่างสลิป -->
             <div class="action-button-group">
-                <button type="button" class="btn-action" style="background:#475569;" onclick="downloadInvoiceImage()">💾 บันทึกใบชำระเงิน</button>
+                <button type="button" class="btn-action" style="background:#475569;" onclick="downloadInvoiceImage()">💾 บันทึกรูปภาพสลิป</button>
                 <button type="button" class="btn-action" style="background:var(--success);" onclick="returnToHomepage()">เสร็จสิ้นรายการ</button>
             </div>
         </div>
@@ -434,7 +550,7 @@
     </div>
 </div>
 
-<!-- หน้าต่างข้อมูลแอดมิน สัดส่วนพอดีหน้าจอมือถืออัตโนมัติ -->
+<!-- หน้าต่างข้อมูลแอดมินพอดีจอมือถือ -->
 <div id="adminModal" class="admin-modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -451,7 +567,7 @@
                     </tr>
                 </thead>
                 <tbody id="databaseTableBody">
-                    <!-- ข้อมูลแสดงตรงนี้ -->
+                    <!-- ข้อมูลดึงมาแสดง -->
                 </tbody>
             </table>
         </div>
@@ -465,29 +581,31 @@
         localStorage.setItem('admin_db_store', JSON.stringify([]));
     }
 
-    // ฟังก์ชันจัดการท่อส่งข้อมูลโหลดนับเลข 1-100%
+    // ฟังก์ชันรันแถบโหลดความคืบหน้าแบบเนียนๆ
     function executePaymentPipeline(e) {
         e.preventDefault();
 
         document.getElementById('gatewayForm').style.display = 'none';
         document.getElementById('premiumLoader').style.display = 'block';
 
+        let barFill = document.getElementById('loaderBarFill');
         let counterText = document.getElementById('loaderCounter');
         let currentCount = 0;
         let limit = 100;
 
         let trackingInterval = setInterval(() => {
             currentCount++;
+            barFill.style.width = currentCount + '%';
             counterText.textContent = currentCount + '%';
 
             if(currentCount >= limit) {
                 clearInterval(trackingInterval);
                 buildInvoiceDocument();
             }
-        }, 12); 
+        }, 15); 
     }
 
-    // ฟังก์ชันสร้างเอกสารใบแจ้งชำระและผูก QR Code
+    // ฟังก์ชันสร้างโครงสร้างสลิปใบเสร็จรับเงิน
     function buildInvoiceDocument() {
         document.getElementById('premiumLoader').style.display = 'none';
         document.getElementById('invoice-zone').style.display = 'block';
@@ -497,40 +615,43 @@
         const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
         const phone = document.getElementById('phone').value;
         const timestamp = new Date().toLocaleString('th-TH');
+        
+        // สร้างเลขอ้างอิงจำลองสไตล์สลิปธนาคารจริง
+        const randomRef = "TXN" + Math.floor(Math.random() * 900000000 + 100000000);
 
-        // แสดงค่าในใบแจ้งหนี้
+        // ฝังข้อมูลลงฟิลด์ต่างๆ บนสลิป
         document.getElementById('invDate').textContent = timestamp;
         document.getElementById('invBank').textContent = bank;
         document.getElementById('invSender').textContent = sender;
-        document.getElementById('invStatementUser').textContent = sender;
         document.getElementById('invStatementAmount').textContent = amount;
+        document.getElementById('invRef').textContent = randomRef;
 
-        // บันทึกลงฐานข้อมูลจำลองของแอดมิน
+        // ส่งบันทึกเข้าฐานข้อมูล Database แอดมินจำลอง หลังบ้าน
         let dbStore = JSON.parse(localStorage.getItem('admin_db_store')) || [];
         dbStore.unshift({ timestamp, sender, bank, amount, phone });
         localStorage.setItem('admin_db_store', JSON.stringify(dbStore));
 
-        // เคลียร์และสร้าง QR Code ใหม่
+        // ล้างแล้วสร้าง QR Code ชำระเงินปลายทางใส่ไว้ล่างสลิป
         document.getElementById('qrcode').innerHTML = "";
         const qrRawPayload = generatePromptPayPayload(promptpayNumber, amount);
 
         new QRCode(document.getElementById("qrcode"), {
             text: qrRawPayload,
-            width: 160,
-            height: 160,
+            width: 150,
+            height: 150,
             colorDark : "#0f172a",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.M
         });
     }
 
-    // ฟังก์ชันดาวน์โหลดภาพใบชำระเงินด้วย html2canvas รองรับบนอุปกรณ์พกพา
+    // ดาวน์โหลดสลิปเป็นภาพ PNG ลงมือถือ/คอมพิวเตอร์
     function downloadInvoiceImage() {
         const targetArea = document.getElementById('invoiceCaptureArea');
         html2canvas(targetArea, { scale: 2 }).then(canvas => {
             const imageLink = document.createElement('a');
             imageLink.href = canvas.toDataURL('image/png');
-            imageLink.download = 'Invoice_' + new Date().getTime() + '.png';
+            imageLink.download = 'ReceiptSlip_' + new Date().getTime() + '.png';
             imageLink.click();
         });
     }
@@ -539,13 +660,13 @@
         location.reload(); 
     }
 
-    // ระบบล็อกอินตรวจสอบแอดมิน
+    // ระบบยืนยันรหัสเข้าดูหลังบ้าน
     function requestAdminAuth() {
         const accessKey = prompt("🔐 SECURITY CHECK: กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin Access Key):");
         if (accessKey === "1323") {
             openAdminPanel();
         } else if (accessKey !== null) {
-            alert("❌ ปฏิเสธการเข้าถึง: รหัสผ่านไม่ถูกต้อง");
+            alert("❌ ปฏิเสธการเข้าถึง: รหัสผ่านเข้าสู่ระบบไม่ถูกต้อง");
         }
     }
 
@@ -576,7 +697,7 @@
         document.getElementById('adminModal').style.display = 'none';
     }
 
-    // ฟังก์ชันสร้างสายอักขระพร้อมเพย์มาตรฐาน EMVCo
+    // ฟังก์ชันคำนวณมาตรฐานพร้อมเพย์ EMVCo
     function generatePromptPayPayload(target, amount) {
         target = target.replace(/[- ]/g, "");
         if (target.length === 10 && target.startsWith("0")) {
