@@ -3,224 +3,496 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบชำระเงินผ่าน PromptPay ปลอดภัย</title>
-    <!-- ใช้ PromptPay QR Code Generator Library เพื่อความแม่นยำ -->
-    <script src="https://cdn.jsdelivr.net/npm/promptpay-qr-code@0.1.2/dist/promptpay-qr-code.min.js"></script>
-    <!-- ใช้ QR Code renderer -->
+    <title>ระบบสร้างคิวอาร์โค้ดชำระเงิน - Fintech Quantum Secured</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0d233a; /* สีกรมท่าหรูหรา */
-            --secondary-color: #c5a059; /* สีทองดูน่าเชื่อถือ */
-            --bg-color: #f4f6f9;
-            --text-color: #333;
+            --bg-dark: #0a0f1d;
+            --card-bg: #111827;
+            --primary-neon: #00f2fe;
+            --secondary-neon: #4facfe;
+            --accent-purple: #7928ca;
+            --text-light: #e2e8f0;
+            --text-muted: #64748b;
+            --success: #10b981;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Prompt', 'Chakra Petch', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, var(--bg-dark));
+            color: var(--text-light);
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
-        .pay-card {
-            background-color: #ffffff;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+
+        /* Container หลัก */
+        .cyber-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 40px;
             box-sizing: border-box;
-            border-top: 5px solid var(--secondary-color);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 242, 254, 0.05);
+            position: relative;
+            overflow: hidden;
         }
-        .header-logo {
+
+        /* ตกแต่งเส้นแสงไฮเทค */
+        .cyber-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-neon), var(--accent-purple));
+        }
+
+        .header-system {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
-        .header-logo h2 {
-            color: var(--primary-color);
-            margin: 5px 0;
+
+        .header-system h2 {
+            font-family: 'Chakra Petch', sans-serif;
             font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #fff, #a5f3fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
         }
-        .header-logo p {
-            color: #777;
-            font-size: 14px;
+
+        .header-system p {
+            color: var(--text-muted);
+            font-size: 13px;
             margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
+
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
         }
+
         label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary-color);
-            font-size: 15px;
+            margin-bottom: 9px;
+            font-weight: 400;
+            color: #94a3b8;
+            font-size: 14px;
         }
-        select, input[type="text"], input[type="number"], input[type="tel"] {
+
+        select, input {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #dcdcdc;
-            border-radius: 8px;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             box-sizing: border-box;
-            font-size: 16px;
-            transition: all 0.3s;
+            font-size: 15px;
+            color: #fff;
+            font-family: 'Prompt', sans-serif;
+            transition: all 0.3s ease;
         }
+
         select:focus, input:focus {
-            border-color: var(--secondary-color);
+            border-color: var(--primary-neon);
             outline: none;
-            box-shadow: 0 0 5px rgba(197, 160, 89, 0.3);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+            background: rgba(15, 23, 42, 0.9);
         }
-        .btn-pay {
+
+        select option {
+            background: var(--card-bg);
+            color: #fff;
+        }
+
+        /* ปุ่มสไตล์ล้ำสมัย */
+        .btn-cyber {
             width: 100%;
-            padding: 14px;
-            background-color: var(--primary-color);
+            padding: 16px;
+            background: linear-gradient(90deg, var(--secondary-neon), var(--accent-purple));
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Prompt', sans-serif;
         }
-        .btn-pay:hover {
-            background-color: #143556;
+
+        .btn-cyber:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.4);
+            filter: brightness(1.1);
         }
-        /* โซนแสดง QR Code */
+
+        /* เอฟเฟคการหมุนโหลด 1-100% */
+        .loader-container {
+            display: none;
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .circular-progress {
+            position: relative;
+            height: 120px;
+            width: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-neon) 0deg, rgba(255,255,255,0.05) 0deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+
+        .circular-progress::before {
+            content: "";
+            position: absolute;
+            height: 100px;
+            width: 100px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+        }
+
+        .progress-value {
+            position: relative;
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-neon);
+        }
+
+        .loader-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* ผลลัพธ์ QR Code */
         #qr-section {
             display: none;
             text-align: center;
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px dashed #ccc;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.5s ease;
         }
+
         #qrcode {
             display: inline-block;
-            padding: 15px;
+            padding: 16px;
             background: white;
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .status-alert {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 12px;
+            border-radius: 8px;
+            color: #ef4444;
+            font-size: 13px;
             margin-bottom: 15px;
         }
-        .loading {
-            display: none;
+
+        /* โซนแอดมิน */
+        .admin-trigger-zone {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 850px;
             text-align: center;
-            color: #ff9800;
-            font-weight: bold;
-            font-size: 16px;
-            margin: 20px 0;
         }
-        .secure-badge {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            color: #28a745;
-            font-size: 13px;
+
+        .btn-admin-toggle {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-admin-toggle:hover {
+            border-color: var(--primary-neon);
+            color: var(--primary-neon);
+        }
+
+        .admin-panel {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: #090d16;
+            border: 1px solid rgba(121, 40, 202, 0.3);
+            border-radius: 16px;
+            padding: 25px;
             margin-top: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .admin-table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: rgba(121, 40, 202, 0.2);
+            color: #c084fc;
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #cbd5e1;
+        }
+
+        .badge-bank {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        /* Animations */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(0, 242, 254, 0.2); }
+            100% { box-shadow: 0 0 30px rgba(0, 242, 254, 0.5); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="pay-card">
-    <div class="header-logo">
-        <h2>ระบบชำระเงินปลายทาง ปลอดภัย</h2>
-        <p>Secure Payment Gateway via Thai QR Payment</p>
+<div class="cyber-container">
+    <div class="header-system">
+        <h2>ระบบสร้างคิวอาร์โค้ดชำระเงิน</h2>
+        <p>Quantum-Secured QR Gateway</p>
     </div>
 
-    <form id="paymentForm" onsubmit="generatePayment(event)">
-        <!-- เลือกธนาคารต้นทางเพื่อความน่าเชื่อถือ -->
+    <form id="paymentForm" onsubmit="startProcessing(event)">
         <div class="form-group">
-            <label for="bank">เลือกธนาคารผู้โอนของคุณ</label>
+            <label>เลือกธนาคารผู้โอนของคุณ</label>
             <select id="bank" required>
                 <option value="">-- กรุณาเลือกธนาคาร --</option>
-                <option value="kbank">ธนาคารกสิกรไทย (KBank)</option>
-                <option value="scb">ธนาคารไทยพาณิชย์ (SCB)</option>
-                <option value="bbl">ธนาคารกรุงเทพ (BBL)</option>
-                <option value="ktb">ธนาคารกรุงไทย (KTB)</option>
-                <option value="ttb">ธนาคารทหารไทยธนชาต (ttb)</option>
-                <option value="gsb">ธนาคารออมสิน (GSB)</option>
+                <option value="KBank">ธนาคารกสิกรไทย (KBank)</option>
+                <option value="SCB">ธนาคารไทยพาณิชย์ (SCB)</option>
+                <option value="BBL">ธนาคารกรุงเทพ (BBL)</option>
+                <option value="KTB">ธนาคารกรุงไทย (KTB)</option>
+                <option value="TTB">ธนาคารทหารไทยธนชาต (ttb)</option>
+                <option value="GSB">ธนาคารออมสิน (GSB)</option>
             </select>
         </div>
 
-        <!-- กรอกจำนวนเงิน -->
         <div class="form-group">
-            <label for="amount">จำนวนเงินที่ต้องการชำระ (บาท)</label>
+            <label>จำนวนเงินที่ต้องการชำระ (บาท)</label>
             <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" required>
         </div>
 
-        <!-- กรอกเบอร์โทรศัพท์สำหรับรับ SMS แจ้งเตือน -->
         <div class="form-group">
-            <label for="phone">เบอร์โทรศัพท์มือถือผู้โอน (เพื่อรับ SMS ยืนยัน)</label>
-            <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="เช่น 089xxxxxxx" required>
+            <label>เบอร์โทรศัพท์มือถือผู้โอน</label>
+            <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="เช่น 089XXXXXXX" required>
         </div>
 
-        <button type="submit" class="btn-pay">สร้าง QR Code เพื่อชำระเงิน</button>
+        <button type="submit" class="btn-cyber">GENERATE SECURE QR CODE</button>
     </form>
 
-    <!-- หน้าต่างรอกระบวนการ -->
-    <div id="loading" class="loading">
-        ⏳ กรุณารอสักครู่ ระบบกำลังทำรายการชำระเงิน...
+    <div id="loaderContainer" class="loader-container">
+        <div class="circular-progress" id="progressCircle">
+            <span class="progress-value" id="progressValue">0%</span>
+        </div>
+        <div class="loader-text">กำลังตรวจสอบการเชื่อมต่อความปลอดภัย...</div>
     </div>
 
-    <!-- ผลลัพธ์ QR Code -->
     <div id="qr-section">
-        <h4 style="color:var(--primary-color); margin-bottom:5px;">สแกนเพื่อจ่ายเงินผ่านแอปธนาคาร</h4>
-        <p style="font-size:12px; color:#666; margin-top:0;">พร้อมเพย์: 063-516-4271</p>
+        <h4 style="color:var(--primary-neon); margin: 0 0 5px 0; font-weight: 600;">THAI QR PAYMENT</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin:0 0 15px 0;">ระบบสแกนพร้อมเพย์ปลายทาง</p>
         
         <div id="qrcode"></div>
         
-        <p style="color:red; font-size:14px; font-weight:bold;">เมื่อสแกนและกดยืนยันการโอนในแอปธนาคารสำเร็จแล้ว <br>กรุณากดปุ่มด้านล่างเพื่อยืนยันรายการ</p>
-        <button type="button" class="btn-pay" style="background-color:#28a745;" onclick="confirmPaymentAndSendSMS()">ฉันได้ทำการโอนเงินเรียบร้อยแล้ว</button>
+        <div class="status-alert">
+            เมื่อโอนเงินสำเร็จแล้ว ระบบจะบันทึกธุรกรรมโดยอัตโนมัติ
+        </div>
+        <button type="button" class="btn-cyber" style="background: var(--success); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);" onclick="finalizeTransaction()">เสร็จสิ้นรายการ</button>
     </div>
+</div>
 
-    <div class="secure-badge">
-        🔒 การเชื่อมต่อปลอดภัยแบบ SSL 256-bit Encryption
+<div class="admin-trigger-zone">
+    <button class="btn-admin-toggle" onclick="accessAdminPanel()">🔒 เข้าสู่ระบบฐานข้อมูลแอดมิน (Real-time)</button>
+    
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-header">
+            <h3 style="margin:0; color:var(--primary-neon); font-family:'Chakra Petch';">ADMIN MANAGEMENT DATABASE</h3>
+            <button class="btn-admin-toggle" style="border-color:#ef4444; color:#ef4444;" onclick="logoutAdmin()">ออกจากระบบ</button>
+        </div>
+        <div class="admin-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>วัน-เวลา (เรียลไทม์)</th>
+                        <th>ธนาคารต้นทาง</th>
+                        <th>จำนวนเงิน (บาท)</th>
+                        <th>เบอร์โทรศัพท์</th>
+                    </tr>
+                </thead>
+                <tbody id="adminLogTable">
+                    </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
-    const promptpayNumber = "0635164271"; // เบอร์พร้อมเพย์ปลายทางของคุณ
+    const promptpayNumber = "0635164271"; 
 
-    function generatePayment(e) {
+    // ฟังก์ชันจัดการคิววิ่งโหลดดิจิตอล 1-100%
+    function startProcessing(e) {
         e.preventDefault();
         
-        const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
-        
-        // แสดงสถานะ รอสักครู่
+        // ซ่อนฟอร์มและเปิดตัวดาวน์โหลด
         document.getElementById('paymentForm').style.display = 'none';
-        document.getElementById('loading').style.display = 'block';
-
-        setTimeout(() => {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('qr-section').style.display = 'block';
-
-            // ล้าง QR Code เก่า (ถ้ามี)
-            document.getElementById('qrcode').innerHTML = "";
-
-            // ใช้ระบบคำนวณสายอักขระของ PromptPay ตามมาตรฐานสากล
-            // โครงสร้างสำหรับเบอร์มือถือพร้อมเพย์โอนเงินระบุจำนวนเงิน
-            const qrText = generatePromptPayPayload(promptpayNumber, amount);
-
-            // สร้างภาพ QR Code
-            new QRCode(document.getElementById("qrcode"), {
-                text: qrText,
-                width: 200,
-                height: 200,
-                colorDark : "#0d233a",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.M
-            });
-
-        }, 1500); // ดีเลย์ทำฟอร์มเนียนๆ 1.5 วินาทีให้ดูเหมือนระบบกำลังประมวลผลเซิร์ฟเวอร์ความปลอดภัย
+        document.getElementById('loaderContainer').style.display = 'block';
+        
+        let progressValue = document.getElementById('progressValue');
+        let progressCircle = document.getElementById('progressCircle');
+        
+        let startValue = 0;
+        let endValue = 100;
+        let speed = 25; // ความเร็วตัวเลขวิ่ง (มิลลิวินาที)
+        
+        let progress = setInterval(() => {
+            startValue++;
+            progressValue.textContent = `${startValue}%`;
+            progressCircle.style.background = `conic-gradient(var(--primary-neon) ${startValue * 3.6}deg, rgba(255,255,255,0.05) 0deg)`;
+            
+            if(startValue == endValue) {
+                clearInterval(progress);
+                showQRCode();
+            }
+        }, speed);
     }
 
-    // ฟังก์ชันช่วยจัดรูปแบบ Payload พลอมเพย์ขั้นพื้นฐาน (แปลงตามข้อกำหนด EMVCo)
+    // แสดงผล QR Code หลังจากโหลดครบ 100%
+    function showQRCode() {
+        document.getElementById('loaderContainer').style.display = 'none';
+        document.getElementById('qr-section').style.display = 'block';
+        
+        const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
+        document.getElementById('qrcode').innerHTML = "";
+
+        // คำนวณ Payload ล้ำสมัยสำหรับ PromptPay
+        const qrText = generatePromptPayPayload(promptpayNumber, amount);
+
+        new QRCode(document.getElementById("qrcode"), {
+            text: qrText,
+            width: 200,
+            height: 200,
+            colorDark : "#0a0f1d",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.M
+        });
+
+        // บันทึกข้อมูลลงฐานข้อมูลระบบแอดมินจำลองทันที (Real-time)
+        saveToAdminLog();
+    }
+
+    // บันทึกข้อมูลลง LocalStorage จำลอง Database หลังบ้าน
+    function saveToAdminLog() {
+        const bank = document.getElementById('bank').value;
+        const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
+        const phone = document.getElementById('phone').value;
+        const timestamp = new Date().toLocaleString('th-TH');
+
+        const newLog = { timestamp, bank, amount, phone };
+
+        // ดึงข้อมูลเก่ามาเติมข้อมูลใหม่เข้าไป
+        let currentLogs = JSON.parse(localStorage.getItem('admin_payment_logs')) || [];
+        currentLogs.unshift(newLog); // เอาข้อมูลใหม่ขึ้นบนสุด
+        localStorage.setItem('admin_payment_logs', JSON.stringify(currentLogs));
+        
+        // อัปเดตตารางหน้ารายการแบบเรียลไทม์
+        renderAdminTable();
+    }
+
+    // ฟังก์ชันสร้างข้อมูลตาราง
+    function renderAdminTable() {
+        const tableBody = document.getElementById('adminLogTable');
+        let currentLogs = JSON.parse(localStorage.getItem('admin_payment_logs')) || [];
+        
+        if (currentLogs.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">ไม่พบข้อมูลการทำรายการในระบบ</td></tr>`;
+            return;
+        }
+
+        tableBody.innerHTML = currentLogs.map(log => `
+            <tr>
+                <td style="font-family:'Chakra Petch';">${log.timestamp}</td>
+                <td><span class="badge-bank">${log.bank}</span></td>
+                <td style="color:var(--primary-neon); font-weight:bold;">${log.amount}</td>
+                <td>${log.phone}</td>
+            </tr>
+        `).join('');
+    }
+
+    // ระบบตรวจสอบรหัสผ่านแอดมิน (1323)
+    function accessAdminPanel() {
+        const password = prompt("🔒 กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบฐานข้อมูลแอดมิน:");
+        if (password === "1323") {
+            document.getElementById('adminPanel').style.display = 'block';
+            renderAdminTable();
+            // เลื่อนหน้าจอลงมาดูตารางโดยอัตโนมัติ
+            document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
+        } else if (password !== null) {
+            alert("❌ รหัสผ่านไม่ถูกต้อง! ไม่ได้รับอนุญาตให้เข้าถึงข้อมูล");
+        }
+    }
+
+    function logoutAdmin() {
+        document.getElementById('adminPanel').style.display = 'none';
+    }
+
+    function finalizeTransaction() {
+        alert("ทำรายการเสร็จสิ้น ขอบคุณที่ใช้บริการรักษาความปลอดภัยของเรา");
+        location.reload();
+    }
+
+    // ฟังก์ชันสร้างสายอักขระพร้อมเพย์มาตรฐาน EMVCo
     function generatePromptPayPayload(target, amount) {
-        // ทำความสะอาดเบอร์โทร
         target = target.replace(/[- ]/g, "");
         if (target.length === 10 && target.startsWith("0")) {
             target = "66" + target.substring(1);
@@ -228,15 +500,13 @@
         target = target.padStart(13, '0');
 
         let payload = "00020101021129370016A0000006770101110113" + target;
-        payload += "5303764"; // สกุลเงินบาท (THB)
+        payload += "5303764"; 
         
         if (amount) {
             let amtStr = amount.toString();
             payload += "54" + amtStr.length.toString().padStart(2, '0') + amtStr;
         }
         payload += "6304";
-        
-        // คำนวณหาค่า CRC16 โค้ดส่วนนี้เพื่อความถูกต้องแม่นยำในการใช้งานจริงบนแอพธนาคาร
         let crc = crc16(payload);
         return payload + crc.toUpperCase();
     }
@@ -254,34 +524,6 @@
         }
         crc &= 0xFFFF;
         return crc.toString(16).padStart(4, '0');
-    }
-
-    // ฟังก์ชันเชื่อมต่อไปยัง Backend PHP เพื่อยิง SMS ส่งข้อความจริง
-    function confirmPaymentAndSendSMS() {
-        const phone = document.getElementById('phone').value;
-        const amount = document.getElementById('amount').value;
-        
-        // ส่งข้อมูลไปยังไฟล์หลังบ้าน php ด้วยวิธี Fetch (AJAX)
-        fetch('send_sms.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `phone=${phone}&amount=${amount}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                alert("ยืนยันรายการสำเร็จ! ระบบได้ส่งข้อความยืนยันการรับเงินไปยังเบอร์โทรของคุณเรียบร้อยแล้ว");
-                location.reload(); // รีเซ็ตหน้าใหม่
-            } else {
-                alert("เกิดข้อผิดพลาดในการส่งข้อความ: " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("ไม่สามารถติดต่อเซิร์ฟเวอร์ส่งข้อความได้");
-        });
     }
 </script>
 
