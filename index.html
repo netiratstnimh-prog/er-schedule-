@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสร้างคิวอาร์โค้ดชำระเงิน - Enterprise Payment Gateway</title>
-    <!-- QR Code Generator Library -->
+    <title>ระบบสร้างคิวอาร์โค้ดชำระเงิน - Digital Invoice Gateway</title>
+    <!-- Libraries ที่จำเป็นสำหรับระบบมืออาชีพ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,20 +33,15 @@
             align-items: center;
         }
 
-        /* แถบด้านบนระดับสากล (Top Navigation Bar) */
+        /* แถบเมนูด้านบน */
         .top-navbar {
             width: 100%;
             max-width: 1200px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
+            padding: 20px 24px;
             box-sizing: border-box;
-        }
-
-        .brand-logo {
-            display: flex;
-            flex-direction: column;
         }
 
         .brand-logo h1 {
@@ -53,7 +49,6 @@
             font-weight: 700;
             color: var(--primary-navy);
             margin: 0;
-            letter-spacing: -0.5px;
         }
 
         .brand-logo p {
@@ -67,16 +62,13 @@
         .btn-admin-nav {
             background: transparent;
             border: 1px solid var(--border-subtle);
-            padding: 8px 18px;
+            padding: 8px 16px;
             border-radius: 6px;
             font-size: 13px;
             font-weight: 500;
             color: var(--text-primary);
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            transition: all 0.2s;
         }
 
         .btn-admin-nav:hover {
@@ -84,34 +76,34 @@
             background-color: rgba(15, 23, 42, 0.04);
         }
 
-        /* พื้นที่แสดงผลส่วนกลาง */
+        /* คอนเทนเนอร์หลัก */
         .main-content {
             width: 100%;
-            max-width: 1120px;
-            padding: 0 40px;
+            max-width: 1200px;
+            padding: 0 24px;
             box-sizing: border-box;
-            margin-top: 40px;
+            margin-top: 20px;
         }
 
         .gateway-container {
             background: var(--card-surface);
             border-radius: 12px;
-            padding: 40px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05), 0 4px 15px -3px rgba(0,0,0,0.03);
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px -3px rgba(0,0,0,0.03);
         }
 
-        /* จัดแถวหน้ากระดานแบบทางการ (Row Matrix Layout) */
+        /* จัดแถวหน้ากระดาน (Responsive Grid สำหรับ 4 คอลัมน์) */
         .form-grid-row {
             display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr 1fr; /* แบ่ง 4 ส่วนเท่ากันสำหรับปุ่มกดด้วย */
-            gap: 16px;
-            align-items: flex-end; /* ให้ปุ่มเสมอกับช่องกรอก */
+            grid-template-columns: 1.2fr 1.2fr 1fr 1fr 0.8fr; 
+            gap: 12px;
+            align-items: flex-end;
         }
 
         @media (max-width: 992px) {
             .form-grid-row {
-                grid-template-columns: 1fr; /* ยุบลงมาถ้ารันบนจอเล็ก */
+                grid-template-columns: 1fr; /* ยุบเป็นแนวตั้งอัตโนมัติบนจอมือถือ */
             }
         }
 
@@ -124,12 +116,12 @@
             font-size: 13px;
             font-weight: 600;
             color: var(--primary-navy);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         select, input {
             width: 100%;
-            padding: 12px 14px;
+            padding: 10px 12px;
             background: #ffffff;
             border: 1px solid var(--border-subtle);
             border-radius: 6px;
@@ -137,7 +129,6 @@
             font-size: 14px;
             color: var(--text-primary);
             font-family: 'Sarabun', sans-serif;
-            transition: all 0.15s ease;
         }
 
         select:focus, input:focus {
@@ -148,7 +139,7 @@
 
         .btn-action {
             width: 100%;
-            padding: 13px;
+            padding: 11px;
             background: var(--primary-navy);
             color: #ffffff;
             border: none;
@@ -156,7 +147,6 @@
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.15s;
             font-family: 'Sarabun', sans-serif;
         }
 
@@ -164,7 +154,7 @@
             background: #1e293b;
         }
 
-        /* พรีเมียม อนิเมชัน โหลด 1-100% */
+        /* พรีเมียมโหลดเดอร์ */
         .premium-loader {
             display: none;
             text-align: center;
@@ -172,10 +162,9 @@
         }
 
         .spinner-box {
-            position: relative;
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 20px auto;
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 15px auto;
             border: 3px solid rgba(15, 23, 42, 0.05);
             border-top: 3px solid var(--accent-blue);
             border-radius: 50%;
@@ -184,47 +173,98 @@
 
         .loader-counter {
             font-family: 'Inter', sans-serif;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 600;
-            color: var(--primary-navy);
-            margin-bottom: 6px;
         }
 
-        .loader-subtitle {
-            font-size: 13px;
+        /* โครงสร้างใบแจ้งชำระเงิน (Official Invoice Document) */
+        #invoice-zone {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .invoice-paper {
+            background: #ffffff;
+            max-width: 500px;
+            margin: 0 auto 25px auto;
+            padding: 35px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            text-align: left;
+            position: relative;
+        }
+
+        .invoice-header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-navy);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .invoice-header h2 {
+            margin: 0;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            color: var(--primary-navy);
+        }
+
+        .invoice-header p {
+            margin: 5px 0 0 0;
+            font-size: 11px;
             color: var(--text-secondary);
         }
 
-        /* บล็อกแสดงคิวอาร์โค้ด */
-        #qr-output-zone {
-            display: none;
+        .invoice-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .invoice-row .label {
+            color: var(--text-secondary);
+        }
+
+        .invoice-row .value {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .invoice-statement {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            line-height: 1.6;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .invoice-qr-area {
             text-align: center;
-            padding: 30px 0 10px 0;
-            animation: fadeIn 0.4s ease-out;
+            margin-top: 20px;
         }
 
         #qrcode {
             display: inline-block;
-            padding: 16px;
+            padding: 10px;
             background: #ffffff;
             border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 20px;
         }
 
-        .status-badge {
-            display: inline-block;
-            background: #f0fdf4;
-            color: #166534;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 25px;
-            border: 1px solid #bbf7d0;
+        .action-button-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        /* หน้าต่างความปลอดภัยของแอดมิน (Admin Modal Window) */
+        /* ระบบแอดมินหน้าต่างสี่เหลี่ยมพอดีจอมือถืออัตโนมัติ */
         .admin-modal {
             display: none;
             position: fixed;
@@ -234,20 +274,24 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            padding: 16px; /* บังคับเว้นขอบคอนเฟิร์มสัดส่วนมือถือ */
+            box-sizing: border-box;
         }
 
         .modal-content {
             background: var(--card-surface);
             width: 100%;
-            max-width: 800px;
+            max-width: 480px; /* บีบหน้าต่างให้กว้างพอดีกับขนาดหน้าจอมือถือมาตรฐานทั่วไป */
             border-radius: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
             overflow: hidden;
-            animation: modalSlide 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh; /* ไม่ให้สูงเกินหน้าจอมือถือ */
         }
 
         .modal-header {
-            padding: 20px 30px;
+            padding: 16px;
             background: #f8fafc;
             border-bottom: 1px solid var(--border-subtle);
             display: flex;
@@ -257,140 +301,157 @@
 
         .modal-header h3 {
             margin: 0;
-            font-size: 16px;
+            font-size: 15px;
             color: var(--primary-navy);
-        }
-
-        .btn-close-modal {
-            background: transparent;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: var(--text-secondary);
         }
 
         .modal-body {
-            padding: 30px;
-            max-height: 455px;
-            overflow-y: auto;
+            padding: 16px;
+            overflow-y: auto; /* เพิ่ม Scrollbar ถ้ารายการยาวในมือถือ */
         }
 
-        /* ตารางสไตล์งานราชการและธนาคาร (Corporate Table) */
-        .corporate-table {
+        /* ตารางแบบยืดหยุ่นรองรับจอมือถือ */
+        .mobile-friendly-table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
-            font-size: 13.5px;
+            font-size: 12px;
         }
 
-        .corporate-table th {
+        .mobile-friendly-table th {
             background: #f1f5f9;
-            color: var(--primary-navy);
-            padding: 12px 16px;
+            padding: 10px;
             font-weight: 600;
+            text-align: left;
             border-bottom: 2px solid var(--border-subtle);
         }
 
-        .corporate-table td {
-            padding: 14px 16px;
+        .mobile-friendly-table td {
+            padding: 10px;
             border-bottom: 1px solid #edf2f7;
-            color: #334155;
+            word-break: break-all; /* ป้องกันข้อความล้นแถวบนมือถือ */
         }
 
-        /* Keyframes */
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes modalSlide { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
-<!-- แถบด้านบนเมนูแอดมิน -->
 <div class="top-navbar">
     <div class="brand-logo">
         <h1>ระบบสร้างคิวอาร์โค้ดชำระเงิน</h1>
-        <p>INTEGRATED OFFICIAL QR GATEWAY</p>
+        <p>Official Digital Invoice Gateway</p>
     </div>
-    <button type="button" class="btn-admin-nav" onclick="requestAdminAuth()">
-        🔒 ระบบแอดมิน (ผู้ดูแลระบบ)
-    </button>
+    <button type="button" class="btn-admin-nav" onclick="requestAdminAuth()">🔒 ระบบแอดมิน</button>
 </div>
 
 <div class="main-content">
     <div class="gateway-container">
         
-        <!-- ฟอร์มเรียงแถวหน้ากระดานระดับพรีเมียม -->
+        <!-- ฟอร์มกรอกข้อมูลหน้ากระดานแบบเพิ่มชื่อผู้โอน -->
         <form id="gatewayForm" onsubmit="executePaymentPipeline(event)">
             <div class="form-grid-row">
-                <!-- ช่องเลือกธนาคาร -->
+                <div class="input-wrapper">
+                    <label for="senderName">ชื่อ-นามสกุล ผู้โอน</label>
+                    <input type="text" id="senderName" placeholder="ระบุชื่อผู้โอน" required>
+                </div>
+
                 <div class="input-wrapper">
                     <label for="bank">ธนาคารผู้โอน</label>
                     <select id="bank" required>
-                        <option value="">-- เลือกสถาบันการเงิน --</option>
-                        <option value="ธ.กสิกรไทย (KBank)">ธนาคารกสิกรไทย (KBank)</option>
-                        <option value="ธ.ไทยพาณิชย์ (SCB)">ธนาคารไทยพาณิชย์ (SCB)</option>
-                        <option value="ธ.กรุงเทพ (BBL)">ธนาคารกรุงเทพ (BBL)</option>
-                        <option value="ธ.กรุงไทย (KTB)">ธนาคารกรุงไทย (KTB)</option>
-                        <option value="ธ.ทหารไทยธนชาต (ttb)">ธนาคารทหารไทยธนชาต (ttb)</option>
-                        <option value="ธ.ออมสิน (GSB)">ธนาคารออมสิน (GSB)</option>
+                        <option value="">-- เลือกธนาคาร --</option>
+                        <option value="ธนาคารกสิกรไทย">ธนาคารกสิกรไทย (KBank)</option>
+                        <option value="ธนาคารไทยพาณิชย์">ธนาคารไทยพาณิชย์ (SCB)</option>
+                        <option value="ธนาคารกรุงเทพ">ธนาคารกรุงเทพ (BBL)</option>
+                        <option value="ธนาคารกรุงไทย">ธนาคารกรุงไทย (KTB)</option>
+                        <option value="ธนาคารทหารไทยธนชาต">ธนาคารทหารไทยธนชาต (ttb)</option>
+                        <option value="ธนาคารออมสิน">ธนาคารออมสิน (GSB)</option>
                     </select>
                 </div>
 
-                <!-- ช่องกรอกจำนวนเงิน -->
                 <div class="input-wrapper">
-                    <label for="amount">จำนวนเงินสุทธิ (บาท)</label>
+                    <label for="amount">จำนวนเงิน (บาท)</label>
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" required>
                 </div>
 
-                <!-- ช่องกรอกเบอร์โทรศัพท์ -->
                 <div class="input-wrapper">
-                    <label for="phone">เบอร์โทรศัพท์เคลื่อนที่</label>
+                    <label for="phone">เบอร์โทรศัพท์มือถือ</label>
                     <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="089XXXXXXX" required>
                 </div>
 
-                <!-- ปุ่มส่งข้อมูลในแถวเดียวกัน -->
-                <button type="submit" class="btn-action">สร้างใบแจ้งชำระเงิน (QR)</button>
+                <button type="submit" class="btn-action">สร้างใบแจ้งชำระ</button>
             </div>
         </form>
 
-        <!-- เอฟเฟคการหมุนโหลดสไตล์พรีเมียมธนาคาร -->
+        <!-- พรีเมียมโหลดเดอร์นับเปอร์เซ็นต์ทางการ -->
         <div id="premiumLoader" class="premium-loader">
             <div class="spinner-box"></div>
             <div id="loaderCounter" class="loader-counter">0%</div>
-            <div class="loader-subtitle">กำลังจัดเตรียมโครงสร้างช่องทางชำระเงินที่ปลอดภัย...</div>
+            <div class="loader-subtitle" style="font-size:12px; color:var(--text-secondary);">กำลังออกเอกสารและเข้ารหัสคิวอาร์โค้ด...</div>
         </div>
 
-        <!-- หน้าต่างแสดงผลลัพธ์ QR Code -->
-        <div id="qr-output-zone">
-            <div id="qrcode"></div>
-            <div>
-                <span class="status-badge">ระบบดึงข้อมูลข้อมูลความปลอดภัยเรียบร้อยแล้ว</span>
+        <!-- หน้าต่างแสดงผลลัพธ์ใบแจ้งหนี้ชำระเงิน -->
+        <div id="invoice-zone">
+            <!-- ตัวเอกสารที่จะถูกเซฟเป็นภาพ -->
+            <div class="invoice-paper" id="invoiceCaptureArea">
+                <div class="invoice-header">
+                    <h2>ใบแจ้งความจำนงชำระเงิน</h2>
+                    <p>ELECTRONIC INVOICE / DIGITAL STATEMENT</p>
+                </div>
+                
+                <div class="invoice-row">
+                    <span class="label">วันที่ทำรายการ</span>
+                    <span class="value" id="invDate">-</span>
+                </div>
+                <div class="invoice-row">
+                    <span class="label">ช่องทางชำระเงิน</span>
+                    <span class="value" id="invBank">-</span>
+                </div>
+                <div class="invoice-row">
+                    <span class="label">ผู้ดำเนินการโอน</span>
+                    <span class="value" id="invSender">-</span>
+                </div>
+
+                <div class="invoice-statement">
+                    ระบบได้รับข้อมูลความจำนงทางธุรกรรมเรียบร้อยแล้ว โดย 
+                    <b id="invStatementUser">-</b> ได้ชำระเงินให้กับ <b>นายนิติรัฐ</b> 
+                    เป็นจำนวนเงินสุทธิทั้งสิ้น <b id="invStatementAmount" style="color:var(--accent-blue);">-</b> บาท
+                </div>
+
+                <div class="invoice-qr-area">
+                    <div id="qrcode"></div>
+                    <p style="font-size:11px; color:var(--text-secondary); margin:10px 0 0 0;">สแกนผ่านแอปพลิเคชันธนาคารเพื่อทำรายการ</p>
+                </div>
             </div>
-            <button type="button" class="btn-action" style="background: var(--success); max-width: 280px;" onclick="returnToHomepage()">เสร็จสิ้นรายการ</button>
+            
+            <!-- ปุ่มควบคุมด้านล่างเอกสาร -->
+            <div class="action-button-group">
+                <button type="button" class="btn-action" style="background:#475569;" onclick="downloadInvoiceImage()">💾 บันทึกใบชำระเงิน</button>
+                <button type="button" class="btn-action" style="background:var(--success);" onclick="returnToHomepage()">เสร็จสิ้นรายการ</button>
+            </div>
         </div>
 
     </div>
 </div>
 
-<!-- หน้าต่างระบบตรวจสอบข้อมูลของแอดมิน (Admin Modal Window) -->
+<!-- หน้าต่างข้อมูลแอดมิน สัดส่วนพอดีหน้าจอมือถืออัตโนมัติ -->
 <div id="adminModal" class="admin-modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>📊 รายการจัดเก็บข้อมูลผู้เข้าทำรายการหลังบ้าน (แอดมิน)</h3>
-            <button type="button" class="btn-close-modal" onclick="closeAdminPanel()">&times;</button>
+            <h3>📊 ฐานข้อมูลผู้ทำรายการ (Admin)</h3>
+            <button type="button" style="background:transparent; border:none; font-size:20px; cursor:pointer;" onclick="closeAdminPanel()">&times;</button>
         </div>
         <div class="modal-body">
-            <table class="corporate-table">
+            <table class="mobile-friendly-table">
                 <thead>
                     <tr>
-                        <th>วัน-เวลาที่บันทึก</th>
-                        <th>สถาบันการเงิน</th>
-                        <th>จำนวนเงิน (บาท)</th>
-                        <th>เบอร์โทรศัพท์ผู้โอน</th>
+                        <th>วัน-เวลา / ผู้โอน</th>
+                        <th>ธนาคาร</th>
+                        <th>ยอดเงิน</th>
                     </tr>
                 </thead>
                 <tbody id="databaseTableBody">
-                    <!-- ข้อมูลถูกจำลองบันทึกไว้จะแสดงตรงนี้ -->
+                    <!-- ข้อมูลแสดงตรงนี้ -->
                 </tbody>
             </table>
         </div>
@@ -400,12 +461,11 @@
 <script>
     const promptpayNumber = "0635164271";
 
-    // ออนโหลดเพื่อเคลียร์หรือสร้างฐานข้อมูลระบบจำลอง
     if (!localStorage.getItem('admin_db_store')) {
         localStorage.setItem('admin_db_store', JSON.stringify([]));
     }
 
-    // ฟังก์ชันจัดการท่อข้อมูลประมวลผลและการนับเลข 1-100%
+    // ฟังก์ชันจัดการท่อส่งข้อมูลโหลดนับเลข 1-100%
     function executePaymentPipeline(e) {
         e.preventDefault();
 
@@ -422,51 +482,70 @@
 
             if(currentCount >= limit) {
                 clearInterval(trackingInterval);
-                commitDataAndBuildQR();
+                buildInvoiceDocument();
             }
-        }, 15); // ความเร็วประมวลผลนิ่งๆ แบบมืออาชีพ
+        }, 12); 
     }
 
-    // บันทึกข้อมูลลง DB ลับแอดมินและรันคิวอาร์โค้ด
-    function commitDataAndBuildQR() {
+    // ฟังก์ชันสร้างเอกสารใบแจ้งชำระและผูก QR Code
+    function buildInvoiceDocument() {
         document.getElementById('premiumLoader').style.display = 'none';
-        document.getElementById('qr-output-zone').style.display = 'block';
+        document.getElementById('invoice-zone').style.display = 'block';
 
+        const sender = document.getElementById('senderName').value;
         const bank = document.getElementById('bank').value;
         const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
         const phone = document.getElementById('phone').value;
-        const currentTimestamp = new Date().toLocaleString('th-TH');
+        const timestamp = new Date().toLocaleString('th-TH');
 
-        // ทำบันทึกส่งเข้าอาเรย์ Database หลังบ้านทันทีที่ประมวลผลสำเร็จ
+        // แสดงค่าในใบแจ้งหนี้
+        document.getElementById('invDate').textContent = timestamp;
+        document.getElementById('invBank').textContent = bank;
+        document.getElementById('invSender').textContent = sender;
+        document.getElementById('invStatementUser').textContent = sender;
+        document.getElementById('invStatementAmount').textContent = amount;
+
+        // บันทึกลงฐานข้อมูลจำลองของแอดมิน
         let dbStore = JSON.parse(localStorage.getItem('admin_db_store')) || [];
-        dbStore.unshift({ currentTimestamp, bank, amount, phone });
+        dbStore.unshift({ timestamp, sender, bank, amount, phone });
         localStorage.setItem('admin_db_store', JSON.stringify(dbStore));
 
+        // เคลียร์และสร้าง QR Code ใหม่
         document.getElementById('qrcode').innerHTML = "";
         const qrRawPayload = generatePromptPayPayload(promptpayNumber, amount);
 
         new QRCode(document.getElementById("qrcode"), {
             text: qrRawPayload,
-            width: 190,
-            height: 190,
+            width: 160,
+            height: 160,
             colorDark : "#0f172a",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.M
         });
     }
 
-    // สั่งเด้งกลับหน้าโฮมเพจหลักทันทีเมื่อกดเสร็จสิ้น
+    // ฟังก์ชันดาวน์โหลดภาพใบชำระเงินด้วย html2canvas รองรับบนอุปกรณ์พกพา
+    function downloadInvoiceImage() {
+        const targetArea = document.getElementById('invoiceCaptureArea');
+        html2canvas(targetArea, { scale: 2 }).then(canvas => {
+            const imageLink = document.createElement('a');
+            imageLink.href = canvas.toDataURL('image/png');
+            imageLink.download = 'Invoice_' + new Date().getTime() + '.png';
+            imageLink.click();
+        });
+    }
+
     function returnToHomepage() {
         location.reload(); 
     }
 
-    // ฟังก์ชันความปลอดภัยเรียกดูแผงแอดมิน
+    // ระบบล็อกอินตรวจสอบแอดมิน
     function requestAdminAuth() {
         const accessKey = prompt("🔐 SECURITY CHECK: กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin Access Key):");
         if (accessKey === "1323") {
             openAdminPanel();
         } else if (accessKey !== null) {
-            alert("❌ ปฏิเสธการเข้าถึง: รหัสผ่านยืนยันตัวตนไม่ถูกต้อง");
+            alert("❌ ปฏิเสธการเข้าถึง: รหัสผ่านไม่ถูกต้อง");
         }
     }
 
@@ -475,14 +554,17 @@
         let dbStore = JSON.parse(localStorage.getItem('admin_db_store')) || [];
 
         if (dbStore.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">ไม่พบฐานข้อมูลผู้ทำธุรกรรมในระบบขณะนี้</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary); padding:20px;">ไม่พบข้อมูลธุรกรรม</td></tr>`;
         } else {
             tableBody.innerHTML = dbStore.map(data => `
                 <tr>
-                    <td style="font-family:'Inter'; font-weight:500;">${data.currentTimestamp}</td>
-                    <td><b>${data.bank}</b></td>
-                    <td style="color:var(--accent-blue); font-weight:600; font-family:'Inter';">${data.amount}</td>
-                    <td style="font-family:'Inter';">${data.phone}</td>
+                    <td>
+                        <span style="color:var(--text-secondary); font-size:10px;">${data.timestamp}</span><br>
+                        <b>${data.sender}</b><br>
+                        <span style="color:var(--text-secondary); font-size:11px;">โทร: ${data.phone}</span>
+                    </td>
+                    <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px;">${data.bank.replace("ธนาคาร", "ธ.")}</span></td>
+                    <td style="color:var(--accent-blue); font-weight:700;">${data.amount}</td>
                 </tr>
             `).join('');
         }
@@ -494,7 +576,7 @@
         document.getElementById('adminModal').style.display = 'none';
     }
 
-    // ฟังก์ชันถอดสูตรคำนวณพร้อมเพย์มาตรฐานระดับสากล EMVCo
+    // ฟังก์ชันสร้างสายอักขระพร้อมเพย์มาตรฐาน EMVCo
     function generatePromptPayPayload(target, amount) {
         target = target.replace(/[- ]/g, "");
         if (target.length === 10 && target.startsWith("0")) {
