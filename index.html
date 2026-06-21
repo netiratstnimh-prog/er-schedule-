@@ -60,21 +60,36 @@
             letter-spacing: 1.5px;
         }
 
+        /* ปุ่ม ADMIN ดีไซน์ใหม่ มินิมอล รูปหน้าคนพร้อมจุดสัญลักษณ์สีเขียว */
         .btn-admin-nav {
-            background: transparent;
+            background: #ffffff;
             border: 1px solid var(--border-subtle);
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
             color: var(--text-primary);
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .btn-admin-nav:hover {
             border-color: var(--primary-navy);
-            background-color: rgba(15, 23, 42, 0.04);
+            background-color: #f8fafc;
+        }
+
+        .status-dot-green {
+            width: 7px;
+            height: 7px;
+            background-color: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 6px var(--success);
         }
 
         /* คอนเทนเนอร์หลัก */
@@ -104,7 +119,7 @@
 
         @media (max-width: 992px) {
             .form-grid-row {
-                grid-template-columns: 1fr; /* ยุบเป็นแนวตั้งบนจอมือถือ */
+                grid-template-columns: 1fr;
             }
         }
 
@@ -356,7 +371,7 @@
             margin: 0 auto;
         }
 
-        /* ระบบแอดมินหน้าต่างสี่เหลี่ยมพอดีจอมือถืออัตโนมัติ */
+        /* แผงแอดมินโมดอล */
         .admin-modal {
             display: none;
             position: fixed;
@@ -422,7 +437,6 @@
             word-break: break-all;
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -433,7 +447,10 @@
         <h1>ระบบสร้างคิวอาร์โค้ดชำระเงิน</h1>
         <p>Official Digital Receipt Gateway</p>
     </div>
-    <button type="button" class="btn-admin-nav" onclick="requestAdminAuth()">🔒 ระบบแอดมิน</button>
+    <!-- ปุ่มแอดมินรูปหน้าคนแบบภาษาอังกฤษ มินิมอล พร้อมสัญลักษณ์วงกลมสีเขียว -->
+    <button type="button" class="btn-admin-nav" onclick="requestAdminAuth()">
+        👤 ADMIN <span class="status-dot-green"></span>
+    </button>
 </div>
 
 <div class="main-content">
@@ -474,7 +491,7 @@
             </div>
         </form>
 
-        <!-- แถบรอสร้างสลิปสไตล์พรีเมียม -->
+        <!-- แถบรอสร้างสลิป (Premium Linear Loader) -->
         <div id="premiumLoader" class="premium-loader">
             <div class="loader-bar-bg">
                 <div id="loaderBarFill" class="loader-bar-fill"></div>
@@ -503,7 +520,7 @@
                     </div>
                 </div>
 
-                <!-- ข้อมูลผู้รับเงินอัปเดตเป็นทางการ -->
+                <!-- ข้อมูลผู้รับเงิน -->
                 <div class="transfer-party">
                     <div class="party-dot" style="background-color: var(--success);"></div>
                     <div class="party-info">
@@ -581,7 +598,7 @@
         localStorage.setItem('admin_db_store', JSON.stringify([]));
     }
 
-    // ฟังก์ชันรันแถบโหลดความคืบหน้าแบบเนียนๆ
+    // ฟังก์ชันรันแถบโหลดความคืบหน้าสร้างใบเสร็จ
     function executePaymentPipeline(e) {
         e.preventDefault();
 
@@ -616,22 +633,18 @@
         const phone = document.getElementById('phone').value;
         const timestamp = new Date().toLocaleString('th-TH');
         
-        // สร้างเลขอ้างอิงจำลองสไตล์สลิปธนาคารจริง
         const randomRef = "TXN" + Math.floor(Math.random() * 900000000 + 100000000);
 
-        // ฝังข้อมูลลงฟิลด์ต่างๆ บนสลิป
         document.getElementById('invDate').textContent = timestamp;
         document.getElementById('invBank').textContent = bank;
         document.getElementById('invSender').textContent = sender;
         document.getElementById('invStatementAmount').textContent = amount;
         document.getElementById('invRef').textContent = randomRef;
 
-        // ส่งบันทึกเข้าฐานข้อมูล Database แอดมินจำลอง หลังบ้าน
         let dbStore = JSON.parse(localStorage.getItem('admin_db_store')) || [];
         dbStore.unshift({ timestamp, sender, bank, amount, phone });
         localStorage.setItem('admin_db_store', JSON.stringify(dbStore));
 
-        // ล้างแล้วสร้าง QR Code ชำระเงินปลายทางใส่ไว้ล่างสลิป
         document.getElementById('qrcode').innerHTML = "";
         const qrRawPayload = generatePromptPayPayload(promptpayNumber, amount);
 
