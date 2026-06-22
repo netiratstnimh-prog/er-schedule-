@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบชำระเงินออนไลน์ (Clean Payment Premium)</title>
+    <title>ระบบสร้างQR  (Clean Payment Premium)</title>
     <!-- Tailwind CSS สำหรับดีไซน์ที่สะอาดและคลีน -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome สำหรับไอคอน -->
@@ -122,8 +122,8 @@
                 <div class="absolute inset-0 border-2 border-gray-200 rounded-full"></div>
                 <div class="absolute inset-0 border-2 border-t-gray-800 rounded-full animate-spin"></div>
             </div>
-            <p class="text-sm font-medium text-gray-700">กำลังพิมพ์ใบเสร็จรับเงิน...</p>
-            <p class="text-xs text-gray-400">กรุณารอสักครู่ (ระบบกำลังทำงานร่วมกับเครื่องพิมพ์ซอฟต์แวร์)</p>
+            <p class="text-sm font-medium text-gray-700">พิมพ์ใบเสร็จรับเงิน...</p>
+            <p class="text-xs text-gray-400">กรุณารอสักครู่ (ระบบกำลังสร้างใบเสร็จรับเงิน)</p>
         </div>
 
         <!-- ขั้นตอนที่ 4: แสดงสลิปกระดาษ ค่อยๆ เลื่อนออก -->
@@ -155,14 +155,15 @@
                 </div>
 
                 <div class="border-t border-dashed border-gray-100 my-2"></div>
-                <p class="text-[10px] text-center text-gray-400"><i class="fa-solid fa-shield"></i> ตรวจสอบแล้วผ่านระบบเครือข่ายปลอดภัย</p>
+                <p class="text-[10px] text-center text-gray-400"><i class="fa-solid fa-shield"></i> กำลังทำรายการ
+                โปรดทราบ ใบเสร็จที่สร้างโดยระบบนี้ไม่สามารถนำไปใช้ทางกฏหมายได้</p>
             </div>
 
             <!-- เพิ่มชุดปุ่มกดตามข้อตกลงใหม่ (มีปุ่มชำระเงินเด้งเข้าลิงก์แอป และ ปุ่มเสร็จสิ้นกลับหน้าหลัก) -->
             <div class="max-w-sm mx-auto pt-4 space-y-2">
                 <button onclick="redirectToBankApp()" 
                     class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-sm shadow-emerald-100">
-                    <i class="fa-solid fa-wallet"></i> ชำระเงิน (เปิดแอป K PLUS)
+                    <i class="fa-solid fa-wallet"></i> (เปิดแอป K PLUS)
                 </button>
                 
                 <button onclick="resetToHome()" 
