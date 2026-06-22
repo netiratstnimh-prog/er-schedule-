@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสร้างQR (Clean Payment Realtime)</title>
+    <title>ระบบชำระเงินออนไลน์ (Clean Payment Premium)</title>
     <!-- Tailwind CSS สำหรับดีไซน์ที่สะอาดและคลีน -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome สำหรับไอคอน -->
@@ -53,9 +53,9 @@
             <div class="space-y-1.5">
                 <h2 class="text-base font-medium text-gray-800">ชำระเงินออนไลน์</h2>
                 <p class="text-xs text-gray-400 leading-relaxed">
-                    กรุณากรอกเบอร์มือถือของคุณ <br>
+                    กรุณากรอกเบอร์มือถือเพื่อยืนยันตัวตนก่อนสร้างคิวอาร์โค้ด <br>
                     <span class="inline-flex items-center gap-1 text-slate-500 font-medium bg-slate-50 px-2 py-0.5 rounded border border-slate-100 mt-1">
-                        <i class="fa-regular fa-clock text-[10px]"></i> <span id="realtime-clock">-</span>
+                        <i class="fa-regular fa-clock text-[10px]"></i> วันนี้: <span id="realtime-clock">-</span>
                     </span>
                 </p>
             </div>
@@ -74,7 +74,7 @@
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" 
                         class="block w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-xl font-semibold text-center text-gray-800 placeholder-gray-300 transition-all outline-none">
                     
-                    <!-- ปุ่มช้อยส์เลือกจำนวนเงินด่วนข้างล่าง (20 - 1000 บาท) -->
+                    <!-- ปุ่มช้อยส์เลือกจำนวนเงินด่วนข้างล่าง -->
                     <div class="grid grid-cols-4 gap-1.5 mt-2.5">
                         <button type="button" onclick="selectQuickAmount(20)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿20</button>
                         <button type="button" onclick="selectQuickAmount(50)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿50</button>
@@ -94,16 +94,20 @@
             </div>
         </div>
 
-        <!-- ขั้นตอนที่ 2: หน้าแสดง QR Code -->
+        <!-- ขั้นตอนที่ 2: หน้าแสดง QR Code (ปรับแต่งคลีน ไม่มีเลขพร้อมเพย์โชว์ + ใส่ป้ายภาพจริง) -->
         <div id="step-qr" class="hidden bg-white rounded-2xl p-6 border border-gray-100 space-y-6 animate-fade">
             <div class="text-center pb-4 border-b border-gray-50">
-                <p class="text-xs text-gray-400 tracking-wider">PromptPay</p>
+                <!-- ใส่รูปแบนเนอร์ภาพ THAI QR PAYMENT จริงให้ดูสวยสมบูรณ์ -->
+                <div class="flex justify-center mb-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Thai_QR_Payment_logo.png" alt="Thai QR Payment" class="h-10 object-contain">
+                </div>
                 <p class="text-3xl font-semibold text-gray-800 my-1" id="display-amount">฿0.00</p>
-                <p class="text-[11px] text-gray-400">พร้อมเพย์ปลายทาง: 0635164271</p>
             </div>
 
-            <div class="flex flex-col items-center justify-center py-4">
+            <!-- กล่องโชว์เฉพาะตัวคิวอาร์โค้ดอย่างเดียวอย่างสะอาดตา -->
+            <div class="flex flex-col items-center justify-center py-4 bg-slate-50/50 rounded-2xl p-4 border border-gray-100">
                 <div id="qrcode" class="p-3 bg-white border border-gray-100 rounded-xl shadow-sm"></div>
+                <p class="text-[11px] text-gray-400 mt-3"><i class="fa-solid fa-scan"></i> สแกนจ่ายด้วยแอปพลิเคชันธนาคารทุกธนาคาร</p>
             </div>
 
             <button onclick="startPrinting()" 
@@ -118,13 +122,12 @@
                 <div class="absolute inset-0 border-2 border-gray-200 rounded-full"></div>
                 <div class="absolute inset-0 border-2 border-t-gray-800 rounded-full animate-spin"></div>
             </div>
-            <p class="text-sm font-medium text-gray-700">พิมพ์ใบเสร็จรับเงิน...</p>
-            <p class="text-xs text-gray-400">กรุณารอสักครู่ (กรุณารอสักครู่เรากำลังสร้างใบเสร็จให้คุณ
-                !โปรดทราบหลักฐานใบเสร็จนี้ไม่สามารถนำไปใช้ทางกฏหมายได้)</p>
+            <p class="text-sm font-medium text-gray-700">กำลังพิมพ์ใบเสร็จรับเงิน...</p>
+            <p class="text-xs text-gray-400">กรุณารอสักครู่ (ระบบกำลังทำงานร่วมกับเครื่องพิมพ์ซอฟต์แวร์)</p>
         </div>
 
         <!-- ขั้นตอนที่ 4: แสดงสลิปกระดาษ ค่อยๆ เลื่อนออก -->
-        <div id="step-receipt" class="hidden space-y-6 animate-fade">
+        <div id="step-receipt" class="hidden space-y-4 animate-fade">
             <!-- ช่องปากเครื่องพิมพ์จำลอง -->
             <div class="w-full h-2 bg-gray-200 rounded-full shadow-inner mb-[-12px] relative z-10"></div>
             
@@ -144,7 +147,6 @@
                 <div class="space-y-2 text-xs">
                     <div class="flex justify-between"><span class="text-gray-400">วันที่ทำรายการ:</span> <span id="slip-date" class="text-gray-700">-</span></div>
                     <div class="flex justify-between"><span class="text-gray-400">ผู้รับเงิน:</span> <span class="text-gray-700 font-medium">เนติราช นิ่มเจริญวัฒนกุล</span></div>
-                    <div class="flex justify-between"><span class="text-gray-400">บัญชีพร้อมเพย์:</span> <span class="text-gray-700">063-516-4271</span></div>
                     <div class="flex justify-between"><span class="text-gray-400">เบอร์มือถือผู้โอน:</span> <span id="slip-phone" class="text-gray-700">-</span></div>
                     <div class="border-t border-gray-100 my-2 pt-2 flex justify-between items-center text-sm">
                         <span class="text-gray-500 font-medium">ยอดเงินสุทธิ:</span>
@@ -156,9 +158,15 @@
                 <p class="text-[10px] text-center text-gray-400"><i class="fa-solid fa-shield"></i> ตรวจสอบแล้วผ่านระบบเครือข่ายปลอดภัย</p>
             </div>
 
-            <div class="max-w-sm mx-auto pt-4">
+            <!-- เพิ่มชุดปุ่มกดตามข้อตกลงใหม่ (มีปุ่มชำระเงินเด้งเข้าลิงก์แอป และ ปุ่มเสร็จสิ้นกลับหน้าหลัก) -->
+            <div class="max-w-sm mx-auto pt-4 space-y-2">
+                <button onclick="redirectToBankApp()" 
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-sm shadow-emerald-100">
+                    <i class="fa-solid fa-wallet"></i> ชำระเงิน (เปิดแอป K PLUS)
+                </button>
+                
                 <button onclick="resetToHome()" 
-                    class="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 rounded-xl transition-all text-sm">
+                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-3 rounded-xl transition-all text-sm">
                     เสร็จสิ้น
                 </button>
             </div>
@@ -184,12 +192,9 @@
                 <button onclick="verifyAdminPass()" class="w-full bg-gray-900 text-white py-2 rounded-xl text-xs font-medium">ยืนยันรหัสผ่าน</button>
             </div>
 
-            <!-- ตารางแสดงเบอร์โทรที่บันทึกไว้ในระบบหลังบ้าน -->
             <div id="admin-data-view" class="hidden space-y-3">
                 <p class="text-xs font-medium text-emerald-600"><i class="fa-solid fa-database"></i> รายการเบอร์มือถือที่ระบบบันทึกไว้ล่าสุด:</p>
-                <div class="max-h-40 overflow-y-auto border border-gray-100 rounded-xl p-2 bg-gray-50 space-y-1.5 text-xs" id="db-list">
-                    <!-- รายการจะเพิ่มเข้ามาที่นี่ -->
-                </div>
+                <div class="max-h-40 overflow-y-auto border border-gray-100 rounded-xl p-2 bg-gray-50 space-y-1.5 text-xs" id="db-list"></div>
             </div>
 
             <button onclick="closeAdminModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-500 py-2 rounded-xl text-xs font-medium transition-all">ปิดหน้าต่างนี้</button>
@@ -201,12 +206,11 @@
         let globalPhone = "";
         let clickCount = 0;
         
-        // จำลองฐานข้อมูลหลังบ้านเก็บใน LocalStorage
         if(!localStorage.getItem('phoneDatabase')) {
             localStorage.setItem('phoneDatabase', JSON.stringify([]));
         }
 
-        // ฟังก์ชันระบบนาฬิกาเรียลไทม์แสดง วัน วันที่ เดือน พ.ศ. และ เวลา
+        // ระบบนาฬิกาเรียลไทม์
         function updateRealTimeClock() {
             const daysArr = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
             const monthsArr = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
@@ -215,7 +219,7 @@
             const dayName = daysArr[now.getDay()];
             const dateNum = now.getDate();
             const monthName = monthsArr[now.getMonth()];
-            const yearTH = now.getFullYear() + 543; // แปลง ค.ศ. เป็น พ.ศ.
+            const yearTH = now.getFullYear() + 543;
             
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -225,26 +229,21 @@
             document.getElementById('realtime-clock').innerText = formattedString;
         }
         
-        // เรียกใช้นาฬิกาทันทีและอัปเดตทุกๆ 1 วินาที
         updateRealTimeClock();
         setInterval(updateRealTimeClock, 1000);
 
-        // ฟังก์ชันเลือกจำนวนเงินด่วนเมื่อกดปุ่ม
         function selectQuickAmount(amount) {
             document.getElementById('amount').value = amount;
         }
 
-        // ฟังก์ชันล้างค่าตัวเลขจำนวนเงิน
         function clearAmountInput() {
             document.getElementById('amount').value = '';
         }
 
-        // ตรวจสอบเงื่อนไขการสร้างคิวอาร์โค้ด
         function goToQRStep() {
             const phoneInput = document.getElementById('phone').value.trim();
             const amountInput = document.getElementById('amount').value;
 
-            // ตรวจสอบเบอร์มือถือตามเงื่อนไข
             if (!phoneInput || phoneInput.length < 9) {
                 alert('กรุณากรอกเบอร์โทรศัพท์มือถือผู้โอนก่อนสร้างคิวอาร์โค้ด');
                 return;
@@ -257,14 +256,14 @@
             globalAmount = parseFloat(amountInput).toFixed(2);
             globalPhone = phoneInput;
 
-            // บันทึกข้อมูลเข้า Storage ทันที
             let db = JSON.parse(localStorage.getItem('phoneDatabase'));
             db.push({ phone: globalPhone, amount: globalAmount, date: document.getElementById('realtime-clock').innerText });
             localStorage.setItem('phoneDatabase', JSON.stringify(db));
 
-            // เจนคิวอาร์โค้ด
             document.getElementById('display-amount').innerText = `฿${Number(globalAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('qrcode').innerHTML = "";
+            
+            // สร้างคิวอาร์โค้ดพร้อมเพย์เชื่อมรหัส 0635164271 เบื้องหลังอย่างปลอดภัย
             const payload = `00020101021129370016A000000677010111011300666351642715407${globalAmount}5802TH5303764`;
             
             new QRCode(document.getElementById("qrcode"), {
@@ -280,19 +279,23 @@
             document.getElementById('step-qr').classList.remove('hidden');
         }
 
-        // ระบบหน่วงเวลาปริ้นใบเสร็จ 6.5 วินาที
         function startPrinting() {
             document.getElementById('step-qr').classList.add('hidden');
             document.getElementById('step-printing').classList.remove('hidden');
 
             document.getElementById('slip-phone').innerText = globalPhone;
             document.getElementById('slip-amount').innerText = `฿${Number(globalAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('slip-date').innerText = document.getElementById('realtime-clock').innerText.replace('วันนี้: ', '');
+            document.getElementById('slip-date').innerText = document.getElementById('realtime-clock').innerText;
 
             setTimeout(() => {
                 document.getElementById('step-printing').classList.add('hidden');
                 document.getElementById('step-receipt').classList.remove('hidden');
             }, 6500);
+        }
+
+        // ฟังก์ชันใหม่เมื่อกดปุ่มชำระเงินในหน้าสลิป -> ดีดเข้า App Store K PLUS ทันที
+        function redirectToBankApp() {
+            window.location.href = "https://apps.apple.com/th/app/k-plus/id361170631?l=th";
         }
 
         function resetToHome() {
