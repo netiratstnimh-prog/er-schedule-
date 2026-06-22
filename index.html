@@ -3,620 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NXRT Core — Clean White 2026</title>
-    
-    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@master/qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    
+    <title>ระบบชำrateเงินออนไลน์ (Secure Payment)</title>
+    <!-- Tailwind CSS สำหรับดีไซน์ที่สวยงามและน่าเชื่อถือ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome สำหรับไอคอนต่างๆ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Google Fonts (Prompt) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-main: #f8fafc;
-            --surface-card: #ffffff;
-            --border-color: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --success: #10b981;
-            --kbank: #00a950;
-            --scb: #4e2e7f;
-            --ktb: #00aade;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body, html {
-            width: 100%; min-height: 100vh;
-            font-family: 'Sarabun', 'Inter', sans-serif;
-            background-color: var(--bg-main); color: var(--text-main);
-            display: flex; flex-direction: column;
-        }
-
-        /* 🟦 Header Bar */
-        .sys-header {
-            background: var(--surface-card); padding: 15px 30px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .sys-logo { font-family: 'Inter'; font-weight: 800; font-size: 20px; letter-spacing: 1px; color: var(--primary); }
-        .sys-status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
-        .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; }
-
-        /* 🖥️ Main Viewport */
-        .main-workspace {
-            flex: 1; padding: 30px; display: flex; justify-content: center; align-items: flex-start;
-        }
-        .content-container {
-            width: 100%; max-width: 1000px; background: var(--surface-card);
-            border-radius: 12px; border: 1px solid var(--border-color); padding: 30px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-        }
-
-        /* 🏠 Menu Selection Grid */
-        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .menu-card {
-            background: var(--bg-main); border: 1px solid var(--border-color);
-            padding: 30px; border-radius: 10px; cursor: pointer;
-            transition: all 0.2s ease; display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .menu-card:hover { border-color: var(--primary); background: #fff; transform: translateY(-2px); }
-        .menu-icon { font-size: 36px; margin-bottom: 15px; }
-        .menu-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-        .menu-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
-        .menu-action { margin-top: 20px; font-size: 13px; font-weight: 600; color: var(--primary); }
-
-        /* 📄 Form Layout */
-        .form-view { display: none; flex-direction: column; gap: 20px; }
-        .btn-back { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; text-align: left; width: fit-content; }
-        .btn-back:hover { color: var(--text-main); }
-        
-        .form-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; }
-        .form-fields { display: flex; flex-direction: column; gap: 20px; }
-        
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 14px; font-weight: 600; color: var(--text-main); }
-        .input-group input {
-            padding: 12px; border: 1px solid var(--border-color); border-radius: 6px;
-            font-size: 15px; font-family: 'Sarabun'; width: 100%;
-        }
-        .input-group input:focus { outline: 1px solid var(--primary); border-color: var(--primary); }
-
-        /* Bank Selectors */
-        .bank-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .bank-btn {
-            border: 1px solid var(--border-color); padding: 12px; border-radius: 8px;
-            background: #fff; cursor: pointer; text-align: center; font-size: 13px;
-            display: flex; flex-direction: column; align-items: center; gap: 6px;
-        }
-        .bank-btn.selected { border-color: var(--primary); background: #eff6ff; }
-        .bank-dot { width: 12px; height: 12px; border-radius: 50%; }
-
-        .btn-submit {
-            background: var(--primary); color: white; border: none; padding: 14px;
-            border-radius: 6px; font-family: 'Sarabun'; font-weight: 600; font-size: 15px;
-            cursor: pointer; width: 100%; margin-top: 10px;
-        }
-        .btn-submit:hover { background: var(--primary-hover); }
-
-        /* ⏳ Loader Progress */
-        .loader-view { display: none; text-align: center; padding: 50px 0; }
-        .progress-container { width: 100%; max-width: 300px; height: 4px; background: var(--border-color); margin: 20px auto; border-radius: 2px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: var(--primary); }
-
-        /* 🖨️ Output & Slip (Square 4x4) */
-        .output-view { display: none; flex-direction: column; align-items: center; gap: 24px; }
-        
-        .slip-box-wrapper {
-            background: #e2e8f0; padding: 20px; border-radius: 8px; display: inline-block;
-        }
-        .slip-canvas {
-            background: #fff; color: #000; width: 400px; height: 400px;
-            padding: 25px; display: flex; flex-direction: column; justify-content: space-between;
-            position: relative; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-        .slip-watermark {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
-            font-size: 50px; font-weight: 900; color: rgba(0,0,0,0.03); font-family: 'Inter'; pointer-events: none;
-        }
-        
-        .slip-header { display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
-        .slip-title { font-size: 15px; font-weight: 700; }
-        .slip-subtitle { font-size: 10px; color: var(--text-muted); font-family: 'Inter'; margin-top: 2px; }
-        
-        .slip-body { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 15px 0; }
-        .slip-cell { display: flex; flex-direction: column; }
-        .slip-cell.full { grid-column: span 2; }
-        .slip-label { font-size: 10px; color: var(--text-muted); }
-        .slip-value { font-size: 12px; font-weight: 600; margin-top: 2px; }
-        
-        .slip-amount-card {
-            grid-column: span 2; background: #f8fafc; padding: 10px; border-radius: 6px;
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid #f1f5f9;
-        }
-        .slip-amount-val { font-family: 'Inter'; font-size: 16px; font-weight: 700; color: var(--primary); }
-
-        .slip-footer { display: flex; justify-content: space-between; align-items: center; background: #fafafa; padding: 8px; border: 1px dashed #e2e8f0; }
-        .qr-holder { width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; }
-        .qr-holder img { width: 100%; height: 100%; object-fit: contain; }
-
-        .action-buttons { display: flex; gap: 15px; width: 100%; max-width: 440px; }
-        .btn-util { flex: 1; padding: 12px; border: 1px solid var(--border-color); background: #fff; font-family: 'Sarabun'; border-radius: 6px; cursor: pointer; font-size: 14px; }
-        .btn-util.primary { background: var(--primary); color: #fff; border: none; }
-
-        /* 🔒 Auth Modal */
-        .modal-overlay {
-            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 1000;
-            justify-content: center; align-items: center;
-        }
-        .modal-card { background: #fff; padding: 30px; border-radius: 10px; width: 100%; max-width: 360px; border: 1px solid var(--border-color); }
-
-        /* 📊 Dashboard View */
-        .dash-view { display: none; flex-direction: column; gap: 20px; }
-        .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .dash-card { background: var(--bg-main); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; }
-        .dash-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
-        .dash-table th, .dash-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border-color); }
-
-        /* 💬 SMS Toast */
-        .toast {
-            position: fixed; bottom: 20px; right: -400px; width: 320px; background: #fff;
-            border-left: 4px solid var(--primary); padding: 15px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            border-radius: 4px; transition: right 0.4s ease; z-index: 9999;
-        }
-        .toast.show { right: 20px; }
-
-        /* 🎛️ Footer Touchbar */
-        .sys-footer {
-            background: var(--surface-card); padding: 15px 30px; border-top: 1px solid var(--border-color);
-            display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted);
-        }
-        .btn-admin-gate { color: var(--primary); cursor: pointer; font-weight: 600; }
+        body { font-family: 'Prompt', sans-serif; }
+        .animate-pop { animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popUp { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between">
 
-<header class="sys-header">
-    <div class="sys-logo">@NXRT CORE</div>
-    <div class="sys-status">
-        <div class="status-dot"></div>
-        <span id="navStatusText">ระบบพร้อมใช้งาน</span>
-    </div>
-</header>
-
-<main class="main-workspace">
-    <div class="content-container">
-        
-        <div class="menu-grid" id="panelMenu">
-            <div class="menu-card" onclick="switchModule('receipt')">
+    <!-- แถบด้านบนแสดงชื่อผู้รับเงิน -->
+    <nav class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <i class="fa-solid fa-user-check text-lg"></i>
+                </div>
                 <div>
-                    <div class="menu-icon">🖨️</div>
-                    <div class="menu-title">ระบบสร้างใบเสร็จรับเงิน</div>
-                    <div class="menu-desc">สร้างสลิปดิจิทัล ทรงสี่เหลี่ยมจัตุรัส 4×4 พร้อมระบบฝังลายน้ำป้องกันเอกสารปลอมแปลง</div>
+                    <p class="text-xs text-indigo-200 font-light">บัญชีผู้รับเงิน</p>
+                    <h1 class="text-base font-medium tracking-wide">เนติราช นิ่มเจริญวัฒนกุล</h1>
                 </div>
-                <div class="menu-action">เรียกใช้งานโมดูล &rarr;</div>
             </div>
-            <div class="menu-card" onclick="switchModule('transfer')">
+            <span class="bg-emerald-500 text-white text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shadow-sm animate-pulse">
+                <span class="w-2 h-2 bg-white rounded-full"></span> ปลอดภัย
+            </span>
+        </div>
+    </nav>
+
+    <!-- ส่วนเนื้อหาหลัก -->
+    <main class="max-w-md w-full mx-auto px-4 py-6 flex-grow">
+        
+        <!-- ส่วนฟอร์มกรอกจำนวนเงิน -->
+        <div id="step-setup" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6">
+            <div class="text-center">
+                <i class="fa-solid fa-wallet text-indigo-600 text-4xl mb-2"></i>
+                <h2 class="text-lg font-semibold text-slate-800">ระบุจำนวนเงินที่ต้องการชำระ</h2>
+                <p class="text-xs text-slate-400">กรุณาตรวจสอบชื่อผู้รับและระบุยอดเงินให้ถูกต้อง</p>
+            </div>
+
+            <div class="space-y-4">
                 <div>
-                    <div class="menu-icon">💰</div>
-                    <div class="menu-title">ระบบโอนเงินด่วน (Real QR)</div>
-                    <div class="menu-desc">ผูกเบอร์พร้อมเพย์กลาง สร้างไดนามิกคิวอาร์สำหรับแอปพลิเคชันธนาคารเพื่อสแกนจ่ายจริง</div>
-                </div>
-                <div class="menu-action">เรียกใช้งานโมดูล &rarr;</div>
-            </div>
-        </div>
-
-        <div class="form-view" id="panelForm">
-            <button class="btn-back" onclick="backToMenuAnimated()">← ย้อนกลับหน้าหลัก</button>
-            <div class="form-grid">
-                <form id="mainForm" onsubmit="handleFormSubmit(event)">
-                    <div class="form-fields">
-                        <div class="input-group">
-                            <label id="lblBank">เลือกธนาคาร</label>
-                            <div class="bank-grid">
-                                <div class="bank-btn" id="b1" onclick="selectBank('b1', 'ธนาคารกสิกรไทย', 'var(--kbank)')">
-                                    <div class="bank-dot" style="background: var(--kbank);"></div><span>กสิกรไทย</span>
-                                </div>
-                                <div class="bank-btn" id="b2" onclick="selectBank('b2', 'ธนาคารไทยพาณิชย์', 'var(--scb)')">
-                                    <div class="bank-dot" style="background: var(--scb);"></div><span>ไทยพาณิชย์</span>
-                                </div>
-                                <div class="bank-btn" id="b3" onclick="selectBank('b3', 'ธนาคารกรุงไทย', 'var(--ktb)')">
-                                    <div class="bank-dot" style="background: var(--ktb);"></div><span>กรุงไทย</span>
-                                </div>
-                            </div>
-                            <input type="hidden" id="selectedBankName" required>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">จำนวนเงิน (บาท)</label>
+                    <div class="relative rounded-xl shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <span class="text-slate-400 font-medium text-lg">฿</span>
                         </div>
-
-                        <div class="input-group" id="groupSender">
-                            <label>ชื่อผู้โอนเงิน</label>
-                            <input type="text" id="inSender" placeholder="นาย / นางสาว สมชาย">
-                        </div>
-
-                        <div class="input-group">
-                            <label>ยอดเงินทำรายการ (บาท)</label>
-                            <input type="number" id="inAmount" step="0.01" min="1" placeholder="0.00" required>
-                        </div>
-
-                        <div class="input-group">
-                            <label id="lblPhone">หมายเลขโทรศัพท์</label>
-                            <input type="tel" id="inPhone" pattern="[0-9]{10}" placeholder="06XXXXXXXX" required>
-                        </div>
-
-                        <button type="submit" class="btn-submit" id="btnSubmitText">ประมวลผลธุรกรรม</button>
-                    </div>
-                </form>
-                
-                <div style="display:flex; flex-direction:column; justify-content:center; padding:20px; background:var(--bg-main); border-radius:8px; text-align:center; color:var(--text-muted);">
-                    <p style="font-size:14px; font-weight:600; color:var(--text-main); margin-bottom:5px;">Secure Gateway 2026</p>
-                    <p style="font-size:12px;">โครงสร้างข้อมูลทั้งหมดเข้ารหัสด้วยความปลอดภัยสูงสุดตามมาตรฐานสากล</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="loader-view" id="panelLoader">
-            <h3 style="font-size:16px;" id="loaderText">กำลังตรวจสอบระบบข้อมูลและสารบบ...</h3>
-            <div class="progress-container"><div class="progress-bar" id="pBar"></div></div>
-            <span id="pPercent" style="font-size:14px; font-weight:700; color:var(--primary);">0%</span>
-        </div>
-
-        <div class="output-view" id="panelOutput">
-            <div class="slip-box-wrapper">
-                <div class="slip-canvas" id="slipTarget">
-                    <div class="slip-watermark">NETIRAT</div>
-                    
-                    <div class="slip-header">
-                        <div>
-                            <div class="slip-title" id="slipMainTitle">ใบรับเงินอิเล็กทรอนิกส์</div>
-                            <div class="slip-subtitle" id="slipSubTitle">TRANSACTION RECORD</div>
-                        </div>
-                        <div style="font-size:11px; font-weight:700; color:var(--success);" id="slipBadge">SUCCESS</div>
-                    </div>
-
-                    <div class="slip-body">
-                        <div class="slip-cell" id="cellSenderBlock">
-                            <div class="slip-label">ผู้โอนเงิน (FROM)</div>
-                            <div class="slip-value" id="outSenderName">-</div>
-                        </div>
-                        <div class="slip-cell">
-                            <div class="slip-label" id="lblSlipBank">ธนาคารต้นทาง</div>
-                            <div class="slip-value" id="outBankName">-</div>
-                        </div>
-                        <div class="slip-cell full">
-                            <div class="slip-label">บัญชีปลายทางผู้รับเงิน (TO)</div>
-                            <div class="slip-value" style="color:var(--primary);" id="outReceiverName">เนติราช นิ่มเจริญวัฒนกุล</div>
-                        </div>
-                        <div class="slip-cell">
-                            <div class="slip-label">วัน-เวลาทำรายการ</div>
-                            <div class="slip-value" id="outTime" style="font-size:11px;">-</div>
-                        </div>
-                        <div class="slip-cell">
-                            <div class="slip-label">หมายเลขอ้างอิง</div>
-                            <div class="slip-value" id="outRef" style="font-family:'Inter'; font-size:11px;">-</div>
-                        </div>
-                        <div class="slip-amount-card">
-                            <div class="slip-label" style="font-weight:700;">จำนวนเงินสุทธิ</div>
-                            <div class="slip-amount-val"><span id="outAmountVal">0.00</span> THB</div>
-                        </div>
-                    </div>
-
-                    <div class="slip-footer">
-                        <div>
-                            <div class="slip-title" id="slipFootTitle" style="font-size:12px;">QR VERIFIED</div>
-                            <div class="slip-subtitle" id="slipFootDesc" style="margin:0;">สแกนตรวจสอบสถานะสลิป</div>
-                        </div>
-                        <div class="qr-holder" id="qrContainer"></div>
+                        <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" 
+                            class="block w-full pl-10 pr-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-xl font-semibold text-slate-800 placeholder-slate-300 transition-all">
                     </div>
                 </div>
-            </div>
 
-            <div class="action-buttons">
-                <button class="btn-util" onclick="resetToNewTransaction()">ทำรายการใหม่</button>
-                <button class="btn-util primary" onclick="captureAndSaveSlip()">บันทึกรูปภาพ</button>
+                <button onclick="generatePayment()" 
+                    class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-medium py-3.5 px-4 rounded-xl shadow-md shadow-indigo-200 transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-qrcode"></i> สร้างพร้อมเพย์
+                </button>
             </div>
         </div>
 
-        <div class="dash-view" id="panelDash">
-            <div style="display:flex; justify-content:between; align-items:center; margin-bottom:15px;">
-                <h3 style="font-size:18px;">ADMIN TRANSACTION AUDIT</h3>
-                <button class="btn-util" style="max-width:100px; padding:6px;" onclick="closeAdminDashboard()">ปิด</button>
-            </div>
-            <div class="dash-grid">
-                <div class="dash-card"><p style="font-size:12px; color:var(--text-muted);">ปริมาณเงินหมุนเวียน</p><h4 style="font-size:20px; font-family:'Inter';" id="dVol">0.00 THB</h4></div>
-                <div class="dash-card"><p style="font-size:12px; color:var(--text-muted);">จำนวนธุรกรรม</p><h4 style="font-size:20px; font-family:'Inter';" id="dCount">0</h4></div>
-                <div class="dash-card">
-                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">ส่วนเสริมเชื่อมต่อภายนอก</p>
-                    <button class="btn-util" style="padding:4px 8px; font-size:11px;" onclick="alert('Google Sheet Integration Standby')">Google Sheets</button>
+        <!-- ส่วนแสดง QR Code และปุ่มชำระเงิน (จะแสดงหลังจากกดปุ่มสร้าง) -->
+        <div id="step-pay" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-6 animate-pop">
+            <div class="text-center border-b border-slate-100 pb-4">
+                <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">PromptPay</p>
+                <div class="flex justify-center my-3">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/PromptPay-logo.png" alt="PromptPay" class="h-8 object-contain">
                 </div>
+                <p class="text-2xl font-bold text-slate-800" id="display-amount">฿0.00</p>
             </div>
-            <table class="dash-table">
-                <thead><tr><th>เวลา</th><th>ประเภท</th><th>เบอร์โทร</th><th>จำนวนเงิน</th></tr></thead>
-                <tbody id="dashTableBody"></tbody>
-            </table>
+
+            <!-- ส่วนโชว์คิวอาร์โค้ดอย่างเดียว -->
+            <div class="flex flex-col items-center justify-center bg-slate-50 p-4 rounded-xl border border-dashed border-slate-200">
+                <div id="qrcode" class="bg-white p-3 rounded-lg shadow-sm"></div>
+                <p class="text-xs text-slate-400 mt-3 flex items-center gap-1">
+                    <i class="fa-solid fa-lock text-emerald-500"></i> สแกนตรวจสอบความถูกต้องผ่านแอปธนาคาร
+                </p>
+            </div>
+
+            <!-- ช่องกรอกเบอร์มือถือและปุ่มชำระเงิน -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">เบอร์โทรศัพท์มือถือผู้โอน</label>
+                    <input type="tel" id="phone" maxlength="10" placeholder="08X-XXX-XXXX" 
+                        class="block w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-center tracking-widest text-slate-700 transition-all">
+                </div>
+
+                <button onclick="processPayment()" 
+                    class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3.5 px-4 rounded-xl shadow-md shadow-emerald-100 transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 text-lg">
+                    <i class="fa-solid fa-shield-stroke text-sm"></i> กดปุ่มชำระเงิน
+                </button>
+            </div>
         </div>
 
-    </div>
-</main>
+    </main>
 
-<div class="modal-overlay" id="modalAuth">
-    <div class="modal-card" id="boxLayer1">
-        <h4 style="margin-bottom:10px;">ตั้งรหัสผ่านชั่วคราว (ชั้นแรก)</h4>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">กรอกรหัสตัวเลข 4 หลักใดก็ได้เพื่อผ่านเลเยอร์เริ่มต้น</p>
-        <input type="password" id="passDummy" maxlength="4" style="padding:10px; text-align:center; width:100%; font-size:20px; letter-spacing:8px; margin-bottom:15px; border:1px solid var(--border-color); border-radius:6px;">
-        <button class="btn-submit" onclick="goAuthLayer2()">ถัดไป</button>
-    </div>
-    <div class="modal-card" id="boxLayer2" style="display:none;">
-        <h4 style="margin-bottom:10px; color:var(--primary);">MASTER AUTH (ชั้นที่ 2)</h4>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:15px;">ระบุรหัสผู้ดูแลระบบระดับสูงเพื่อเข้าถึงฐานข้อมูล</p>
-        <input type="password" id="passReal" maxlength="4" style="padding:10px; text-align:center; width:100%; font-size:20px; letter-spacing:8px; margin-bottom:15px; border:1px solid var(--border-color); border-radius:6px;">
-        <button class="btn-submit" onclick="verifyAdminKey()">เข้าสู่ระบบ</button>
-    </div>
-</div>
+    <!-- ลิขสิทธิ์ความปลอดภัยด้านล่าง -->
+    <footer class="max-w-md w-full mx-auto text-center py-4 px-4 text-xs text-slate-400">
+        <p class="flex items-center justify-center gap-1">
+            <i class="fa-solid fa-shield-halved text-slate-400"></i> Secured by PromptPay Sandbox Gateway
+        </p>
+    </footer>
 
-<div class="modal-overlay" id="modalSavePreview">
-    <div class="modal-card" style="max-width:440px; text-align:center;">
-        <h4 style="margin-bottom:15px;">💾 พร้อมดาวน์โหลดรูปภาพ</h4>
-        <div id="previewArea" style="background:#f1f5f9; padding:10px; border-radius:6px; margin-bottom:15px; display:inline-block; width:100%;"></div>
-        <div style="display:flex; gap:10px;">
-            <button class="btn-util" style="flex:1;" onclick="document.getElementById('modalSavePreview').style.display='none'">ยกเลิก</button>
-            <button class="btn-util primary" style="flex:1;" id="btnDownloadTrigger">ดาวน์โหลดทันที</button>
-        </div>
-    </div>
-</div>
-
-<div class="toast" id="smsToast">
-    <p style="font-size:11px; font-weight:700; color:var(--primary); margin-bottom:4px;">💬 SYSTEM SMS ALERT</p>
-    <p style="font-size:13px; line-height:1.4;" id="smsText"></p>
-</div>
-
-<footer class="sys-footer">
-    <div>&copy; 2026 NXRT MANAGEMENT SYSTEM</div>
-    <div class="btn-admin-gate" onclick="openAuthModal()">🎚️ เข้าสู่ระบบผู้ดูแลหลังบ้าน</div>
-</footer>
-
-<script>
-    const globalPromptPayNo = "0635164271";
-    let activeModule = "";
-    let txCache = { bank: "", sender: "", amount: "", phone: "" };
-
-    function switchModule(module) {
-        activeModule = module;
-        document.getElementById('panelMenu').style.display = 'none';
-        document.getElementById('panelForm').style.display = 'flex';
-        
-        const navStatus = document.getElementById('navStatusText');
-        const sBlock = document.getElementById('groupSender');
-
-        if(module === 'receipt') {
-            navStatus.textContent = "โหมด: ออกใบเสร็จรับเงินอิเล็กทรอนิกส์";
-            document.getElementById('lblBank').textContent = "สถาบันการเงินที่ระบุบนสลิป";
-            sBlock.style.display = 'flex';
-            document.getElementById('inSender').required = true;
-            document.getElementById('lblPhone').textContent = "หมายเลขโทรศัพท์ (เพื่อประกอบข้อมูลจำลอง)";
-            document.getElementById('btnSubmitText').textContent = "สร้างโครงสร้างและพิมพ์สลิปเอกสาร";
-        } else {
-            navStatus.textContent = "โหมด: ระบบโอนเงินด่วนสากล (Real QR)";
-            document.getElementById('lblBank').textContent = "ธนาคารต้นทางที่ใช้โอน";
-            sBlock.style.display = 'none';
-            document.getElementById('inSender').required = false;
-            document.getElementById('lblPhone').textContent = "หมายเลขโทรศัพท์ผู้โอน (เพื่อระบบยิง SMS ปลายทาง)";
-            document.getElementById('btnSubmitText').textContent = "สร้าง Dynamic QR สแกนเข้าบัญชีจริง";
-        }
-    }
-
-    function backToMenuAnimated() {
-        document.getElementById('navStatusText').textContent = "🔄 กำลังเรียกคืนค่าระบบอิเล็กทรอนิกส์...";
-        document.getElementById('panelForm').style.display = 'none';
-        document.getElementById('panelOutput').style.display = 'none';
-        
-        setTimeout(() => {
-            document.getElementById('panelMenu').style.display = 'grid';
-            document.getElementById('navStatusText').textContent = "ระบบพร้อมใช้งาน";
-        }, 1500);
-    }
-
-    function selectBank(id, name, color) {
-        document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
-        document.getElementById(id).classList.add('selected');
-        document.getElementById('selectedBankName').value = name;
-    }
-
-    function handleFormSubmit(e) {
-        e.preventDefault();
-        if(!document.getElementById('selectedBankName').value) { alert("กรุณาเลือกธนาคารก่อนครับ"); return; }
-
-        txCache.sender = document.getElementById('inSender').value;
-        txCache.bank = document.getElementById('selectedBankName').value;
-        txCache.amount = document.getElementById('inAmount').value;
-        txCache.phone = document.getElementById('inPhone').value;
-
-        document.getElementById('panelForm').style.display = 'none';
-        document.getElementById('panelLoader').style.display = 'block';
-
-        let progress = 0;
-        let bar = document.getElementById('pBar');
-        let text = document.getElementById('pPercent');
-
-        let interval = setInterval(() => {
-            progress += 4;
-            bar.style.width = progress + '%';
-            text.textContent = progress + '%';
+    <!-- ป็อปอัพยืนยันการชำระเงินสำเร็จ -->
+    <div id="success-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl animate-pop">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-check text-4xl animate-bounce"></i>
+            </div>
             
-            if(progress >= 100) {
-                clearInterval(interval);
-                document.getElementById('panelLoader').style.display = 'none';
-                
-                // ⚡ แกล้งสลับหน้าบอร์ดให้เปิดบล็อกการแสดงผลของหน้า Output ก่อนเพื่อให้พื้นที่ Element พร้อมรับ QR Code
-                document.getElementById('panelOutput').style.display = 'flex';
-                
-                // ค่อยเรียกฟังก์ชันวาดข้อมูลและ QR Code
-                buildSlipViewContent();
-                triggerSmsNotification();
-            }
-        }, 40);
-    }
-
-    function buildSlipViewContent() {
-        const timeStr = new Date().toLocaleString('th-TH');
-        const refNo = "NXRT" + Math.floor(Math.random() * 900000 + 100000);
-        const amtFixed = parseFloat(txCache.amount).toFixed(2);
-
-        document.getElementById('outTime').textContent = timeStr;
-        document.getElementById('outBankName').textContent = txCache.bank;
-        document.getElementById('outAmountVal').textContent = amtFixed;
-        document.getElementById('outRef').textContent = refNo;
-
-        if(activeModule === 'receipt') {
-            document.getElementById('slipMainTitle').textContent = "ใบรับเงินอิเล็กทรอนิกส์";
-            document.getElementById('slipSubTitle').textContent = "OFFICIAL TRANSACTION RECORD";
-            document.getElementById('slipBadge').textContent = "SUCCESS";
-            document.getElementById('cellSenderBlock').style.display = 'flex';
-            document.getElementById('outSenderName').textContent = txCache.sender;
-            document.getElementById('lblSlipBank').textContent = "ธนาคารต้นทาง";
-            document.getElementById('outReceiverName').textContent = "เนติราช นิ่มเจริญวัฒนกุล";
-            document.getElementById('slipFootTitle').textContent = "QR VERIFIED";
-            document.getElementById('slipFootDesc').textContent = "สแกนตรวจสอบสถานะสลิป";
-        } else {
-            document.getElementById('slipMainTitle').textContent = "ใบบันทึกคำสั่งโอนเงินด่วน";
-            document.getElementById('slipSubTitle').textContent = "DYNAMIC PAYABLE MERCHANT QR";
-            document.getElementById('slipBadge').textContent = "REAL QR";
-            document.getElementById('cellSenderBlock').style.display = 'none';
-            document.getElementById('lblSlipBank').textContent = "ธนาคารผู้โอน";
-            document.getElementById('outReceiverName').textContent = "เนติราช นิ่มเจริญวัฒนกุล (" + globalPromptPayNo + ")";
-            document.getElementById('slipFootTitle').textContent = "SCAN TO PAY (โอนจริง)";
-            document.getElementById('slipFootDesc').textContent = "ใช้แอปฯ ธนาคารสแกนคิวอาร์เพื่อโอนเงิน";
-        }
-
-        // เก็บประวัติลงความจำ LocalStorage
-        let logs = JSON.parse(localStorage.getItem('nxrt_clean_logs')) || [];
-        logs.unshift({ time: timeStr, type: activeModule === 'receipt' ? 'ใบเสร็จ' : 'โอนด่วน', phone: txCache.phone, amount: amtFixed });
-        localStorage.setItem('nxrt_clean_logs', JSON.stringify(logs));
-
-        // 🌟 เคลียร์กล่องคิวอาร์เดิมทิ้ง แล้วสั่ง Gen ใหม่หลังหน้าจอเปิดการแสดงผล (สลิปจะไม่ว่างเปล่าแล้ว)
-        const qrBox = document.getElementById('qrContainer');
-        qrBox.innerHTML = "";
-        
-        const payload = generatePromptPayString(globalPromptPayNo, amtFixed);
-        new QRCode(qrBox, {
-            text: payload,
-            width: 80,
-            height: 80,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.M
-        });
-    }
-
-    function triggerSmsNotification() {
-        const toast = document.getElementById('smsToast');
-        document.getElementById('smsText').innerHTML = `ระบบได้แจ้งเตือนธุรกรรมจำนวนเงิน <b>${txCache.amount} บาท</b> ไปที่ปลายทางเบอร์ ${txCache.phone} สำเร็จแล้ว`;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4500);
-    }
-
-    function resetToNewTransaction() {
-        document.getElementById('panelOutput').style.display = 'none';
-        document.getElementById('panelForm').style.display = 'flex';
-        document.getElementById('mainForm').reset();
-        document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
-        document.getElementById('selectedBankName').value = "";
-    }
-
-    function captureAndSaveSlip() {
-        const target = document.getElementById('slipTarget');
-        html2canvas(target, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(canvas => {
-            const dataUrl = canvas.toDataURL('image/png');
-            document.getElementById('previewArea').innerHTML = `<img src="${dataUrl}" style="max-width:100%; height:auto; border:1px solid var(--border-color); display:block; margin:0 auto;">`;
+            <h3 class="text-xl font-bold text-slate-800 mb-1">ยืนยันการชำระยอดสำเร็จ</h3>
+            <p class="text-sm text-slate-500 mb-6">ระบบได้ทำการบันทึกข้อมูลการโอนเงินเรียบร้อยแล้ว</p>
             
-            document.getElementById('btnDownloadTrigger').onclick = function() {
-                const link = document.createElement('a');
-                link.href = dataUrl; link.download = 'NXRT_Receipt_4x4.png';
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            };
-            document.getElementById('modalSavePreview').style.display = 'flex';
-        });
-    }
+            <div class="bg-slate-50 rounded-xl p-4 text-left space-y-2 mb-6 border border-slate-100">
+                <div class="flex justify-between text-xs"><span class="text-slate-400">ผู้รับเงิน:</span> <span class="font-medium text-slate-700">เนติราช นิ่มเจริญวัฒนกุล</span></div>
+                <div class="flex justify-between text-xs"><span class="text-slate-400">พร้อมเพย์:</span> <span class="font-medium text-slate-700">063-516-4271</span></div>
+                <div class="flex justify-between text-xs"><span class="text-slate-400">เบอร์ผู้โอน:</span> <span id="modal-phone" class="font-medium text-slate-700">-</span></div>
+                <hr class="border-slate-200 my-1">
+                <div class="flex justify-between text-sm"><span class="text-slate-600 font-medium">ยอดเงินชำระ:</span> <span id="modal-amount" class="font-bold text-indigo-600 text-base">฿0.00</span></div>
+            </div>
 
-    /* 🔒 ระบบรหัสผ่าน 2 ชั้น */
-    function openAuthModal() {
-        document.getElementById('passDummy').value = "";
-        document.getElementById('passReal').value = "";
-        document.getElementById('boxLayer1').style.display = 'block';
-        document.getElementById('boxLayer2').style.display = 'none';
-        document.getElementById('modalAuth').style.display = 'flex';
-    }
+            <p class="text-xs text-slate-400 mb-4 animate-pulse"><i class="fa-solid fa-spinner fa-spin mr-1"></i> กำลังเปิดแอปพลิเคชันธนาคารของคุณ...</p>
+        </div>
+    </div>
 
-    function goAuthLayer2() {
-        if(document.getElementById('passDummy').value.length < 4) { alert("กรุณาป้อนรหัสชั้นแรกก่อน"); return; }
-        document.getElementById('boxLayer1').style.display = 'none';
-        document.getElementById('boxLayer2').style.display = 'block';
-        document.getElementById('passReal').focus();
-    }
+    <!-- สคริปต์การทำงานภายในระบบ -->
+    <script>
+        let currentAmount = 0;
 
-    function verifyAdminKey() {
-        if(document.getElementById('passReal').value === "1323") {
-            document.getElementById('modalAuth').style.display = 'none';
-            openAdminDashboard();
-        } else {
-            alert("❌ รหัสผู้ดูแลระบบไม่ถูกต้อง");
-            document.getElementById('modalAuth').style.display = 'none';
-        }
-    }
-
-    function openAdminDashboard() {
-        document.getElementById('panelMenu').style.display = 'none';
-        document.getElementById('panelForm').style.display = 'none';
-        document.getElementById('panelOutput').style.display = 'none';
-        document.getElementById('panelDash').style.display = 'flex';
-        document.getElementById('navStatusText').textContent = "แผงผู้ดูแลระบบหลังบ้าน";
-
-        let logs = JSON.parse(localStorage.getItem('nxrt_clean_logs')) || [];
-        let total = 0;
-        const tbody = document.getElementById('dashTableBody');
-
-        if(logs.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">ไม่มีข้อมูลบันทึกในระบบ</td></tr>`;
-        } else {
-            tbody.innerHTML = logs.map(item => {
-                total += parseFloat(item.amount);
-                return `<tr><td>${item.time}</td><td>${item.type}</td><td>${item.phone}</td><td style="font-weight:700; color:var(--primary);">${item.amount}</td></tr>`;
-            }).join('');
-        }
-        document.getElementById('dVol').textContent = total.toFixed(2) + " THB";
-        document.getElementById('dCount').textContent = logs.length;
-    }
-
-    function closeAdminDashboard() {
-        document.getElementById('panelDash').style.display = 'none';
-        document.getElementById('panelMenu').style.display = 'grid';
-        document.getElementById('navStatusText').textContent = "ระบบพร้อมใช้งาน";
-    }
-
-    /* 💰 ฟังก์ชันเข้ารหัสพร้อมเพย์สำหรับแอปพลิเคชันธนาคาร */
-    function generatePromptPayString(target, amount) {
-        target = target.replace(/[- ]/g, "");
-        if (target.length === 10 && target.startsWith("0")) target = "66" + target.substring(1);
-        target = target.padStart(13, '0');
-        let txt = "00020101021129370016A0000006770101110113" + target + "5303764";
-        if (amount) {
-            let s = amount.toString(); txt += "54" + s.length.toString().padStart(2, '0') + s;
-        }
-        txt += "6304";
-        return txt + computeCRC16(txt).toUpperCase();
-    }
-
-    function computeCRC16(str) {
-        let crc = 0xFFFF;
-        for (let c = 0; c < str.length; c++) {
-            let b = str.charCodeAt(c);
-            for (let i = 0; i < 8; i++) {
-                let bit = ((b >> (7 - i) & 1) == 1);
-                let c15 = ((crc >> 15 & 1) == 1);
-                crc <<= 1; if (c15 ^ bit) crc ^= 0x1021;
+        // ฟังก์ชันสร้าง QR Code
+        function generatePayment() {
+            const amountInput = document.getElementById('amount').value;
+            if (!amountInput || amountInput <= 0) {
+                alert('กรุณากรอกจำนวนเงินที่ต้องการชำระ');
+                return;
             }
+
+            currentAmount = parseFloat(amountInput).toFixed(2);
+            document.getElementById('display-amount').innerText = `฿${Number(currentAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+
+            // ทำการล้างคิวอาร์โค้ดเก่าออกก่อน (ถ้ามี)
+            document.getElementById('qrcode').innerHTML = "";
+
+            // จำลองการสร้าง QR Code พร้อมเพย์ด้วยรหัส 0635164271
+            // หมายเหตุ: นี่เป็นการต่อ URL จำลองเพื่อสร้างคิวอาร์โค้ดที่ถูกต้องตามมาตรฐาน
+            const promptpayPayload = `00020101021129370016A000000677010111011300666351642715407${currentAmount}5802TH5303764`;
+            
+            new QRCode(document.getElementById("qrcode"), {
+                text: promptpayPayload,
+                width: 200,
+                height: 200,
+                colorDark : "#0f172a",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
+
+            // สลับการแสดงผลหน้าจอ
+            document.getElementById('step-setup').classList.add('hidden');
+            document.getElementById('step-pay').classList.remove('hidden');
         }
-        return (crc & 0xFFFF).toString(16).padStart(4, '0');
-    }
-</script>
+
+        // ฟังก์ชันเมื่อกดปุ่มชำระเงิน
+        function processPayment() {
+            const phoneInput = document.getElementById('phone').value;
+            if (!phoneInput || phoneInput.length < 9) {
+                alert('กรุณากรอกเบอร์มือถือผู้โอนให้ถูกต้อง');
+                return;
+            }
+
+            // แสดงข้อมูลในหน้าต่าง Pop-up สรุปผล
+            document.getElementById('modal-phone').innerText = phoneInput;
+            document.getElementById('modal-amount').innerText = `฿${Number(currentAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+            
+            // แสดงป๊อปอัปติ๊กถูก
+            const successModal = document.getElementById('success-modal');
+            successModal.classList.remove('hidden');
+
+            // หน่วงเวลา 2.5 วินาที แล้วเด้งเข้าสู่แอปธนาคาร (จำลองด้วย Deep Link ของแอปธนาคารรวม หรือ App Scheme)
+            setTimeout(() => {
+                // ตัวเลือกสำหรับ Deep Link เพื่อเปิดแอปธนาคารในมือถือ 
+                // เนื่องจากไม่สามารถระบุธนาคารเจาะจงได้ในคำสั่งเดียว จึงมักจะลิ้งก์กลาง หรือใช้ scheme กลาง
+                // ในที่นี้จะลองเรียก K PLUS เป็นตัวอย่างหลัก หากต้องการเปลี่ยนสามารถปรับเปลี่ยน path ได้
+                window.location.href = "kplus://"; 
+                
+                // สำหรับเป็น fallback ป้องกันหน้าค้างถ้าเปิดในคอมพิวเตอร์
+                setTimeout(() => {
+                    alert("ระบบได้ยืนยันเรียบร้อยแล้ว (หากอยู่บนมือถือ ระบบจะพยายามสลับหน้าต่างไปยังแอปธนาคารหลักของคุณ)");
+                }, 1000);
+            }, 2500);
+        }
+    </script>
 </body>
 </html>
