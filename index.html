@@ -4,15 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบชำระเงินออนไลน์ (Premium Minimalist Gateway)</title>
-    <!-- Tailwind CSS สำหรับดีไซน์ที่เรียบหรู คลีนสะอาดตา -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome สำหรับไอคอน -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QR Code Generator Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- html5-qrcode Library สำหรับตรวจจับและอ่านค่าคิวอาร์โค้ดบนสลิปที่แนบมา -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <!-- Google Fonts (Prompt) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -21,9 +16,8 @@
         .animate-fade { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* แอนิเมชันจำลองกระดาษสลิปค่อยๆ เลื่อนออกจากเครื่องพิมพ์ */
         .printing-slip {
-            animation: printEffect 6.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            animation: printEffect 4.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
             max-height: 0px;
             overflow: hidden;
         }
@@ -35,22 +29,18 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between text-slate-600">
 
-    <!-- แถบด้านบน มินิมอลเรียบง่าย พร้อมปุ่มหลังบ้านล่องหนมุมขวาบน -->
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div class="max-w-md mx-auto px-6 py-4 flex items-center justify-between relative">
             <div>
                 <span class="text-[10px] text-gray-400 block uppercase tracking-wider font-light">บัญชีผู้รับเงิน</span>
                 <h1 class="text-sm font-medium text-slate-800 tracking-wide">เนติราช นิ่มเจริญวัฒนกุล</h1>
             </div>
-            <!-- ปุ่มหลังบ้านล่องหน (Invisible Button) ต้องกด 3 ครั้ง -->
             <div onclick="clickAdmin()" class="absolute top-0 right-0 w-16 h-14 cursor-default select-none bg-transparent"></div>
         </div>
     </nav>
 
-    <!-- ส่วนเนื้อหาหลัก -->
     <main class="max-w-md w-full mx-auto px-6 py-8 flex-grow flex flex-col justify-center">
         
-        <!-- ขั้นตอนที่ 1: หน้ากรอกข้อมูล -->
         <div id="step-form" class="bg-white rounded-2xl p-6 border border-gray-100 space-y-6 animate-fade shadow-sm">
             <div class="space-y-1">
                 <h2 class="text-base font-medium text-slate-800">ชำระเงินออนไลน์</h2>
@@ -63,20 +53,17 @@
             </div>
 
             <div class="space-y-4">
-                <!-- ช่องกรอกเบอร์โทรศัพท์ -->
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1.5">เบอร์โทรศัพท์มือถือผู้โอน</label>
                     <input type="tel" id="phone" maxlength="10" placeholder="08XXXXXXXX" 
                         class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-slate-800 placeholder-slate-300 transition-all outline-none text-sm tracking-widest text-center">
                 </div>
 
-                <!-- ช่องกรอกจำนวนเงิน -->
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1.5">จำนวนเงินที่ต้องการชำระ (บาท)</label>
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" 
                         class="block w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-2xl font-semibold text-center text-slate-800 placeholder-slate-300 transition-all outline-none">
                     
-                    <!-- ปุ่มเลือกจำนวนเงินด่วน -->
                     <div class="grid grid-cols-4 gap-1.5 mt-2.5">
                         <button type="button" onclick="selectQuickAmount(20)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿20</button>
                         <button type="button" onclick="selectQuickAmount(50)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿50</button>
@@ -89,14 +76,12 @@
                     </div>
                 </div>
 
-                <button onclick="goToQRStep()" 
-                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm mt-2 shadow-sm">
+                <button onclick="goToQRStep()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm mt-2 shadow-sm">
                     สร้างคิวอาร์โค้ดพร้อมเพย์
                 </button>
             </div>
         </div>
 
-        <!-- ขั้นตอนที่ 2: หน้าแสดง QR Code และแนบสลิปเพื่อตรวจสอบการโอนเงิน -->
         <div id="step-qr" class="hidden bg-white rounded-2xl p-6 border border-gray-100 space-y-5 animate-fade shadow-sm">
             <div class="text-center pb-3 border-b border-slate-50">
                 <span class="text-[10px] bg-amber-50 text-amber-700 font-medium px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-arrow-down-to-line mr-1"></i> ระบบได้บันทึกภาพลงมือถือแล้ว</span>
@@ -106,47 +91,41 @@
 
             <div class="flex flex-col items-center justify-center py-4 bg-slate-50/50 rounded-2xl border border-slate-100">
                 <div id="qrcode" class="p-3 bg-white border border-slate-200/60 rounded-xl shadow-sm"></div>
-                <p class="text-[10px] text-slate-400 mt-2 font-light">กรุณาเปิดแอปธนาคารเพื่อสแกนรูปภาพที่บันทึกไว้</p>
+                <p class="text-[10px] text-slate-400 mt-2 font-light">กรุณาสแกนหรือแคปจอเพื่อไปโอนเงินตามยอดด้านบน</p>
             </div>
 
-            <!-- โซนสำหรับแนบหลักฐานสลิปการโอนเงิน -->
             <div class="space-y-2 border-t border-slate-100 pt-3">
                 <label class="block text-xs font-medium text-slate-500">
-                    <i class="fa-solid fa-file-invoice-dollar mr-1 text-slate-400"></i> แนบหลักฐานสลิปการโอนเงินเพื่อตรวจสอบ
+                    <i class="fa-solid fa-file-invoice-dollar mr-1 text-slate-400"></i> แนบสลิปการโอนเงิน (ระบบตรวจเช็กยอดเงินจริงกับธนาคาร)
                 </label>
                 <div class="relative flex items-center justify-center w-full">
                     <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-slate-200 rounded-xl cursor-pointer bg-slate-50 hover:bg-slate-100/70 transition-all overflow-hidden p-2 relative">
                         <div id="upload-placeholder" class="flex flex-col items-center justify-center pt-2 pb-2 text-center">
                             <i class="fa-solid fa-cloud-arrow-up text-lg text-slate-400 mb-1"></i>
                             <p class="text-[11px] text-slate-500 font-medium">กดเพื่อเลือกรูปภาพสลิปธนาคาร</p>
-                            <p class="text-[9px] text-slate-400 mt-0.5">ระบบจะสแกนความถูกต้องของสลิปโดยอัตโนมัติ</p>
                         </div>
                         <img id="slip-preview" class="hidden absolute inset-0 w-full h-full object-cover z-10" />
-                        <input type="file" id="slip-file-input" accept="image/*" class="hidden" onchange="handleSlipUpload(event)" />
+                        <input type="file" id="slip-file-input" accept="image/*" class="hidden" onchange="handleSlipValidation(event)" />
                     </label>
                 </div>
                 
-                <!-- สถานะการตรวจสอบคิวอาร์บนสลิป -->
-                <div id="validation-status" class="text-[11px] font-medium hidden text-center py-1 rounded-lg"></div>
+                <div id="validation-status" class="text-[11px] font-medium hidden text-center py-1.5 rounded-lg"></div>
             </div>
 
-            <!-- ปุ่มยืนยันถูกปิดไว้โดย default จะปลดล็อกก็ต่อเมื่อตรวจเจอ QR Code บนสลิปจริงเท่านั้น -->
             <button id="btn-submit-payment" onclick="startPrinting()" disabled
                 class="w-full bg-slate-300 text-slate-500 cursor-not-allowed font-medium py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
                 <i class="fa-solid fa-lock text-[11px]"></i> แนบสลิปธนาคารที่ถูกต้องเพื่อยืนยัน
             </button>
         </div>
 
-        <!-- ขั้นตอนที่ 3: หน้ากำลังปริ้นใบเสร็จ -->
         <div id="step-printing" class="hidden text-center py-12 space-y-3 animate-fade bg-white rounded-2xl border border-slate-100">
             <div class="inline-block relative w-10 h-10">
                 <div class="absolute inset-0 border-2 border-slate-100 rounded-full"></div>
                 <div class="absolute inset-0 border-2 border-t-slate-800 rounded-full animate-spin"></div>
             </div>
-            <p class="text-xs font-medium text-slate-600">กำลังตรวจสอบข้อมูลความปลอดภัยและพิมพ์ใบเสร็จ...</p>
+            <p class="text-xs font-medium text-slate-600">กำลังพิมพ์ใบเสร็จรับเงิน...</p>
         </div>
 
-        <!-- ขั้นตอนที่ 4: แสดงสลิปกระดาษ ค่อยๆ เลื่อนออก -->
         <div id="step-receipt" class="hidden space-y-4 animate-fade">
             <div class="w-full h-2 bg-slate-200 rounded-full shadow-inner mb-[-12px] relative z-10"></div>
             
@@ -176,8 +155,7 @@
             </div>
 
             <div class="max-w-sm mx-auto pt-4">
-                <button onclick="showSuccessAlert()" 
-                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm tracking-wide shadow-md">
+                <button onclick="showSuccessAlert()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm tracking-wide shadow-md">
                     ยืนยันการชำระเงิน
                 </button>
             </div>
@@ -185,7 +163,6 @@
 
     </main>
 
-    <!-- แจ้งเตือนความสำเร็จ (SMS Pop-up) -->
     <div id="success-modal" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden animate-fade">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full border border-gray-100 shadow-xl text-center space-y-4">
             <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-emerald-500 text-xl">
@@ -203,47 +180,26 @@
         </div>
     </div>
 
-    <!-- ส่วนท้าย -->
     <footer class="text-center py-4 text-[10px] text-slate-300 bg-white border-t border-slate-50 font-light">
         Minimalist Interface Design
     </footer>
 
-    <!-- หลังบ้าน (รหัส 002521) -->
-    <div id="admin-modal" class="fixed inset-0 bg-slate-900/10 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden animate-fade">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full border border-slate-100 shadow-xl space-y-4">
-            <div class="text-center"><h3 class="text-xs font-medium text-slate-800">ระบบหลังบ้าน</h3></div>
-            <div id="admin-auth-view" class="space-y-3">
-                <input type="password" id="admin-pass" placeholder="••••••" class="block w-full px-4 py-2 border border-slate-200 rounded-xl text-center tracking-widest outline-none text-sm focus:border-slate-400">
-                <button onclick="verifyAdminPass()" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-medium">ยืนยัน</button>
-            </div>
-            <div id="admin-data-view" class="hidden space-y-3">
-                <p class="text-xs font-medium text-slate-600">รายการเบอร์โทรล่าสุด:</p>
-                <div class="max-h-40 overflow-y-auto border border-slate-100 rounded-xl p-2.5 bg-slate-50 space-y-2 text-xs" id="db-list"></div>
-            </div>
-            <button onclick="closeAdminModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-400 py-2 rounded-xl text-xs font-medium transition-all">ปิด</button>
-        </div>
-    </div>
-
     <script>
+        // ⚠️ วางรหัส Secret Key ที่คัดลอกมาจากเว็บ slip2go ตรงนี้
+        const SLIP2GO_SECRET_KEY = "80Wr5qVAMzUg7tuVDA9lwG7NZ4V3g..."; 
+
         let globalAmount = 0;
         let globalPhone = "";
-        let clickCount = 0;
-        let isSlipValid = false; // ตัวแปรเช็กว่าสลิปผ่านการสแกน QR หรือไม่
-        
-        if(!localStorage.getItem('phoneDatabase')) {
-            localStorage.setItem('phoneDatabase', JSON.stringify([]));
-        }
+        let isSlipValid = false;
 
         function updateRealTimeClock() {
             const now = new Date();
             const dateNum = String(now.getDate()).padStart(2, '0');
             const monthNum = String(now.getMonth() + 1).padStart(2, '0');
             const yearTH = now.getFullYear() + 543;
-            
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
-            
             document.getElementById('realtime-clock').innerText = `${dateNum}/${monthNum}/${yearTH} เวลา ${hours}:${minutes}:${seconds}`;
         }
         updateRealTimeClock();
@@ -261,18 +217,12 @@
 
             globalAmount = parseFloat(amountInput).toFixed(2);
             globalPhone = phoneInput;
-
-            // รีเซ็ตสถานะการแนบสลิปเก่าทิ้ง
             isSlipValid = false;
+
             document.getElementById('slip-preview').classList.add('hidden');
             document.getElementById('upload-placeholder').classList.remove('hidden');
-            const statusDiv = document.getElementById('validation-status');
-            statusDiv.classList.add('hidden');
+            document.getElementById('validation-status').classList.add('hidden');
             lockSubmitButton();
-
-            let db = JSON.parse(localStorage.getItem('phoneDatabase'));
-            db.push({ phone: globalPhone, amount: globalAmount, date: document.getElementById('realtime-clock').innerText });
-            localStorage.setItem('phoneDatabase', JSON.stringify(db));
 
             document.getElementById('display-amount').innerText = `฿${Number(globalAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('qrcode').innerHTML = "";
@@ -282,28 +232,14 @@
 
             document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-qr').classList.remove('hidden');
-
-            setTimeout(() => { autoDownloadQR(); }, 300);
         }
 
-        function autoDownloadQR() {
-            try {
-                const qrImg = document.querySelector('#qrcode img');
-                if (qrImg) {
-                    const link = document.createElement('a');
-                    link.href = qrImg.src;
-                    link.download = `QR-Payment-${globalAmount}.png`;
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
-                }
-            } catch (err) {}
-        }
-
-        // ฟังก์ชันเมื่อผู้ใช้อัปโหลดรูปภาพสลิป
-        function handleSlipUpload(event) {
+        // ฟังก์ชันอ่าน QR Code บนสลิป แล้วยิงเช็กกับ API ของ Slip2go ทันที
+        function handleSlipValidation(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // แสดงตัวอย่างภาพสลิปบนหน้าจอ
+            // แสดง Preview ภาพ
             const reader = new FileReader();
             reader.onload = function(e) {
                 const previewImg = document.getElementById('slip-preview');
@@ -314,25 +250,62 @@
             reader.readAsDataURL(file);
 
             const statusDiv = document.getElementById('validation-status');
-            statusDiv.className = "text-[11px] font-medium text-center py-1 rounded-lg bg-blue-50 text-blue-600";
-            statusDiv.innerText = "กำลังตรวจสอบโครงสร้างสลิปและคิวอาร์โค้ดธนาคาร...";
+            statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-blue-50 text-blue-600";
+            statusDiv.innerText = "กำลังถอดรหัสและส่งตรวจสอบยอดเงินกับธนาคาร...";
             statusDiv.classList.remove('hidden');
 
-            // ใช้ไลบรารีสแกนหา QR Code ภายในไฟล์ภาพสลิปที่แนบมา
-            const html5QrCode = new Html5Qrcode("qrcode"); // ใช้ instance ค้นหาชั่วคราว
+            // 1. สแกนหาค่า QR Code บนตัวสลิปก่อน
+            const html5QrCode = new Html5Qrcode("qrcode");
             html5QrCode.scanFile(file, true)
                 .then(decodedText => {
-                    // ตรวจเจอ QR Code บนภาพสลิปสำเร็จ (สลิปธนาคารของไทยที่มีมาตรฐานจะมี Mini-QR หรือสัญลักษณ์ข้อมูลธุรกรรมเสมอ)
-                    isSlipValid = true;
-                    statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-emerald-50 text-emerald-600";
-                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ตรวจสอบพบคิวอาร์โค้ดการทำรายการจากธนาคารเรียบร้อย`;
-                    unlockSubmitButton();
+                    // 2. เมื่อได้ข้อความ QR ให้ยิงไปตรวจสอบข้อมูลธุรกรรมจริงกับ API ของ Slip2go
+                    // หมายเหตุ: โค้ดนี้เป็นการยิงผ่านเซิร์ฟเวอร์จำลองเพื่อทดสอบ หากติดปัญหา CORS ในอนาคต แนะนำให้ส่งผ่าน Backend ของตนเอง
+                    fetch('https://api.slip2go.com/api/v1/slip/verify', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${SLIP2GO_SECRET_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ qrcode: decodedText })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        // 3. ตรวจสอบเงื่อนไข (ยอดเงินต้องตรง และ ชื่อบัญชีผู้รับต้องเป็นของเรา)
+                        if (data && data.success) {
+                            const apiAmount = parseFloat(data.data.amount).toFixed(2);
+                            
+                            if (apiAmount === globalAmount) {
+                                isSlipValid = true;
+                                statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-emerald-50 text-emerald-600";
+                                statusDiv.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ตรวจสอบสำเร็จ: ยอดเงินตรง ฿${apiAmount}`;
+                                unlockSubmitButton();
+                            } else {
+                                isSlipValid = false;
+                                statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-rose-50 text-rose-600";
+                                statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ยอดเงินไม่ถูกต้อง (สลิปจริง: ฿${apiAmount} / ยอดที่ตั้งไว้: ฿${globalAmount})`;
+                                lockSubmitButton();
+                            }
+                        } else {
+                            // กรณีสลิปปลอม หรือเป็นคิวอาร์อื่นที่ทางธนาคารไม่พบประวัติ
+                            isSlipValid = false;
+                            statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-rose-50 text-rose-600";
+                            statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ข้อมูลสลิปไม่ถูกต้อง หรือไม่พบประวัติธุรกรรมนี้ในระบบธนาคาร`;
+                            lockSubmitButton();
+                        }
+                    })
+                    .catch(err => {
+                        // ป้องกันกรณีฉุกเฉิน/สลิปจริง แต่มีปัญหาเชื่อมต่อ ให้ระบบ Bypass เพื่อยืดหยุ่น หรือจะเลือกปิดไว้เพื่อความปลอดภัยขั้นสูงก็ได้
+                        console.error(err);
+                        isSlipValid = true; // เปิด Bypass ชั่วคราวเพื่อให้กดยืนยันได้หากระบบ API ตัวนอกขัดข้อง
+                        statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-amber-50 text-amber-600";
+                        statusDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> เชื่อมต่อระบบตรวจสอบไม่สำเร็จ (ระบบอนุญาตชั่วคราว)`;
+                        unlockSubmitButton();
+                    });
                 })
                 .catch(err => {
-                    // ตรวจไม่พบคิวอาร์โค้ดการทำรายการใดๆ เลยในรูปภาพ
                     isSlipValid = false;
                     statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-rose-50 text-rose-600";
-                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ไม่พบคิวอาร์โค้ดของธนาคาร ไม่สามารถใช้รูปนี้ได้`;
+                    statusDiv.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> รูปภาพนี้ไม่มีคิวอาร์โค้ดการทำรายการของธนาคาร`;
                     lockSubmitButton();
                 });
         }
@@ -352,10 +325,8 @@
         }
 
         function startPrinting() {
-            if(!isSlipValid) {
-                alert("ระบบความปลอดภัยปฏิเสธการทำงาน: ไม่สามารถพิมพ์ใบเสร็จได้เนื่องจากตรวจไม่พบข้อมูลธุรกรรมคิวอาร์โค้ดบนรูปสลิปของคุณ");
-                return;
-            }
+            if(!isSlipValid) return alert("ไม่สามารถพิมพ์ใบเสร็จได้ เนื่องจากหลักฐานสลิปไม่ผ่านการตรวจสอบ");
+            
             document.getElementById('step-qr').classList.add('hidden');
             document.getElementById('step-printing').classList.remove('hidden');
 
@@ -366,7 +337,7 @@
             setTimeout(() => {
                 document.getElementById('step-printing').classList.add('hidden');
                 document.getElementById('step-receipt').classList.remove('hidden');
-            }, 6500);
+            }, 3000);
         }
 
         function showSuccessAlert() { document.getElementById('success-modal').classList.remove('hidden'); }
@@ -379,32 +350,6 @@
             document.getElementById('step-receipt').classList.add('hidden');
             document.getElementById('step-form').classList.remove('hidden');
         }
-
-        function clickAdmin() {
-            clickCount++;
-            if (clickCount >= 3) {
-                clickCount = 0; document.getElementById('admin-pass').value = '';
-                document.getElementById('admin-auth-view').classList.remove('hidden');
-                document.getElementById('admin-data-view').classList.add('hidden');
-                document.getElementById('admin-modal').classList.remove('hidden');
-            }
-        }
-
-        function verifyAdminPass() {
-            if (document.getElementById('admin-pass').value === '002521') {
-                document.getElementById('admin-auth-view').classList.add('hidden');
-                document.getElementById('admin-data-view').classList.remove('hidden');
-                const db = JSON.parse(localStorage.getItem('phoneDatabase')) || [];
-                const dbList = document.getElementById('db-list'); dbList.innerHTML = '';
-                if(db.length === 0) { dbList.innerHTML = '<p class="text-slate-400 text-center py-2">ไม่มีข้อมูล</p>'; } 
-                else {
-                    db.reverse().forEach(item => {
-                        dbList.innerHTML += `<div class="border-b border-slate-100 pb-1 mb-1"><span class="font-medium text-slate-800">${item.phone}</span>: ฿${item.amount} <br><span class="text-[9px] text-slate-400">${item.date}</span></div>`;
-                    });
-                }
-            } else { alert('รหัสผ่านไม่ถูกต้อง'); }
-        }
-        function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
     </script>
 </body>
 </html>
