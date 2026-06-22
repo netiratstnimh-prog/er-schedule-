@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสร้างQR  (Clean Payment)</title>
+    <title>ระบบชำระเงินออนไลน์ (Clean Payment Realtime)</title>
     <!-- Tailwind CSS สำหรับดีไซน์ที่สะอาดและคลีน -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome สำหรับไอคอน -->
@@ -50,24 +50,41 @@
         
         <!-- ขั้นตอนที่ 1: หน้ากรอกข้อมูล (คลีน มินิมอล) -->
         <div id="step-form" class="bg-white rounded-2xl p-6 border border-gray-100 space-y-6 animate-fade">
-            <div class="space-y-1">
+            <div class="space-y-1.5">
                 <h2 class="text-base font-medium text-gray-800">ชำระเงินออนไลน์</h2>
-                <p class="text-xs text-gray-400">กรุณากรอกเบอร์มือถือเพื่อยืนยันตัวตนก่อนสร้างคิวอาร์โค้ด</p>
+                <p class="text-xs text-gray-400 leading-relaxed">
+                    กรุณากรอกเบอร์มือถือเพื่อยืนยันตัวตนก่อนสร้างคิวอาร์โค้ด <br>
+                    <span class="inline-flex items-center gap-1 text-slate-500 font-medium bg-slate-50 px-2 py-0.5 rounded border border-slate-100 mt-1">
+                        <i class="fa-regular fa-clock text-[10px]"></i> วันนี้: <span id="realtime-clock">-</span>
+                    </span>
+                </p>
             </div>
 
             <div class="space-y-4">
                 <!-- ช่องกรอกเบอร์โทรศัพท์ (เงื่อนไขบังคับ) -->
                 <div>
                     <label class="block text-xs font-medium text-gray-400 mb-1.5">เบอร์โทรศัพท์มือถือผู้โอน</label>
-                    <input type="tel" id="phone" maxlength="10" placeholder="08XXXXXXXXX" 
+                    <input type="tel" id="phone" maxlength="10" placeholder="08XXXXXXXX" 
                         class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-gray-800 placeholder-gray-300 transition-all outline-none text-sm tracking-widest text-center">
                 </div>
 
                 <!-- ช่องกรอกจำนวนเงิน -->
                 <div>
-                    <label class="block text-xs font-medium text-gray-400 mb-1.5">จำนวนเงิน (บาท)</label>
+                    <label class="block text-xs font-medium text-gray-400 mb-1.5">จำนวนเงินที่ต้องการชำระ (บาท)</label>
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" 
-                        class="block w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-2xl font-semibold text-center text-gray-800 placeholder-gray-300 transition-all outline-none">
+                        class="block w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-xl font-semibold text-center text-gray-800 placeholder-gray-300 transition-all outline-none">
+                    
+                    <!-- ปุ่มช้อยส์เลือกจำนวนเงินด่วนข้างล่าง (20 - 1000 บาท) -->
+                    <div class="grid grid-cols-4 gap-1.5 mt-2.5">
+                        <button type="button" onclick="selectQuickAmount(20)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿20</button>
+                        <button type="button" onclick="selectQuickAmount(50)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿50</button>
+                        <button type="button" onclick="selectQuickAmount(100)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿100</button>
+                        <button type="button" onclick="selectQuickAmount(200)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿200</button>
+                        <button type="button" onclick="selectQuickAmount(300)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿300</button>
+                        <button type="button" onclick="selectQuickAmount(500)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors">฿500</button>
+                        <button type="button" onclick="selectQuickAmount(1000)" class="py-1.5 text-xs font-medium bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg border border-gray-100 transition-colors font-semibold">฿1,000</button>
+                        <button type="button" onclick="clearAmountInput()" class="py-1.5 text-xs font-medium bg-red-50 hover:bg-red-100 text-red-500 rounded-lg border border-red-100 transition-colors">ล้างค่า</button>
+                    </div>
                 </div>
 
                 <button onclick="goToQRStep()" 
@@ -82,7 +99,7 @@
             <div class="text-center pb-4 border-b border-gray-50">
                 <p class="text-xs text-gray-400 tracking-wider">PromptPay</p>
                 <p class="text-3xl font-semibold text-gray-800 my-1" id="display-amount">฿0.00</p>
-                <p class="text-[11px] text-gray-400">ขอบคุณสำหรับการชำระ</p>
+                <p class="text-[11px] text-gray-400">พร้อมเพย์ปลายทาง: 0635164271</p>
             </div>
 
             <div class="flex flex-col items-center justify-center py-4">
@@ -102,7 +119,7 @@
                 <div class="absolute inset-0 border-2 border-t-gray-800 rounded-full animate-spin"></div>
             </div>
             <p class="text-sm font-medium text-gray-700">กำลังพิมพ์ใบเสร็จรับเงิน...</p>
-            <p class="text-xs text-gray-400">กรุณารอสักครู่ (รอสักครู่เรากำลังสร้างใบเสร็จให้คุณ)</p>
+            <p class="text-xs text-gray-400">กรุณารอสักครู่ (ระบบกำลังทำงานร่วมกับเครื่องพิมพ์ซอฟต์แวร์)</p>
         </div>
 
         <!-- ขั้นตอนที่ 4: แสดงสลิปกระดาษ ค่อยๆ เลื่อนออก -->
@@ -148,7 +165,7 @@
 
     </main>
 
-    <!-- เท้าความสะอาดๆ -->
+    <!-- ส่วนท้าย -->
     <footer class="text-center py-6 text-[10px] text-gray-300 bg-white border-t border-gray-50">
         Secure Minimalist Interface
     </footer>
@@ -183,17 +200,50 @@
         let globalPhone = "";
         let clickCount = 0;
         
-        // จำลองฐานข้อมูลหลังบ้านเก็บใน LocalStorage บนเบราว์เซอร์
+        // จำลองฐานข้อมูลหลังบ้านเก็บใน LocalStorage
         if(!localStorage.getItem('phoneDatabase')) {
             localStorage.setItem('phoneDatabase', JSON.stringify([]));
         }
 
-        // ตรวจสอบเงื่อนไขหน้าแรก
+        // ฟังก์ชันระบบนาฬิกาเรียลไทม์แสดง วัน วันที่ เดือน พ.ศ. และ เวลา
+        function updateRealTimeClock() {
+            const daysArr = ["อาทิตย์", "จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์"];
+            const monthsArr = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            
+            const now = new Date();
+            const dayName = daysArr[now.getDay()];
+            const dateNum = now.getDate();
+            const monthName = monthsArr[now.getMonth()];
+            const yearTH = now.getFullYear() + 543; // แปลง ค.ศ. เป็น พ.ศ.
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const formattedString = `วัน ${dayName} ที่ ${dateNum} ${monthName} ${yearTH} เวลา ${hours}:${minutes}:${seconds} น.`;
+            document.getElementById('realtime-clock').innerText = formattedString;
+        }
+        
+        // เรียกใช้นาฬิกาทันทีและอัปเดตทุกๆ 1 วินาที
+        updateRealTimeClock();
+        setInterval(updateRealTimeClock, 1000);
+
+        // ฟังก์ชันเลือกจำนวนเงินด่วนเมื่อกดปุ่ม
+        function selectQuickAmount(amount) {
+            document.getElementById('amount').value = amount;
+        }
+
+        // ฟังก์ชันล้างค่าตัวเลขจำนวนเงิน
+        function clearAmountInput() {
+            document.getElementById('amount').value = '';
+        }
+
+        // ตรวจสอบเงื่อนไขการสร้างคิวอาร์โค้ด
         function goToQRStep() {
             const phoneInput = document.getElementById('phone').value.trim();
             const amountInput = document.getElementById('amount').value;
 
-            // เงื่อนไข: ถ้าไม่กรอกเบอร์ หรือกรอกไม่ครบ 9-10 หลัก จะแจ้งเตือนทันที
+            // ตรวจสอบเบอร์มือถือตามเงื่อนไข
             if (!phoneInput || phoneInput.length < 9) {
                 alert('กรุณากรอกเบอร์โทรศัพท์มือถือผู้โอนก่อนสร้างคิวอาร์โค้ด');
                 return;
@@ -206,9 +256,9 @@
             globalAmount = parseFloat(amountInput).toFixed(2);
             globalPhone = phoneInput;
 
-            // บันทึกข้อมูลเบอร์ผู้ใช้ลงระบบหลังบ้าน (Database) ทันทีหลังกดสร้างสำเร็จ
+            // บันทึกข้อมูลเข้า Storage ทันที
             let db = JSON.parse(localStorage.getItem('phoneDatabase'));
-            db.push({ phone: globalPhone, amount: globalAmount, date: new Date().toLocaleString('th-TH') });
+            db.push({ phone: globalPhone, amount: globalAmount, date: document.getElementById('realtime-clock').innerText });
             localStorage.setItem('phoneDatabase', JSON.stringify(db));
 
             // เจนคิวอาร์โค้ด
@@ -225,29 +275,25 @@
                 correctLevel : QRCode.CorrectLevel.M
             });
 
-            // สลับไปหน้า QR
             document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-qr').classList.remove('hidden');
         }
 
-        // ฟังก์ชันหน่วงเวลา 6-7 วินาทีจำลองการปริ้นสลิปออกจากเครื่องพิมพ์
+        // ระบบหน่วงเวลาปริ้นใบเสร็จ 6.5 วินาที
         function startPrinting() {
             document.getElementById('step-qr').classList.add('hidden');
             document.getElementById('step-printing').classList.remove('hidden');
 
-            // เซ็ตข้อมูลลงบนใบเสร็จสลิป
             document.getElementById('slip-phone').innerText = globalPhone;
             document.getElementById('slip-amount').innerText = `฿${Number(globalAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('slip-date').innerText = new Date().toLocaleString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+            document.getElementById('slip-date').innerText = document.getElementById('realtime-clock').innerText.replace('วันนี้: ', '');
 
-            // หน่วงเวลาประมาณ 6.5 วินาที
             setTimeout(() => {
                 document.getElementById('step-printing').classList.add('hidden');
                 document.getElementById('step-receipt').classList.remove('hidden');
             }, 6500);
         }
 
-        // กดปุ่มเสร็จสิ้นกลับสู่หน้าแรก
         function resetToHome() {
             document.getElementById('amount').value = '';
             document.getElementById('phone').value = '';
@@ -255,11 +301,10 @@
             document.getElementById('step-form').classList.remove('hidden');
         }
 
-        // ระบบคลิกปุ่มล่องหน 3 ครั้งเข้าหลังบ้าน
         function clickAdmin() {
             clickCount++;
             if (clickCount >= 3) {
-                clickCount = 0; // รีเซ็ตตัวนับ
+                clickCount = 0;
                 document.getElementById('admin-pass').value = '';
                 document.getElementById('admin-auth-view').classList.remove('hidden');
                 document.getElementById('admin-data-view').classList.add('hidden');
@@ -267,14 +312,12 @@
             }
         }
 
-        // ยืนยันรหัสหลังบ้าน 002521
         function verifyAdminPass() {
             const pass = document.getElementById('admin-pass').value;
             if (pass === '002521') {
                 document.getElementById('admin-auth-view').classList.add('hidden');
                 document.getElementById('admin-data-view').classList.remove('hidden');
                 
-                // ดึงข้อมูลมาโชว์ในระบบหลังบ้าน
                 const db = JSON.parse(localStorage.getItem('phoneDatabase')) || [];
                 const dbList = document.getElementById('db-list');
                 dbList.innerHTML = '';
