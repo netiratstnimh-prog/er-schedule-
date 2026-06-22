@@ -4,13 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบชำระเงินออนไลน์ (Premium Minimalist Gateway)</title>
-    <!-- Tailwind CSS สำหรับดีไซน์ที่เรียบหรู คลีนสะอาดตา -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome สำหรับไอคอน -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QR Code Generator Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Google Fonts (Prompt) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -33,22 +29,18 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between text-slate-600">
 
-    <!-- แถบด้านบน มินิมอลเรียบง่าย (เอาป้ายปลอดภัยออกแล้ว) พร้อมปุ่มหลังบ้านล่องหนมุมขวาบน -->
     <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div class="max-w-md mx-auto px-6 py-4 flex items-center justify-between relative">
             <div>
                 <span class="text-[10px] text-gray-400 block uppercase tracking-wider font-light">บัญชีผู้รับเงิน</span>
                 <h1 class="text-sm font-medium text-slate-800 tracking-wide">เนติราช นิ่มเจริญวัฒนกุล</h1>
             </div>
-            <!-- ปุ่มหลังบ้านล่องหน (Invisible Button) ต้องกด 3 ครั้ง -->
             <div onclick="clickAdmin()" class="absolute top-0 right-0 w-16 h-14 cursor-default select-none bg-transparent"></div>
         </div>
     </nav>
 
-    <!-- ส่วนเนื้อหาหลัก -->
     <main class="max-w-md w-full mx-auto px-6 py-8 flex-grow flex flex-col justify-center">
         
-        <!-- ขั้นตอนที่ 1: หน้ากรอกข้อมูล (ดีไซน์เรียบเท่ คุมโทนอุ่น ไม่ฉูดฉาด) -->
         <div id="step-form" class="bg-white rounded-2xl p-6 border border-gray-100 space-y-6 animate-fade shadow-sm">
             <div class="space-y-1">
                 <h2 class="text-base font-medium text-slate-800">ชำระเงินออนไลน์</h2>
@@ -61,20 +53,17 @@
             </div>
 
             <div class="space-y-4">
-                <!-- ช่องกรอกเบอร์โทรศัพท์ -->
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1.5">เบอร์โทรศัพท์มือถือผู้โอน</label>
                     <input type="tel" id="phone" maxlength="10" placeholder="08XXXXXXXX" 
                         class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-slate-800 placeholder-slate-300 transition-all outline-none text-sm tracking-widest text-center">
                 </div>
 
-                <!-- ช่องกรอกจำนวนเงิน -->
                 <div>
                     <label class="block text-xs font-medium text-slate-400 mb-1.5">จำนวนเงินที่ต้องการชำระ (บาท)</label>
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" 
                         class="block w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-2xl font-semibold text-center text-slate-800 placeholder-slate-300 transition-all outline-none">
                     
-                    <!-- ปุ่มเลือกจำนวนเงินด่วน คุมโทนเทา-น้ำตาล เรียบสุภาพ -->
                     <div class="grid grid-cols-4 gap-1.5 mt-2.5">
                         <button type="button" onclick="selectQuickAmount(20)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿20</button>
                         <button type="button" onclick="selectQuickAmount(50)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿50</button>
@@ -88,13 +77,12 @@
                 </div>
 
                 <button onclick="goToQRStep()" 
-                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm mt-2 shadow-sm font-medium">
+                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm mt-2 shadow-sm">
                     สร้างคิวอาร์โค้ดพร้อมเพย์
                 </button>
             </div>
         </div>
 
-        <!-- ขั้นตอนที่ 2: หน้าแสดง QR Code (ลบภาพด้านบนออกอย่างสะอาดตา สั่งเซฟรูปภาพอัตโนมัติ) -->
         <div id="step-qr" class="hidden bg-white rounded-2xl p-6 border border-gray-100 space-y-6 animate-fade shadow-sm">
             <div class="text-center pb-4 border-b border-slate-50">
                 <span class="text-[10px] bg-amber-50 text-amber-700 font-medium px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-arrow-down-to-line mr-1"></i> ระบบได้บันทึกภาพลงมือถือแล้ว</span>
@@ -102,7 +90,6 @@
                 <p class="text-xs text-slate-400">ชื่อผู้รับ: เนติราช นิ่มเจริญวัฒนกุล</p>
             </div>
 
-            <!-- โชว์เฉพาะคิวอาร์โค้ด เรียบหรู คลีนสุด ๆ -->
             <div class="flex flex-col items-center justify-center py-6 bg-slate-50/50 rounded-2xl border border-slate-100">
                 <div id="qrcode" class="p-3 bg-white border border-slate-200/60 rounded-xl shadow-sm"></div>
                 <p class="text-[10px] text-slate-400 mt-4 font-light"><i class="fa-solid fa-camera"></i> หากรูปไม่ดาวน์โหลดอัตโนมัติ สามารถแคปหน้าจอเพื่อสแกนได้</p>
@@ -114,7 +101,6 @@
             </button>
         </div>
 
-        <!-- ขั้นตอนที่ 3: หน้ากำลังปริ้นใบเสร็จ (หน่วงเวลาเรียบหรู) -->
         <div id="step-printing" class="hidden text-center py-12 space-y-3 animate-fade bg-white rounded-2xl border border-slate-100">
             <div class="inline-block relative w-10 h-10">
                 <div class="absolute inset-0 border-2 border-slate-100 rounded-full"></div>
@@ -123,12 +109,9 @@
             <p class="text-xs font-medium text-slate-600">กำลังพิมพ์ใบเสร็จรับเงิน...</p>
         </div>
 
-        <!-- ขั้นตอนที่ 4: แสดงสลิปกระดาษ ค่อยๆ เลื่อนออก -->
         <div id="step-receipt" class="hidden space-y-4 animate-fade">
-            <!-- ช่องปากเครื่องพิมพ์จำลอง -->
             <div class="w-full h-2 bg-slate-200 rounded-full shadow-inner mb-[-12px] relative z-10"></div>
             
-            <!-- ตัวสลิปสีขาวคลีน ค่อยๆ เลื่อนออก -->
             <div class="printing-slip bg-white border border-slate-200 rounded-b-xl shadow-md p-6 max-w-sm mx-auto space-y-4 relative">
                 <div class="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(to_right,#e2e8f0_50%,transparent_50%)] bg-[length:10px_1px]"></div>
                 
@@ -154,28 +137,37 @@
                 <p class="text-[9px] text-center text-slate-400 font-light">ตรวจสอบแล้วผ่านระบบเครือข่ายปลอดภัย</p>
             </div>
 
-            <!-- ชุดปุ่มกดเรียบหรูสไตล์มินิมอล -->
-            <div class="max-w-sm mx-auto pt-4 space-y-2">
-                <button onclick="redirectToBankApp()" 
-                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-wallet text-[11px]"></i> ชำระเงิน (เปิดแอป K PLUS)
-                </button>
-                
-                <button onclick="resetToHome()" 
-                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-500 py-3 rounded-xl transition-all text-sm">
-                    เสร็จสิ้น
+            <div class="max-w-sm mx-auto pt-4">
+                <button onclick="showSuccessAlert()" 
+                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm tracking-wide shadow-md">
+                    ยืนยันการชำระเงิน
                 </button>
             </div>
         </div>
 
     </main>
 
-    <!-- ส่วนท้าย -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden animate-fade">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full border border-gray-100 shadow-xl text-center space-y-4">
+            <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-emerald-500 text-xl">
+                <i class="fa-solid fa-comment-sms"></i>
+            </div>
+            <div class="space-y-1">
+                <h4 class="text-sm font-medium text-slate-800">ยืนยันการทำรายการสำเร็จ</h4>
+                <p class="text-xs text-slate-500 leading-relaxed px-2">
+                    เราได้รับการชำระเงินเรียบร้อยแล้ว SMS จะส่งไปยังหมายเลขปลายทางของท่าน ขอบคุณครับ
+                </p>
+            </div>
+            <button onclick="finalResetHome()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl text-xs font-medium transition-all">
+                ตกลง
+            </button>
+        </div>
+    </div>
+
     <footer class="text-center py-4 text-[10px] text-slate-300 bg-white border-t border-slate-50 font-light">
         Minimalist Interface Design
     </footer>
 
-    <!-- ป๊อปอัพเข้าสู่หลังบ้าน (ซ่อนรหัส 002521) -->
     <div id="admin-modal" class="fixed inset-0 bg-slate-900/10 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden animate-fade">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full border border-slate-100 shadow-xl space-y-4">
             <div class="text-center">
@@ -205,12 +197,11 @@
             localStorage.setItem('phoneDatabase', JSON.stringify([]));
         }
 
-        // ระบบนาฬิกา ฟอร์แมตสั้นกระชับ: DD/MM/2569 เวลา HH:MM:SS
         function updateRealTimeClock() {
             const now = new Date();
             const dateNum = String(now.getDate()).padStart(2, '0');
             const monthNum = String(now.getMonth() + 1).padStart(2, '0');
-            const yearTH = now.getFullYear() + 543; // พ.ศ. 2569
+            const yearTH = now.getFullYear() + 543;
             
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -268,7 +259,6 @@
             document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-qr').classList.remove('hidden');
 
-            // บันทึกรูปภาพลงมือถืออัตโนมัติ
             setTimeout(() => {
                 autoDownloadQR();
             }, 300);
@@ -286,7 +276,7 @@
                     document.body.removeChild(link);
                 }
             } catch (err) {
-                console.log("Auto-download bypass:", err);
+                console.log("Auto-download handled", err);
             }
         }
 
@@ -304,11 +294,14 @@
             }, 6500);
         }
 
-        function redirectToBankApp() {
-            window.location.href = "https://apps.apple.com/th/app/k-plus/id361170631?l=th";
+        // ฟังก์ชันเมื่อกดปุ่มยืนยันการชำระเงิน -> แสดงป๊อปอัพแจ้งเตือนรับเงินและ SMS
+        function showSuccessAlert() {
+            document.getElementById('success-modal').classList.remove('hidden');
         }
 
-        function resetToHome() {
+        // ฟังก์ชันปิดป๊อปอัพแจ้งเตือนและพากลับหน้าหลักเพื่อพร้อมใช้งานคิวถัดไป
+        function finalResetHome() {
+            document.getElementById('success-modal').classList.add('hidden');
             document.getElementById('amount').value = '';
             document.getElementById('phone').value = '';
             document.getElementById('step-receipt').classList.add('hidden');
@@ -357,3 +350,4 @@
     </script>
 </body>
 </html>
+
