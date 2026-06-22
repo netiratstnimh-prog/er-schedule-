@@ -9,20 +9,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* 🎨 คุมโทนสไตล์ปี 2026: Slate Dark Mode & Neon Luminescence */
+            --bg-dark-slate: #0b0f19;
+            --glass-bg: rgba(22, 30, 49, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-indigo: #6366f1;
+            --neon-cyan: #06b6d4;
+            
             --primary-navy: #0f172a;
             --secondary-blue: #1e40af;
-            --accent-blue: #2563eb;
-            --bg-corporate: #f8fafc;
+            --accent-blue: #38bdf8;
             --surface-white: #ffffff;
-            --border-slate: #e2e8f0;
-            --text-main: #334155;
-            --text-dark: #0f172a;
+            --border-slate: rgba(255, 255, 255, 0.1);
+            --text-main: #94a3b8;
+            --text-dark: #f8fafc;
             --success-green: #10b981;
         }
 
         body {
             font-family: 'Sarabun', 'Inter', sans-serif;
-            background-color: var(--bg-corporate);
+            background-color: var(--bg-dark-slate);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
             color: var(--text-main);
             margin: 0;
             padding: 0;
@@ -30,36 +39,81 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
 
-        /* ส่วนหัวที่เป็นทางการ */
+        /* ⚡ Splash Screen @NRT ล้ำๆ (3.5 วินาที) */
+        #nrt-splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #070a12;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.6s ease;
+        }
+
+        .splash-content {
+            text-align: center;
+            animation: splashBlurFade 3.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        .splash-logo {
+            font-family: 'Inter', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--neon-indigo), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .splash-tagline {
+            font-size: 16px;
+            font-weight: 400;
+            color: #cbd5e1;
+            letter-spacing: 1px;
+        }
+
+        @keyframes splashBlurFade {
+            0% { filter: blur(15px); opacity: 0; transform: scale(0.95); }
+            15% { filter: blur(0px); opacity: 1; transform: scale(1); }
+            85% { filter: blur(0px); opacity: 1; transform: scale(1); }
+            100% { filter: blur(10px); opacity: 0; transform: scale(1.02); }
+        }
+
+        /* ส่วนหัวคอนโซลหลัก */
         .enterprise-header {
             width: 100%;
             max-width: 650px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 30px 24px 15px 24px;
+            padding: 40px 24px 20px 24px;
             box-sizing: border-box;
             position: relative;
         }
 
         .header-title h1 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--primary-navy);
+            color: #ffffff;
             margin: 0;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.05);
         }
 
         .header-title p {
             font-size: 11px;
-            color: var(--accent-blue);
-            margin: 4px 0 0 0;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            color: var(--neon-cyan);
+            margin: 6px 0 0 0;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
 
-        /* 🔒 จุดรับสัมผัสลับ 3 ครั้งที่มุมบนขวา (ซ่อนปุ่มแอดมินไว้) */
+        /* 🔒 ปุ่มแอดมินลับสเปกเดิม */
         .hidden-admin-trigger {
             position: absolute;
             top: 20px;
@@ -73,7 +127,7 @@
             -webkit-user-select: none;
         }
 
-        /* กล่องคอนเทนเนอร์หลัก */
+        /* กล่องคอนเทนเนอร์หลักแนว Glassmorphism */
         .portal-container {
             width: 100%;
             max-width: 650px;
@@ -82,11 +136,15 @@
         }
 
         .main-card {
-            background: var(--surface-white);
-            border: 1px solid var(--border-slate);
-            border-radius: 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
             padding: 35px;
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .form-layout {
@@ -103,11 +161,11 @@
         .form-group label {
             font-size: 13px;
             font-weight: 600;
-            color: var(--primary-navy);
-            margin-bottom: 8px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
         }
 
-        /* แผงปุ่มธนาคารแบบคลีนๆ ไม่ต้องกด dropdown */
+        /* แผงปุ่มธนาคารสไตล์ดาร์กโหมด */
         .bank-selector-group {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -115,37 +173,37 @@
         }
 
         .bank-btn-node {
-            background: #ffffff;
-            border: 1px solid var(--border-slate);
-            border-radius: 12px;
-            padding: 14px 8px;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 16px 8px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .bank-btn-node:hover {
-            background: #f1f5f9;
-            border-color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .bank-btn-node.selected {
-            background: #eff6ff;
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 1px var(--accent-blue);
+            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--neon-indigo);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
         }
 
         .bank-icon-circle {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             color: #fff;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -157,53 +215,56 @@
         .bank-label-text {
             font-size: 12px;
             font-weight: 600;
-            color: var(--text-dark);
+            color: #e2e8f0;
         }
 
         input {
             width: 100%;
-            padding: 12px 14px;
-            background: #ffffff;
-            border: 1px solid var(--border-slate);
-            border-radius: 10px;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
             box-sizing: border-box;
             font-size: 14px;
-            color: var(--text-dark);
+            color: #ffffff;
             font-family: 'Sarabun', sans-serif;
+            transition: all 0.2s;
         }
 
         input:focus {
-            border-color: var(--accent-blue);
+            border-color: var(--neon-cyan);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+            background: rgba(15, 23, 42, 0.8);
         }
 
         .btn-submit-action {
             width: 100%;
-            padding: 15px;
-            background: var(--primary-navy);
+            padding: 16px;
+            background: linear-gradient(135deg, var(--neon-indigo), var(--neon-cyan));
             color: #ffffff;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             font-family: 'Sarabun', sans-serif;
-            transition: background 0.2s;
+            transition: opacity 0.2s, transform 0.2s;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.25);
         }
 
         .btn-submit-action:hover {
-            background: var(--secondary-blue);
+            opacity: 0.95;
+            transform: translateY(-1px);
         }
 
-        /* หน้าประมวลผลความปลอดภัยอย่างเป็นทางการ */
+        /* โหลดเดอร์ตรวจสอบความปลอดภัย */
         .pipeline-processing-loader {
             display: none;
             text-align: center;
             padding: 40px 0;
         }
 
-        /* แอนิเมชันติ๊กถูกก่อนปรินต์เอกสาร */
         .success-checkmark-wrapper {
             display: none;
             justify-content: center;
@@ -214,7 +275,7 @@
         .checkmark-circle {
             width: 60px;
             height: 60px;
-            background: #f0fdf4;
+            background: rgba(16, 185, 129, 0.1);
             border: 2px solid var(--success-green);
             color: var(--success-green);
             border-radius: 50%;
@@ -229,8 +290,8 @@
         .laser-bar-bg {
             width: 100%;
             max-width: 300px;
-            height: 4px;
-            background: #e2e8f0;
+            height: 6px;
+            background: rgba(255,255,255,0.05);
             border-radius: 10px;
             overflow: hidden;
             margin: 0 auto 15px auto;
@@ -239,46 +300,50 @@
         .laser-fill-progress {
             height: 100%;
             width: 0%;
-            background: var(--accent-blue);
+            background: linear-gradient(90deg, var(--neon-indigo), var(--neon-cyan));
         }
 
         .pipeline-status-text {
             font-size: 14px;
             font-weight: 500;
-            color: var(--text-main);
+            color: #e2e8f0;
         }
 
-        /* 👑 โซนแสดงสลิปสี่เหลี่ยมจัตุรัส 4x4 เลื่อนดิ่งลงมาจากด้านบน */
+        /* 🖨️ โซนขับเคลื่อนสลิปแบบจำลองความร้อน (Paper Roll-out Delay 3-5 วินาที) */
         #receipt-output-area {
             display: none;
-            position: relative;
-            overflow: hidden;
-            padding-top: 10px;
         }
 
+        /* กล่องหุ้มสลิปเพื่อใช้ทริกเกอร์ max-height ทะยานไหลลื่นลงมาด้านล่าง */
+        .rollout-printer-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 4.2s cubic-bezier(0.25, 1, 0.5, 1);
+            margin: 0 auto;
+            padding-top: 5px;
+        }
+
+        /* เมื่อระบบสั่งพิมพ์สมบูรณ์ คลาสนี้จะถูกยัดเข้าแผงเพื่อสั่งยืด */
+        .rollout-printer-container.printing-active {
+            max-height: 650px;
+        }
+
+        /* 👑 ตัวสลิปคงรูป 4x4 สีขาวบริสุทธิ์ ขับพื้นหลังมืดให้สว่างคมชัดสะดุดตา */
         .master-receipt-card {
             background: #ffffff;
             color: #0f172a;
             width: 100%;
             max-width: 400px;
-            aspect-ratio: 1 / 1; /* บังคับโครงสร้างสี่เหลี่ยมจัตุรัส 4x4 */
+            aspect-ratio: 1 / 1;
             margin: 0 auto 25px auto;
             padding: 30px;
             box-sizing: border-box;
             border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.06);
+            border-radius: 14px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            
-            /* 🖨️ เอฟเฟกต์การเลื่อนลงมาจากแท่นสแกนเอกสาร */
-            animation: copierPrintDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @keyframes copierPrintDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         @keyframes popCheck {
@@ -342,7 +407,7 @@
         }
 
         .enterprise-amount-strip .label { font-size: 12px; font-weight: 700; color: #475569; }
-        .enterprise-amount-strip .figure { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: var(--secondary-blue); }
+        .enterprise-amount-strip .figure { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 700; color: #1e40af; }
 
         .slip-footer-verification {
             display: flex;
@@ -364,7 +429,7 @@
             display: inline-block;
         }
 
-        /* 🎛️ พาเนลควบคุมสเปก 5 ปุ่มสั่งงานขององค์กร */
+        /* แผงควบคุมธุรกรรมท้ายสลิป */
         .corporate-btn-stack {
             display: flex;
             flex-direction: column;
@@ -381,31 +446,42 @@
 
         .btn-utility {
             width: 100%;
-            padding: 12px 14px;
-            border-radius: 8px;
+            padding: 13px 14px;
+            border-radius: 10px;
             font-size: 13px;
             font-weight: 600;
             font-family: 'Sarabun', sans-serif;
             cursor: pointer;
             text-align: center;
             box-sizing: border-box;
-            border: 1px solid var(--border-slate);
-            background: #ffffff;
-            color: var(--text-dark);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
             transition: all 0.2s ease;
         }
 
-        .btn-utility:hover { background: #f8fafc; border-color: #cbd5e1; }
-        .btn-primary-stack { background: var(--primary-navy); color: #fff; border: none; }
-        .btn-primary-stack:hover { background: var(--secondary-blue); }
+        .btn-utility:hover { 
+            background: rgba(255, 255, 255, 0.1); 
+            border-color: rgba(255, 255, 255, 0.2); 
+        }
+        
+        .btn-primary-stack { 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.3)); 
+            border: 1px solid var(--neon-indigo);
+            color: #ffffff; 
+        }
+        .btn-primary-stack:hover { 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(6, 182, 212, 0.5)); 
+        }
 
-        /* โมดอลพรีวิวบันทึกสลิป 4x4 */
+        /* แผงหน้าต่าง Pop-up Modal */
         .popup-modal-backdrop {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            background: rgba(7, 10, 18, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1500;
             justify-content: center;
             align-items: center;
@@ -414,50 +490,58 @@
         }
 
         .modal-body-card {
-            background: #ffffff;
-            border-radius: 16px;
+            background: #111827;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
             width: 100%;
             max-width: 430px;
             padding: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             text-align: center;
         }
 
-        .modal-header-text { font-size: 14px; font-weight: 700; color: var(--primary-navy); margin-bottom: 16px; }
+        .modal-header-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-bottom: 16px; }
 
         .preview-canvas-container {
             width: 100%;
             max-width: 300px;
             aspect-ratio: 1/1;
             margin: 0 auto 20px auto;
-            border: 1px solid var(--border-slate);
-            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
             overflow: hidden;
-            background: #f8fafc;
+            background: #1f2937;
         }
 
         .preview-canvas-container img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* ตารางสิทธิ์ผู้ดูแลระบบ */
         .table-admin {
             width: 100%;
             border-collapse: collapse;
             font-size: 12px;
             margin-top: 10px;
+            color: #e2e8f0;
         }
-        .table-admin th { background: #f1f5f9; padding: 8px; text-align: left; }
-        .table-admin td { padding: 10px 8px; border-bottom: 1px solid #f1f5f9; }
+        .table-admin th { background: #1f2937; padding: 8px; text-align: left; color: #94a3b8; }
+        .table-admin td { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        /* บังคับไม่ให้พิมพ์ส่วนอื่นๆ ออกมาในหน้าเครื่องพิมพ์มือถือ */
         @media print {
             body * { display: none !important; }
-            #receipt-output-area, #receipt-output-area *, .master-receipt-card, .master-receipt-card * { display: flex !important; }
+            #receipt-output-area, #receipt-output-area *, .rollout-printer-container, .master-receipt-card, .master-receipt-card * { display: flex !important; }
+            .rollout-printer-container { max-height: none !important; }
             .corporate-btn-stack { display: none !important; }
             .master-receipt-card { border: none !important; box-shadow: none !important; margin: 0 !important; }
         }
     </style>
 </head>
 <body>
+
+<div id="nrt-splash-screen">
+    <div class="splash-content">
+        <div class="splash-logo">@NRT</div>
+        <div class="splash-tagline">ระบบออกใบเสร็จอัตโนมัติ</div>
+    </div>
+</div>
 
 <div class="enterprise-header">
     <div class="header-title">
@@ -520,53 +604,55 @@
             <div class="laser-bar-bg" id="laserFrame">
                 <div id="laserLine" class="laser-fill-progress"></div>
             </div>
-            <span id="pipelineCounter" style="font-family:'Inter'; font-weight:700; font-size:13px; color:var(--accent-blue);">0%</span>
+            <span id="pipelineCounter" style="font-family:'Inter'; font-weight:700; font-size:13px; color:var(--neon-cyan);">0%</span>
         </div>
 
         <div id="receipt-output-area">
-            <div class="master-receipt-card" id="targetSlipFrame">
-                <div class="slip-header-meta">
-                    <div>
-                        <h2>ใบรับเงินคิวอาร์โค้ดสากล</h2>
-                        <p>OFFICIAL ELECTRONIC RECEIPT</p>
-                    </div>
-                    <div class="corp-badge">องค์กรตรวจสอบแล้ว</div>
-                </div>
-                
-                <div class="slip-core-grid">
-                    <div class="grid-data-node">
-                        <span class="lbl">ผู้โอนเงิน (FROM)</span>
-                        <span class="data" id="v_sender">-</span>
-                    </div>
-                    <div class="grid-data-node">
-                        <span class="lbl">ธนาคารต้นทาง</span>
-                        <span class="data" id="v_bank">-</span>
-                    </div>
-                    <div class="grid-data-node span-all">
-                        <span class="lbl">บัญชีผู้รับโอนปลายทาง (TO)</span>
-                        <span class="data" style="color:var(--secondary-blue);">เนติราช นิ่มเจริญวัฒนกุล</span>
-                    </div>
-                    <div class="grid-data-node">
-                        <span class="lbl">วัน-เวลาที่ทำรายการ</span>
-                        <span class="data" id="v_date" style="font-size:12px;">-</span>
-                    </div>
-                    <div class="grid-data-node">
-                        <span class="lbl">รหัสอนุมัติของระบบ</span>
-                        <span class="data" id="v_ref" style="font-family:'Inter'; font-size:12px;">-</span>
+            <div class="rollout-printer-container" id="printerDriveGate">
+                <div class="master-receipt-card" id="targetSlipFrame">
+                    <div class="slip-header-meta">
+                        <div>
+                            <h2>ใบรับเงินคิวอาร์โค้ดสากล</h2>
+                            <p>OFFICIAL ELECTRONIC RECEIPT</p>
+                        </div>
+                        <div class="corp-badge">องค์กรตรวจสอบแล้ว</div>
                     </div>
                     
-                    <div class="enterprise-amount-strip">
-                        <span class="label">ยอดเงินโอนสุทธิ</span>
-                        <span class="figure"><span id="v_amount">-</span> THB</span>
+                    <div class="slip-core-grid">
+                        <div class="grid-data-node">
+                            <span class="lbl">ผู้โอนเงิน (FROM)</span>
+                            <span class="data" id="v_sender">-</span>
+                        </div>
+                        <div class="grid-data-node">
+                            <span class="lbl">ธนาคารต้นทาง</span>
+                            <span class="data" id="v_bank">-</span>
+                        </div>
+                        <div class="grid-data-node span-all">
+                            <span class="lbl">บัญชีผู้รับโอนปลายทาง (TO)</span>
+                            <span class="data" style="color:#1e40af;">เนติราช นิ่มเจริญวัฒนกุล</span>
+                        </div>
+                        <div class="grid-data-node">
+                            <span class="lbl">วัน-เวลาที่ทำรายการ</span>
+                            <span class="data" id="v_date" style="font-size:12px;">-</span>
+                        </div>
+                        <div class="grid-data-node">
+                            <span class="lbl">รหัสอนุมัติของระบบ</span>
+                            <span class="data" id="v_ref" style="font-family:'Inter'; font-size:12px;">-</span>
+                        </div>
+                        
+                        <div class="enterprise-amount-strip">
+                            <span class="label">ยอดเงินโอนสุทธิ</span>
+                            <span class="figure"><span id="v_amount">-</span> THB</span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="slip-footer-verification">
-                    <div class="verify-text">
-                        <h4>คิวอาร์โค้ดตรวจสอบ</h4>
-                        <p>เอกสารฉบับนี้ใช้ระบบลงลายมือชื่อดิจิทัล สแกนผ่านโมบายแบงก์กิ้งเพื่อทำธุรกรรม</p>
+                    <div class="slip-footer-verification">
+                        <div class="verify-text">
+                            <h4>คิวอาร์โค้ดตรวจสอบ</h4>
+                            <p>เอกสารฉบับนี้ใช้ระบบลงลายมือชื่อดิจิทัล สแกนผ่านโมบายแบงก์กิ้งเพื่อทำธุรกรรม</p>
+                        </div>
+                        <div id="qrcode"></div>
                     </div>
-                    <div id="qrcode"></div>
                 </div>
             </div>
             
@@ -590,9 +676,8 @@
 
 <div id="savePreviewModal" class="popup-modal-backdrop">
     <div class="modal-body-card">
-        <div class="modal-header-text">💾 ตัวอย่างรูปภาพสำหรับบันทึกลงมือถือ ($4 \times 4$)</div>
-        <div class="preview-canvas-container" id="previewImagePlace">
-            </div>
+        <div class="modal-header-text">💾 ตัวอย่างรูปภาพสำหรับบันทึกลงมือถือ (4 × 4)</div>
+        <div class="preview-canvas-container" id="previewImagePlace"></div>
         <div class="btn-row-flex">
             <button type="button" class="btn-utility" onclick="closeSaveModal()">ยกเลิก</button>
             <button type="button" class="btn-utility btn-primary-stack" id="triggerDownloadBtn">ดาวน์โหลดลงเครื่องมือถือ</button>
@@ -602,7 +687,7 @@
 
 <div id="adminLogModal" class="popup-modal-backdrop">
     <div class="modal-body-card" style="max-width: 450px;">
-        <div class="modal-header-text" style="color:var(--accent-blue); text-align: left;">🔒 AUDIT DATABASE SYSTEM</div>
+        <div class="modal-header-text" style="color:var(--neon-cyan); text-align: left;">🔒 AUDIT DATABASE SYSTEM</div>
         <div style="max-height: 250px; overflow-y:auto;">
             <table class="table-admin">
                 <thead>
@@ -623,9 +708,17 @@
     const promptpayID = "0635164271";
     let adminTapCount = 0;
     let adminTapTimer = null;
-    
-    // ออบเจกต์เก็บความทรงจำธุรกรรมล่าสุด (เพื่อใช้ทำ Auto-fill)
     let memoryCache = { sender: '', bank: '', amount: '', phone: '', bankElementId: '' };
+
+    // ควบคุมการหลุดจากม่านหน้าจอ Splash Screen เมื่อผ่านไป 3.5 วินาที
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('nrt-splash-screen');
+            splash.style.transform = 'translateY(-100%)';
+            splash.style.opacity = '0';
+            setTimeout(() => splash.remove(), 800);
+        }, 3500);
+    });
 
     if (!localStorage.getItem('corp_audit_store')) {
         localStorage.setItem('corp_audit_store', JSON.stringify([]));
@@ -638,7 +731,6 @@
         memoryCache.bankElementId = elementId;
     }
 
-    // ฟังก์ชันความปลอดภัยคุมลำดับงาน (Pipeline Processing)
     function executeEnterprisePipeline(e) {
         e.preventDefault();
         if(!document.getElementById('corporateBankField').value) {
@@ -646,7 +738,6 @@
             return;
         }
 
-        // เซฟลงความจำ Cache สำหรับใช้ปุ่มกดทำอีกครั้ง
         memoryCache.sender = document.getElementById('senderName').value;
         memoryCache.bank = document.getElementById('corporateBankField').value;
         memoryCache.amount = document.getElementById('amount').value;
@@ -667,7 +758,6 @@
             if(percentage >= 100) {
                 clearInterval(clock);
                 
-                // สลับเอฟเฟกต์: ซ่อนแท่งโหลด -> โชว์ติ๊กถูกวงกลม -> ส่งสัญญาณทำสลิปกระดาษถ่ายเอกสารดิ่งลงมา
                 document.getElementById('secureShield').style.display = 'none';
                 document.getElementById('laserFrame').style.display = 'none';
                 document.getElementById('checkmarkContainer').style.display = 'flex';
@@ -677,6 +767,12 @@
                     document.getElementById('pipelineLoader').style.display = 'none';
                     document.getElementById('receipt-output-area').style.display = 'block';
                     renderFinalDataSlip();
+                    
+                    // 🖨️ เปิดใช้งานสายพานขับเคลื่อนเพื่อเลื่อนกระดาษไหลงมาแบบช้าๆ สมจริง
+                    setTimeout(() => {
+                        document.getElementById('printerDriveGate').classList.add('printing-active');
+                    }, 50);
+
                 }, 900);
             }
         }, 12);
@@ -709,9 +805,9 @@
         });
     }
 
-    // ปุ่มที่ 1: รีเซ็ตฟอร์มกลับหน้าแรก + ยัดข้อมูลเก่าคืนช่อง (Auto-Fill)
     function actionRevertAndAutofill() {
-        // เคลียร์สถานะการโหลดชิ้นเก่า
+        // ล้างกลไกท่อส่งกระดาษเครื่องพิมพ์เก่า
+        document.getElementById('printerDriveGate').classList.remove('printing-active');
         document.getElementById('receipt-output-area').style.display = 'none';
         document.getElementById('secureShield').style.display = 'block';
         document.getElementById('laserFrame').style.display = 'none';
@@ -719,7 +815,6 @@
         document.getElementById('checkmarkContainer').style.display = 'none';
         document.getElementById('loaderTitle').textContent = "กำลังเข้ารหัสและเชื่อมโยงเครือข่ายความปลอดภัย...";
 
-        // ดึงของเก่าจาก Cache ยัดกลับเข้าช่องกรอกข้อมูล
         document.getElementById('senderName').value = memoryCache.sender;
         document.getElementById('amount').value = memoryCache.amount;
         document.getElementById('phone').value = memoryCache.phone;
@@ -730,12 +825,10 @@
         document.getElementById('corporateForm').style.display = 'flex';
     }
 
-    // ปุ่มที่ 2: ระบบปรินต์สลิป Native Mobile Print
     function actionNativePrint() {
         window.print();
     }
 
-    // ปุ่มที่ 3: เปิดหน้าต่างพรีวิว รูปทรงสี่เหลี่ยมจัตุรัส ก่อนสั่งเซฟเข้าเครื่อง
     function actionOpenSavePreview() {
         const frame = document.getElementById('targetSlipFrame');
         html2canvas(frame, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(canvas => {
@@ -760,16 +853,13 @@
 
     function closeSaveModal() { document.getElementById('savePreviewModal').style.display = 'none'; }
 
-    // ปุ่มที่ 4 และ 5: กลไกแจ้งเตือนระบบยังไม่เปิดใช้งาน
     function actionUnderMaintenance() {
         alert("📢 ประกาศจากระบบ:\nฟังก์ชันไลน์และช่องทางนี้อยู่ระหว่างปรับปรุงความปลอดภัย จะเปิดให้ใช้งานได้อย่างเป็นทางการเร็วๆ นี้");
     }
 
-    // 🔒 กลไกลับดักจับนิ้วจิ้ม 3 ครั้งเพื่อแสดงแผงควบคุมแอดมิน
     function handleSecretAdminTap() {
         adminTapCount++;
         clearTimeout(adminTapTimer);
-        
         adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 1500);
 
         if(adminTapCount >= 3) {
@@ -793,21 +883,25 @@
             container.innerHTML = db.map(i => `
                 <tr>
                     <td>
-                        <span style="color:#64748b; font-size:10px;">${i.timestamp}</span><br>
-                        <b>${i.sender}</b><br>
-                        <span style="font-size:10px; color:#64748b;">T: ${i.phone}</span>
+                        <span style="color:#94a3b8; font-size:10px;">${i.timestamp}</span><br>
+                        <b style="color:#ffffff;">${i.sender}</b><br>
+                        <span style="font-size:10px; color:#94a3b8;">T: ${i.phone}</span>
                     </td>
-                    <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-weight:600;">${i.bank.substring(3,9)}</span></td>
-                    <td style="color:var(--accent-blue); font-weight:700;">${i.amount}</td>
+                    <td><span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-weight:600; color:#ffffff;">${i.bank.substring(3,9)}</span></td>
+                    <td style="color:var(--neon-cyan); font-weight:700;">${i.amount}</td>
                 </tr>
             `).join('');
         }
         document.getElementById('adminLogModal').style.display = 'flex';
     }
 
+    document.body.addEventListener('click', function(e) {
+        if(e.target.id === 'adminLogModal') closeAdminPanel();
+        if(e.target.id === 'savePreviewModal') closeSaveModal();
+    });
+
     function closeAdminPanel() { document.getElementById('adminLogModal').style.display = 'none'; }
 
-    // ฟังก์ชันคำนวณและสร้างสมการ Payload พร้อม CRC16 ของระบบพร้อมเพย์
     function generatePromptPayFormat(target, amount) {
         target = target.replace(/[- ]/g, "");
         if (target.length === 10 && target.startsWith("0")) target = "66" + target.substring(1);
