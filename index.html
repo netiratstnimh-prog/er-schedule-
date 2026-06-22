@@ -9,139 +9,116 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-global: #0b0f19;
-            --surface-card: rgba(22, 30, 49, 0.7);
-            --navy-primary: #1e293b;
-            --blue-accent: #3b82f6;
-            --cyber-purple: #8b5cf6;
-            --border-light: rgba(255, 255, 255, 0.08);
-            --text-dark: #f8fafc;
-            --text-muted: #94a3b8;
-            --emerald-success: #10b981;
-            --overlay: rgba(5, 8, 16, 0.8);
+            --bg-global: #060913;
+            --liquid-glass: rgba(255, 255, 255, 0.03);
+            --liquid-border: rgba(255, 255, 255, 0.08);
+            --blue-glow: #3b82f6;
+            --cyber-purple: #a855f7;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --emerald-solid: #10b981;
         }
 
         body {
             font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-global);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
-            color: var(--text-dark);
+                radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+            color: var(--text-main);
             margin: 0;
             padding: 0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
 
-        /* แถบเมนูด้านบนแบบลอยล้ำๆ */
+        /* เมนูด้านบนลอยตัว */
         .top-navigation {
             width: 100%;
-            max-width: 800px;
+            max-width: 650px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 24px;
+            padding: 30px 24px 15px 24px;
             box-sizing: border-box;
-            margin-top: 10px;
         }
 
         .brand-identity h1 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            letter-spacing: -0.3px;
+            margin: 0;
+            background: linear-gradient(135deg, #fff 30%, #cbd5e1 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin: 0;
         }
 
         .brand-identity p {
-            font-size: 10px;
-            color: var(--blue-accent);
+            font-size: 9px;
+            color: var(--blue-glow);
             margin: 4px 0 0 0;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
+            letter-spacing: 2px;
+            font-weight: 700;
         }
 
-        /* ปุ่ม ADMIN สไตล์แอป Tech */
         .btn-admin-minimal {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-light);
-            padding: 8px 16px;
-            border-radius: 30px;
+            background: var(--liquid-glass);
+            border: 1px solid var(--liquid-border);
+            padding: 8px 14px;
+            border-radius: 40px;
             font-size: 11px;
             font-weight: 600;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-dark);
+            color: var(--text-main);
             cursor: pointer;
-            backdrop-filter: blur(8px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
-            letter-spacing: 0.5px;
+            gap: 6px;
         }
 
         .btn-admin-minimal:hover {
-            border-color: var(--blue-accent);
-            background: rgba(59, 130, 246, 0.1);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+            border-color: var(--blue-glow);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
+            background: rgba(255,255,255,0.06);
         }
 
         .online-glow-dot {
             width: 6px;
             height: 6px;
-            background-color: var(--emerald-success);
+            background-color: var(--emerald-solid);
             border-radius: 50%;
             display: inline-block;
-            animation: pulseGlow 2s infinite;
+            box-shadow: 0 0 8px var(--emerald-solid);
         }
 
-        @keyframes pulseGlow {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* คอนเทนเนอร์หลักแนวกระจกหรูหรา */
+        /* พาเนลกระจกเหลวหลัก */
         .portal-wrapper {
             width: 100%;
-            max-width: 800px;
+            max-width: 650px;
             padding: 0 24px 40px 24px;
             box-sizing: border-box;
         }
 
         .gateway-panel {
-            background: var(--surface-card);
-            border-radius: 24px;
-            padding: 32px;
-            border: 1px solid var(--border-light);
-            backdrop-filter: blur(16px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: var(--liquid-glass);
+            border: 1px solid var(--liquid-border);
+            border-radius: 28px;
+            padding: 30px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
-        /* ปรับฟอร์มใหม่ให้เป็นระบบ 2 คอลัมน์ที่สมดุลและสวยงามขึ้น */
         .smart-form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 20px;
-        }
-
-        .full-width-field {
-            grid-column: span 2;
-        }
-
-        @media (max-width: 640px) {
-            .smart-form-row {
-                grid-template-columns: 1fr;
-            }
-            .full-width-field {
-                grid-column: span 1;
-            }
         }
 
         .field-group {
@@ -151,273 +128,349 @@
 
         .field-group label {
             font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            letter-spacing: 0.2px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
         }
 
-        select, input {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            box-sizing: border-box;
-            font-size: 14px;
-            color: #ffffff;
-            font-family: 'Sarabun', sans-serif;
-            transition: all 0.2s ease;
+        /* ปรับแต่งปุ่มเลือกธนาคารหน้าแรกแบบไอโฟน */
+        .bank-grid-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
 
-        select option {
-            background: #111827;
+        .bank-option-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--liquid-border);
+            border-radius: 16px;
+            padding: 16px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bank-option-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .bank-option-card.active {
+            background: rgba(255, 255, 255, 0.06);
+            transform: scale(0.98);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+        }
+
+        /* บอร์เดอร์สีประจำธนาคารเมื่อ Active */
+        .bank-option-card.active[data-bank="kbank"] { border-color: #00a950; box-shadow: 0 0 15px rgba(0, 169, 80, 0.2); }
+        .bank-option-card.active[data-bank="scb"] { border-color: #4e2e7f; box-shadow: 0 0 15px rgba(78, 46, 127, 0.2); }
+        .bank-option-card.active[data-bank="ktb"] { border-color: #00aade; box-shadow: 0 0 15px rgba(0, 170, 222, 0.2); }
+
+        .bank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
             color: #fff;
         }
+        .bg-kbank { background: #00a950; }
+        .bg-scb { background: #4e2e7f; }
+        .bg-ktb { background: #00aade; }
 
-        select:focus, input:focus {
-            border-color: var(--blue-accent);
+        .bank-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .bank-sub {
+            font-size: 9px;
+            color: var(--text-sub);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* สไตล์ Input เก๋ๆ */
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--liquid-border);
+            border-radius: 14px;
+            box-sizing: border-box;
+            font-size: 15px;
+            color: #ffffff;
+            font-family: 'Sarabun', sans-serif;
+            transition: all 0.25s ease;
+        }
+
+        input:focus {
+            border-color: var(--blue-glow);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+            background: rgba(15, 23, 42, 0.7);
         }
 
         .btn-action-trigger {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, var(--blue-accent) 0%, var(--cyber-purple) 100%);
+            background: linear-gradient(135deg, var(--blue-glow) 0%, var(--cyber-purple) 100%);
             color: #ffffff;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             font-family: 'Sarabun', sans-serif;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
         }
 
         .btn-action-trigger:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
             filter: brightness(1.1);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.35);
         }
 
-        /* แอนิเมชันตอนโหลดแบบเลเซอร์ล้ำๆ */
+        /* หน้าประมวลผลความปลอดภัยแบบทางการ */
         .digital-processing-loader {
             display: none;
             text-align: center;
-            padding: 40px 0;
-            max-width: 400px;
-            margin: 0 auto;
+            padding: 40px 10px;
+        }
+
+        .secure-shield-icon {
+            font-size: 28px;
+            color: var(--blue-glow);
+            margin-bottom: 16px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .loader-headline {
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: -0.1px;
+            margin: 0 0 6px 0;
+        }
+
+        .loader-sub {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin: 0 0 24px 0;
         }
 
         .laser-track-bg {
             width: 100%;
-            height: 6px;
+            max-width: 320px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.02);
+            margin: 0 auto 12px auto;
         }
 
         .laser-fill-line {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, var(--blue-accent), var(--cyber-purple));
-            box-shadow: 0 0 10px var(--blue-accent);
-            transition: width 0.1s linear;
-        }
-
-        .loading-metrics {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--text-muted);
+            background: linear-gradient(90deg, var(--blue-glow), var(--cyber-purple));
+            box-shadow: 0 0 10px var(--blue-glow);
         }
 
         .counter-digital {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 700;
-            color: var(--blue-accent);
+            font-size: 12px;
+            color: var(--blue-glow);
         }
 
-        /* 👑 ดีไซน์หน้าตาสลิปพรีเมียมเทคระดับลักชัวรี */
+        /* 👑 ตกแต่งใบเสร็จทรงสี่เหลี่ยมจัตุรัสแบบทางการ 4x4 */
         #receipt-display-zone {
             display: none;
-            margin-top: 10px;
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: iosSpring 0.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .master-receipt-card {
             background: #ffffff;
             color: #0f172a;
-            max-width: 380px;
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 1 / 1; /* กำหนดสัดส่วน 4x4 สมมาตร */
             margin: 0 auto 24px auto;
-            padding: 32px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            text-align: left;
+            padding: 28px;
+            box-sizing: border-box;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             position: relative;
-            overflow: hidden;
         }
 
         .master-receipt-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, var(--blue-accent), var(--cyber-purple));
+            top: 0; left: 0; right: 0; height: 5px;
+            border-radius: 20px 20px 0 0;
+            background: linear-gradient(90deg, #00a950, #3b82f6);
         }
 
-        .receipt-status-badge {
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .verified-circle-icon {
-            width: 48px;
-            height: 48px;
-            background: #f0fdf4;
-            color: #10b981;
-            border-radius: 50%;
+        .slip-header-node {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: bold;
-            margin: 0 auto 12px auto;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1);
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
-        .receipt-status-badge h2 {
-            margin: 0;
-            font-size: 18px;
-            color: #0f172a;
+        .slip-title h2 {
+            font-size: 15px;
             font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-
-        .receipt-status-badge p {
-            margin: 4px 0 0 0;
-            font-size: 10px;
-            color: #64748b;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .node-flow-item {
-            margin-bottom: 14px;
-            padding-left: 14px;
-            border-left: 3px solid #cbd5e1;
-        }
-
-        .node-label {
-            font-size: 11px;
-            color: #64748b;
-            display: block;
-            margin-bottom: 2px;
-        }
-
-        .node-value {
-            font-size: 14px;
-            font-weight: 600;
+            margin: 0;
             color: #0f172a;
         }
 
-        .receipt-divider {
-            height: 1px;
-            border-bottom: 2px dashed #e2e8f0;
-            margin: 20px 0;
+        .slip-title p {
+            font-size: 9px;
+            color: #64748b;
+            margin: 2px 0 0 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
-        .receipt-grid-meta {
+        .verified-pill {
+            background: #f0fdf4;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .slip-main-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .data-block {
             display: flex;
             flex-direction: column;
-            gap: 10px;
         }
 
-        .meta-data-row {
-            display: flex;
-            justify-content: space-between;
+        .data-block.full {
+            grid-column: span 2;
+        }
+
+        .data-block .caption {
+            font-size: 10px;
+            color: #64748b;
+            margin-bottom: 1px;
+        }
+
+        .data-block .val {
             font-size: 13px;
-        }
-
-        .meta-data-row .label { color: #64748b; }
-        .meta-data-row .value { color: #0f172a; font-weight: 500; }
-
-        /* การแสดงยอดเงินสุทธิแบบล้ำๆ */
-        .premium-amount-callout {
-            background: #f8fafc;
-            border-radius: 14px;
-            padding: 14px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 14px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .premium-amount-callout .label {
-            font-size: 13px;
-            font-weight: 700;
+            font-weight: 600;
             color: #1e293b;
         }
 
-        .premium-amount-callout .value {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* บล็อกแสดงยอดเงินเด่นชัดระดับ High-End */
+        .amount-display-container {
+            grid-column: span 2;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .qr-render-container {
-            text-align: center;
-            margin-top: 24px;
+        .amount-display-container .label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        .amount-display-container .figure {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e4ed8;
+        }
+
+        /* การรวมศุนย์คิวอาร์โค้ดท้ายสลิป */
+        .slip-footer-qr-zone {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background: #fafafa;
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .qr-instruction {
+            max-width: 180px;
+        }
+
+        .qr-instruction h4 {
+            margin: 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .qr-instruction p {
+            margin: 3px 0 0 0;
+            font-size: 9px;
+            color: #64748b;
+            line-height: 1.3;
         }
 
         #qrcode {
-            display: inline-block;
-            padding: 10px;
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 6px;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
 
         .control-buttons-layout {
             display: flex;
             justify-content: center;
             gap: 12px;
-            max-width: 380px;
+            max-width: 420px;
             margin: 0 auto;
         }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--liquid-border);
             color: #fff;
         }
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.1);
-            border-color: var(--text-muted);
         }
 
-        /* บอร์ดแอดมินล้ำๆ สไตล์แก้วโปร่งใส */
+        /* แผงควบคุมแอดมิน */
         .admin-modal-backdrop {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--overlay);
-            backdrop-filter: blur(8px);
+            background: rgba(5, 8, 16, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -426,39 +479,24 @@
         }
 
         .admin-square-box {
-            background: rgba(30, 41, 59, 0.85);
+            background: rgba(30, 41, 59, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(24px);
             width: 100%;
-            max-width: 440px; 
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            max-width: 400px; 
+            border-radius: 24px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            max-height: 80vh;
+            max-height: 75vh;
         }
 
         .admin-modal-header {
             padding: 16px 20px;
             background: rgba(15, 23, 42, 0.4);
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--liquid-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .admin-modal-header h3 {
-            margin: 0;
-            font-size: 13px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: 1px;
-            color: var(--blue-accent);
-        }
-
-        .admin-modal-body {
-            padding: 20px;
-            overflow-y: auto;
         }
 
         .table-responsive-admin {
@@ -468,22 +506,25 @@
         }
 
         .table-responsive-admin th {
-            background: rgba(15, 23, 42, 0.5);
+            background: rgba(15, 23, 42, 0.4);
             padding: 10px;
-            font-weight: 600;
             text-align: left;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border-light);
+            color: var(--text-sub);
         }
 
         .table-responsive-admin td {
             padding: 12px 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            color: var(--text-dark);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        @keyframes iosSpring {
+            from { opacity: 0; transform: translateY(20px) scale(0.96); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
     </style>
@@ -496,7 +537,7 @@
         <p>Official Digital Receipt Gateway</p>
     </div>
     <button type="button" class="btn-admin-minimal" onclick="triggerAdminLogin()">
-        👤 ADMIN CONTROL <span class="online-glow-dot"></span>
+        👤 ADMIN <span class="online-glow-dot"></span>
     </button>
 </div>
 
@@ -505,99 +546,108 @@
         
         <form id="gatewayForm" onsubmit="initiateReceiptPipeline(event)">
             <div class="smart-form-row">
-                <div class="field-group full-width-field">
+                
+                <div class="field-group">
+                    <label>เลือกธนาคารผู้โอน</label>
+                    <div class="bank-grid-selector">
+                        <div class="bank-option-card" data-bank="kbank" onclick="selectBank(this, 'ธนาคารกสิกรไทย')">
+                            <div class="bank-badge bg-kbank">K</div>
+                            <span class="bank-title">กสิกรไทย</span>
+                            <span class="bank-sub">KBANK</span>
+                        </div>
+                        <div class="bank-option-card" data-bank="scb" onclick="selectBank(this, 'ธนาคารไทยพาณิชย์')">
+                            <div class="bank-badge bg-scb">S</div>
+                            <span class="bank-title">ไทยพาณิชย์</span>
+                            <span class="bank-sub">SCB</span>
+                        </div>
+                        <div class="bank-option-card" data-bank="ktb" onclick="selectBank(this, 'ธนาคารกรุงไทย')">
+                            <div class="bank-badge bg-ktb">K</div>
+                            <span class="bank-title">กรุงไทย</span>
+                            <span class="bank-sub">KTB</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selectedBank" required>
+                </div>
+
+                <div class="field-group">
                     <label for="senderName">ชื่อ-นามสกุล ผู้โอน</label>
-                    <input type="text" id="senderName" placeholder="ระบุชื่อผู้โอน" required>
+                    <input type="text" id="senderName" placeholder="ระบุชื่อผู้ทำรายการ" required>
                 </div>
 
                 <div class="field-group">
-                    <label for="bank">ธนาคารผู้โอน</label>
-                    <select id="bank" required>
-                        <option value="">-- เลือกธนาคาร --</option>
-                        <option value="ธนาคารกสิกรไทย">ธนาคารกสิกรไทย (KBank)</option>
-                        <option value="ธนาคารไทยพาณิชย์">ธนาคารไทยพาณิชย์ (SCB)</option>
-                        <option value="ธนาคารกรุงเทพ">ธนาคารกรุงเทพ (BBL)</option>
-                        <option value="ธนาคารกรุงไทย">ธนาคารกรุงไทย (KTB)</option>
-                        <option value="ธนาคารทหารไทยธนชาต">ธนาคารทหารไทยธนชาต (ttb)</option>
-                        <option value="ธนาคารออมสิน">ธนาคารออมสิน (GSB)</option>
-                    </select>
-                </div>
-
-                <div class="field-group">
-                    <label for="amount">จำนวนเงิน (บาท)</label>
+                    <label for="amount">จำนวนเงินโอนสุทธิ (บาท)</label>
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" required>
                 </div>
 
-                <div class="field-group full-width-field">
+                <div class="field-group">
                     <label for="phone">เบอร์โทรศัพท์มือถือ</label>
                     <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="089XXXXXXX" required>
                 </div>
 
-                <div class="full-width-field" style="margin-top: 10px;">
-                    <button type="submit" class="btn-action-trigger">สร้างใบแจ้งชำระอิเล็กทรอนิกส์</button>
-                </div>
+                <button type="submit" class="btn-action-trigger" style="margin-top: 10px;">ตรวจสอบและออกใบอนุมัติ</button>
             </div>
         </form>
 
         <div id="digitalLoader" class="digital-processing-loader">
+            <div class="secure-shield-icon">🛡️</div>
+            <h3 class="loader-headline">กำลังแลกเปลี่ยนข้อมูลผ่าน Gateway</h3>
+            <p class="loader-sub">ระบบกำลังรักษาความปลอดภัยข้อมูลธนาคารและตรวจสอบความถูกต้องเอกสาร</p>
             <div class="laser-track-bg">
                 <div id="laserLine" class="laser-fill-line"></div>
             </div>
-            <div class="loading-metrics">
-                <span>กำลังประมวลผลข้อมูลความปลอดภัย...</span>
-                <span id="digitalCounter" class="counter-digital">0%</span>
-            </div>
+            <span id="digitalCounter" class="counter-digital">0%</span>
         </div>
 
         <div id="receipt-display-zone">
             <div class="master-receipt-card" id="slipCaptureFrame">
-                <div class="receipt-status-badge">
-                    <div class="verified-circle-icon">✓</div>
-                    <h2>สร้างใบเสร็จสำเร็จ</h2>
-                    <p>ELECTRONIC RECEIPT SLIP</p>
+                <div class="slip-header-node">
+                    <div class="slip-title">
+                        <h2>ใบรับเงินอิเล็กทรอนิกส์สำเร็จ</h2>
+                        <p>ELECTRONIC TRANSACTION RECEIPT</p>
+                    </div>
+                    <div class="verified-pill">VERIFIED</div>
                 </div>
                 
-                <div class="node-flow-item">
-                    <span class="node-label">ผู้โอนเงิน (จาก)</span>
-                    <span class="node-value" id="slipSender">-</span>
-                </div>
-
-                <div class="node-flow-item" style="border-left-color: var(--emerald-success);">
-                    <span class="node-label">ผู้รับเงิน (เข้า)</span>
-                    <span class="node-value">เนติราช นิ่มเจริญวัฒนกุล</span>
-                </div>
-
-                <div class="receipt-divider"></div>
-
-                <div class="receipt-grid-meta">
-                    <div class="meta-data-row">
-                        <span class="label">ธนาคารต้นทาง</span>
-                        <span class="value" id="slipBank">-</span>
+                <div class="slip-main-body">
+                    <div class="data-block">
+                        <span class="caption">ชื่อผู้โอนเงิน (FROM)</span>
+                        <span class="val" id="slipSender">-</span>
                     </div>
-                    <div class="meta-data-row">
-                        <span class="label">วัน-เวลาที่ทำรายการ</span>
-                        <span class="value" id="slipDate">-</span>
+                    <div class="data-block">
+                        <span class="caption">ธนาคารต้นทาง</span>
+                        <span class="val" id="slipBank">-</span>
                     </div>
-                    <div class="meta-data-row">
-                        <span class="label">รหัสอ้างอิงระบบ</span>
-                        <span class="value" id="slipRef" style="font-family:'Plus Jakarta Sans'; font-weight: 600;">-</span>
+                    <div class="data-block full">
+                        <span class="caption">บัญชีผู้รับเงิน (TO)</span>
+                        <span class="val" style="color:#00a950;">เนติราช นิ่มเจริญวัฒนกุล</span>
+                    </div>
+                    <div class="data-block">
+                        <span class="caption">วันที่-เวลาที่ทำรายการ</span>
+                        <span class="val" id="slipDate" style="font-size:12px;">-</span>
+                    </div>
+                    <div class="data-block">
+                        <span class="caption">รหัสอ้างอิงความปลอดภัย</span>
+                        <span class="val" id="slipRef" style="font-family:'Plus Jakarta Sans'; font-size:12px;">-</span>
                     </div>
                     
-                    <div class="premium-amount-callout">
-                        <span class="label">จำนวนเงินสุทธิ</span>
-                        <span class="value"><span id="slipAmountCallout">-</span> THB</span>
+                    <div class="amount-display-container">
+                        <span class="label">จำนวนเงินรวม</span>
+                        <span class="figure"><span id="slipAmountCallout">-</span> THB</span>
                     </div>
                 </div>
 
-                <div class="qr-render-container">
+                <div class="slip-footer-qr-zone">
+                    <div class="qr-instruction">
+                        <h4>คิวอาร์โค้ดตรวจสอบ</h4>
+                        <p>สแกนตรวจสอบความถูกต้องและทำธุรกรรมผ่าน Mobile Banking ได้ทันที</p>
+                    </div>
                     <div id="qrcode"></div>
-                    <p style="font-size:9px; color:#64748b; margin:12px 0 0 0; font-family:'Plus Jakarta Sans'; font-weight:600; letter-spacing:0.5px;">SCAN VIA BANKING APP FOR TRANSACTION</p>
                 </div>
             </div>
             
             <div class="control-buttons-layout">
-                <button type="button" class="btn-action-trigger btn-secondary" onclick="captureAndSaveSlip()">💾 บันทึกสลิป</button>
-                <button type="button" class="btn-action-trigger" style="background:var(--emerald-success); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);" onclick="refreshPortalState()">ทำรายการใหม่</button>
+                <button type="button" class="btn-action-trigger btn-secondary" onclick="captureAndSaveSlip()">💾 บันทึกรูปใบเสร็จ</button>
+                <button type="button" class="btn-action-trigger" style="background:var(--emerald-solid); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);" onclick="refreshPortalState()">ทำรายการถัดไป</button>
             </div>
         </div>
 
@@ -607,16 +657,16 @@
 <div id="adminModal" class="admin-modal-backdrop">
     <div class="admin-square-box">
         <div class="admin-modal-header">
-            <h3>📊 SECURE DATABASE LOGS</h3>
-            <button type="button" style="background:transparent; border:none; font-size:22px; cursor:pointer; color:var(--text-muted);" onclick="closeAdminPanel()">&times;</button>
+            <h3 style="margin:0; font-size:13px; font-family:'Plus Jakarta Sans'; letter-spacing:1px; color:var(--blue-glow);">🔒 SECURE AUDIT LOGS</h3>
+            <button type="button" style="background:transparent; border:none; font-size:22px; cursor:pointer; color:var(--text-sub);" onclick="closeAdminPanel()">&times;</button>
         </div>
         <div class="admin-modal-body">
             <table class="table-responsive-admin">
                 <thead>
                     <tr>
-                        <th>รายละเอียดประวัติ</th>
+                        <th>ประวัติรายการ</th>
                         <th>ธนาคาร</th>
-                        <th>ยอดเงิน</th>
+                        <th>ยอดโอน</th>
                     </tr>
                 </thead>
                 <tbody id="adminTableContent">
@@ -633,8 +683,21 @@
         localStorage.setItem('admin_db_store', JSON.stringify([]));
     }
 
+    function selectBank(element, bankName) {
+        document.querySelectorAll('.bank-option-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        element.classList.add('active');
+        document.getElementById('selectedBank').value = bankName;
+    }
+
     function initiateReceiptPipeline(e) {
         e.preventDefault();
+        
+        if (!document.getElementById('selectedBank').value) {
+            alert("กรุณาเลือกธนาคารผู้โอนบนหน้าจอหลักครับ");
+            return;
+        }
 
         document.getElementById('gatewayForm').style.display = 'none';
         document.getElementById('digitalLoader').style.display = 'block';
@@ -652,7 +715,7 @@
                 clearInterval(timeline);
                 compileEReceiptDocument();
             }
-        }, 10); 
+        }, 12); 
     }
 
     function compileEReceiptDocument() {
@@ -660,12 +723,12 @@
         document.getElementById('receipt-display-zone').style.display = 'block';
 
         const sender = document.getElementById('senderName').value;
-        const bank = document.getElementById('bank').value;
+        const bank = document.getElementById('selectedBank').value;
         const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
         const phone = document.getElementById('phone').value;
         const timestamp = new Date().toLocaleString('th-TH');
         
-        const generatedRef = "TXN" + Math.floor(Math.random() * 899999 + 100000);
+        const generatedRef = "SEC-" + Math.floor(Math.random() * 899999 + 100000);
 
         document.getElementById('slipDate').textContent = timestamp;
         document.getElementById('slipBank').textContent = bank;
@@ -682,8 +745,8 @@
 
         new QRCode(document.getElementById("qrcode"), {
             text: qrRawPayload,
-            width: 150,
-            height: 150,
+            width: 100,
+            height: 100,
             colorDark : "#0f172a",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.M
@@ -699,12 +762,12 @@
         }).then(canvas => {
             const dlLink = document.createElement('a');
             dlLink.href = canvas.toDataURL('image/png');
-            dlLink.download = 'E-Receipt_' + new Date().getTime() + '.png';
+            dlLink.download = 'Receipt_' + new Date().getTime() + '.png';
             document.body.appendChild(dlLink);
             dlLink.click();
             document.body.removeChild(dlLink);
         }).catch(err => {
-            alert("ระบบบันทึกรูปภาพขัดข้องชั่วคราวบนอุปกรณ์นี้ กรุณาถ่ายภาพหน้าจอแทนครับ");
+            alert("กรุณาแคปหน้าจอแทนเพื่อบันทึกข้อมูลครับ");
         });
     }
 
@@ -713,11 +776,11 @@
     }
 
     function triggerAdminLogin() {
-        const passkey = prompt("🔐 ADMIN AUTHENTICATION:\nกรุณาระบุรหัสผ่านเพื่อเปิดแผงข้อมูล:");
+        const passkey = prompt("🔐 ADMIN AUTHENTICATION:\nกรุณาระบุรหัสผ่านผู้ดูแลระบบ:");
         if (passkey === "1323") {
             showAdminDashboard();
         } else if (passkey !== null) {
-            alert("❌ รหัสตรวจสอบไม่ถูกต้อง ไม่ได้รับสิทธิ์เข้าถึง");
+            alert("❌ รหัสตรวจสอบไม่ถูกต้อง");
         }
     }
 
@@ -726,17 +789,16 @@
         let dbStore = JSON.parse(localStorage.getItem('admin_db_store')) || [];
 
         if (dbStore.length === 0) {
-            container.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:30px;">ไม่พบประวัติข้อมูลในระบบ</td></tr>`;
+            container.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-sub); padding:20px;">ไม่พบประวัติข้อมูล</td></tr>`;
         } else {
             container.innerHTML = dbStore.map(item => `
                 <tr>
                     <td>
-                        <span style="color:var(--text-muted); font-size:10px;">${item.timestamp}</span><br>
-                        <b style="color:#fff;">${item.sender}</b><br>
-                        <span style="color:var(--text-muted); font-size:11px;">T: ${item.phone}</span>
+                        <span style="color:var(--text-sub); font-size:10px;">${item.timestamp}</span><br>
+                        <b style="color:#fff;">${item.sender}</b>
                     </td>
-                    <td><span style="background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; font-size:11px;">${item.bank.substring(0,6)}</span></td>
-                    <td style="color:var(--blue-accent); font-weight:700; font-family:'Plus Jakarta Sans'; font-size:14px;">${item.amount}</td>
+                    <td><span style="background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px;">${item.bank.substring(0,6)}</span></td>
+                    <td style="color:var(--blue-glow); font-weight:700;">${item.amount}</td>
                 </tr>
             `).join('');
         }
