@@ -3,26 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสร้างคิวอาร์โค้ดชำระเงิน - Stable Verified Portal</title>
+    <title>ระบบสร้างQR - Stable Verified Portal</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-global: #f8fafc;
-            --surface-card: #ffffff;
-            --navy-primary: #0f172a;
-            --blue-accent: #2563eb;
-            --border-light: #e2e8f0;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --emerald-success: #16a34a;
-            --overlay: rgba(15, 23, 42, 0.4);
+            --bg-global: #0b0f19;
+            --surface-card: rgba(22, 30, 49, 0.7);
+            --navy-primary: #1e293b;
+            --blue-accent: #3b82f6;
+            --cyber-purple: #8b5cf6;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --text-dark: #f8fafc;
+            --text-muted: #94a3b8;
+            --emerald-success: #10b981;
+            --overlay: rgba(5, 8, 16, 0.8);
         }
 
         body {
-            font-family: 'Sarabun', 'Inter', sans-serif;
+            font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-global);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
             color: var(--text-dark);
             margin: 0;
             padding: 0;
@@ -32,52 +36,60 @@
             align-items: center;
         }
 
-        /* แถบเมนูด้านบน */
+        /* แถบเมนูด้านบนแบบลอยล้ำๆ */
         .top-navigation {
             width: 100%;
-            max-width: 1120px;
+            max-width: 800px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
+            padding: 24px;
             box-sizing: border-box;
+            margin-top: 10px;
         }
 
         .brand-identity h1 {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            color: var(--navy-primary);
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin: 0;
         }
 
         .brand-identity p {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin: 2px 0 0 0;
+            font-size: 10px;
+            color: var(--blue-accent);
+            margin: 4px 0 0 0;
             text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+
+        /* ปุ่ม ADMIN สไตล์แอป Tech */
+        .btn-admin-minimal {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-light);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-dark);
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
             letter-spacing: 0.5px;
         }
 
-        /* ปุ่ม ADMIN มินิมอล พร้อมสัญลักษณ์จุดเขียว */
-        .btn-admin-minimal {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            color: var(--text-dark);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         .btn-admin-minimal:hover {
-            border-color: var(--navy-primary);
-            background: #fafafa;
+            border-color: var(--blue-accent);
+            background: rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
         }
 
         .online-glow-dot {
@@ -86,37 +98,49 @@
             background-color: var(--emerald-success);
             border-radius: 50%;
             display: inline-block;
-            box-shadow: 0 0 4px var(--emerald-success);
+            animation: pulseGlow 2s infinite;
         }
 
-        /* คอนเทนเนอร์หลัก */
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* คอนเทนเนอร์หลักแนวกระจกหรูหรา */
         .portal-wrapper {
             width: 100%;
-            max-width: 1120px;
+            max-width: 800px;
             padding: 0 24px 40px 24px;
             box-sizing: border-box;
-            margin-top: 10px;
         }
 
         .gateway-panel {
             background: var(--surface-card);
-            border-radius: 16px;
-            padding: 30px;
+            border-radius: 24px;
+            padding: 32px;
             border: 1px solid var(--border-light);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* ฟอร์มหน้ากระดาน 4 คอลัมน์ที่เสถียรขึ้น */
+        /* ปรับฟอร์มใหม่ให้เป็นระบบ 2 คอลัมน์ที่สมดุลและสวยงามขึ้น */
         .smart-form-row {
             display: grid;
-            grid-template-columns: 1.2fr 1.2fr 1fr 1fr 0.9fr;
-            gap: 12px;
-            align-items: flex-end;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
-        @media (max-width: 992px) {
+        .full-width-field {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 640px) {
             .smart-form-row {
-                grid-template-columns: 1fr; /* ยุบลงมาพอดีจอมือถืออัตโนมัติ */
+                grid-template-columns: 1fr;
+            }
+            .full-width-field {
+                grid-column: span 1;
             }
         }
 
@@ -127,69 +151,83 @@
 
         .field-group label {
             font-size: 13px;
-            font-weight: 600;
-            color: var(--navy-primary);
-            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            letter-spacing: 0.2px;
         }
 
         select, input {
             width: 100%;
-            padding: 11px 14px;
-            background: #ffffff;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--border-light);
-            border-radius: 8px;
+            border-radius: 12px;
             box-sizing: border-box;
             font-size: 14px;
-            color: var(--text-dark);
+            color: #ffffff;
             font-family: 'Sarabun', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        select option {
+            background: #111827;
+            color: #fff;
         }
 
         select:focus, input:focus {
             border-color: var(--blue-accent);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            background: rgba(15, 23, 42, 0.8);
         }
 
         .btn-action-trigger {
             width: 100%;
-            padding: 12px;
-            background: var(--navy-primary);
+            padding: 16px;
+            background: linear-gradient(135deg, var(--blue-accent) 0%, var(--cyber-purple) 100%);
             color: #ffffff;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             font-family: 'Sarabun', sans-serif;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .btn-action-trigger:hover {
-            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            filter: brightness(1.1);
         }
 
-        /* แถบสถานะรอสร้างใบเสร็จ (เสถียร ไม่บั๊กกระตุก) */
+        /* แอนิเมชันตอนโหลดแบบเลเซอร์ล้ำๆ */
         .digital-processing-loader {
             display: none;
             text-align: center;
-            padding: 30px 0;
-            max-width: 380px;
+            padding: 40px 0;
+            max-width: 400px;
             margin: 0 auto;
         }
 
         .laser-track-bg {
             width: 100%;
-            height: 4px;
-            background: #e2e8f0;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
         }
 
         .laser-fill-line {
             height: 100%;
             width: 0%;
-            background: var(--blue-accent);
+            background: linear-gradient(90deg, var(--blue-accent), var(--cyber-purple));
+            box-shadow: 0 0 10px var(--blue-accent);
+            transition: width 0.1s linear;
         }
 
         .loading-metrics {
@@ -200,91 +238,106 @@
         }
 
         .counter-digital {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 700;
-            color: var(--navy-primary);
+            color: var(--blue-accent);
         }
 
-        /* 👑 หน้าตาสลิปพรีเมียมเวอร์ชันจัดระเบียบโครงสร้างใหม่ */
+        /* 👑 ดีไซน์หน้าตาสลิปพรีเมียมเทคระดับลักชัวรี */
         #receipt-display-zone {
             display: none;
             margin-top: 10px;
-            animation: fadeIn 0.3s ease-out;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .master-receipt-card {
             background: #ffffff;
-            max-width: 400px;
-            margin: 0 auto 20px auto;
-            padding: 30px;
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.03);
+            color: #0f172a;
+            max-width: 380px;
+            margin: 0 auto 24px auto;
+            padding: 32px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .master-receipt-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--blue-accent), var(--cyber-purple));
         }
 
         .receipt-status-badge {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .verified-circle-icon {
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             background: #f0fdf4;
-            color: var(--emerald-success);
+            color: #10b981;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
-            margin: 0 auto 10px auto;
-            border: 1px solid rgba(22, 163, 74, 0.2);
+            margin: 0 auto 12px auto;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1);
         }
 
         .receipt-status-badge h2 {
             margin: 0;
-            font-size: 16px;
-            color: var(--text-dark);
-            font-weight: 600;
+            font-size: 18px;
+            color: #0f172a;
+            font-weight: 700;
+            letter-spacing: -0.3px;
         }
 
         .receipt-status-badge p {
-            margin: 2px 0 0 0;
+            margin: 4px 0 0 0;
             font-size: 10px;
-            color: var(--text-muted);
-            font-family: 'Inter', sans-serif;
+            color: #64748b;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .node-flow-item {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             padding-left: 14px;
-            border-left: 2px solid #e2e8f0;
+            border-left: 3px solid #cbd5e1;
         }
 
         .node-label {
             font-size: 11px;
-            color: var(--text-muted);
+            color: #64748b;
+            display: block;
+            margin-bottom: 2px;
         }
 
         .node-value {
             font-size: 14px;
             font-weight: 600;
-            color: var(--text-dark);
-            margin-top: 1px;
+            color: #0f172a;
         }
 
         .receipt-divider {
             height: 1px;
-            border-bottom: 1px dashed #cbd5e1;
-            margin: 15px 0;
+            border-bottom: 2px dashed #e2e8f0;
+            margin: 20px 0;
         }
 
         .receipt-grid-meta {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .meta-data-row {
@@ -293,61 +346,78 @@
             font-size: 13px;
         }
 
-        .meta-data-row .label { color: var(--text-muted); }
-        .meta-data-row .value { color: var(--text-dark); font-weight: 500; }
+        .meta-data-row .label { color: #64748b; }
+        .meta-data-row .value { color: #0f172a; font-weight: 500; }
 
+        /* การแสดงยอดเงินสุทธิแบบล้ำๆ */
         .premium-amount-callout {
             background: #f8fafc;
-            border-radius: 8px;
-            padding: 12px 14px;
+            border-radius: 14px;
+            padding: 14px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 12px;
+            margin-top: 14px;
             border: 1px solid #e2e8f0;
         }
 
         .premium-amount-callout .label {
             font-size: 13px;
-            font-weight: 600;
-            color: var(--navy-primary);
+            font-weight: 700;
+            color: #1e293b;
         }
 
         .premium-amount-callout .value {
-            font-family: 'Inter', sans-serif;
-            font-size: 18px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--blue-accent);
+            background: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .qr-render-container {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px dashed #e2e8f0;
         }
 
         #qrcode {
             display: inline-block;
-            padding: 8px;
+            padding: 10px;
             background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: 6px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .control-buttons-layout {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            max-width: 400px;
+            gap: 12px;
+            max-width: 380px;
             margin: 0 auto;
         }
 
-        /* หน้าต่างแอดมินทรงสี่เหลี่ยมพอดีจอมือถืออัตโนมัติ */
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--text-muted);
+        }
+
+        /* บอร์ดแอดมินล้ำๆ สไตล์แก้วโปร่งใส */
         .admin-modal-backdrop {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: var(--overlay);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -356,11 +426,13 @@
         }
 
         .admin-square-box {
-            background: var(--surface-card);
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(24px);
             width: 100%;
-            max-width: 420px; 
-            border-radius: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            max-width: 440px; 
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -368,8 +440,8 @@
         }
 
         .admin-modal-header {
-            padding: 14px 16px;
-            background: #f8fafc;
+            padding: 16px 20px;
+            background: rgba(15, 23, 42, 0.4);
             border-bottom: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
@@ -378,12 +450,14 @@
 
         .admin-modal-header h3 {
             margin: 0;
-            font-size: 14px;
-            color: var(--navy-primary);
+            font-size: 13px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 1px;
+            color: var(--blue-accent);
         }
 
         .admin-modal-body {
-            padding: 16px;
+            padding: 20px;
             overflow-y: auto;
         }
 
@@ -394,21 +468,23 @@
         }
 
         .table-responsive-admin th {
-            background: #f1f5f9;
-            padding: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 10px;
             font-weight: 600;
             text-align: left;
+            color: var(--text-muted);
             border-bottom: 1px solid var(--border-light);
         }
 
         .table-responsive-admin td {
-            padding: 10px 8px;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-dark);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
     </style>
 </head>
@@ -420,7 +496,7 @@
         <p>Official Digital Receipt Gateway</p>
     </div>
     <button type="button" class="btn-admin-minimal" onclick="triggerAdminLogin()">
-        👤 ADMIN <span class="online-glow-dot"></span>
+        👤 ADMIN CONTROL <span class="online-glow-dot"></span>
     </button>
 </div>
 
@@ -429,7 +505,7 @@
         
         <form id="gatewayForm" onsubmit="initiateReceiptPipeline(event)">
             <div class="smart-form-row">
-                <div class="field-group">
+                <div class="field-group full-width-field">
                     <label for="senderName">ชื่อ-นามสกุล ผู้โอน</label>
                     <input type="text" id="senderName" placeholder="ระบุชื่อผู้โอน" required>
                 </div>
@@ -452,12 +528,14 @@
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" required>
                 </div>
 
-                <div class="field-group">
+                <div class="field-group full-width-field">
                     <label for="phone">เบอร์โทรศัพท์มือถือ</label>
                     <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="089XXXXXXX" required>
                 </div>
 
-                <button type="submit" class="btn-action-trigger">สร้างใบแจ้งชำระ</button>
+                <div class="full-width-field" style="margin-top: 10px;">
+                    <button type="submit" class="btn-action-trigger">สร้างใบแจ้งชำระอิเล็กทรอนิกส์</button>
+                </div>
             </div>
         </form>
 
@@ -466,7 +544,7 @@
                 <div id="laserLine" class="laser-fill-line"></div>
             </div>
             <div class="loading-metrics">
-                <span>ระบบกำลังสร้างใบเสร็จรับเงินอิเล็กทรอนิกส์...</span>
+                <span>กำลังประมวลผลข้อมูลความปลอดภัย...</span>
                 <span id="digitalCounter" class="counter-digital">0%</span>
             </div>
         </div>
@@ -475,7 +553,7 @@
             <div class="master-receipt-card" id="slipCaptureFrame">
                 <div class="receipt-status-badge">
                     <div class="verified-circle-icon">✓</div>
-                    <h2>สร้างใบเสร็จรับเงินสำเร็จ</h2>
+                    <h2>สร้างใบเสร็จสำเร็จ</h2>
                     <p>ELECTRONIC RECEIPT SLIP</p>
                 </div>
                 
@@ -502,7 +580,7 @@
                     </div>
                     <div class="meta-data-row">
                         <span class="label">รหัสอ้างอิงระบบ</span>
-                        <span class="value" id="slipRef" style="font-family:'Inter';">-</span>
+                        <span class="value" id="slipRef" style="font-family:'Plus Jakarta Sans'; font-weight: 600;">-</span>
                     </div>
                     
                     <div class="premium-amount-callout">
@@ -513,13 +591,13 @@
 
                 <div class="qr-render-container">
                     <div id="qrcode"></div>
-                    <p style="font-size:10px; color:var(--text-muted); margin:10px 0 0 0;">SCAN VIA BANKING APP FOR TRANSACTION</p>
+                    <p style="font-size:9px; color:#64748b; margin:12px 0 0 0; font-family:'Plus Jakarta Sans'; font-weight:600; letter-spacing:0.5px;">SCAN VIA BANKING APP FOR TRANSACTION</p>
                 </div>
             </div>
             
             <div class="control-buttons-layout">
-                <button type="button" class="btn-action-trigger" style="background:#475569;" onclick="captureAndSaveSlip()">💾 บันทึกรูปภาพสลิป</button>
-                <button type="button" class="btn-action-trigger" style="background:var(--emerald-success);" onclick="refreshPortalState()">เสร็จสิ้นรายการ</button>
+                <button type="button" class="btn-action-trigger btn-secondary" onclick="captureAndSaveSlip()">💾 บันทึกสลิป</button>
+                <button type="button" class="btn-action-trigger" style="background:var(--emerald-success); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);" onclick="refreshPortalState()">ทำรายการใหม่</button>
             </div>
         </div>
 
@@ -529,8 +607,8 @@
 <div id="adminModal" class="admin-modal-backdrop">
     <div class="admin-square-box">
         <div class="admin-modal-header">
-            <h3>📊 DATABASE CONTROL PANEL</h3>
-            <button type="button" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:var(--text-muted);" onclick="closeAdminPanel()">&times;</button>
+            <h3>📊 SECURE DATABASE LOGS</h3>
+            <button type="button" style="background:transparent; border:none; font-size:22px; cursor:pointer; color:var(--text-muted);" onclick="closeAdminPanel()">&times;</button>
         </div>
         <div class="admin-modal-body">
             <table class="table-responsive-admin">
@@ -542,7 +620,7 @@
                     </tr>
                 </thead>
                 <tbody id="adminTableContent">
-                    </tbody>
+                </tbody>
             </table>
         </div>
     </div>
@@ -555,7 +633,6 @@
         localStorage.setItem('admin_db_store', JSON.stringify([]));
     }
 
-    // ฟังก์ชันนับเลขโหลด 1-100% ตัวแก้บั๊กค้างเรียบร้อย
     function initiateReceiptPipeline(e) {
         e.preventDefault();
 
@@ -575,10 +652,9 @@
                 clearInterval(timeline);
                 compileEReceiptDocument();
             }
-        }, 12); 
+        }, 10); 
     }
 
-    // ออกสลิปใบเสร็จ
     function compileEReceiptDocument() {
         document.getElementById('digitalLoader').style.display = 'none';
         document.getElementById('receipt-display-zone').style.display = 'block';
@@ -589,7 +665,7 @@
         const phone = document.getElementById('phone').value;
         const timestamp = new Date().toLocaleString('th-TH');
         
-        const generatedRef = "FT" + Math.floor(Math.random() * 899999 + 100000);
+        const generatedRef = "TXN" + Math.floor(Math.random() * 899999 + 100000);
 
         document.getElementById('slipDate').textContent = timestamp;
         document.getElementById('slipBank').textContent = bank;
@@ -597,26 +673,23 @@
         document.getElementById('slipAmountCallout').textContent = amount;
         document.getElementById('slipRef').textContent = generatedRef;
 
-        // บันทึกฐานข้อมูลแอดมิน
         let dbStore = JSON.parse(localStorage.getItem('admin_db_store')) || [];
         dbStore.unshift({ timestamp, sender, bank, amount, phone });
         localStorage.setItem('admin_db_store', JSON.stringify(dbStore));
 
-        // เจน QR Code
         document.getElementById('qrcode').innerHTML = "";
         const qrRawPayload = generatePromptPayPayload(promptpayNumber, amount);
 
         new QRCode(document.getElementById("qrcode"), {
             text: qrRawPayload,
-            width: 140,
-            height: 140,
+            width: 150,
+            height: 150,
             colorDark : "#0f172a",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.M
         });
     }
 
-    // ฟังก์ชันเซฟรูปที่แก้ไขปัญหาบั๊กกับอุปกรณ์พกพา
     function captureAndSaveSlip() {
         const targetFrame = document.getElementById('slipCaptureFrame');
         html2canvas(targetFrame, { 
@@ -626,12 +699,12 @@
         }).then(canvas => {
             const dlLink = document.createElement('a');
             dlLink.href = canvas.toDataURL('image/png');
-            dlLink.download = 'Receipt_' + new Date().getTime() + '.png';
+            dlLink.download = 'E-Receipt_' + new Date().getTime() + '.png';
             document.body.appendChild(dlLink);
             dlLink.click();
             document.body.removeChild(dlLink);
         }).catch(err => {
-            alert("ระบบบันทึกรูปภาพขัดข้องชั่วคราวบนเบราว์เซอร์นี้ กรุณาแคปหน้าจอแทนครับ");
+            alert("ระบบบันทึกรูปภาพขัดข้องชั่วคราวบนอุปกรณ์นี้ กรุณาถ่ายภาพหน้าจอแทนครับ");
         });
     }
 
@@ -640,11 +713,11 @@
     }
 
     function triggerAdminLogin() {
-        const passkey = prompt("🔐 ADMIN AUTHENTICATION:\nกรุณาระบุรหัสผ่านผู้ดูแลระบบเพื่อเปิดตารางข้อมูล:");
+        const passkey = prompt("🔐 ADMIN AUTHENTICATION:\nกรุณาระบุรหัสผ่านเพื่อเปิดแผงข้อมูล:");
         if (passkey === "1323") {
             showAdminDashboard();
         } else if (passkey !== null) {
-            alert("❌ รหัสตรวจสอบไม่ถูกต้อง ไม่ได้รับสิทธิ์");
+            alert("❌ รหัสตรวจสอบไม่ถูกต้อง ไม่ได้รับสิทธิ์เข้าถึง");
         }
     }
 
@@ -653,17 +726,17 @@
         let dbStore = JSON.parse(localStorage.getItem('admin_db_store')) || [];
 
         if (dbStore.length === 0) {
-            container.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">ไม่พบประวัติข้อมูล</td></tr>`;
+            container.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:30px;">ไม่พบประวัติข้อมูลในระบบ</td></tr>`;
         } else {
             container.innerHTML = dbStore.map(item => `
                 <tr>
                     <td>
                         <span style="color:var(--text-muted); font-size:10px;">${item.timestamp}</span><br>
-                        <b>${item.sender}</b><br>
+                        <b style="color:#fff;">${item.sender}</b><br>
                         <span style="color:var(--text-muted); font-size:11px;">T: ${item.phone}</span>
                     </td>
-                    <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px;">${item.bank.substring(0,6)}</span></td>
-                    <td style="color:var(--blue-accent); font-weight:700;">${item.amount}</td>
+                    <td><span style="background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; font-size:11px;">${item.bank.substring(0,6)}</span></td>
+                    <td style="color:var(--blue-accent); font-weight:700; font-family:'Plus Jakarta Sans'; font-size:14px;">${item.amount}</td>
                 </tr>
             `).join('');
         }
