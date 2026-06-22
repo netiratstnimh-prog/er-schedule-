@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบชำระเงินออนไลน์ (Colorful & Secure Gateway)</title>
-    <!-- Tailwind CSS สำหรับดีไซน์ที่สวยงามและมีสีสัน -->
+    <title>ระบบชำระเงินออนไลน์ (Premium Minimalist Gateway)</title>
+    <!-- Tailwind CSS สำหรับดีไซน์ที่เรียบหรู คลีนสะอาดตา -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome สำหรับไอคอน -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,11 +15,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #f0f4ff 0%, #f5f3ff 100%); }
-        .animate-fade { animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        body { font-family: 'Prompt', sans-serif; background-color: #fafafa; }
+        .animate-fade { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* แอนิเมชันจำลองกระดาษสลิปค่อยๆ เลื่อนออกจากเครื่องพิมพ์ (หน่วงเวลา 6-7 วินาที) */
+        /* แอนิเมชันจำลองกระดาษสลิปค่อยๆ เลื่อนออกจากเครื่องพิมพ์ */
         .printing-slip {
             animation: printEffect 6.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
             max-height: 0px;
@@ -31,38 +31,30 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between text-slate-700">
+<body class="min-h-screen flex flex-col justify-between text-slate-600">
 
-    <!-- แถบด้านบน ดีไซน์สีสันพรีเมียม พร้อมปุ่มหลังบ้านล่องหนมุมขวาบน -->
-    <nav class="bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white shadow-lg sticky top-0 z-40">
+    <!-- แถบด้านบน มินิมอลเรียบง่าย (เอาป้ายปลอดภัยออกแล้ว) พร้อมปุ่มหลังบ้านล่องหนมุมขวาบน -->
+    <nav class="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div class="max-w-md mx-auto px-6 py-4 flex items-center justify-between relative">
-            <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
-                    <i class="fa-solid fa-paper-plane text-sm text-amber-300"></i>
-                </div>
-                <div>
-                    <span class="text-[10px] text-blue-200 block uppercase tracking-wider font-light">บัญชีผู้รับเงิน</span>
-                    <h1 class="text-sm font-semibold tracking-wide">เนติราช นิ่มเจริญวัฒนกุล</h1>
-                </div>
+            <div>
+                <span class="text-[10px] text-gray-400 block uppercase tracking-wider font-light">บัญชีผู้รับเงิน</span>
+                <h1 class="text-sm font-medium text-slate-800 tracking-wide">เนติราช นิ่มเจริญวัฒนกุล</h1>
             </div>
-            <span class="text-[11px] font-medium bg-emerald-500/90 text-white px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                <i class="fa-solid fa-shield-check text-[10px]"></i> ปลอดภัย
-            </span>
             <!-- ปุ่มหลังบ้านล่องหน (Invisible Button) ต้องกด 3 ครั้ง -->
             <div onclick="clickAdmin()" class="absolute top-0 right-0 w-16 h-14 cursor-default select-none bg-transparent"></div>
         </div>
     </nav>
 
     <!-- ส่วนเนื้อหาหลัก -->
-    <main class="max-w-md w-full mx-auto px-5 py-6 flex-grow flex flex-col justify-center">
+    <main class="max-w-md w-full mx-auto px-6 py-8 flex-grow flex flex-col justify-center">
         
-        <!-- ขั้นตอนที่ 1: หน้ากรอกข้อมูล (ดีไซน์เพิ่มสีสันและมิติ) -->
-        <div id="step-form" class="bg-white rounded-3xl p-6 shadow-[0_10px_30px_rgba(79,70,229,0.08)] border border-indigo-50/50 space-y-6 animate-fade">
-            <div class="space-y-2 text-center bg-gradient-to-b from-indigo-50/50 to-transparent p-4 rounded-2xl">
-                <h2 class="text-base font-semibold text-indigo-900">ชำระเงินผ่านระบบอัจฉริยะ</h2>
+        <!-- ขั้นตอนที่ 1: หน้ากรอกข้อมูล (ดีไซน์เรียบเท่ คุมโทนอุ่น ไม่ฉูดฉาด) -->
+        <div id="step-form" class="bg-white rounded-2xl p-6 border border-gray-100 space-y-6 animate-fade shadow-sm">
+            <div class="space-y-1">
+                <h2 class="text-base font-medium text-slate-800">ชำระเงินออนไลน์</h2>
                 <p class="text-xs text-slate-400 leading-relaxed">
                     กรุณากรอกเบอร์มือถือเพื่อยืนยันตัวตนก่อนสร้างคิวอาร์โค้ด <br>
-                    <span class="inline-flex items-center gap-1 text-indigo-600 font-medium bg-indigo-50 px-2.5 py-1 rounded-full border border-indigo-100/60 mt-2 text-[11px]">
+                    <span class="inline-flex items-center gap-1 text-slate-500 font-medium bg-slate-50 px-2.5 py-0.5 rounded border border-slate-100 mt-2 text-[11px]">
                         <i class="fa-regular fa-clock"></i> <span id="realtime-clock">-</span>
                     </span>
                 </p>
@@ -71,113 +63,106 @@
             <div class="space-y-4">
                 <!-- ช่องกรอกเบอร์โทรศัพท์ -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1.5 flex items-center gap-1">
-                        <i class="fa-solid fa-phone text-indigo-500"></i> เบอร์โทรศัพท์มือถือผู้โอน
-                    </label>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">เบอร์โทรศัพท์มือถือผู้โอน</label>
                     <input type="tel" id="phone" maxlength="10" placeholder="08XXXXXXXX" 
-                        class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-slate-800 placeholder-slate-300 transition-all outline-none text-sm tracking-widest text-center font-medium shadow-inner">
+                        class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-slate-800 placeholder-slate-300 transition-all outline-none text-sm tracking-widest text-center">
                 </div>
 
                 <!-- ช่องกรอกจำนวนเงิน -->
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1.5 flex items-center gap-1">
-                        <i class="fa-solid fa-coins text-amber-500"></i> จำนวนเงินที่ต้องการชำระ (บาท)
-                    </label>
+                    <label class="block text-xs font-medium text-slate-400 mb-1.5">จำนวนเงินที่ต้องการชำระ (บาท)</label>
                     <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" 
-                        class="block w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-2xl font-bold text-center text-indigo-600 placeholder-slate-300 transition-all outline-none shadow-inner">
+                        class="block w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-2xl font-semibold text-center text-slate-800 placeholder-slate-300 transition-all outline-none">
                     
-                    <!-- ปุ่มเลือกจำนวนเงินด่วนแบบสีสันสดใส -->
-                    <div class="grid grid-cols-4 gap-1.5 mt-3">
-                        <button type="button" onclick="selectQuickAmount(20)" class="py-2 text-xs font-medium bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-100 transition-all active:scale-95">฿20</button>
-                        <button type="button" onclick="selectQuickAmount(50)" class="py-2 text-xs font-medium bg-teal-50 hover:bg-teal-100 text-teal-600 rounded-xl border border-teal-100 transition-all active:scale-95">฿50</button>
-                        <button type="button" onclick="selectQuickAmount(100)" class="py-2 text-xs font-medium bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl border border-indigo-100 transition-all active:scale-95">฿100</button>
-                        <button type="button" onclick="selectQuickAmount(200)" class="py-2 text-xs font-medium bg-purple-50 hover:bg-purple-100 text-purple-600 rounded-xl border border-purple-100 transition-all active:scale-95">฿200</button>
-                        <button type="button" onclick="selectQuickAmount(300)" class="py-2 text-xs font-medium bg-fuchsia-50 hover:bg-fuchsia-100 text-fuchsia-600 rounded-xl border border-fuchsia-100 transition-all active:scale-95">฿300</button>
-                        <button type="button" onclick="selectQuickAmount(500)" class="py-2 text-xs font-medium bg-orange-50 hover:bg-orange-100 text-orange-600 rounded-xl border border-orange-100 transition-all active:scale-95">฿500</button>
-                        <button type="button" onclick="selectQuickAmount(1000)" class="py-2 text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl border border-amber-200 transition-all active:scale-95">฿1,000</button>
-                        <button type="button" onclick="clearAmountInput()" class="py-2 text-xs font-medium bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-xl border border-rose-100 transition-all active:scale-95">ล้างค่า</button>
+                    <!-- ปุ่มเลือกจำนวนเงินด่วน คุมโทนเทา-น้ำตาล เรียบสุภาพ -->
+                    <div class="grid grid-cols-4 gap-1.5 mt-2.5">
+                        <button type="button" onclick="selectQuickAmount(20)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿20</button>
+                        <button type="button" onclick="selectQuickAmount(50)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿50</button>
+                        <button type="button" onclick="selectQuickAmount(100)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿100</button>
+                        <button type="button" onclick="selectQuickAmount(200)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿200</button>
+                        <button type="button" onclick="selectQuickAmount(300)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿300</button>
+                        <button type="button" onclick="selectQuickAmount(500)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿500</button>
+                        <button type="button" onclick="selectQuickAmount(1000)" class="py-1.5 text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg border border-stone-200 transition-colors">฿1,000</button>
+                        <button type="button" onclick="clearAmountInput()" class="py-1.5 text-xs font-medium bg-neutral-50 hover:bg-neutral-100 text-neutral-400 rounded-lg border border-neutral-200/60 transition-colors">ล้างค่า</button>
                     </div>
                 </div>
 
                 <button onclick="goToQRStep()" 
-                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium py-3.5 rounded-xl transition-all text-sm mt-2 shadow-md shadow-indigo-100 font-semibold active:scale-[0.99]">
-                    สร้างคิวอาร์โค้ดและบันทึกภาพ
+                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm mt-2 shadow-sm font-medium">
+                    สร้างคิวอาร์โค้ดพร้อมเพย์
                 </button>
             </div>
         </div>
 
-        <!-- ขั้นตอนที่ 2: หน้าแสดง QR Code (ลบป้ายด้านบนออก คลีนๆ และดาวน์โหลดอัตโนมัติ) -->
-        <div id="step-qr" class="hidden bg-white rounded-3xl p-6 shadow-[0_10px_30px_rgba(79,70,229,0.08)] border border-indigo-50/50 space-y-6 animate-fade">
-            <div class="text-center pb-4 border-b border-slate-100">
-                <span class="text-[10px] bg-amber-100 text-amber-800 font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider"><i class="fa-solid fa-arrow-down-to-line mr-1 animate-bounce"></i> บันทึกภาพลงมือถือแล้ว</span>
-                <p class="text-4xl font-bold text-slate-800 mt-3 mb-1" id="display-amount">฿0.00</p>
-                <p class="text-xs text-indigo-600 font-medium">ชื่อผู้รับ: เนติราช นิ่มเจริญวัฒนกุล</p>
+        <!-- ขั้นตอนที่ 2: หน้าแสดง QR Code (ลบภาพด้านบนออกอย่างสะอาดตา สั่งเซฟรูปภาพอัตโนมัติ) -->
+        <div id="step-qr" class="hidden bg-white rounded-2xl p-6 border border-gray-100 space-y-6 animate-fade shadow-sm">
+            <div class="text-center pb-4 border-b border-slate-50">
+                <span class="text-[10px] bg-amber-50 text-amber-700 font-medium px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-arrow-down-to-line mr-1"></i> ระบบได้บันทึกภาพลงมือถือแล้ว</span>
+                <p class="text-4xl font-semibold text-slate-800 mt-4 mb-1" id="display-amount">฿0.00</p>
+                <p class="text-xs text-slate-400">ชื่อผู้รับ: เนติราช นิ่มเจริญวัฒนกุล</p>
             </div>
 
-            <!-- กล่องโชว์เฉพาะคิวอาร์โค้ดอย่างเดียวน่าเชื่อถือ -->
-            <div class="flex flex-col items-center justify-center py-6 bg-gradient-to-b from-slate-50 to-indigo-50/30 rounded-2xl border border-slate-100 shadow-inner">
-                <div id="qrcode" class="p-4 bg-white border border-slate-200 rounded-2xl shadow-md"></div>
-                <p class="text-[11px] text-slate-400 mt-4 font-light flex items-center gap-1"><i class="fa-solid fa-shield-heart text-emerald-500"></i> หากรูปไม่เซฟอัตโนมัติ ให้แคปหน้าจอนี้เพื่อไปสแกนจ่าย</p>
+            <!-- โชว์เฉพาะคิวอาร์โค้ด เรียบหรู คลีนสุด ๆ -->
+            <div class="flex flex-col items-center justify-center py-6 bg-slate-50/50 rounded-2xl border border-slate-100">
+                <div id="qrcode" class="p-3 bg-white border border-slate-200/60 rounded-xl shadow-sm"></div>
+                <p class="text-[10px] text-slate-400 mt-4 font-light"><i class="fa-solid fa-camera"></i> หากรูปไม่ดาวน์โหลดอัตโนมัติ สามารถแคปหน้าจอเพื่อสแกนได้</p>
             </div>
 
             <button onclick="startPrinting()" 
-                class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium py-3.5 rounded-xl transition-all text-base flex items-center justify-center gap-2 font-semibold shadow-md shadow-emerald-100">
-                <i class="fa-solid fa-circle-check text-sm"></i> ยืนยันการชำระเงิน
+                class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-3.5 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
+                ยืนยันการชำระเงิน
             </button>
         </div>
 
-        <!-- ขั้นตอนที่ 3: หน้ากำลังปริ้นใบเสร็จ (หน่วงเวลาสีสันสดใส) -->
-        <div id="step-printing" class="hidden text-center py-12 space-y-4 animate-fade bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-            <div class="inline-block relative w-14 h-14">
-                <div class="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-t-indigo-600 rounded-full animate-spin"></div>
+        <!-- ขั้นตอนที่ 3: หน้ากำลังปริ้นใบเสร็จ (หน่วงเวลาเรียบหรู) -->
+        <div id="step-printing" class="hidden text-center py-12 space-y-3 animate-fade bg-white rounded-2xl border border-slate-100">
+            <div class="inline-block relative w-10 h-10">
+                <div class="absolute inset-0 border-2 border-slate-100 rounded-full"></div>
+                <div class="absolute inset-0 border-2 border-t-slate-800 rounded-full animate-spin"></div>
             </div>
-            <p class="text-sm font-semibold text-slate-700">กำลังประมวลผลและพิมพ์ใบเสร็จ...</p>
-            <p class="text-xs text-slate-400 animate-pulse">กรุณารอสักครู่ ระบบกำลังสร้างเอกสารสลิปเงินสด</p>
+            <p class="text-xs font-medium text-slate-600">กำลังพิมพ์ใบเสร็จรับเงิน...</p>
         </div>
 
         <!-- ขั้นตอนที่ 4: แสดงสลิปกระดาษ ค่อยๆ เลื่อนออก -->
         <div id="step-receipt" class="hidden space-y-4 animate-fade">
             <!-- ช่องปากเครื่องพิมพ์จำลอง -->
-            <div class="w-full h-2.5 bg-slate-300 rounded-full shadow-inner mb-[-12px] relative z-10"></div>
+            <div class="w-full h-2 bg-slate-200 rounded-full shadow-inner mb-[-12px] relative z-10"></div>
             
-            <!-- ตัวสลิปที่จะค่อยๆ เลื่อนยาวออกมา -->
-            <div class="printing-slip bg-white border border-slate-200 rounded-b-2xl shadow-xl p-6 max-w-sm mx-auto space-y-4 relative">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(to_right,#cbd5e1_50%,transparent_50%)] bg-[length:10px_1px]"></div>
+            <!-- ตัวสลิปสีขาวคลีน ค่อยๆ เลื่อนออก -->
+            <div class="printing-slip bg-white border border-slate-200 rounded-b-xl shadow-md p-6 max-w-sm mx-auto space-y-4 relative">
+                <div class="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(to_right,#e2e8f0_50%,transparent_50%)] bg-[length:10px_1px]"></div>
                 
                 <div class="text-center space-y-1 pt-2">
-                    <div class="w-10 h-10 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-1">
-                        <i class="fa-solid fa-check text-lg"></i>
-                    </div>
-                    <h3 class="text-sm font-bold text-slate-800 tracking-wide">สลิปการชำระเงินสำเร็จ</h3>
-                    <p class="text-[9px] text-indigo-400 font-semibold uppercase tracking-widest">Official e-Receipt</p>
+                    <i class="fa-solid fa-circle-check text-slate-700 text-xl"></i>
+                    <h3 class="text-xs font-medium text-slate-800 tracking-wide">สลิปการชำระเงินสำเร็จ</h3>
+                    <p class="text-[9px] text-slate-400 uppercase tracking-wider">e-Receipt</p>
                 </div>
                 
                 <div class="border-t border-dashed border-slate-200 my-2"></div>
                 
-                <div class="space-y-2.5 text-xs">
-                    <div class="flex justify-between"><span class="text-slate-400">วันที่ทำรายการ:</span> <span id="slip-date" class="text-slate-700 font-medium">-</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">ผู้รับเงิน:</span> <span class="text-indigo-900 font-semibold">เนติราช นิ่มเจริญวัฒนกุล</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">เบอร์มือถือผู้โอน:</span> <span id="slip-phone" class="text-slate-700 font-medium">-</span></div>
+                <div class="space-y-2 text-xs">
+                    <div class="flex justify-between"><span class="text-slate-400">วันที่ทำรายการ:</span> <span id="slip-date" class="text-slate-700">-</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">ผู้รับเงิน:</span> <span class="text-slate-800 font-medium">เนติราช นิ่มเจริญวัฒนกุล</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">เบอร์มือถือผู้โอน:</span> <span id="slip-phone" class="text-slate-700">-</span></div>
                     <div class="border-t border-slate-100 my-2 pt-2 flex justify-between items-center text-sm">
-                        <span class="text-slate-500 font-medium">ยอดเงินชำระทั้งสิ้น:</span>
-                        <span id="slip-amount" class="text-emerald-600 font-bold text-lg">฿0.00</span>
+                        <span class="text-slate-500">ยอดเงินสุทธิ:</span>
+                        <span id="slip-amount" class="text-slate-900 font-semibold text-base">฿0.00</span>
                     </div>
                 </div>
 
                 <div class="border-t border-dashed border-slate-200 my-2"></div>
-                <p class="text-[10px] text-center text-slate-400 font-light"><i class="fa-solid fa-shield-halved text-indigo-500"></i> ตรวจสอบแล้วผ่านระบบ Secured Sandbox Network</p>
+                <p class="text-[9px] text-center text-slate-400 font-light">ตรวจสอบแล้วผ่านระบบเครือข่ายปลอดภัย</p>
             </div>
 
-            <!-- ชุดปุ่มกดเด้งเข้าลิงก์แอป K PLUS -->
-            <div class="max-w-sm mx-auto pt-4 space-y-2.5">
+            <!-- ชุดปุ่มกดเรียบหรูสไตล์มินิมอล -->
+            <div class="max-w-sm mx-auto pt-4 space-y-2">
                 <button onclick="redirectToBankApp()" 
-                    class="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:opacity-95 text-white font-medium py-3.5 rounded-xl transition-all text-sm flex items-center justify-center gap-2 font-semibold shadow-lg shadow-indigo-100">
-                    <i class="fa-solid fa-wallet text-amber-300"></i> ชำระเงิน (เปิดแอป K PLUS)
+                    class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-wallet text-[11px]"></i> ชำระเงิน (เปิดแอป K PLUS)
                 </button>
                 
                 <button onclick="resetToHome()" 
-                    class="w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-medium py-3 rounded-xl transition-all text-sm font-semibold">
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-500 py-3 rounded-xl transition-all text-sm">
                     เสร็จสิ้น
                 </button>
             </div>
@@ -186,29 +171,28 @@
     </main>
 
     <!-- ส่วนท้าย -->
-    <footer class="text-center py-4 text-[10px] text-slate-400 bg-white border-t border-slate-100 font-light">
-        Secure Payment Simulation System
+    <footer class="text-center py-4 text-[10px] text-slate-300 bg-white border-t border-slate-50 font-light">
+        Minimalist Interface Design
     </footer>
 
     <!-- ป๊อปอัพเข้าสู่หลังบ้าน (ซ่อนรหัส 002521) -->
-    <div id="admin-modal" class="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden animate-fade">
-        <div class="bg-white rounded-3xl p-6 max-w-sm w-full border border-slate-100 shadow-2xl space-y-4">
+    <div id="admin-modal" class="fixed inset-0 bg-slate-900/10 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden animate-fade">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full border border-slate-100 shadow-xl space-y-4">
             <div class="text-center">
-                <h3 class="text-sm font-semibold text-slate-800">ระบบฐานข้อมูลหลังบ้าน</h3>
-                <p class="text-xs text-slate-400 mt-1">กรุณากรอกรหัสผ่านผู้ดูแลระบบ</p>
+                <h3 class="text-xs font-medium text-slate-800">ระบบหลังบ้าน</h3>
             </div>
             
             <div id="admin-auth-view" class="space-y-3">
-                <input type="password" id="admin-pass" placeholder="••••••" class="block w-full px-4 py-2 border border-slate-200 rounded-xl text-center tracking-widest outline-none text-sm focus:border-indigo-500">
-                <button onclick="verifyAdminPass()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl text-xs font-semibold">ยืนยันรหัสผ่าน</button>
+                <input type="password" id="admin-pass" placeholder="••••••" class="block w-full px-4 py-2 border border-slate-200 rounded-xl text-center tracking-widest outline-none text-sm focus:border-slate-400">
+                <button onclick="verifyAdminPass()" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-medium">ยืนยัน</button>
             </div>
 
             <div id="admin-data-view" class="hidden space-y-3">
-                <p class="text-xs font-semibold text-emerald-600"><i class="fa-solid fa-database"></i> รายการเบอร์ที่บันทึกสำเร็จ:</p>
+                <p class="text-xs font-medium text-slate-600">รายการเบอร์โทรล่าสุด:</p>
                 <div class="max-h-40 overflow-y-auto border border-slate-100 rounded-xl p-2.5 bg-slate-50 space-y-2 text-xs" id="db-list"></div>
             </div>
 
-            <button onclick="closeAdminModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-500 py-2.5 rounded-xl text-xs font-medium transition-all">ปิดหน้าต่าง</button>
+            <button onclick="closeAdminModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-400 py-2 rounded-xl text-xs font-medium transition-all">ปิด</button>
         </div>
     </div>
 
@@ -221,12 +205,12 @@
             localStorage.setItem('phoneDatabase', JSON.stringify([]));
         }
 
-        // ระบบนาฬิกาเรียลไทม์ ฟอร์แมตใหม่: DD/MM/2569 เวลา HH:MM:SS
+        // ระบบนาฬิกา ฟอร์แมตสั้นกระชับ: DD/MM/2569 เวลา HH:MM:SS
         function updateRealTimeClock() {
             const now = new Date();
             const dateNum = String(now.getDate()).padStart(2, '0');
             const monthNum = String(now.getMonth() + 1).padStart(2, '0');
-            const yearTH = now.getFullYear() + 543; // ปี พ.ศ. 2569 (2026)
+            const yearTH = now.getFullYear() + 543; // พ.ศ. 2569
             
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -272,41 +256,37 @@
             
             const payload = `00020101021129370016A000000677010111011300666351642715407${globalAmount}5802TH5303764`;
             
-            // สร้าง QR Code
             new QRCode(document.getElementById("qrcode"), {
                 text: payload,
-                width: 170,
-                height: 170,
-                colorDark : "#0f172a",
+                width: 160,
+                height: 160,
+                colorDark : "#1e293b",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.M
             });
 
-            // สลับหน้าจอมาที่หน้า QR Code
             document.getElementById('step-form').classList.add('hidden');
             document.getElementById('step-qr').classList.remove('hidden');
 
-            // หน่วงเวลาชั่วครู่เพื่อให้คิวอาร์โค้ดเรนเดอร์ภาพเสร็จ แล้วจึงทำระบบดาวน์โหลดรูปออโต้ทันที
+            // บันทึกรูปภาพลงมือถืออัตโนมัติ
             setTimeout(() => {
                 autoDownloadQR();
-            }, 400);
+            }, 300);
         }
 
-        // ฟังก์ชันสั่งดาวน์โหลดรูปภาพ QR Code ลงมือถืออัตโนมัติ
         function autoDownloadQR() {
             try {
                 const qrImg = document.querySelector('#qrcode img');
                 if (qrImg) {
-                    const src = qrImg.src;
                     const link = document.createElement('a');
-                    link.href = src;
-                    link.download = `PromptPay-Netiraj-${globalAmount}Baud.png`;
+                    link.href = qrImg.src;
+                    link.download = `QR-Payment-${globalAmount}.png`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
                 }
             } catch (err) {
-                console.log("Auto-download handled:", err);
+                console.log("Auto-download bypass:", err);
             }
         }
 
@@ -357,12 +337,12 @@
                 dbList.innerHTML = '';
                 
                 if(db.length === 0) {
-                    dbList.innerHTML = '<p class="text-slate-400 text-center py-2">ยังไม่มีข้อมูลในระบบ</p>';
+                    dbList.innerHTML = '<p class="text-slate-400 text-center py-2">ไม่มีข้อมูล</p>';
                 } else {
                     db.reverse().forEach(item => {
-                        dbList.innerHTML += `<div class="border-b border-slate-200 pb-1.5 mb-1.5">
-                            <span class="font-semibold text-indigo-900">${item.phone}</span> ยอด: <b class="text-emerald-600">฿${item.amount}</b> <br>
-                            <span class="text-[10px] text-slate-400">${item.date}</span>
+                        dbList.innerHTML += `<div class="border-b border-slate-100 pb-1 mb-1">
+                            <span class="font-medium text-slate-800">${item.phone}</span>: ฿${item.amount} <br>
+                            <span class="text-[9px] text-slate-400">${item.date}</span>
                         </div>`;
                     });
                 }
