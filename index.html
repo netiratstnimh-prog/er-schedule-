@@ -3,734 +3,717 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการเอกสารดิจิทัลและธุรกรรม - NXRT Enterprise</title>
+    <title>NXRT Portal 2026 -ระบบจัดการธุรกรรมเต็มรูปแบบ</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-corporate: #f4f6f9;
-            --surface-white: #ffffff;
-            --nxrt-navy: #0f172a;
-            --nxrt-blue: #1e3a8a;
-            --nxrt-accent: #2563eb;
-            --border-clean: rgba(15, 23, 42, 0.08);
-            --text-dark: #1e293b;
+            --bg-dark-core: #090d16;
+            --surface-clean-white: #ffffff;
+            --nxrt-gradient: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            --corporate-blue: #2563eb;
+            --corporate-navy: #0f172a;
+            --text-dark: #0f172a;
             --text-muted: #64748b;
-            --success-green: #10b981;
+            --success-color: #10b981;
+            --neon-glow: 0 0 20px rgba(37, 99, 235, 0.2);
         }
 
-        body {
+        body, html {
+            margin: 0; padding: 0; width: 100%; min-height: 100vh;
             font-family: 'Sarabun', 'Inter', sans-serif;
-            background-color: var(--bg-corporate);
-            background-image: 
-                radial-gradient(circle at 50% 15%, rgba(37, 99, 235, 0.03) 0%, transparent 60%),
-                linear-gradient(rgba(15, 23, 42, 0.01) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(15, 23, 42, 0.01) 1px, transparent 1px);
-            background-size: 100% 100%, 20px 20px, 20px 20px;
-            color: var(--text-dark);
-            margin: 0; padding: 0; min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center;
+            background-color: #f8fafc; color: var(--text-dark);
+            overflow-x: hidden; display: flex; flex-direction: column;
         }
 
-        /* ⚡ Splash Screen @NXRT ทันสมัย ดึงเวลา 6.5 วินาที */
+        /* ⚡ Splash Screen @NXRT 6.5 วินาที */
         #nxrt-splash-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff; z-index: 99999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark-core); z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: transform 1s cubic-bezier(0.86, 0, 0.07, 1), opacity 0.8s ease;
+            transition: transform 1s cubic-bezier(0.85, 0, 0.15, 1), opacity 0.8s ease;
         }
 
-        .splash-content {
-            text-align: center;
-            animation: splashBlurFade 6.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        .splash-logo {
-            font-family: 'Inter', sans-serif;
-            font-size: 52px; font-weight: 800; letter-spacing: 5px;
-            color: var(--nxrt-navy); margin-bottom: 12px;
-        }
-
-        .splash-tagline {
-            font-size: 15px; font-weight: 600; color: var(--nxrt-accent);
-            letter-spacing: 2px; margin-bottom: 24px;
-        }
-
-        .splash-loader-text {
-            font-size: 13px; color: var(--text-muted); font-weight: 500;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-
-        .spinner-dot {
-            width: 6px; height: 6px; background: var(--nxrt-accent); border-radius: 50%;
-            animation: dotFlashing 1s infinite alternate;
-        }
-        .spinner-dot:nth-child(2) { animation-delay: 0.2s; }
-        .spinner-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes dotFlashing {
-            0% { opacity: 0.2; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); }
-        }
-
-        @keyframes splashBlurFade {
-            0% { filter: blur(10px); opacity: 0; transform: scale(0.97); }
-            12% { filter: blur(0px); opacity: 1; transform: scale(1); }
-            88% { filter: blur(0px); opacity: 1; transform: scale(1); }
-            100% { filter: blur(8px); opacity: 0; transform: scale(1.02); }
-        }
-
-        /* หัวข้อส่วนหัว */
-        .enterprise-header {
-            width: 100%; max-width: 650px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 40px 24px 15px 24px; box-sizing: border-box; position: relative;
-        }
-
-        .header-title h1 { font-size: 20px; font-weight: 700; color: var(--nxrt-navy); margin: 0; }
-        .header-title p { font-size: 11px; color: var(--nxrt-accent); margin: 6px 0 0 0; font-weight: 700; letter-spacing: 0.5px; }
-        .hidden-admin-trigger { position: absolute; top: 20px; right: 20px; width: 60px; height: 60px; background: transparent; cursor: default; z-index: 9999; }
-
-        /* แผงคอนเทนเนอร์หลัก */
-        .portal-container { width: 100%; max-width: 650px; padding: 0 24px 50px 24px; box-sizing: border-box; }
-
-        /* กล่องหลักสไตล์โมเดิร์นที่มีแถบแสดงสถานะด้านบน */
-        .main-card {
-            background: var(--surface-white);
-            border: 1px solid var(--border-clean);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        /* 🟦 แถบสีน้ำเงินแจ้งเตือนสถานะด้านบนที่ปรับเปลี่ยนตามการใช้งาน */
-        .system-mode-topbar {
-            background: linear-gradient(90deg, var(--nxrt-blue), var(--nxrt-accent));
-            color: #ffffff;
-            padding: 12px 24px;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
+        .splash-content { text-align: center; animation: splashFade 6.2s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        .splash-logo { font-family: 'Inter'; font-size: 64px; font-weight: 900; letter-spacing: 8px; color: #ffffff; margin-bottom: 10px; text-shadow: 0 0 30px rgba(255,255,255,0.2); }
+        .splash-tagline { font-size: 14px; font-weight: 500; color: #60a5fa; letter-spacing: 3px; margin-bottom: 30px; }
         
-        .mode-indicator-pulse {
-            width: 8px; height: 8px; background: #67e8f9; border-radius: 50%;
-            box-shadow: 0 0 8px #67e8f9; animation: pulseGlow 1.5s infinite alternate;
+        .spinner-container { display: flex; justify-content: center; gap: 8px; align-items: center; }
+        .spinner-bar { width: 4px; height: 18px; background: #3b82f6; animation: barGrow 1s ease-in-out infinite; }
+        .spinner-bar:nth-child(2) { animation-delay: 0.15s; background: #60a5fa; }
+        .spinner-bar:nth-child(3) { animation-delay: 0.3s; background: #93c5fd; }
+
+        @keyframes barGrow { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(2); } }
+        @keyframes splashFade { 0% { opacity: 0; filter: blur(5px); } 15% { opacity: 1; filter: blur(0px); } 85% { opacity: 1; filter: blur(0px); } 100% { opacity: 0; filter: blur(10px); } }
+
+        /* 🟦 แถบสถานะ Topbar ด้านบนสุด */
+        .nxrt-top-navbar {
+            background: var(--corporate-navy); color: #ffffff; padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); z-index: 100;
         }
-        @keyframes pulseGlow { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+        .nav-brand { font-family: 'Inter'; font-weight: 900; font-size: 22px; letter-spacing: 2px; }
+        .nav-status-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; background: rgba(255,255,255,0.08); padding: 6px 16px; border-radius: 20px; }
+        .pulse-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
 
-        .card-inner-padding { padding: 35px 40px 40px 40px; }
-
-        /* 🎛️ บอร์ดตัวเลือก 1 และ 2 หน้าแรก */
-        #gateway-option-selector {
-            display: flex; flex-direction: column; gap: 16px;
-        }
-
-        .option-gate-btn {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
+        /* 🖥️ Layout แบบภาพรวมเต็มหน้าจอ (Full-Screen Main Workspace) */
+        .fullscreen-app-container {
+            flex: 1; width: 100%; box-sizing: border-box; padding: 40px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        .option-gate-btn::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
-            transform: skewX(-25deg);
+        .workspace-card {
+            width: 100%; max-width: 1200px; background: var(--surface-clean-white);
+            border-radius: 16px; box-shadow: 0 20px 50px rgba(15,23,42,0.04);
+            border: 1px solid rgba(15, 23, 42, 0.06); overflow: hidden;
+            min-height: 550px; display: flex; flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .option-gate-btn:hover::after { left: 150%; transition: left 0.6s ease-in-out; }
 
-        .option-gate-btn:hover {
-            transform: translateY(-3px); background: #ffffff; border-color: var(--nxrt-accent);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.08);
+        /* หน้าเลือก Option หลัก 1 และ 2 */
+        .modules-grid-select {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 60px 40px; flex: 1;
         }
-        .option-gate-btn:active { transform: scale(0.98); }
 
-        .gate-icon-box {
-            width: 50px; height: 50px; background: #f0f5ff; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; color: var(--nxrt-accent);
-            transition: all 0.3s;
+        .module-selection-box {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px;
+            padding: 40px; display: flex; flex-direction: column; justify-content: space-between;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        .option-gate-btn:hover .gate-icon-box { background: var(--nxrt-accent); color: #ffffff; }
 
-        .gate-desc-text { text-align: left; }
-        .gate-desc-text h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--nxrt-navy); }
-        .gate-desc-text p { margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted); }
+        .module-selection-box::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: transparent; transition: background 0.3s;
+        }
 
-        /* การจัดวางฟอร์มข้อมูล */
-        .form-layout { display: flex; flex-direction: column; gap: 22px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { font-size: 13px; font-weight: 700; color: var(--nxrt-navy); margin-bottom: 8px; }
+        .module-selection-box:hover {
+            transform: translateY(-5px); background: #ffffff; border-color: #3b82f6;
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.08);
+        }
+        .module-selection-box:hover::before { background: var(--corporate-blue); }
 
-        /* แผงปุ่มธนาคาร */
-        .bank-selector-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .bank-btn-node {
-            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+        .module-icon-graphic { font-size: 48px; margin-bottom: 20px; }
+        .module-title-meta h3 { margin: 0; font-size: 22px; font-weight: 700; color: var(--corporate-navy); }
+        .module-title-meta p { margin: 10px 0 0 0; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+        
+        .action-arrow-indicator {
+            align-self: flex-end; margin-top: 30px; font-weight: 700; color: var(--corporate-blue);
+            display: flex; align-items: center; gap: 5px; font-size: 14px;
+        }
+
+        /* สไตล์ฟอร์มการทำรายการ */
+        .dynamic-interface-wrapper { padding: 40px; display: none; flex-direction: column; }
+        .form-two-column-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; margin-top: 20px; }
+
+        .interactive-form-pane { display: flex; flex-direction: column; gap: 24px; }
+        .field-block { display: flex; flex-direction: column; }
+        .field-block label { font-size: 13px; font-weight: 700; color: var(--corporate-navy); margin-bottom: 10px; }
+
+        /* แผงปุ่มธนาคารแบบ High-End */
+        .bank-interactive-cluster { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .bank-node-item {
+            background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px;
             padding: 16px 8px; text-align: center; cursor: pointer; position: relative;
             overflow: hidden; display: flex; flex-direction: column; align-items: center; gap: 8px;
             transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        .bank-btn-node::after {
+        .bank-node-item::after {
             content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-25deg);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent); transform: skewX(-25deg);
         }
-        .bank-btn-node:hover::after { left: 150%; transition: left 0.5s; }
-        .bank-btn-node:hover { transform: translateY(-2px); background: #ffffff; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
-        .bank-btn-node:active { transform: scale(0.97); }
-        .bank-btn-node.selected { background: #f0f5ff; border-color: var(--nxrt-accent); box-shadow: 0 0 0 1px var(--nxrt-accent); }
+        .bank-node-item:hover::after { left: 150%; transition: left 0.5s ease-in-out; }
+        .bank-node-item:hover { transform: translateY(-2px); background: #ffffff; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .bank-node-item.selected { background: #eff6ff; border-color: var(--corporate-blue); box-shadow: 0 0 0 1px var(--corporate-blue); }
 
-        .bank-icon-circle {
-            width: 32px; height: 32px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 12px;
-            display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .b-kbank { background: #00a950; } .b-scb { background: #4e2e7f; } .b-ktb { background: #00aade; }
-        .bank-label-text { font-size: 12px; font-weight: 600; color: var(--text-dark); }
+        .bank-circle-logo { width: 32px; height: 32px; border-radius: 50%; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+        .bk-kbank { background: #00a950; } .bk-scb { background: #4e2e7f; } .bk-ktb { background: #00aade; }
 
         input {
-            width: 100%; padding: 13px 15px; background: #f8fafc; border: 1px solid #e2e8f0;
-            border-radius: 10px; box-sizing: border-box; font-size: 14px; color: var(--text-dark);
-            font-family: 'Sarabun', sans-serif; transition: all 0.25s ease;
+            width: 100%; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0;
+            border-radius: 10px; box-sizing: border-box; font-size: 14px; font-family: 'Sarabun';
+            transition: all 0.25s ease;
         }
-        input:focus { background: #ffffff; border-color: var(--nxrt-accent); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08); }
+        input:focus { background: #ffffff; border-color: var(--corporate-blue); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08); }
 
-        .btn-submit-action {
-            width: 100%; padding: 16px; background: var(--nxrt-navy); color: #ffffff;
-            border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
+        .btn-core-action {
+            width: 100%; padding: 16px; background: var(--corporate-navy); color: #fff;
+            border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
             font-family: 'Sarabun'; transition: background 0.2s;
         }
-        .btn-submit-action:hover { background: var(--nxrt-blue); }
+        .btn-core-action:hover { background: var(--corporate-blue); }
 
-        /* หน้าโหลดดิ้งสแกนเนอร์พิมพ์เอกสาร */
-        .pipeline-processing-loader { display: none; text-align: center; padding: 40px 0; }
-        .success-checkmark-wrapper { display: none; justify-content: center; align-items: center; margin-bottom: 20px; }
-        .checkmark-circle {
-            width: 60px; height: 60px; background: #f0fdf4; border: 2px solid var(--success-green);
-            color: var(--success-green); border-radius: 50%; font-size: 28px;
-            display: flex; align-items: center; justify-content: center; font-weight: bold;
-            animation: popCheck 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        /* พื้นหลังจำลองการโหลด และรางเครื่องพิมพ์สลิปดิ่งยาว (7-8 วินาที) */
+        .processing-pipe-overlay { display: none; text-align: center; padding: 60px 0; }
+        .laser-track-bg { width: 100%; max-width: 320px; height: 4px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 20px auto; }
+        .laser-fill-bar { height: 100%; width: 0%; background: var(--corporate-blue); }
+
+        .printer-rollout-vault { max-height: 0; overflow: hidden; transition: max-height 7.8s cubic-bezier(0.22, 1, 0.36, 1); margin: 0 auto; }
+        .printer-rollout-vault.active { max-height: 800px; }
+
+        /* 👑 ใบเสร็จสี่เหลี่ยมจัตุรัส 4x4 พร้อมลายน้ำ NETIRAT */
+        .master-receipt-document {
+            background: #ffffff; color: #0f172a; width: 100%; max-width: 380px; aspect-ratio: 1/1;
+            margin: 0 auto 30px auto; padding: 25px; box-sizing: border-box; border: 1px solid #cbd5e1;
+            border-radius: 4px; box-shadow: 0 15px 40px rgba(0,0,0,0.05); position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
-
-        .laser-bar-bg { width: 100%; max-width: 300px; height: 4px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin: 0 auto 15px auto; }
-        .laser-fill-progress { height: 100%; width: 0%; background: var(--nxrt-accent); }
-
-        /* 🖨️ กลไกหน่วงการพิมพ์กระดาษไหลสลิป (7-8 วินาทีตามฟิสิกส์มอเตอร์) */
-        #receipt-output-area { display: none; }
-        .rollout-printer-container { max-height: 0; overflow: hidden; transition: max-height 7.8s cubic-bezier(0.22, 1, 0.36, 1); margin: 0 auto; }
-        .rollout-printer-container.printing-active { max-height: 720px; }
-
-        /* 👑 บล็อกใบเสร็จรับเงิน 4x4 ขาวสะอาดตาพร้อมลายน้ำ */
-        .master-receipt-card {
-            background: #ffffff; color: #0f172a; width: 100%; max-width: 400px; aspect-ratio: 1 / 1;
-            margin: 10px auto 25px auto; padding: 30px; box-sizing: border-box; border: 1px solid #cbd5e1;
-            border-radius: 4px; box-shadow: 0 20px 40px rgba(15,23,42,0.06); display: flex;
-            flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;
-        }
-
-        .master-receipt-card::before {
+        .master-receipt-document::before {
             content: 'NETIRAT'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg);
-            font-family: 'Inter'; font-size: 52px; font-weight: 900; letter-spacing: 6px; color: rgba(15, 23, 42, 0.035);
-            pointer-events: none; z-index: 1; user-select: none;
+            font-family: 'Inter'; font-size: 52px; font-weight: 900; color: rgba(15,23,42,0.035); pointer-events: none; z-index: 1;
         }
+        .doc-layer { position: relative; z-index: 2; }
+        
+        .receipt-top-row { display: flex; justify-content: space-between; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; }
+        .receipt-top-row h4 { margin: 0; font-size: 13px; font-weight: 700; }
+        .receipt-top-row p { margin: 2px 0 0 0; font-size: 9px; color: var(--text-muted); font-family: 'Inter'; }
 
-        .slip-header-meta, .slip-core-grid, .slip-footer-verification { position: relative; z-index: 2; }
-        .slip-header-meta { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
-        .slip-header-meta h2 { font-size: 14px; font-weight: 700; margin: 0; color: var(--nxrt-navy); }
-        .slip-header-meta p { font-size: 9px; color: var(--text-muted); margin: 2px 0 0 0; font-family: 'Inter'; letter-spacing: 0.5px; }
-        .corp-badge { font-size: 9px; font-weight: 700; background: #f1f5f9; padding: 3px 8px; border-radius: 4px; color: #475569; }
+        .receipt-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+        .data-node-cell { display: flex; flex-direction: column; }
+        .data-node-cell.full-width { grid-column: span 2; }
+        .data-node-cell .label-txt { font-size: 9px; color: var(--text-muted); }
+        .data-node-cell .value-txt { font-size: 12px; font-weight: 600; margin-top: 2px; color: #1e293b; }
 
-        .slip-core-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0; }
-        .grid-data-node { display: flex; flex-direction: column; }
-        .grid-data-node.span-all { grid-column: span 2; }
-        .grid-data-node .lbl { font-size: 10px; color: var(--text-muted); }
-        .grid-data-node .data { font-size: 13px; font-weight: 600; color: #1e293b; margin-top: 2px; }
-
-        .enterprise-amount-strip {
-            grid-column: span 2; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
-            padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
+        .amount-highlight-box {
+            grid-column: span 2; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px;
+            border-radius: 6px; display: flex; justify-content: space-between; align-items: center;
         }
-        .enterprise-amount-strip .label { font-size: 12px; font-weight: 700; color: #475569; }
-        .enterprise-amount-strip .figure { font-family: 'Inter'; font-size: 16px; font-weight: 700; color: var(--nxrt-blue); }
+        .amount-highlight-box .lbl { font-size: 11px; font-weight: 700; }
+        .amount-highlight-box .val { font-family: 'Inter'; font-size: 15px; font-weight: 700; color: var(--corporate-blue); }
 
-        .slip-footer-verification { display: flex; align-items: center; justify-content: space-between; background: #fdfdfd; padding: 10px; border: 1px dashed #cbd5e1; }
-        .verify-text h4 { margin: 0; font-size: 11px; font-weight: 700; color: var(--nxrt-navy); }
-        .verify-text p { margin: 2px 0 0 0; font-size: 9px; color: var(--text-muted); line-height: 1.3; }
-        #qrcode { background: #ffffff; padding: 4px; display: inline-block; }
+        .receipt-footer-row { display: flex; align-items: center; justify-content: space-between; background: #fafafa; padding: 8px; border: 1px dashed #cbd5e1; }
+        .footer-info-text h5 { margin: 0; font-size: 10px; font-weight: 700; }
+        .footer-info-text p { margin: 2px 0 0 0; font-size: 8px; color: var(--text-muted); }
+        #qrcode-space { background: #ffffff; padding: 2px; }
 
-        /* แผงปุ่มด้านล่าง */
-        .corporate-btn-stack { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto; }
-        .btn-row-flex { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-utility {
-            width: 100%; padding: 13px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Sarabun';
-            cursor: pointer; text-align: center; box-sizing: border-box; border: 1px solid #cbd5e1; background: #ffffff; color: var(--text-dark);
-            transition: all 0.2s ease;
+        /* 💾 ป๊อปอัพจำลองการแจ้งเตือน SMS ส่งออกสำเร็จ */
+        .sms-alert-toast {
+            position: fixed; top: 30px; right: -400px; width: 340px; background: #0f172a;
+            color: #ffffff; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .btn-utility:hover { background: #f8fafc; border-color: #94a3b8; }
-        .btn-primary-stack { background: var(--nxrt-navy); color: #fff; border: none; }
-        .btn-primary-stack:hover { background: var(--nxrt-blue); }
+        .sms-alert-toast.visible { right: 30px; }
+        .sms-header { display: flex; justify-content: space-between; font-size: 11px; color: #93c5fd; font-weight: 700; margin-bottom: 6px; }
 
-        /* โมดอล */
-        .popup-modal-backdrop {
+        /* 🔒 หน้าต่างรหัสล็อกอิน 2 ชั้น (Double Layer Authentication) */
+        .auth-gate-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 1500; justify-content: center; align-items: center; padding: 16px; box-sizing: border-box;
+            background: rgba(9, 13, 22, 0.85); backdrop-filter: blur(8px); z-index: 5000;
+            justify-content: center; align-items: center;
         }
-        .modal-body-card { background: #ffffff; border-radius: 12px; width: 100%; max-width: 430px; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); text-align: center; }
-        .modal-header-text { font-size: 14px; font-weight: 700; color: var(--nxrt-navy); margin-bottom: 16px; }
-        .preview-canvas-container { width: 100%; max-width: 300px; aspect-ratio: 1/1; margin: 0 auto 20px auto; border: 1px solid #e2e8f0; background: #f8fafc; }
-        .preview-canvas-container img { width: 100%; height: 100%; object-fit: contain; }
+        .auth-card-box {
+            background: #ffffff; padding: 40px; border-radius: 16px; width: 100%; max-width: 360px; text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        .auth-icon-spin { font-size: 32px; margin-bottom: 15px; }
 
-        .table-admin { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        .table-admin th { background: #f1f5f9; padding: 8px; text-align: left; }
-        .table-admin td { padding: 10px 8px; border-bottom: 1px solid #f1f5f9; }
+        /* 📊 Real-time Admin Dashboard Console */
+        #admin-panel-workspace { display: none; padding: 40px; flex-direction: column; gap: 30px; }
+        .dashboard-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .stat-widget-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 24px; border-radius: 12px; }
+        .stat-widget-card .title { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        .stat-widget-card .value { font-family: 'Inter'; font-size: 28px; font-weight: 800; color: var(--corporate-navy); margin-top: 8px; }
 
-        .btn-back-home { background: transparent; border: none; color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; padding: 5px; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 15px; }
-        .btn-back-home:hover { color: var(--nxrt-navy); }
+        .integration-btn-group { display: flex; gap: 12px; margin-top: 15px; }
+        .btn-integration { flex: 1; padding: 12px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid #cbd5e1; background: #fff; font-family: 'Sarabun'; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-integration:hover { background: #f1f5f9; }
+
+        /* 🎛️ แถบด้านล่างสุดระบบ Touchbar คิวคอนโซล */
+        .nxrt-footer-system {
+            background: var(--corporate-navy); color: rgba(255,255,255,0.4); padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 500;
+        }
+        .touchbar-login-wire {
+            background: rgba(255,255,255,0.06); padding: 6px 18px; border-radius: 6px;
+            color: #93c5fd; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            border: 1px solid rgba(255,255,255,0.1); font-weight: 600;
+            transition: all 0.2s;
+        }
+        .touchbar-login-wire:hover { background: rgba(255,255,255,0.12); color: #ffffff; box-shadow: 0 0 12px rgba(59,130,246,0.3); }
+
+        .btn-return-home-action { background: transparent; border: none; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px; }
+        .btn-return-home-action:hover { color: var(--corporate-navy); }
 
         @media print {
             body * { display: none !important; }
-            #receipt-output-area, #receipt-output-area *, .rollout-printer-container, .master-receipt-card, .master-receipt-card * { display: flex !important; }
-            .rollout-printer-container { max-height: none !important; }
-            .corporate-btn-stack { display: none !important; }
-            .master-receipt-card { border: none !important; box-shadow: none !important; margin: 0 !important; }
+            #receipt-output-area, #receipt-output-area *, .printer-rollout-vault, .master-receipt-document, .master-receipt-document * { display: flex !important; }
+            .printer-rollout-vault { max-height: none !important; }
+            .master-receipt-document { border: none !important; box-shadow: none !important; margin: 0 !important; }
         }
     </style>
 </head>
 <body>
 
-<!-- ⚡ หน้าสกรีนต้อนรับ @NXRT หน่วงเวลาการประมวลผล 6.5 วินาที -->
 <div id="nxrt-splash-screen">
     <div class="splash-content">
         <div class="splash-logo">@NXRT</div>
-        <div class="splash-tagline">ระบบจัดการเอกสารและธุรกรรมดิจิทัล</div>
-        <div class="splash-loader-text">
-            <span>กรุณารอสักครู่ ระบบกำลังเชื่อมต่อโปรโตคอลความปลอดภัย</span>
-            <div style="display:flex; gap:3px; margin-left:4px;">
-                <div class="spinner-dot"></div>
-                <div class="spinner-dot"></div>
-                <div class="spinner-dot"></div>
-            </div>
+        <div class="splash-tagline">ELECTRONIC TRANSACTION CORE GATEWAY</div>
+        <div class="spinner-container">
+            <div class="spinner-bar"></div>
+            <div class="spinner-bar"></div>
+            <div class="spinner-bar"></div>
         </div>
     </div>
 </div>
 
-<div class="enterprise-header">
-    <div class="header-title">
-        <h1>ระบบบริการจัดการธุรกรรมอิเล็กทรอนิกส์</h1>
-        <p>NXRT ENTERPRISE GLOBAL GATEWAY</p>
+<nav class="nxrt-top-navbar">
+    <div class="nav-brand">NXRT PORTAL 2026</div>
+    <div class="nav-status-badge">
+        <div class="pulse-dot"></div>
+        <span id="globalNavStatusText">โมดูลความปลอดภัยคลาวด์: แสตนด์บาย</span>
     </div>
-    <div class="hidden-admin-trigger" onclick="handleSecretAdminTap()"></div>
-</div>
+</nav>
 
-<div class="portal-container">
-    <div class="main-card">
+<div class="fullscreen-app-container">
+    <div class="workspace-card" id="coreAppBoard">
         
-        <!-- 🟦 แถบสีน้ำเงินบอกสถานะโหมดระบบด้านบนสุดตามบรีฟ -->
-        <div class="system-mode-topbar" id="liveTopbarMode">
-            <div class="mode-indicator-pulse"></div>
-            <span id="topbarModeText">กรุณาเลือกโมดูลการเข้าใช้งานระบบด้านล่าง</span>
+        <div class="modules-grid-select" id="menuViewPanel">
+            <div class="module-selection-box" onclick="enterTargetModule('receipt')">
+                <div>
+                    <div class="module-icon-graphic">🖨️</div>
+                    <div class="module-title-meta">
+                        <h3>1. สร้างใบเสร็จรับเงินอิเล็กทรอนิกส์</h3>
+                        <p>ออกสลิปกระดาษความร้อนดิจิทัลทรงสี่เหลี่ยมจัตุรัส 4×4 ตกแต่งพื้นผิวสะอาดตา พร้อมฝังเลเยอร์ลายน้ำกันปลอมแปลงเอกสาร</p>
+                    </div>
+                </div>
+                <div class="action-arrow-indicator">เรียกใช้งานโครงสร้างเครื่องพิมพ์ &rarr;</div>
+            </div>
+
+            <div class="module-selection-box" onclick="enterTargetModule('transfer')">
+                <div>
+                    <div class="module-icon-graphic">💰</div>
+                    <div class="module-title-meta">
+                        <h3>2. ระบบโอนเงินด่วนสากล (สร้าง QR โอนจริง)</h3>
+                        <p>ผูกบัญชีพร้อมเพย์หลักขององค์กร แปลงมูลค่าเงินเป็น Dynamic QR Code มาตรฐานสากลเพื่อนำแอปสแกนทำรายการเงินเข้าจริง</p>
+                    </div>
+                </div>
+                <div class="action-arrow-indicator">เรียกใช้งานคอร์โอนเงินความเร็วสูง &rarr;</div>
+            </div>
         </div>
 
-        <div class="card-inner-padding">
+        <div class="dynamic-interface-wrapper" id="formExecutionPane">
+            <button type="button" class="btn-return-home-action" onclick="executeAnimatedBackToMenu()">&larr; ถอยกลับหน้าหลักเลือกโมดูล</button>
             
-            <!-- 🎛️ หน้าต่างหลักตัวเลือก Option 1 และ Option 2 -->
-            <div id="gateway-option-selector">
-                <div class="option-gate-btn" onclick="switchActiveModule('receipt')">
-                    <div class="gate-icon-box">🖨️</div>
-                    <div class="gate-desc-text">
-                        <h3>1. สร้างใบเสร็จรับเงินอิเล็กทรอนิกส์</h3>
-                        <p>ออกสลิปกระดาษดิจิทัล บันทึกประวัติและระบบลายน้ำความปลอดภัย</p>
-                    </div>
-                </div>
-
-                <div class="option-gate-btn" onclick="switchActiveModule('transfer')">
-                    <div class="gate-icon-box">💰</div>
-                    <div class="gate-desc-text">
-                        <h3>2. ระบบโอนเงินด่วนสากล (สร้าง QR โอนจริง)</h3>
-                        <p>ผูกข้อมูลบัญชีพร้อมเพย์ สร้าง Dynamic QR สแกนเข้าแอปธนาคารเพื่อโอนได้ทันที</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ฟอร์มกรอกข้อมูลใช้งานร่วมกัน -->
-            <form id="corporateForm" style="display: none;" onsubmit="executeEnterprisePipeline(event)">
-                <button type="button" class="btn-back-home" onclick="returnToMenu()">&larr; กลับหน้าหลักเลือกโมดูล</button>
-                
-                <div class="form-layout">
-                    <div class="form-group">
-                        <label id="lblBankField">สถาบันการเงินผู้ทำรายการ</label>
-                        <div class="bank-selector-group">
-                            <div class="bank-btn-node" id="bk_kbank" onclick="bindBankSelection('bk_kbank', 'ธนาคารกสิกรไทย')">
-                                <div class="bank-icon-circle b-kbank">K</div>
-                                <span class="bank-label-text">กสิกรไทย</span>
+            <div class="form-two-column-grid">
+                <form id="nxrtDynamicForm" onsubmit="triggerGatewayPipeline(event)">
+                    <div class="interactive-form-pane">
+                        <div class="field-block">
+                            <label id="lblDynamicBankTitle">เลือกสถาบันการเงินที่เกี่ยวข้อง</label>
+                            <div class="bank-interactive-cluster">
+                                <div class="bank-node-item" id="bk1" onclick="selectBankNode('bk1', 'ธนาคารกสิกรไทย')">
+                                    <div class="bank-circle-logo bk-kbank">K</div>
+                                    <span class="bank-label-text">กสิกรไทย</span>
+                                </div>
+                                <div class="bank-node-item" id="bk2" onclick="selectBankNode('bk2', 'ธนาคารไทยพาณิชย์')">
+                                    <div class="bank-circle-logo bk-scb">S</div>
+                                    <span class="bank-label-text">ไทยพาณิชย์</span>
+                                </div>
+                                <div class="bank-node-item" id="bk3" onclick="selectBankNode('bk3', 'ธนาคารกรุงไทย')">
+                                    <div class="bank-circle-logo bk-ktb">K</div>
+                                    <span class="bank-label-text">กรุงไทย</span>
+                                </div>
                             </div>
-                            <div class="bank-btn-node" id="bk_scb" onclick="bindBankSelection('bk_scb', 'ธนาคารไทยพาณิชย์')">
-                                <div class="bank-icon-circle b-scb">S</div>
-                                <span class="bank-label-text">ไทยพาณิชย์</span>
-                            </div>
-                            <div class="bank-btn-node" id="bk_ktb" onclick="bindBankSelection('bk_ktb', 'ธนาคารกรุงไทย')">
-                                <div class="bank-icon-circle b-ktb">K</div>
-                                <span class="bank-label-text">กรุงไทย</span>
-                            </div>
+                            <input type="hidden" id="formSelectedBank" required>
                         </div>
-                        <input type="hidden" id="corporateBankField" required>
-                    </div>
 
-                    <div class="form-group" id="groupSenderName">
-                        <label for="senderName">ชื่อ-นามสกุล ผู้โอนเงิน</label>
-                        <input type="text" id="senderName" placeholder="กรอกชื่อ-นามสกุลเต็ม">
-                    </div>
+                        <div class="field-block" id="rowSenderName">
+                            <label for="inputSenderName">ชื่อ-นามสกุล ผู้โอนเงินบนหน้าใบเสร็จ</label>
+                            <input type="text" id="inputSenderName" placeholder="กรอกนามเต็ม เช่น สมชาย ตั้งใจดี">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="amount">ยอดเงินธุรกรรมสุทธิ (บาท)</label>
-                        <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" required>
-                    </div>
+                        <div class="field-block">
+                            <label for="inputAmount">ยอดเงินรวมสุทธิที่ทำธุรกรรม (THB)</label>
+                            <input type="number" id="inputAmount" step="0.01" min="1" placeholder="0.00" required>
+                        </div>
 
-                    <div class="form-group" id="groupPhone">
-                        <label for="phone">เบอร์โทรศัพท์ติดต่อ</label>
-                        <input type="tel" id="phone" pattern="[0-9]{10}" placeholder="ระบุเบอร์โทรศัพท์ 10 หลัก">
-                    </div>
+                        <div class="field-block">
+                            <label for="inputTargetPhone" id="lblPhoneMode">หมายเลขโทรศัพท์ปลายทาง (สำหรับรับสายพาน SMS แจ้งเตือน)</label>
+                            <input type="tel" id="inputTargetPhone" pattern="[0-9]{10}" placeholder="ตัวอย่าง 0812345678" required>
+                        </div>
 
-                    <button type="submit" class="btn-submit-action" id="btnSubmitText">ยืนยันข้อมูลและประมวลผล</button>
+                        <button type="submit" class="btn-core-action" id="btnActionLabel">เริ่มตรวจสอบและสร้างโครงสร้างเอกสาร</button>
+                    </div>
+                </form>
+
+                <div style="border-left: 1px solid #e2e8f0; padding-left: 40px; display: flex; flex-direction: column; justify-content: center; text-align: center; color: var(--text-muted);">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🛡️</div>
+                    <h4 style="color:var(--corporate-navy); margin:0 0 8px 0;">ระบบรักษาความปลอดภัยเครือข่าย</h4>
+                    <p style="font-size:13px; margin:0;">ทุกข้อมูลที่กรอกผ่านพอร์ทัล @NXRT จะถูกเข้ารหัสผ่านโปรโตคอล SSL-128Bit และบันทึกประวัติภายในระบบ Audit Real-time</p>
                 </div>
-            </form>
-
-            <!-- แผงดาวน์โหลดและคำนวณท่อส่งความปลอดภัย -->
-            <div id="pipelineLoader" class="pipeline-processing-loader">
-                <div id="secureShield" style="font-size: 32px; margin-bottom: 12px;">⚙️</div>
-                <div class="success-checkmark-wrapper" id="checkmarkContainer">
-                    <div class="checkmark-circle">✓</div>
-                </div>
-                <h3 id="loaderTitle" class="pipeline-status-text" style="margin: 0 0 8px 0;">ระบบกำลังประมวลผลคำสั่งและสแกนโครงสร้างเอกสาร...</h3>
-                <div class="laser-bar-bg" id="laserFrame">
-                    <div id="laserLine" class="laser-fill-progress"></div>
-                </div>
-                <span id="pipelineCounter" style="font-family:'Inter'; font-weight:700; font-size:13px; color:var(--nxrt-accent);">0%</span>
             </div>
+        </div>
 
-            <!-- โซนกระจายหน้าผลลัพธ์สลิปความร้อนยืดสายพาน -->
-            <div id="receipt-output-area">
-                <div class="rollout-printer-container" id="printerContainerDrive">
-                    <div class="master-receipt-card" id="targetSlipFrame">
-                        <div class="slip-header-meta">
-                            <div>
-                                <h2 id="slipMainTitle">ใบรับเงินคิวอาร์โค้ดสากล</h2>
-                                <p id="slipSubTitle">OFFICIAL ELECTRONIC RECEIPT</p>
-                            </div>
-                            <div class="corp-badge" id="slipBadgeStatus">องค์กรตรวจสอบแล้ว</div>
+        <div id="pipelineOverlay" class="processing-pipe-overlay">
+            <div style="font-size: 40px; margin-bottom: 10px; animation: pulseGlow 1s infinite alternate;">⚙️</div>
+            <h3 id="loaderStatusHeadline" style="margin: 0; font-size: 18px;">กำลังส่งรหัสตรวจสอบสู่โครงสร้างความปลอดภัยเอกสาร...</h3>
+            <div class="laser-track-bg">
+                <div class="laser-fill-bar" id="laserProgressBar"></div>
+            </div>
+            <span id="txtPercentageProgress" style="font-family:'Inter'; font-weight:700; color:var(--corporate-blue);">0%</span>
+        </div>
+
+        <div id="receipt-output-area" style="padding: 40px; display: none;">
+            <div class="printer-rollout-vault" id="rolloutDriveContainer">
+                <div class="master-receipt-document" id="htmlSlipCard">
+                    <div class="doc-layer receipt-top-row">
+                        <div>
+                            <h4 id="txtMetaSlipMainTitle">ใบรับเงินอิเล็กทรอนิกส์</h4>
+                            <p id="txtMetaSlipSubTitle">OFFICIAL TRANSACTION RECORD</p>
+                        </div>
+                        <div style="font-size: 9px; font-weight: 700; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;" id="txtMetaBadge">อนุมัติเรียบร้อย</div>
+                    </div>
+                    
+                    <div class="doc-layer receipt-data-grid">
+                        <div class="data-node-cell" id="slipCellSender">
+                            <span class="label-txt">นามผู้โอนเงิน (FROM)</span>
+                            <span class="value-txt" id="outSender">-</span>
+                        </div>
+                        <div class="data-node-cell">
+                            <span class="label-txt" id="lblSlipBankLabel">ช่องทางสแกนออก</span>
+                            <span class="value-txt" id="outBank">-</span>
+                        </div>
+                        <div class="data-node-cell full-width">
+                            <span class="label-txt">บัญชีผู้รับโอนเงินปลายทาง (TO)</span>
+                            <span class="value-txt" style="color:var(--corporate-blue);" id="outReceiver">เนติราช นิ่มเจริญวัฒนกุล</span>
+                        </div>
+                        <div class="data-node-cell">
+                            <span class="label-txt">วัน-เวลาประมวลผล</span>
+                            <span class="value-txt" id="outTimestamp" style="font-size:11px;">-</span>
+                        </div>
+                        <div class="data-node-cell">
+                            <span class="label-txt">หมายเลขตรวจสอบข้อมูล</span>
+                            <span class="value-txt" id="outRefNumber" style="font-family:'Inter'; font-size:11px;">-</span>
                         </div>
                         
-                        <div class="slip-core-grid">
-                            <div class="grid-data-node" id="slipNodeSender">
-                                <span class="lbl">ผู้โอนเงิน (FROM)</span>
-                                <span class="data" id="v_sender">-</span>
-                            </div>
-                            <div class="grid-data-node">
-                                <span class="lbl" id="lblSlipBank">ธนาคารต้นทาง</span>
-                                <span class="data" id="v_bank">-</span>
-                            </div>
-                            <div class="grid-data-node span-all">
-                                <span class="lbl">บัญชีปลายทางผู้รับเงิน (TO)</span>
-                                <span class="data" style="color:var(--nxrt-blue);" id="v_receiver_name">เนติราช นิ่มเจริญวัฒนกุล</span>
-                            </div>
-                            <div class="grid-data-node">
-                                <span class="lbl">วัน-เวลาที่ทำรายการ</span>
-                                <span class="data" id="v_date" style="font-size:12px;">-</span>
-                            </div>
-                            <div class="grid-data-node">
-                                <span class="lbl">รหัสอนุมัติของระบบ</span>
-                                <span class="data" id="v_ref" style="font-family:'Inter'; font-size:12px;">-</span>
-                            </div>
-                            
-                            <div class="enterprise-amount-strip">
-                                <span class="label">ยอดเงินรวมสุทธิ</span>
-                                <span class="figure"><span id="v_amount">-</span> THB</span>
-                            </div>
-                        </div>
-
-                        <div class="slip-footer-verification">
-                            <div class="verify-text">
-                                <h4 id="footerVerifyTitle">คิวอาร์โค้ดตรวจสอบ</h4>
-                                <p id="footerVerifyDesc">เอกสารฉบับนี้ใช้ระบบลงลายมือชื่อดิจิทัล สแกนผ่านโมบายแบงก์กิ้งเพื่อทำธุรกรรม</p>
-                            </div>
-                            <div id="qrcode"></div>
+                        <div class="amount-highlight-box">
+                            <span class="lbl">ยอดเงินโอนสุทธิ</span>
+                            <span class="val"><span id="outAmount">0.00</span> THB</span>
                         </div>
                     </div>
-                </div>
-                
-                <div class="corporate-btn-stack">
-                    <button type="button" class="btn-utility btn-primary-stack" onclick="actionRevertAndAutofill()">🔄 ทำรายการอีกครั้ง (กรอกข้อมูลเดิมอัตโนมัติ)</button>
-                    
-                    <div class="btn-row-flex">
-                        <button type="button" class="btn-utility" onclick="actionNativePrint()"><span style="margin-right:4px;">🖨️</span> ปรินต์เอกสาร</button>
-                        <button type="button" class="btn-utility" onclick="actionOpenSavePreview()"><span style="margin-right:4px;">💾</span> บันทึกรูปภาพ</button>
-                    </div>
 
-                    <div class="btn-row-flex">
-                        <button type="button" class="btn-utility" onclick="actionUnderMaintenance()">📞 ติดต่อผู้พัฒนา</button>
-                        <button type="button" class="btn-utility" onclick="actionUnderMaintenance()">➕ เพิ่มเพื่อน LINE</button>
+                    <div class="doc-layer receipt-footer-row">
+                        <div class="footer-info-text">
+                            <h5 id="txtFooterTitle">QR-CODE VERIFIED</h5>
+                            <p id="txtFooterDesc">สแกนผ่านแอปฯ ธนาคารเพื่อตรวจสอบความสมบูรณ์ของโครงสร้าง</p>
+                        </div>
+                        <div id="qrcode-space"></div>
                     </div>
                 </div>
             </div>
 
+            <div class="corporate-btn-stack">
+                <button type="button" class="btn-utility btn-primary-stack" onclick="actionFlushAndRepeatForm()">🔄 ทำรายการอีกครั้งด้วยพิกัดข้อมูลเดิม</button>
+                <div class="btn-row-flex">
+                    <button type="button" class="btn-utility" onclick="window.print()"><span style="margin-right:4px;">🖨️</span> ส่งคำสั่งพิมพ์กระดาษ</button>
+                    <button type="button" class="btn-utility" onclick="actionCaptureAndExportImage()"><span style="margin-right:4px;">💾</span> บันทึกรูปเอกสาร</button>
+                </div>
+            </div>
         </div>
+
+        <div id="admin-panel-workspace">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0; font-size:22px; font-weight:800; letter-spacing:1px; color:var(--corporate-navy);">📊 REAL-TIME TRANSACTION AUDIT CONSOLE</h2>
+                <button type="button" class="btn-utility" style="width:auto; padding:8px 16px;" onclick="closeAdminDashboardView()">ออกจากแผงควบคุม</button>
+            </div>
+            
+            <div class="dashboard-stats-row">
+                <div class="stat-widget-card"><div class="title">ยอดมูลค่าหมุนเวียนรวม (TOTAL VOLUME)</div><div class="value" id="dashTotalVol">0.00 THB</div></div>
+                <div class="stat-widget-card"><div class="title">จำนวนธุรกรรมรวม (TX COUNTER)</div><div class="value" id="dashTxCount">0 บิล</div></div>
+                <div class="stat-widget-card" style="grid-column: span 2;">
+                    <div class="title">ระบบเชื่อมโยง API ภายนอก (EXTERNAL INTEGRATION)</div>
+                    <div class="integration-btn-group">
+                        <button class="btn-integration" onclick="alert('🔄 กำหนดการอัปเดตโมดูล:\nระบบเชื่อมต่อ Google Sheets API จะเปิดให้ใช้งานในเวอร์ชันถัดไปเร็วๆ นี้')">🟢 Google Sheets</button>
+                        <button class="btn-integration" onclick="alert('🔄 กำหนดการอัปเดตโมดูล:\nระบบส่งข้อมูลแจ้งเตือน LINE Notify อยู่ระหว่างทดสอบ Sandbox')">🟢 LINE Notify</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px; max-height:250px; overflow-y:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+                    <thead><tr style="border-bottom:2px solid #e2e8f0; color:var(--text-muted);"><th style="padding:8px;">ประวัติแสตมป์เวลา</th><th style="padding:8px;">ประเภทโมดูล</th><th style="padding:8px;">เบอร์ติดต่อ</th><th style="padding:8px; text-align:right;">ยอดเงิน (THB)</th></tr></thead>
+                    <tbody id="adminTablePlacement"></tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- โมดอลย่อยเก็บประวัติและพรีวิวสเปกเดิม -->
-<div id="savePreviewModal" class="popup-modal-backdrop"><div class="modal-body-card"><div class="modal-header-text">💾 ตัวอย่างรูปภาพสำหรับบันทึกลงมือถือ (4 × 4)</div><div class="preview-canvas-container" id="previewImagePlace"></div><div class="btn-row-flex"><button type="button" class="btn-utility" onclick="closeSaveModal()">ยกเลิก</button><button type="button" class="btn-utility btn-primary-stack" id="triggerDownloadBtn">ดาวน์โหลดลงเครื่องมือถือ</button></div></div></div>
-<div id="adminLogModal" class="popup-modal-backdrop"><div class="modal-body-card" style="max-width: 450px;"><div class="modal-header-text" style="color:var(--nxrt-accent); text-align: left;">🔒 AUDIT DATABASE SYSTEM</div><div style="max-height: 250px; overflow-y:auto;"><table class="table-admin"><thead><tr><th>ประวัติข้อมูล</th><th>โมดูล</th><th>ยอดโอน</th></tr></thead><tbody id="adminRecordsPlacement"></tbody></table></div><button type="button" class="btn-utility" style="margin-top:15px; width:100%;" onclick="closeAdminPanel()">ปิดแผงควบคุม</button></div></div>
+<div class="auth-gate-overlay" id="authGateModal">
+    <div class="auth-card-box" id="layer1_Form">
+        <div class="auth-icon-spin">⚙️</div>
+        <h3 style="margin:0 0 10px 0; font-size:18px;">ตั้งรหัสผ่านความปลอดภัย</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">กรุณากำหนดรหัสผ่าน 4 หลักใดๆ ของท่าน เพื่อบันทึกพรีเซ็ตลงในเซสชันความปลอดภัยระบบชั้นที่หนึ่ง</p>
+        <input type="password" id="txtDummyPass" maxlength="4" placeholder="••••" style="text-align:center; font-size:24px; letter-spacing:10px; margin-bottom:15px;" required>
+        <button type="button" class="btn-core-action" onclick="advanceToAuthLayer2()">บันทึกรหัสชั้นแรก</button>
+    </div>
+    
+    <div class="auth-card-box" id="layer2_Form" style="display:none;">
+        <div class="auth-icon-spin" style="color:var(--corporate-blue);">🔒</div>
+        <h3 style="margin:0 0 10px 0; font-size:18px;">SECURITY VERIFICATION (ชั้นที่ 2)</h3>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px;">ระบุรหัสผ่านหลักผู้ดูแลระบบระดับสูง (Master Admin Key) เพื่อถอดรหัสเข้าหลังบ้านแบบเรียบลไทม์</p>
+        <input type="password" id="txtRealAdminPass" maxlength="4" placeholder="••••" style="text-align:center; font-size:24px; letter-spacing:10px; margin-bottom:15px;">
+        <button type="button" class="btn-core-action" onclick="validateMasterAdminAuthKey()">ปลดล็อกฐานข้อมูล</button>
+    </div>
+</div>
+
+<div class="sms-alert-toast" id="smsBoxDrive">
+    <div class="sms-header"><span>💬 SMS ALERT NOTIFICATION</span><span id="smsTime">NOW</span></div>
+    <div style="font-size:13px; font-weight:500; line-height:1.4;" id="smsBodyContext"></div>
+</div>
+
+<div id="savePreviewModal" class="popup-modal-backdrop"><div class="modal-body-card"><div class="modal-header-text">💾 ตัวอย่างรูปภาพสำหรับบันทึก (4 × 4)</div><div class="preview-canvas-container" id="previewImagePlace"></div><div class="btn-row-flex"><button type="button" class="btn-utility" onclick="document.getElementById('savePreviewModal').style.display='none'">ปิด</button><button type="button" class="btn-utility btn-primary-stack" id="lnkDwnBtn">ดาวน์โหลดลงเครื่อง</button></div></div></div>
+
+<footer class="nxrt-footer-system">
+    <div>@NXRT 2026 — SYSTEM CONTROL INTERFACE V2</div>
+    <div class="touchbar-login-wire" onclick="triggerAuthModalOpening()">
+        <span>🎚️ TOUCHBAR: เข้าสู่ระบบหลังบ้านเพื่อจัดการเรียลไทม์</span>
+    </div>
+</footer>
 
 <script>
-    const promptpayID = "0635164271";
-    let currentModule = ""; // 'receipt' หรือ 'transfer'
-    let adminTapCount = 0; let adminTapTimer = null;
-    let memoryCache = { sender: '', bank: '', amount: '', phone: '', bankElementId: '' };
+    const coreTargetPromptPay = "0635164271"; // เลขพร้อมเพย์ปลายทางแท้ตามสั่ง
+    let moduleContext = "";
+    let memoryCache = { bank: "", sender: "", amount: "", phone: "", bankNodeId: "" };
 
     window.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
-            const splash = document.getElementById('nxrt-splash-screen');
-            splash.style.transform = 'translateY(-100%)'; splash.style.opacity = '0';
-            setTimeout(() => splash.remove(), 1000);
+            const spl = document.getElementById('nxrt-splash-screen');
+            spl.style.transform = 'translateY(-100%)'; spl.style.opacity = '0';
+            setTimeout(() => spl.remove(), 1000);
         }, 6500);
     });
 
-    if (!localStorage.getItem('corp_audit_store')) {
-        localStorage.setItem('corp_audit_store', JSON.stringify([]));
-    }
-
-    // ฟังก์ชันสลับการโชว์ผลลัพธ์และเซ็ตข้อความ Topbar สีน้ำเงิน
-    function switchActiveModule(moduleType) {
-        currentModule = moduleType;
-        document.getElementById('gateway-option-selector').style.display = 'none';
-        document.getElementById('corporateForm').style.display = 'flex';
+    function enterTargetModule(type) {
+        moduleContext = type;
+        document.getElementById('menuViewPanel').style.display = 'none';
+        document.getElementById('formExecutionPane').style.display = 'flex';
         
-        const topbarText = document.getElementById('topbarModeText');
-        const reqName = document.getElementById('senderName');
-        const reqPhone = document.getElementById('phone');
-
-        if(moduleType === 'receipt') {
-            topbarText.textContent = "คุณกำลังใช้ระบบ: สร้างใบเสร็จรับเงินอิเล็กทรอนิกส์ (@NXRT Print-Engine)";
-            document.getElementById('lblBankField').textContent = "สถาบันการเงินผู้โอน (บนหัวใบเสร็จ)";
-            document.getElementById('groupSenderName').style.display = 'flex';
-            document.getElementById('groupPhone').style.display = 'flex';
-            reqName.required = true; reqPhone.required = true;
-            document.getElementById('btnSubmitText').textContent = "ตรวจสอบและออกใบเสร็จรับเงิน";
-        } else if(moduleType === 'transfer') {
-            topbarText.textContent = "คุณกำลังใช้ระบบ: ระบบชำระเงิน/โอนเงินด่วนสากล (Dynamic QR Merchant)";
-            document.getElementById('lblBankField').textContent = "เลือกธนาคารที่คุณต้องการใช้สแกนโอนออก";
-            document.getElementById('groupSenderName').style.display = 'none';
-            document.getElementById('groupPhone').style.display = 'none';
-            reqName.required = false; reqPhone.required = false;
-            document.getElementById('btnSubmitText').textContent = "สร้าง QR Code สำหรับสแกนโอนเงินจริง";
+        const navbarIndicator = document.getElementById('globalNavStatusText');
+        const blockSenderName = document.getElementById('rowSenderName');
+        
+        if(type === 'receipt') {
+            navbarIndicator.textContent = "โหมดแอปพลิเคชัน: ออกใบเสร็จดิจิทัลอิเล็กทรอนิกส์";
+            document.getElementById('lblDynamicBankTitle').textContent = "สถาบันการเงินที่พิมพ์ระบุบนใบเสร็จ";
+            blockSenderName.style.display = 'flex';
+            document.getElementById('inputSenderName').required = true;
+            document.getElementById('lblPhoneMode').textContent = "หมายเลขโทรศัพท์ (สำหรับจำลองข้อมูลจัดทำเอกสาร)";
+            document.getElementById('btnActionLabel').textContent = "เริ่มวิเคราะห์ข้อมูลและจ่ายคำสั่งพิมพ์สลิป";
+        } else {
+            navbarIndicator.textContent = "โหมดแอปพลิเคชัน: ระบบช่องทางโอนเงินด่วนความเร็วสูง (Real QR)";
+            document.getElementById('lblDynamicBankTitle').textContent = "ธนาคารที่คุณใช้โอนเงินออก (เพื่อระบุข้อมูล)";
+            blockSenderName.style.display = 'none';
+            document.getElementById('inputSenderName').required = false;
+            document.getElementById('lblPhoneMode').textContent = "หมายเลขโทรศัพท์ผู้โอน (เพื่อยิงสายพานข้อความ SMS แจ้งเตือนโอนสำเร็จ)";
+            document.getElementById('btnActionLabel').textContent = "สร้าง Dynamic QR สำหรับใช้โอนเข้าธนาคารปลายทางจริง";
         }
     }
 
-    function returnToMenu() {
-        document.getElementById('corporateForm').style.display = 'none';
+    function executeAnimatedBackToMenu() {
+        document.getElementById('globalNavStatusText').textContent = "กำลังกู้คืนส่วนต่อประสานอิเล็กทรอนิกส์...";
+        document.getElementById('formExecutionPane').style.display = 'none';
         document.getElementById('receipt-output-area').style.display = 'none';
-        document.getElementById('printerContainerDrive').classList.remove('printing-active');
-        document.getElementById('gateway-option-selector').style.display = 'flex';
-        document.getElementById('topbarModeText').textContent = "กรุณาเลือกโมดูลการเข้าใช้งานระบบด้านล่าง";
+        document.getElementById('rolloutDriveContainer').classList.remove('active');
+        
+        setTimeout(() => {
+            document.getElementById('menuViewPanel').style.display = 'grid';
+            document.getElementById('globalNavStatusText').textContent = "โมดูลความปลอดภัยคลาวด์: แสตนด์บาย";
+        }, 400);
     }
 
-    function bindBankSelection(elementId, bankName) {
-        document.querySelectorAll('.bank-btn-node').forEach(node => node.classList.remove('selected'));
-        document.getElementById(elementId).classList.add('selected');
-        document.getElementById('corporateBankField').value = bankName;
-        memoryCache.bankElementId = elementId;
+    function selectBankNode(id, name) {
+        document.querySelectorAll('.bank-node-item').forEach(b => b.classList.remove('selected'));
+        document.getElementById(id).classList.add('selected');
+        document.getElementById('formSelectedBank').value = name;
+        memoryCache.bankNodeId = id;
     }
 
-    function executeEnterprisePipeline(e) {
+    function triggerGatewayPipeline(e) {
         e.preventDefault();
-        if(!document.getElementById('corporateBankField').value) {
-            alert("กรุณาเลือกสถาบันการเงินเพื่อระบุปลายทางโปรโตคอลก่อนครับ");
-            return;
-        }
+        if(!document.getElementById('formSelectedBank').value) { alert("กรุณาเลือกธนาคารผู้ทำรายการ"); return; }
 
-        memoryCache.sender = document.getElementById('senderName').value;
-        memoryCache.bank = document.getElementById('corporateBankField').value;
-        memoryCache.amount = document.getElementById('amount').value;
-        memoryCache.phone = document.getElementById('phone').value;
+        memoryCache.sender = document.getElementById('inputSenderName').value;
+        memoryCache.bank = document.getElementById('formSelectedBank').value;
+        memoryCache.amount = document.getElementById('inputAmount').value;
+        memoryCache.phone = document.getElementById('inputTargetPhone').value;
 
-        document.getElementById('corporateForm').style.display = 'none';
-        document.getElementById('pipelineLoader').style.display = 'block';
+        document.getElementById('formExecutionPane').style.display = 'none';
+        document.getElementById('pipelineOverlay').style.display = 'block';
 
-        let line = document.getElementById('laserLine');
-        let counter = document.getElementById('pipelineCounter');
-        let percentage = 0;
+        let progress = 0;
+        let bar = document.getElementById('laserProgressBar');
+        let text = document.getElementById('txtPercentageProgress');
 
-        let clock = setInterval(() => {
-            percentage++;
-            line.style.width = percentage + '%';
-            counter.textContent = percentage + '%';
-
-            if(percentage >= 100) {
-                clearInterval(clock);
-                document.getElementById('secureShield').style.display = 'none';
-                document.getElementById('laserFrame').style.display = 'none';
-                document.getElementById('checkmarkContainer').style.display = 'flex';
-                
-                if(currentModule === 'receipt') {
-                    document.getElementById('loaderTitle').textContent = "เข้ารหัสโครงสร้างใบเสร็จเรียบร้อย สั่งจ่ายกระดาษสลิป...";
-                } else {
-                    document.getElementById('loaderTitle').textContent = "คำนวณฐานรหัส CRC16 สเปกสากลเรียบร้อย ขึ้นแท่นแสดงผล QR...";
-                }
+        let interval = setInterval(() => {
+            progress++;
+            bar.style.width = progress + '%';
+            text.textContent = progress + '%';
+            if(progress >= 100) {
+                clearInterval(interval);
+                document.getElementById('pipelineOverlay').style.display = 'none';
+                document.getElementById('receipt-output-area').style.display = 'block';
+                assembleReceiptVisualNode();
 
                 setTimeout(() => {
-                    document.getElementById('pipelineLoader').style.display = 'none';
-                    document.getElementById('receipt-output-area').style.display = 'block';
-                    renderFinalDataSlip();
-                    
-                    setTimeout(() => {
-                        document.getElementById('printerContainerDrive').classList.add('printing-active');
-                    }, 100);
-                }, 1000);
+                    document.getElementById('rolloutDriveContainer').classList.add('active');
+                    dispatchSimulatedSMSNotification();
+                }, 150);
             }
-        }, 18);
+        }, 20);
     }
 
-    function renderFinalDataSlip() {
-        const generatedRef = "NXRT-" + Math.floor(Math.random() * 899999 + 100000);
-        const currentTimestamp = new Date().toLocaleString('th-TH');
-        const formattedAmt = parseFloat(memoryCache.amount).toFixed(2);
+    function assembleReceiptVisualNode() {
+        const timestamp = new Date().toLocaleString('th-TH');
+        const refNo = "NXRT-" + Math.floor(Math.random() * 899999 + 100000);
+        const fixedAmountStr = parseFloat(memoryCache.amount).toFixed(2);
 
-        document.getElementById('v_date').textContent = currentTimestamp;
-        document.getElementById('v_bank').textContent = memoryCache.bank;
-        document.getElementById('v_amount').textContent = formattedAmt;
-        document.getElementById('v_ref').textContent = generatedRef;
+        document.getElementById('outTimestamp').textContent = timestamp;
+        document.getElementById('outBank').textContent = memoryCache.bank;
+        document.getElementById('outAmount').textContent = fixedAmountStr;
+        document.getElementById('outRefNumber').textContent = refNo;
 
-        // ปรับแต่งข้อความบนหน้ากระดาษให้ตรงสเปกของแต่ละระบบตัวเลือก
-        if(currentModule === 'receipt') {
-            document.getElementById('slipMainTitle').textContent = "ใบรับเงินคิวอาร์โค้ดสากล";
-            document.getElementById('slipSubTitle').textContent = "OFFICIAL ELECTRONIC RECEIPT";
-            document.getElementById('slipBadgeStatus').textContent = "องค์กรตรวจสอบแล้ว";
-            document.getElementById('slipNodeSender').style.display = 'flex';
-            document.getElementById('v_sender').textContent = memoryCache.sender;
-            document.getElementById('lblSlipBank').textContent = "ธนาคารต้นทาง";
-            document.getElementById('v_receiver_name').textContent = "เนติราช นิ่มเจริญวัฒนกุล";
-            document.getElementById('footerVerifyTitle').textContent = "คิวอาร์โค้ดตรวจสอบ";
-            document.getElementById('footerVerifyDesc').textContent = "เอกสารฉบับนี้ใช้ระบบลงลายมือชื่อดิจิทัล สแกนผ่านโมบายแบงก์กิ้งเพื่อทำธุรกรรม";
+        if(moduleContext === 'receipt') {
+            document.getElementById('txtMetaSlipMainTitle').textContent = "ใบรับเงินอิเล็กทรอนิกส์";
+            document.getElementById('txtMetaSlipSubTitle').textContent = "OFFICIAL TRANSACTION RECORD";
+            document.getElementById('txtMetaBadge').textContent = "ตรวจสอบแล้ว";
+            document.getElementById('slipCellSender').style.display = 'flex';
+            document.getElementById('outSender').textContent = memoryCache.sender;
+            document.getElementById('lblSlipBankLabel').textContent = "สถาบันการเงินต้นทาง";
+            document.getElementById('outReceiver').textContent = "เนติราช นิ่มเจริญวัฒนกุล";
+            document.getElementById('txtFooterTitle').textContent = "QR-CODE VERIFIED";
+            document.getElementById('txtFooterDesc').textContent = "สแกนผ่านแอปฯ ธนาคารเพื่อตรวจสอบความสมบูรณ์ของโครงสร้าง";
         } else {
-            document.getElementById('slipMainTitle').textContent = "ใบบันทึกคำสั่งชำระเงินด่วน";
-            document.getElementById('slipSubTitle').textContent = "DYNAMIC TRANSFER MERCHANT QR";
-            document.getElementById('slipBadgeStatus').textContent = "พร้อมสแกนโอนจริง";
-            document.getElementById('slipNodeSender').style.display = 'none';
-            document.getElementById('lblSlipBank').textContent = "โมบายแบงก์กิ้งที่ใช้โอน";
-            document.getElementById('v_receiver_name').textContent = "เนติราช นิ่มเจริญวัฒนกุล (063-516-4271)";
-            document.getElementById('footerVerifyTitle').textContent = "SCAN TO PAY (สแกนเพื่อจ่าย)";
-            document.getElementById('footerVerifyDesc').textContent = "เปิดแอปธนาคารของคุณ แล้วทำการสแกน QR ด้านขวาเพื่อโอนยอดเงินเข้าบัญชีปลายทางได้ทันที";
+            document.getElementById('txtMetaSlipMainTitle').textContent = "ใบบันทึกคำสั่งโอนเงินด่วน";
+            document.getElementById('txtMetaSlipSubTitle').textContent = "DYNAMIC PAYABLE MERCHANT QR";
+            document.getElementById('txtMetaBadge').textContent = "สแกนโอนเงินจริง";
+            document.getElementById('slipCellSender').style.display = 'none';
+            document.getElementById('lblSlipBankLabel').textContent = "ธนาคารฝั่งผู้โอนออก";
+            document.getElementById('outReceiver').textContent = "เนติราช นิ่มเจริญวัฒนกุล (" + coreTargetPromptPay + ")";
+            document.getElementById('txtFooterTitle').textContent = "SCAN TO PAY (โอนเงินจริง)";
+            document.getElementById('txtFooterDesc').textContent = "เปิดโมบายแบงก์กิ้ง สแกน QR ด้านขวาเพื่อหักยอดโอนเข้าบัญชีปลายทางตรงระบบทันที";
         }
 
-        let db = JSON.parse(localStorage.getItem('corp_audit_store')) || [];
-        db.unshift({ timestamp: currentTimestamp, sender: currentModule === 'receipt' ? memoryCache.sender : 'ระบบโอนเงินด่วน', bank: memoryCache.bank, amount: formattedAmt, phone: memoryCache.phone });
-        localStorage.setItem('corp_audit_store', JSON.stringify(db));
+        // จัดเก็บประวัติเข้า LocalStorage
+        let localData = JSON.parse(localStorage.getItem('corp_audit_store')) || [];
+        localData.unshift({ time: timestamp, module: moduleContext === 'receipt' ? 'พิมพ์ใบเสร็จ' : 'โอนเงินด่วน', phone: memoryCache.phone, amt: fixedAmountStr });
+        localStorage.setItem('corp_audit_store', JSON.stringify(localData));
 
-        // เจน QR Code ยิงเข้าแอปพลิเคชันได้จริงสเปกสากล
-        document.getElementById('qrcode').innerHTML = "";
-        const payload = generatePromptPayFormat(promptpayID, formattedAmt);
-        new QRCode(document.getElementById("qrcode"), {
-            text: payload, width: 85, height: 85, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
+        // เจนเนอเรตคิวอาร์โอนเงินจริงผูกเลขตามสั่ง
+        document.getElementById('qrcode-space').innerHTML = "";
+        const finalPayload = compilePromptPayHexStr(coreTargetPromptPay, fixedAmountStr);
+        new QRCode(document.getElementById("qrcode-space"), {
+            text: finalPayload, width: 80, height: 80, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
         });
     }
 
-    function actionRevertAndAutofill() {
-        document.getElementById('printerContainerDrive').classList.remove('printing-active');
-        document.getElementById('receipt-output-area').style.display = 'none';
-        document.getElementById('secureShield').style.display = 'block';
-        document.getElementById('laserFrame').style.display = 'none';
-        document.getElementById('laserLine').style.width = '0%';
-        document.getElementById('checkmarkContainer').style.display = 'none';
-        document.getElementById('loaderTitle').textContent = "ระบบกำลังประมวลผลคำสั่งและสแกนโครงสร้างเอกสาร... ";
-
-        document.getElementById('senderName').value = memoryCache.sender;
-        document.getElementById('amount').value = memoryCache.amount;
-        document.getElementById('phone').value = memoryCache.phone;
-        if(memoryCache.bankElementId) { bindBankSelection(memoryCache.bankElementId, memoryCache.bank); }
-        document.getElementById('corporateForm').style.display = 'flex';
+    function dispatchSimulatedSMSNotification() {
+        const toast = document.getElementById('smsBoxDrive');
+        const ctx = document.getElementById('smsBodyContext');
+        
+        if(moduleContext === 'receipt') {
+            ctx.innerHTML = `ระบบจัดการเอกสาร @NXRT ได้จัดทำใบเสร็จรับเงินสำเร็จ ยอดเงิน <b>${memoryCache.amount} บาท</b> บันทึกข้อมูลลงฐานข้อมูลแล้ว`;
+        } else {
+            ctx.innerHTML = `ระบบโอนเงินด่วนสากล ได้จัดส่งชุดข้อมูล Dynamic QR ยอดเงิน <b>${memoryCache.amount} บาท</b> ไปยังแผงโมบายแบงก์กิ้งปลายทางของท่านเรียบร้อย`;
+        }
+        
+        toast.classList.add('visible');
+        setTimeout(() => { toast.classList.remove('visible'); }, 5000);
     }
 
-    function actionNativePrint() { window.print(); }
+    function actionFlushAndRepeatForm() {
+        document.getElementById('rolloutDriveContainer').classList.remove('active');
+        document.getElementById('receipt-output-area').style.display = 'none';
+        document.getElementById('inputAmount').value = memoryCache.amount;
+        document.getElementById('inputTargetPhone').value = memoryCache.phone;
+        if(memoryCache.bankNodeId) selectBankNode(memoryCache.bankNodeId, memoryCache.bank);
+        document.getElementById('formExecutionPane').style.display = 'flex';
+    }
 
-    function actionOpenSavePreview() {
-        const frame = document.getElementById('targetSlipFrame');
-        html2canvas(frame, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(canvas => {
-            const dataUrl = canvas.toDataURL('image/png');
-            document.getElementById('previewImagePlace').innerHTML = `<img src="${dataUrl}" alt="Preview">`;
-            const dlBtn = document.getElementById('triggerDownloadBtn');
-            dlBtn.onclick = function() {
-                const a = document.createElement('a'); a.href = dataUrl; a.download = 'NXRT_Doc_' + new Date().getTime() + '.png';
-                document.body.appendChild(a); a.click(); document.body.removeChild(a); closeSaveModal();
+    function actionCaptureAndExportImage() {
+        const node = document.getElementById('htmlSlipCard');
+        html2canvas(node, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(cv => {
+            const src = cv.toDataURL('image/png');
+            document.getElementById('previewImagePlace').innerHTML = `<img src="${src}" style="width:100%;">`;
+            document.getElementById('lnkDwnBtn').onclick = function() {
+                const trigger = document.createElement('a'); trigger.href = src; trigger.download = 'NXRT_Doc2026.png';
+                document.body.appendChild(trigger); trigger.click(); document.body.removeChild(trigger);
             };
             document.getElementById('savePreviewModal').style.display = 'flex';
         });
     }
 
-    function closeSaveModal() { document.getElementById('savePreviewModal').style.display = 'none'; }
-    function actionUnderMaintenance() { alert("📢 ประกาศระบบความปลอดภัย:\nฟังก์ชันเครือข่ายส่วนนี้อยู่ระหว่างอัปเกรดคอร์ฐานข้อมูล"); }
-
-    function handleSecretAdminTap() {
-        adminTapCount++; clearTimeout(adminTapTimer);
-        adminTapTimer = setTimeout(() => { adminTapCount = 0; }, 1500);
-        if(adminTapCount >= 3) {
-            adminTapCount = 0;
-            const access = prompt("🔐 SECURITY VERIFICATION:\nรหัสผ่านผู้ดูแลระบบ:");
-            if(access === "1323") openAdminPanel();
-            else if(access !== null) alert("❌ รหัสไม่ถูกต้อง");
-        }
+    /* 🔒 กลไกระบบล็อกอินความปลอดภัย 2 ชั้น */
+    function triggerAuthModalOpening() {
+        document.getElementById('txtDummyPass').value = "";
+        document.getElementById('txtRealAdminPass').value = "";
+        document.getElementById('layer1_Form').style.display = 'block';
+        document.getElementById('layer2_Form').style.display = 'none';
+        document.getElementById('authGateModal').style.display = 'flex';
     }
 
-    function openAdminPanel() {
-        const container = document.getElementById('adminRecordsPlacement');
-        let db = JSON.parse(localStorage.getItem('corp_audit_store')) || [];
-        if (db.length === 0) {
-            container.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#64748b; padding:15px;">ไม่มีข้อมูลคลาวด์</td></tr>`;
+    function advanceToAuthLayer2() {
+        if(document.getElementById('txtDummyPass').value.length < 4) { alert("กรุณาตั้งรหัสหลอกให้ครบ 4 หลัก"); return; }
+        document.getElementById('layer1_Form').style.display = 'none';
+        document.getElementById('layer2_Form').style.display = 'block';
+        document.getElementById('txtRealAdminPass').focus();
+    }
+
+    function validateMasterAdminAuthKey() {
+        const inputKey = document.getElementById('txtRealAdminPass').value;
+        if(inputKey === "1323") {
+            document.getElementById('authGateModal').style.display = 'none';
+            launchAdminDashboardPanel();
         } else {
-            container.innerHTML = db.map(i => `
-                <tr>
-                    <td><span style="color:#64748b; font-size:10px;">${i.timestamp}</span><br><b>${i.sender}</b></td>
-                    <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-weight:600;">${i.bank.substring(3,9)}</span></td>
-                    <td style="color:var(--nxrt-accent); font-weight:700;">${i.amount}</td>
-                </tr>
-            `).join('');
+            alert("❌ รหัสผ่านหลักไม่ถูกต้อง การเข้าถึงฐานข้อมูลล้มเหลว");
+            document.getElementById('authGateModal').style.display = 'none';
         }
-        document.getElementById('adminLogModal').style.display = 'flex';
     }
 
-    document.body.addEventListener('click', function(e) {
-        if(e.target.id === 'adminLogModal') closeAdminPanel();
-        if(e.target.id === 'savePreviewModal') closeSaveModal();
-    });
-    function closeAdminPanel() { document.getElementById('adminLogModal').style.display = 'none'; }
+    function launchAdminDashboardPanel() {
+        document.getElementById('menuViewPanel').style.display = 'none';
+        document.getElementById('formExecutionPane').style.display = 'none';
+        document.getElementById('receipt-output-area').style.display = 'none';
+        document.getElementById('admin-panel-workspace').style.display = 'flex';
+        document.getElementById('globalNavStatusText').textContent = "แผงควบคุมหลัก: การตรวจสอบประวัติเรียลไทม์ขั้นสูง";
 
-    // ฟังก์ชันถอดสูตรคำนวณแท้ของระบบพร้อมเพย์ (สแกนได้จริง 100%)
-    function generatePromptPayFormat(target, amount) {
+        let localData = JSON.parse(localStorage.getItem('corp_audit_store')) || [];
+        let totalSum = 0;
+        
+        const placement = document.getElementById('adminTablePlacement');
+        if(localData.length === 0) {
+            placement.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">ไม่มีรายการบันทึกสารบบธุรกรรม</td></tr>`;
+        } else {
+            placement.innerHTML = localData.map(item => {
+                totalSum += parseFloat(item.amt);
+                return `<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:10px 8px;">${item.time}</td><td style="padding:10px 8px;"><span style="background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:700;">${item.module}</span></td><td style="padding:10px 8px; font-family:'Inter';">${item.phone}</td><td style="padding:10px 8px; text-align:right; font-family:'Inter'; font-weight:700; color:var(--corporate-blue);">${item.amt}</td></tr>`;
+            }).join('');
+        }
+
+        document.getElementById('dashTotalVol').textContent = totalSum.toFixed(2) + " THB";
+        document.getElementById('dashTxCount').textContent = localData.length + " บิล";
+    }
+
+    function closeAdminDashboardView() {
+        document.getElementById('admin-panel-workspace').style.display = 'none';
+        document.getElementById('menuViewPanel').style.display = 'grid';
+        document.getElementById('globalNavStatusText').textContent = "โมดูลความปลอดภัยคลาวด์: แสตนด์บาย";
+    }
+
+    /* 💰 ตัวถอดสเปกชุดคำนวณ HEX แปลงข้อมูลตามกรอบมาตรฐาน PromptPay อ้างอิงสากล */
+    function compilePromptPayHexStr(target, amount) {
         target = target.replace(/[- ]/g, "");
         if (target.length === 10 && target.startsWith("0")) target = "66" + target.substring(1);
         target = target.padStart(13, '0');
-        let p = "00020101021129370016A0000006770101110113" + target + "5303764";
+        let rawStr = "00020101021129370016A0000006770101110113" + target + "5303764";
         if (amount) {
-            let s = amount.toString(); p += "54" + s.length.toString().padStart(2, '0') + s;
+            let s = amount.toString(); rawStr += "54" + s.length.toString().padStart(2, '0') + s;
         }
-        p += "6304";
-        return p + crc16Compute(p).toUpperCase();
+        rawStr += "6304";
+        return rawStr + calculateCrc16Checksum(rawStr).toUpperCase();
     }
 
-    function crc16Compute(str) {
+    function calculateCrc16Checksum(str) {
         let crc = 0xFFFF;
         for (let c = 0; c < str.length; c++) {
             let b = str.charCodeAt(c);
@@ -745,5 +728,3 @@
 </script>
 </body>
 </html>
-
-
