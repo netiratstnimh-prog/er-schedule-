@@ -78,62 +78,66 @@
         /* --- Scene 1: Intro --- */
         #scene1 { display: flex; flex-direction: column; align-items: center; transition: opacity 0.4s; width: 100%; max-width: 480px; }
         
-        /* ปรับดีไซน์โซนป้ายไฟวิ่งด้านบนน้องหมา */
-        .top-donation-zone {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fff0f3;
-            border: 2px solid #ffccd5;
-            border-radius: 20px;
-            padding: 8px 12px;
+        /* โซนบริจาคร่างกายปรับปรุงใหม่ */
+        .donation-zone-container {
             width: 100%;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.08);
-            overflow: hidden;
+            margin-bottom: 25px;
         }
-        .banner-marquee-container {
-            flex: 1;
+        
+        /* ส่วนแถบด้านบนสำหรับวางโลโก้ (ซ้าย) และปุ่มบริจาค (ขวา) */
+        .donation-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 5px 8px 5px;
+        }
+        
+        .redcross-top-logo {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+        }
+
+        /* ปรับปรุงแถบข้อความวิ่งสไตล์ลายไทย หรูหราและตัวใหญ่ขึ้นตามสั่ง */
+        .thai-pattern-marquee {
+            background: radial-gradient(circle, #8b0000 0%, #5c0000 100%);
+            border: 3px double #d4af37;
+            border-radius: 12px;
+            padding: 10px 12px;
+            width: 100%;
+            box-shadow: 0 6px 15px rgba(92, 0, 0, 0.2);
             overflow: hidden;
             white-space: nowrap;
-            margin-right: 10px;
         }
-        .banner-marquee-text {
+        .thai-marquee-text {
             display: inline-block;
-            animation: bannerMarquee 10s linear infinite;
-            font-size: 0.9rem;
-            color: #d63031;
+            animation: bannerMarquee 12s linear infinite;
+            font-size: 1.15rem; /* ขยายตัวอักษรให้ใหญ่ขึ้น */
+            color: #fffdf0;
             font-weight: 600;
+            text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.6), 0 0 5px #d4af37; /* เพิ่มออร่าสีทอง */
+            letter-spacing: 1px;
         }
         @keyframes bannerMarquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
 
-        /* ดีไซน์ปุ่มบริจาคสุดพรีเมียมพร้อมโลโก้ */
         .btn-pink-premium {
             background: linear-gradient(135deg, #ff4d6d, #ff758f);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 15px;
-            font-size: 0.9rem;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
             white-space: nowrap;
         }
-        .btn-pink-premium img {
-            width: 16px;
-            height: 16px;
-            object-fit: contain;
-            filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
-        }
-        .btn-pink-premium:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(255, 77, 109, 0.2); }
+        .btn-pink-premium:active { transform: scale(0.95); }
 
         .puppy { font-size: 5rem; margin-bottom: 10px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
@@ -208,8 +212,8 @@
         .btn:active { transform: scale(0.95); }
         .btn-send { background: #2c3e50; width: 100%; margin-top: 5px; }
 
-        /* --- Block Scene (เมื่อส่งเรียบร้อยแล้ว) --- */
-        #already-sent-scene {
+        /* --- Success Scene (เมื่อส่งเรียบร้อยแล้ว) --- */
+        #success-sent-scene {
             display: none;
             flex-direction: column;
             align-items: center;
@@ -316,16 +320,17 @@
         
         <div id="scene1">
             
-            <div class="top-donation-zone">
-                <div class="banner-marquee-container">
-                    <div class="banner-marquee-text">
+            <div class="donation-zone-container">
+                <div class="donation-top-bar">
+                    <img src="https://e7.pngegg.com/pngimages/201/886/png-clipart-american-red-cross-international-committee-of-the-red-cross-symbol-indian-red-cross-society-kreuz-symbol-angle-flag-thumbnail.png" alt="Red Cross Logo" class="redcross-top-logo">
+                    <button type="button" class="btn-pink-premium" onclick="openDonateModal()">บริจาค 💖</button>
+                </div>
+                
+                <div class="thai-pattern-marquee">
+                    <div class="thai-marquee-text">
                         บริจาคร่างกาย 1 ร่างกาย ช่วยได้ 8 ชีวิต ส่งต่อการให้ที่งดงาม 🙏❤️
                     </div>
                 </div>
-                <button type="button" class="btn-pink-premium" onclick="openDonateModal()">
-                    <img src="https://e7.pngegg.com/pngimages/201/886/png-clipart-american-red-cross-international-committee-of-the-red-cross-symbol-indian-red-cross-society-kreuz-symbol-angle-flag-thumbnail.png" alt="Red Cross">
-                    บริจาค 💖
-                </button>
             </div>
 
             <div class="puppy">🐶</div>
@@ -381,7 +386,7 @@
 
             <div style="margin-bottom: 8px; font-size: 0.9rem; color: #555;">หรือแก้ไข/พิมพ์ข้อความเพิ่มเติมด้านล่างนี้ 🤍</div>
             
-            <form action="https://formspree.io/f/xwvdoqjb" method="POST" id="wishForm" onsubmit="return handleFormSubmit(event)">
+            <form action="https://formspree.io/f/xwvdoqjb" method="POST" id="wishForm" onsubmit="handleFormSubmit(event)">
                 <input type="hidden" name="_subject" value="🎉 มีคำอวยพรวันเกิดใหม่ถึง NAY!">
                 
                 <textarea id="messageBox" name="message" placeholder="พิมพ์คำอวยพร หรือเลือกการ์ดด้านบน..." required></textarea>
@@ -400,7 +405,7 @@
             <div class="dog-footer">🐩🐾🐕</div>
         </div>
 
-        <div id="already-sent-scene">
+        <div id="success-sent-scene">
             <div class="block-card">
                 <div class="bell-icon">💐</div>
                 <h2 style="color: #2c3e50; font-size: 1.5rem; margin: 0 0 10px 0; font-weight: 600;">ส่งคำอวยพรเรียบร้อยแล้ว</h2>
@@ -433,12 +438,7 @@
     </div>
 
     <script>
-        window.addEventListener('DOMContentLoaded', (event) => {
-            if (localStorage.getItem('nay_hbd_sent') === 'true') {
-                document.getElementById('scene1').style.display = 'none';
-                document.getElementById('already-sent-scene').style.display = 'flex';
-            }
-        });
+        // ปลดการเช็ก onload ล็อกเครื่องออกเรียบร้อย เข้ามาใหม่ได้ตลอดเวลา
 
         function openDonateModal() {
             const modal = document.getElementById('donateModal');
@@ -485,12 +485,6 @@
         }
 
         function goToWishScene() {
-            if (localStorage.getItem('nay_hbd_sent') === 'true') {
-                document.getElementById('scene1').style.display = 'none';
-                document.getElementById('already-sent-scene').style.display = 'flex';
-                return;
-            }
-
             const s1 = document.getElementById('scene1');
             const s2 = document.getElementById('scene2');
 
@@ -506,15 +500,15 @@
             }, 400);
         }
 
+        // ปรับปรุงการส่งข้อมูลให้สมบูรณ์แบบชัวร์ 100% พร้อมเอฟเฟกต์การสลับหน้าจอ
         function handleFormSubmit(event) {
             event.preventDefault();
             playSubmitEffect();
             
-            localStorage.setItem('nay_hbd_sent', 'true');
-            
             const form = document.getElementById('wishForm');
             const formData = new FormData(form);
             
+            // ใช้ AJAX ส่งหา Formspree เพื่อไม่ให้หน้าเว็บเด้งไปหน้าอื่น แต่เปลี่ยนการแสดงผลเป็นการ์ดแจ้งเตือนแทน
             fetch(form.action, {
                 method: form.method,
                 body: formData,
@@ -522,16 +516,18 @@
                     'Accept': 'application/json'
                 }
             }).then(response => {
-                document.getElementById('scene2').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('scene2').style.display = 'none';
-                    document.getElementById('already-sent-scene').style.display = 'flex';
-                }, 400);
+                if(response.ok) {
+                    document.getElementById('scene2').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('scene2').style.display = 'none';
+                        document.getElementById('success-sent-scene').style.display = 'flex';
+                    }, 400);
+                } else {
+                    alert('เกิดปัญหาในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง');
+                }
             }).catch(error => {
-                alert('เกิดข้อผิดพลาดชั่วคราว กรุณาลองใหม่อีกครั้งครับ');
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาตรวจสอบอินเทอร์เน็ตครับ');
             });
-
-            return false;
         }
 
         function fireFestiveConfetti() {
