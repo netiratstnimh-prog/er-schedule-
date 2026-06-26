@@ -3,288 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday NETIRAT</title>
+    <title>HBD NETIRAT - Puppy & Blessing</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        * { box-sizing: border-box; }
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Kanit', sans-serif;
-            background-color: #fdfdfd; /* สีขาวออฟไวท์ */
+            background-color: #ffffff;
             color: #333;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center;
             height: 100vh;
         }
 
-        /* ---------------- แถบตัวหนังสือวิ่งด้านบน (Minimal) ---------------- */
-        .marquee-container {
+        /* --- Header Bar --- */
+        .header-bar {
             width: 100%;
-            background-color: #fff;
-            color: #8c734b; /* สีทองหม่น */
-            padding: 12px 0;
+            background: #fff;
+            padding: 15px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-bottom: 2px solid #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+        }
+        .animated-cake { font-size: 1.5rem; animation: shake 2s infinite; display: inline-block; }
+        @keyframes shake { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(15deg); } }
+
+        /* --- Footer Marquee --- */
+        .footer-marquee {
+            width: 100%;
+            background: #2c3e50;
+            color: #d4af37;
+            padding: 10px 0;
             position: fixed;
-            top: 0;
-            z-index: 10;
-            border-bottom: 1px solid #eee;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            bottom: 0;
+            z-index: 100;
         }
         .marquee-text {
             display: inline-block;
             white-space: nowrap;
             animation: marquee 15s linear infinite;
-            font-size: 1.1rem;
-            font-weight: 400;
-            letter-spacing: 1px;
+            font-size: 1rem;
         }
-        @keyframes marquee {
-            0% { transform: translateX(100vw); }
-            100% { transform: translateX(-100%); }
-        }
+        @keyframes marquee { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
-        /* ---------------- คอนเทนเนอร์หลัก ---------------- */
-        .container {
-            margin-top: 60px;
-            width: 100%;
-            height: 100%;
+        /* --- Main Container --- */
+        .main-container {
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
+            padding: 20px;
             position: relative;
         }
 
-        /* ---------------- หน้าแรก (Scene 1) ---------------- */
-        #scene1 {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
+        /* --- Scene 1: Intro --- */
+        #scene1 { display: flex; flex-direction: column; align-items: center; }
+        .puppy { font-size: 5rem; margin-bottom: 10px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+        .hbd-main-text { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 30px; color: #2c3e50; }
+        .hbd-main-text span { color: #d4af37; }
 
-        .candles {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            animation: float 4s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4)); /* เรืองแสงสีทองอ่อนๆ */
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .hbd-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            opacity: 0;
-            color: #2c3e50; /* สีเทาเข้มเรียบหรู */
-            animation: elegantReveal 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            animation-delay: 4s; /* หน่วงเวลา 4 วินาที */
-            margin-bottom: 40px;
-            line-height: 1.3;
-        }
-        .hbd-text span {
-            color: #d4af37; /* เน้นชื่อสีทอง */
-        }
-
-        @keyframes elegantReveal {
-            0% { opacity: 0; transform: translateY(30px) scale(0.95); filter: blur(5px); }
-            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #d4af37, #aa8529);
-            color: #fff;
-            border: none;
-            padding: 12px 40px;
-            font-size: 1.1rem;
-            font-family: 'Kanit', sans-serif;
-            font-weight: 300;
-            letter-spacing: 1px;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-            transition: all 0.3s ease;
-            opacity: 0;
-            animation: fadeIn 1.5s ease-out forwards;
-            animation-delay: 5.5s;
-        }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(212, 175, 55, 0.5);
-        }
-
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        /* ---------------- เอฟเฟกต์เปลี่ยนหน้า (Cinematic Wipe) ---------------- */
-        .curtain-overlay {
+        /* --- Scene: Transition (Bible Verse) --- */
+        #transition-scene {
             position: fixed;
-            top: 100%;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #2c3e50; /* สีเทาเข้มตัดอารมณ์ให้ตลึง */
-            z-index: 50;
-            transition: top 1.2s cubic-bezier(0.77, 0, 0.175, 1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #2c3e50;
             color: #d4af37;
-            font-size: 2rem;
-            font-family: 'Playfair Display', serif;
-        }
-        .curtain-overlay.active {
-            top: 0;
-        }
-        .curtain-overlay.exit {
-            top: -100%;
-        }
-
-        /* ---------------- หน้าที่สอง (Scene 2) ---------------- */
-        #scene2 {
             display: none;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
-            width: 90%;
-            max-width: 400px;
-            z-index: 10;
+            padding: 40px;
+            z-index: 200;
+            text-align: center;
         }
+        .verse-ref { font-size: 1.8rem; margin-bottom: 20px; font-weight: 600; }
+        .verse-text { font-size: 1.3rem; line-height: 1.6; font-style: italic; font-family: 'Playfair Display', serif; }
 
-        .box-title {
-            font-size: 1.4rem;
-            color: #555;
-            margin-bottom: 25px;
-            font-weight: 400;
-        }
-
+        /* --- Scene 2: Wish Form --- */
+        #scene2 { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 450px; }
         textarea {
-            width: 100%;
-            height: 160px;
-            padding: 20px;
-            border: 1px solid #e0e0e0;
-            background-color: #fff;
-            border-radius: 12px;
-            font-family: 'Kanit', sans-serif;
-            font-size: 1rem;
-            resize: none;
-            outline: none;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
-            transition: border 0.3s;
-            box-sizing: border-box;
-        }
-        
-        textarea:focus {
-            border-color: #d4af37;
+            width: 100%; height: 120px; padding: 15px;
+            border: 2px solid #d4af37; border-radius: 15px;
+            font-size: 1rem; font-family: 'Kanit', sans-serif;
+            margin-bottom: 10px; outline: none;
         }
 
-        .btn-submit {
-            margin-top: 25px;
-            background: #2c3e50;
-            box-shadow: 0 10px 20px rgba(44, 62, 80, 0.2);
-            opacity: 1;
-            animation: none;
+        /* --- Emoji Keyboard --- */
+        .emoji-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        .btn-submit:hover {
-            background: #1a252f;
+        .emoji-btn {
+            background: #f9f9f9; border: 1px solid #ddd;
+            padding: 8px 12px; border-radius: 10px; cursor: pointer;
+            font-size: 1.2rem; transition: 0.2s;
         }
+        .emoji-btn:active { transform: scale(0.9); background: #eee; }
+
+        /* --- Buttons --- */
+        .btn {
+            background: #d4af37; color: white; border: none;
+            padding: 15px 40px; border-radius: 50px;
+            font-size: 1.1rem; cursor: pointer; font-weight: 600;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            transition: 0.3s;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-send { background: #2c3e50; }
+
+        /* --- Dog Decorative --- */
+        .dog-footer { font-size: 2rem; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="marquee-container">
-        <div class="marquee-text">✨ 27 มิถุนายน สุขสันต์วันเกิดให้กับ เนติราช ขอให้เป็นปีที่เต็มไปด้วยรอยยิ้มและความสุข ✨</div>
+    <div class="header-bar">
+        <span class="animated-cake">🎂</span>
+        HAPPY BIRTHDAY NETIRAT
+        <span class="animated-cake">🕯️</span>
     </div>
 
-    <div class="curtain-overlay" id="curtain">Make a wish... 🕯️</div>
-
-    <audio id="bgMusic" loop>
-        <source src="hbd-piano.mp3" type="audio/mpeg">
-    </audio>
-
-    <div class="container">
+    <div class="main-container">
+        
         <div id="scene1">
-            <div class="candles">🎂</div>
-            <div class="hbd-text">Happy birthday<br>to <span>NETIRAT</span></div>
-            <button class="btn" onclick="startTransition()">กดอวยพร</button>
+            <div class="puppy">🐶</div>
+            <div class="hbd-main-text">Happy Birthday<br><span>NETIRAT</span></div>
+            <button class="btn" onclick="goToTransition()">กดอวยพรให้นเนติราช ✨</button>
+        </div>
+
+        <div id="transition-scene">
+            <div class="verse-ref">สดุดี 20:4</div>
+            <div class="verse-text">“ขอพระองค์ประทานตามความปรารถนาแห่งใจของท่าน และทรงให้แผนงานทั้งสิ้นของท่านสำเร็จ”</div>
         </div>
 
         <div id="scene2">
-            <div class="box-title">ส่งคำอวยพรให้เนติราช 🤍</div>
-            <form action="https://formspree.io/f/xwvdoqjb" method="POST">
+            <div style="margin-bottom: 15px; color: #555;">เขียนความในใจถึงเนติราช 🤍</div>
+            <form action="https://formspree.io/f/xwvdoqjb" method="POST" id="wishForm">
+                <textarea id="messageBox" name="message" placeholder="พิมพ์คำอวยพรที่นี่..." required></textarea>
+                
+                <div class="emoji-bar">
+                    <button type="button" class="emoji-btn" onclick="addEmoji('🎂')">🎂</button>
+                    <button type="button" class="emoji-btn" onclick="addEmoji('🎉')">🎉</button>
+                    <button type="button" class="emoji-btn" onclick="addEmoji('❤️')">❤️</button>
+                    <button type="button" class="emoji-btn" onclick="addEmoji('🎁')">🎁</button>
+                    <button type="button" class="emoji-btn" onclick="addEmoji('✨')">✨</button>
+                    <button type="button" class="emoji-btn" onclick="addEmoji('🐶')">🐶</button>
+                </div>
 
-                <input type="hidden" name="_subject" value="🎉 มีคำอวยพรวันเกิดใหม่!">
-                <textarea name="message" placeholder="เขียนความรู้สึกดีๆ ถึงเนติราช..." required></textarea>
-                <button type="submit" class="btn btn-submit">ส่งคำอวยพร</button>
+                <button type="submit" class="btn btn-send" onclick="playSubmitSound()">ส่งคำอวยพรให้เพื่อน 💌</button>
             </form>
+            <div class="dog-footer">🐩🐾🐕</div>
         </div>
+
     </div>
 
+    <div class="footer-marquee">
+        <div class="marquee-text">✨ 27 มิถุนายน สุขสันต์วันเกิดให้กับ เนติราช • ขอพระเจ้าอวยพระพรในทุกย่างก้าว • สุขสันต์วันเกิด! ✨</div>
+    </div>
+
+    <audio id="submitSound">
+        <source src="https://www.soundjay.com/misc/sounds/magic-chime-01.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        function startTransition() {
-            const curtain = document.getElementById('curtain');
-            const scene1 = document.getElementById('scene1');
-            const scene2 = document.getElementById('scene2');
-            const music = document.getElementById('bgMusic');
-
-            // 1. เล่นเพลง (เพลงจะเล่นได้ก็ต่อเมื่อผู้ใช้กดปุ่มแล้วเท่านั้น)
-            music.play().catch(error => console.log("เบราว์เซอร์ไม่อนุญาตให้เล่นเสียงอัตโนมัติ"));
-
-            // 2. ปาดหน้าจอขึ้นมาปิด (Cinematic Wipe)
-            curtain.classList.add('active');
-
-            // 3. รอให้หน้าจอปิดสนิท (1.2 วิ) แล้วสลับหน้า
-            setTimeout(() => {
-                scene1.style.display = 'none';
-                scene2.style.display = 'flex';
-                
-                // 4. แช่หน้า "Make a wish..." ไว้สักพัก แล้วปาดขึ้นไปเปิดหน้าใหม่ (รวม 3-4 วิ)
-                setTimeout(() => {
-                    curtain.classList.add('exit');
-                    
-                    // 5. เมื่อเปิดหน้ามา ยิงเอฟเฟกต์พลุกระดาษฉลอง!
-                    setTimeout(() => {
-                        fireConfetti();
-                    }, 500);
-
-                }, 1800);
-
-            }, 1200); 
+        // ฟังก์ชันจิ้มอีโมจิแล้วไปโผล่ในช่องข้อความ
+        function addEmoji(emoji) {
+            const box = document.getElementById('messageBox');
+            box.value += emoji;
+            box.focus();
         }
 
-        // ฟังก์ชันยิงพลุกระดาษสวยๆ
-        function fireConfetti() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        // ฟังก์ชันเปลี่ยนหน้า พร้อมเอฟเฟกต์สดุดี
+        function goToTransition() {
+            const s1 = document.getElementById('scene1');
+            const trans = document.getElementById('transition-scene');
+            const s2 = document.getElementById('scene2');
 
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
+            // เลือนหน้า 1 ออก
+            s1.style.opacity = '0';
+            setTimeout(() => {
+                s1.style.display = 'none';
+                trans.style.display = 'flex'; // แสดงหน้าสดุดี 20:4
+                
+                // หน่วงเวลาหน้าสดุดี 4 วินาทีตามขอ
+                setTimeout(() => {
+                    trans.style.opacity = '0';
+                    trans.style.transition = '1s';
+                    
+                    setTimeout(() => {
+                        trans.style.display = 'none';
+                        s2.style.display = 'flex';
+                        fireFestiveConfetti(); // ยิงพลุฉลองตอนเข้าหน้ากรอกข้อความ
+                    }, 1000);
+                }, 4000);
 
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
+            }, 500);
+        }
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
+        // เอฟเฟกต์พลุแบบเยอะๆ (อีโมจิ + พลุ)
+        function fireFestiveConfetti() {
+            const scalar = 2;
+            const dog = confetti.shapeFromText({ text: '🐶', scalar });
+            const cake = confetti.shapeFromText({ text: '🎂', scalar });
+            const heart = confetti.shapeFromText({ text: '❤️', scalar });
 
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount,
-                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-                }));
-                confetti(Object.assign({}, defaults, { particleCount,
-                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-                }));
-            }, 250);
+            confetti({
+                shapes: [dog, cake, heart],
+                particleCount: 50,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            
+            // ยิงพลุสีทองตามไป
+            confetti({
+                particleCount: 100,
+                spread: 160,
+                colors: ['#d4af37', '#ffffff', '#2c3e50']
+            });
+        }
+
+        function playSubmitSound() {
+            document.getElementById('submitSound').play();
+            // เปิดลิงก์เพลง YouTube ในหน้าต่างใหม่เมื่อส่ง
+            setTimeout(() => {
+                window.open('https://youtu.be/vhVBWw6rId0?si=MRXeXpyl9ggiL-ZD', '_blank');
+            }, 500);
         }
     </script>
 </body>
