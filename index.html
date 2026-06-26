@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBD NETIRAT - Puppy, Cards & Blessing</title>
+    <title>HBD NETIRAT - Puppy, Cards & Music</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Playfair+Display:ital,wght=1,600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -124,26 +124,21 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
         }
-        /* ซ่อน scrollbar สำหรับความสวยงาม */
         .cards-container::-webkit-scrollbar { height: 5px; }
         .cards-container::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
         
         .wish-card {
             flex: 0 0 160px; height: 110px;
-            background: linear-gradient(135deg, #ffedbc, #ffc796);
-            border: 2px solid #d4af37; border-radius: 12px;
-            padding: 10px; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            cursor: pointer; scroll-snap-align: start;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-radius: 12px; padding: 10px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; cursor: pointer; scroll-snap-align: start;
+            transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border: 2px solid #d4af37;
         }
         .wish-card:active { transform: scale(0.95); }
         .wish-card.selected { border-color: #2c3e50; box-shadow: 0 0 10px rgba(44, 62, 80, 0.3); transform: scale(1.02); }
         .card-icon { font-size: 1.5rem; margin-bottom: 4px; }
         .card-text { font-size: 0.75rem; font-weight: bold; color: #2c3e50; line-height: 1.3; }
 
-        /* ดีไซน์การ์ดแต่ละใบให้สีต่างกัน */
         .c1 { background: linear-gradient(135deg, #FFF3B0, #CAAE7A); }
         .c2 { background: linear-gradient(135deg, #E3F2FD, #90CAF9); }
         .c3 { background: linear-gradient(135deg, #FCE4EC, #F48FB1); }
@@ -166,11 +161,17 @@
         .btn:active { transform: scale(0.95); }
         .btn-send { background: #2c3e50; width: 100%; margin-top: 5px; }
 
-        /* --- Dog Decorative --- */
         .dog-footer { font-size: 1.8rem; margin-top: 10px; }
+        
+        /* ซ่อนเครื่องเล่น YouTube ไว้ข้างหลัง */
+        #youtube-player {
+            position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none;
+        }
     </style>
 </head>
 <body>
+
+    <iframe id="youtube-player" src="https://www.youtube.com/embed/vhVBWw6rId0?enablejsapi=1" allow="autoplay"></iframe>
 
     <div class="header-bar">
         <span class="animated-cake">🎂</span>
@@ -268,19 +269,12 @@
             box.focus();
         }
 
-        // ฟังก์ชันเลือกการ์ดสำเร็จรูป
         function selectCard(cardElement, text) {
-            // ลบสถานะเลือกเก่าออกให้หมด
             const allCards = document.querySelectorAll('.wish-card');
             allCards.forEach(c => c.classList.remove('selected'));
-            
-            // ใส่ข้อความลงในกล่อง textarea
             document.getElementById('messageBox').value = text;
-            
-            // ไฮไลต์การ์ดที่ถูกเลือก
             cardElement.classList.add('selected');
             
-            // เอฟเฟกต์วิ้งๆ เล็กน้อยตอนเลือกการ์ด
             confetti({
                 particleCount: 20,
                 spread: 30,
@@ -288,10 +282,15 @@
             });
         }
 
+        // ฟังก์ชันเปลี่ยนหน้า + เริ่มเล่นเพลงอัตโนมัติเมื่อมีการสัมผัสจอ
         function goToTransition() {
             const s1 = document.getElementById('scene1');
             const trans = document.getElementById('transition-scene');
             const s2 = document.getElementById('scene2');
+
+            // 🎵 สั่งให้เครื่องเล่นเพลง YouTube เริ่มทำงานทันทีกดปุ่ม
+            const player = document.getElementById('youtube-player');
+            player.src += "&autoplay=1";
 
             s1.style.opacity = '0';
             setTimeout(() => {
