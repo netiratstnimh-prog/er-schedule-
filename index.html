@@ -3,384 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบชำระเงินออนไลน์ (Super-Stable Premium Gateway)</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Prompt) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Happy Birthday NETIRAT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Prompt', sans-serif; background-color: #fafafa; -webkit-tap-highlight-color: transparent; }
-        .animate-fade { animation: fadeIn 0.25s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        .printing-slip { animation: printEffect 3s cubic-bezier(0.25, 1, 0.5, 1) forwards; max-height: 0px; overflow: hidden; }
-        @keyframes printEffect { 0% { max-height: 0px; } 100% { max-height: 600px; } }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            overflow: hidden; /* ซ่อน scrollbar */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* ---------------- แถบตัวหนังสือวิ่งด้านบน ---------------- */
+        .marquee-container {
+            width: 100%;
+            background-color: #ff9ff3; /* สีชมพูพาสเทล */
+            color: #fff;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 15s linear infinite;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ---------------- คอนเทนเนอร์หลัก ---------------- */
+        .container {
+            margin-top: 60px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        /* ---------------- หน้าแรก (Scene 1) ---------------- */
+        #scene1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .candles {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .hbd-text {
+            font-family: 'Pacifico', cursive;
+            font-size: 2.8rem;
+            opacity: 0;
+            /* แต่งสีตัวอักษรแบบไล่สี */
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: popUp 2s ease-out forwards;
+            animation-delay: 4s; /* หน่วงเวลา 4 วินาทีก่อนเด้งขึ้นมา */
+            margin-bottom: 30px;
+            padding: 0 20px;
+            line-height: 1.4;
+        }
+
+        @keyframes popUp {
+            0% { opacity: 0; transform: translateY(50px) scale(0.8); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .btn {
+            background-color: #feca57;
+            color: #fff;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-family: 'Kanit', sans-serif;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(254, 202, 87, 0.5);
+            transition: transform 0.2s, background-color 0.2s;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+            animation-delay: 5.5s; /* ปุ่มเด้งขึ้นมาหลังข้อความเล็กน้อย */
+        }
+        
+        .btn:hover {
+            transform: scale(1.05);
+            background-color: #ff9f43;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* ---------------- เอฟเฟกต์ผ้าม่าน (Curtain) ---------------- */
+        .curtain {
+            position: fixed;
+            top: 0;
+            width: 50vw;
+            height: 100vh;
+            background-color: #ff9ff3;
+            z-index: 50;
+            transition: transform 1.5s ease-in-out; /* ความเร็วตอนปิดม่าน */
+        }
+        .curtain-left {
+            left: 0;
+            transform: translateX(-100%);
+            border-right: 3px solid #f368e0;
+        }
+        .curtain-right {
+            right: 0;
+            transform: translateX(100%);
+            border-left: 3px solid #f368e0;
+        }
+
+        .curtain.close-left { transform: translateX(0); }
+        .curtain.close-right { transform: translateX(0); }
+
+        /* ---------------- หน้าที่สอง (Scene 2 - ฟอร์มอวยพร) ---------------- */
+        #scene2 {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 400px;
+            z-index: 10;
+        }
+
+        .box-title {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #48dbfb;
+            border-radius: 15px;
+            font-family: 'Kanit', sans-serif;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+        
+        textarea:focus {
+            border-color: #0abde3;
+        }
+
+        .btn-submit {
+            margin-top: 20px;
+            background-color: #48dbfb;
+            box-shadow: 0 4px 15px rgba(72, 219, 251, 0.4);
+            opacity: 1;
+            animation: none; /* ยกเลิก animation ของปุ่มหน้าแรก */
+        }
+        .btn-submit:hover {
+            background-color: #0abde3;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between text-slate-600 select-none">
+<body>
 
-    <!-- แถบด้านบน -->
-    <nav class="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-md mx-auto px-6 py-4 flex items-center justify-between">
-            <div>
-                <span class="text-[10px] text-gray-400 block uppercase tracking-wider font-light">ช่องทางชำระเงิน</span>
-                <h1 class="text-sm font-medium text-slate-800 tracking-wide">ระบบรับชำระเงินอัตโนมัติ</h1>
-            </div>
-        </div>
-    </nav>
+    <div class="marquee-container">
+        <div class="marquee-text">🎂 27 มิถุนายน สุขสันต์วันเกิดให้กับ เนติราช 🎉 ขอให้มีความสุขมากๆ นะ! 🎁</div>
+    </div>
 
-    <!-- ส่วนเนื้อหาหลัก -->
-    <main class="max-w-md w-full mx-auto px-6 py-6 flex-grow flex flex-col justify-center">
-        
-        <!-- ขั้นตอนที่ 1: หน้ากรอกข้อมูล -->
-        <div id="step-form" class="bg-white rounded-2xl p-6 border border-gray-100 space-y-5 animate-fade shadow-sm">
-            <div class="space-y-1">
-                <h2 class="text-base font-medium text-slate-800">ชำระเงินออนไลน์</h2>
-                <p class="text-xs text-slate-400 leading-relaxed">
-                    กรุณากรอกข้อมูลเพื่อทำรายการชำระเงิน <br>
-                    <span class="inline-flex items-center gap-1 text-slate-500 font-medium bg-slate-50 px-2.5 py-0.5 rounded border border-slate-100 mt-2 text-[11px]">
-                        <i class="fa-regular fa-clock"></i> <span id="realtime-clock">-</span>
-                    </span>
-                </p>
-            </div>
+    <div class="curtain curtain-left" id="curtainLeft"></div>
+    <div class="curtain curtain-right" id="curtainRight"></div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1.5">เบอร์โทรศัพท์มือถือผู้โอน</label>
-                    <input type="tel" id="phone" maxlength="10" placeholder="08XXXXXXXX" 
-                        class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-slate-800 placeholder-slate-300 transition-all outline-none text-sm tracking-widest text-center">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 mb-1.5">จำนวนเงินที่ต้องการชำระ (บาท)</label>
-                    <input type="number" id="amount" step="0.01" min="1" placeholder="0.00" 
-                        class="block w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-1 focus:ring-slate-400 focus:border-slate-400 text-2xl font-semibold text-center text-slate-800 placeholder-slate-300 transition-all outline-none">
-                    
-                    <div class="grid grid-cols-4 gap-1.5 mt-2.5">
-                        <button type="button" onclick="selectQuickAmount(20)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿20</button>
-                        <button type="button" onclick="selectQuickAmount(25)" class="py-1.5 text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg border border-stone-200 transition-colors">฿25</button>
-                        <button type="button" onclick="selectQuickAmount(50)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿50</button>
-                        <button type="button" onclick="selectQuickAmount(100)" class="py-1.5 text-xs font-medium bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-100 transition-colors">฿100</button>
-                    </div>
-                </div>
-
-                <button onclick="goToBankSelection()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm mt-2 shadow-md">
-                    เลือกช่องทางโอนเงิน
-                </button>
-            </div>
+    <div class="container">
+        <div id="scene1">
+            <div class="candles">🕯️🎂✨🕯️</div>
+            <div class="hbd-text">Happy birthday<br>to NETIRAT</div>
+            <button class="btn" onclick="startTransition()">กดอวยพร</button>
         </div>
 
-        <!-- ขั้นตอนที่ 2: หน้าแสดงข้อมูลโอนและตรวจสลิป -->
-        <div id="step-pay" class="hidden bg-white rounded-2xl p-6 border border-gray-100 space-y-5 animate-fade shadow-sm">
-            <div class="text-center pb-2 border-b border-slate-100">
-                <span class="text-xs text-slate-400">ยอดเงินที่ต้องโอน (ห้ามโอนขาดหรือเกิน)</span>
-                <p class="text-3xl font-semibold text-slate-800 my-1" id="display-amount">฿0.00</p>
-            </div>
-
-            <!-- ตัวเลือกธนาคาร -->
-            <div class="space-y-2">
-                <label class="block text-xs font-medium text-slate-400">เลือกธนาคาร:</label>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="selectActiveBank('pp')" id="btn-bank-pp" class="border rounded-xl p-2 flex flex-col items-center justify-center gap-1 transition-all bg-slate-900 border-slate-900 text-white">
-                        <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px] font-bold">PP</div>
-                        <span class="text-[10px] font-medium text-white">พร้อมเพย์</span>
-                    </button>
-                    <button onclick="selectActiveBank('kbank')" id="btn-bank-kbank" class="border rounded-xl p-2 flex flex-col items-center justify-center gap-1 transition-all border-slate-100 bg-white">
-                        <div class="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center text-white text-[10px] font-bold">K</div>
-                        <span class="text-[10px] text-slate-400">กสิกรไทย</span>
-                    </button>
-                    <button onclick="selectActiveBank('scb')" id="btn-bank-scb" class="border rounded-xl p-2 flex flex-col items-center justify-center gap-1 transition-all border-slate-100 bg-white">
-                        <div class="w-7 h-7 bg-purple-600 rounded-full flex items-center justify-center text-white text-[10px] font-bold">SCB</div>
-                        <span class="text-[10px] text-slate-400">ไทยพาณิชย์</span>
-                    </button>
-                    <button onclick="selectActiveBank('ktb')" id="btn-bank-ktb" class="border rounded-xl p-2 flex flex-col items-center justify-center gap-1 transition-all border-slate-100 bg-white">
-                        <div class="w-7 h-7 bg-sky-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold">KTB</div>
-                        <span class="text-[10px] text-slate-400">กรุงไทย</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- ข้อมูลบัญชี -->
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-150 space-y-3">
-                <div class="w-full space-y-2 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400">ชื่อบัญชี:</span>
-                        <span class="font-medium text-slate-800">เนติราช นิ่มเจริญวัฒนกุล</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-slate-400" id="label-account-type">เบอร์พร้อมเพย์:</span>
-                        <div class="flex items-center gap-1.5">
-                            <span class="font-semibold text-slate-800 tracking-wider text-sm" id="val-account-number">0635164271</span>
-                            <button onclick="copyToClipboardStable()" class="text-slate-500 hover:text-slate-700 bg-white border border-slate-300 px-2 py-1 rounded-md text-[10px] active:bg-slate-100 font-medium shadow-sm">คัดลอก</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- พื้นที่แนบสลิป -->
-            <div class="space-y-2 border-t border-slate-100 pt-3">
-                <label class="block text-xs font-medium text-slate-500">
-                    <i class="fa-solid fa-file-invoice-dollar mr-1 text-slate-400"></i> แนบรูปสลิปธนาคาร (ระบบจะล็อกให้ตรงยอด <span id="status-target-amount" class="font-semibold">0.00</span> บาท)
-                </label>
-                
-                <button type="button" onclick="triggerFileInput()" class="w-full h-24 border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center bg-slate-50 hover:bg-slate-100/80 transition-all relative overflow-hidden p-2">
-                    <div id="upload-placeholder" class="flex flex-col items-center justify-center text-center">
-                        <i class="fa-solid fa-cloud-arrow-up text-xl text-slate-400 mb-1"></i>
-                        <p class="text-[11px] text-slate-600 font-medium">แตะที่นี่เพื่อเลือกรูปภาพสลิป</p>
-                    </div>
-                    <img id="slip-preview" class="hidden absolute inset-0 w-full h-full object-cover z-10" />
-                </button>
-                <input type="file" id="secure-file-input" accept="image/*" class="hidden" onchange="processSlipSimple(event)" />
-                
-                <div id="validation-status" class="text-[11px] font-medium hidden text-center py-1.5 rounded-lg"></div>
-            </div>
-
-            <!-- ปุ่มกดยืนยัน (ปรับให้เสถียร ไม่ล็อกตาย) -->
-            <button id="btn-submit-payment" onclick="startPrinting()" disabled
-                class="w-full bg-slate-200 text-slate-400 cursor-not-allowed font-medium py-3.5 rounded-xl transition-all text-sm flex items-center justify-center gap-2">
-                <i class="fa-solid fa-lock text-[11px]"></i> กรุณาแนบภาพสลิปโอนเงิน
-            </button>
-        </div>
-
-        <!-- ขั้นตอนที่ 3: หน้ากำลังออกใบเสร็จ -->
-        <div id="step-printing" class="hidden text-center py-12 space-y-3 animate-fade bg-white rounded-2xl border border-slate-100 shadow-sm">
-            <div class="inline-block relative w-10 h-10">
-                <div class="absolute inset-0 border-2 border-slate-100 rounded-full"></div>
-                <div class="absolute inset-0 border-2 border-t-slate-800 rounded-full animate-spin"></div>
-            </div>
-            <p class="text-xs font-medium text-slate-600">กำลังตรวจสอบและบันทึกใบเสร็จ...</p>
-        </div>
-
-        <!-- ขั้นตอนที่ 4: หน้าใบเสร็จกระดาษ -->
-        <div id="step-receipt" class="hidden space-y-4 animate-fade">
-            <div class="w-full h-2 bg-slate-200 rounded-full shadow-inner mb-[-12px] relative z-10"></div>
-            
-            <div class="printing-slip bg-white border border-slate-200 rounded-b-xl shadow-md p-6 max-w-sm mx-auto space-y-4 relative">
-                <div class="absolute top-0 left-0 right-0 h-1 bg-[linear-gradient(to_right,#e2e8f0_50%,transparent_50%)] bg-[length:10px_1px]"></div>
-                
-                <div class="text-center space-y-1 pt-2">
-                    <i class="fa-solid fa-circle-check text-slate-700 text-xl"></i>
-                    <h3 class="text-xs font-medium text-slate-800 tracking-wide">สลิปการชำระเงินสำเร็จ</h3>
-                    <p class="text-[9px] text-slate-400 uppercase tracking-wider">e-Receipt</p>
-                </div>
-                
-                <div class="border-t border-dashed border-slate-200 my-2"></div>
-                
-                <div class="space-y-2 text-xs">
-                    <div class="flex justify-between"><span class="text-slate-400">วันที่ทำรายการ:</span> <span id="slip-date" class="text-slate-700">-</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">ผู้รับเงิน:</span> <span class="text-slate-800 font-medium">เนติราช นิ่มเจริญวัฒนกุล</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400">เบอร์มือถือผู้โอน:</span> <span id="slip-phone" class="text-slate-700">-</span></div>
-                    <div class="border-t border-slate-100 my-2 pt-2 flex justify-between items-center text-sm">
-                        <span class="text-slate-500">ยอดเงินสุทธิ:</span>
-                        <span id="slip-amount" class="text-slate-900 font-semibold text-base">฿0.00</span>
-                    </div>
-                </div>
-
-                <div class="border-t border-dashed border-slate-200 my-2"></div>
-                <p class="text-[9px] text-center text-slate-400 font-light">ระบบบันทึกหลักฐานการโอนเรียบร้อย</p>
-            </div>
-
-            <div class="max-w-sm mx-auto pt-4">
-                <button onclick="showSuccessAlert()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3.5 rounded-xl transition-all text-sm tracking-wide shadow-md">
-                    ยืนยันทำรายการสำเร็จ
-                </button>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- ป๊อปอัพยืนยัน SMS -->
-    <div id="success-modal" class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-50 flex items-center justify-center p-6 hidden animate-fade">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full border border-gray-100 shadow-xl text-center space-y-4">
-            <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-emerald-500 text-xl">
-                <i class="fa-solid fa-comment-sms"></i>
-            </div>
-            <div class="space-y-1">
-                <h4 class="text-sm font-medium text-slate-800">ทำรายการสำเร็จเรียบร้อย</h4>
-                <p class="text-xs text-slate-500 leading-relaxed px-2">
-                    เราได้รับยอดเงินโอนเรียบร้อยแล้ว ข้อความ SMS จะถูกส่งไปยังเบอร์ปลายทาง ขอบคุณครับ
-                </p>
-            </div>
-            <button onclick="finalResetHome()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl text-xs font-medium transition-all">
-                ตกลง
-            </button>
+        <div id="scene2">
+            <div class="box-title">ส่งคำอวยพรให้เนติราช 💌</div>
+            <form action="https://formspree.io/f/เปลี่ยนตรงนี้เป็น_ID_ของคุณ" method="POST" id="wishForm">
+                <input type="hidden" name="_subject" value="🎉 มีคำอวยพรวันเกิดใหม่จากเพื่อน!">
+                <textarea name="message" placeholder="พิมพ์คำอวยพรของคุณที่นี่..." required></textarea>
+                <button type="submit" class="btn btn-submit">ส่งคำอวยพร</button>
+            </form>
         </div>
     </div>
 
-    <footer class="text-center py-4 text-[10px] text-slate-300 bg-white border-t border-slate-50 font-light">
-        Minimalist Interface Design
-    </footer>
-
     <script>
-        // ข้อมูลบัญชีธนาคารต่าง ๆ (แก้ไขได้ตามต้องการ)
-        const bankData = {
-            pp: { label: "เบอร์พร้อมเพย์:", number: "0635164271" },
-            kbank: { label: "เลขบัญชี กสิกรไทย:", number: "023-1-45678-9" },
-            scb: { label: "เลขบัญชี ไทยพาณิชย์:", number: "408-2-78901-2" },
-            ktb: { label: "เลขบัญชี กรุงไทย:", number: "006-0-12345-6" }
-        };
+        function startTransition() {
+            const curtainLeft = document.getElementById('curtainLeft');
+            const curtainRight = document.getElementById('curtainRight');
+            const scene1 = document.getElementById('scene1');
+            const scene2 = document.getElementById('scene2');
 
-        let globalAmount = 0;
-        let globalPhone = "";
-        let selectedBankKey = "pp";
+            // 1. ปิดผ้าม่านเข้าหากัน
+            curtainLeft.classList.add('close-left');
+            curtainRight.classList.add('close-right');
 
-        function updateRealTimeClock() {
-            const now = new Date();
-            const dateNum = String(now.getDate()).padStart(2, '0');
-            const monthNum = String(now.getMonth() + 1).padStart(2, '0');
-            const yearTH = now.getFullYear() + 543;
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('realtime-clock').innerText = `${dateNum}/${monthNum}/${yearTH} เวลา ${hours}:${minutes}:${seconds}`;
-        }
-        updateRealTimeClock();
-        setInterval(updateRealTimeClock, 1000);
-
-        function selectQuickAmount(amount) { document.getElementById('amount').value = amount; }
-
-        function goToBankSelection() {
-            const phoneInput = document.getElementById('phone').value.trim();
-            const amountInput = document.getElementById('amount').value;
-
-            if (!phoneInput || phoneInput.length < 9) { return alert('กรุณากรอกเบอร์โทรศัพท์มือถือผู้โอนให้ถูกต้อง'); }
-            if (!amountInput || amountInput <= 0) { return alert('กรุณาระบุจำนวนเงิน'); }
-
-            globalAmount = parseFloat(amountInput).toFixed(2);
-            globalPhone = phoneInput;
-
-            document.getElementById('display-amount').innerText = `฿${Number(globalAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('status-target-amount').innerText = Number(globalAmount).toLocaleString(undefined, {minimumFractionDigits: 2});
-            
-            // รีเซ็ตพื้นที่อัปโหลด
-            document.getElementById('slip-preview').classList.add('hidden');
-            document.getElementById('upload-placeholder').classList.remove('hidden');
-            document.getElementById('validation-status').classList.add('hidden');
-            document.getElementById('secure-file-input').value = "";
-            
-            lockSubmitButton();
-            selectActiveBank('pp');
-
-            document.getElementById('step-form').classList.add('hidden');
-            document.getElementById('step-pay').classList.remove('hidden');
-        }
-
-        function selectActiveBank(bankKey) {
-            selectedBankKey = bankKey;
-            const list = ['pp', 'kbank', 'scb', 'ktb'];
-            list.forEach(b => {
-                const btn = document.getElementById(`btn-bank-${b}`);
-                const text = btn.querySelector('span');
-                if (b === bankKey) {
-                    btn.className = "border rounded-xl p-2 flex flex-col items-center justify-center gap-1 transition-all bg-slate-900 border-slate-900 text-white";
-                    text.className = "text-[10px] font-medium text-white";
-                } else {
-                    btn.className = "border rounded-xl p-2 flex flex-col items-center justify-center gap-1 transition-all border-slate-100 bg-white text-slate-600";
-                    text.className = "text-[10px] text-slate-400";
-                }
-            });
-
-            document.getElementById('label-account-type').innerText = bankData[bankKey].label;
-            document.getElementById('val-account-number').innerText = bankData[bankKey].number;
-        }
-
-        // ระบบคัดลอกแบบไฮบริด (เสถียรที่สุดบนมือถือ)
-        function copyToClipboardStable() {
-            const rawNum = bankData[selectedBankKey].number.replace(/-/g, '');
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(rawNum).then(() => {
-                    alert('คัดลอกเลขบัญชีสำเร็จ!');
-                }).catch(() => fallbackCopy(rawNum));
-            } else {
-                fallbackCopy(rawNum);
-            }
-        }
-
-        function fallbackCopy(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                alert('คัดลอกเลขบัญชีสำเร็จ!');
-            } catch (err) {
-                alert('โปรดคัดลอกด้วยตนเอง: ' + text);
-            }
-            document.body.removeChild(textArea);
-        }
-
-        function triggerFileInput() {
-            document.getElementById('secure-file-input').click();
-        }
-
-        // 🌟 ตัวประมวลผลรูปแบบใหม่ เสถียร ไม่หน่วง ไม่บล็อกปุ่มตาย
-        function processSlipSimple(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // แสดงรูปภาพตัวอย่างพรีวิวทันที
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewImg = document.getElementById('slip-preview');
-                previewImg.src = e.target.result;
-                previewImg.classList.remove('hidden');
-                document.getElementById('upload-placeholder').classList.add('hidden');
-            }
-            reader.readAsDataURL(file);
-
-            const statusDiv = document.getElementById('validation-status');
-            statusDiv.className = "text-[11px] font-medium text-center py-1.5 rounded-lg bg-emerald-50 text-emerald-600";
-            statusDiv.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> แนบรูปภาพสลิปเรียบร้อยแล้ว (ระบบเปิดให้กดยืนยันได้ทันที)`;
-            statusDiv.classList.remove('hidden');
-            
-            // ปลดล็อกปุ่มให้กดไปต่อได้เสถียร 100% ไม่ค้างหน้านอยด์
-            unlockSubmitButton();
-        }
-
-        function unlockSubmitButton() {
-            const btn = document.getElementById('btn-submit-payment');
-            btn.disabled = false;
-            btn.className = "w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-3.5 rounded-xl transition-all text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-[0.99]";
-            btn.innerHTML = `ยืนยันชำระยอดเงิน ฿${globalAmount}`;
-        }
-
-        function lockSubmitButton() {
-            const btn = document.getElementById('btn-submit-payment');
-            btn.disabled = true;
-            btn.className = "w-full bg-slate-200 text-slate-400 cursor-not-allowed font-medium py-3.5 rounded-xl transition-all text-sm flex items-center justify-center gap-2";
-            btn.innerHTML = `<i class="fa-solid fa-lock text-[11px]"></i> กรุณาแนบภาพสลิปโอนเงิน`;
-        }
-
-        function startPrinting() {
-            document.getElementById('step-pay').classList.add('hidden');
-            document.getElementById('step-printing').classList.remove('hidden');
-
-            document.getElementById('slip-phone').innerText = globalPhone;
-            document.getElementById('slip-amount').innerText = `฿${Number(globalAmount).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
-            document.getElementById('slip-date').innerText = document.getElementById('realtime-clock').innerText;
-
+            // 2. รอ 1.5 วินาทีให้ม่านปิดสนิท แล้วสลับจากหน้า 1 ไปหน้า 2 
             setTimeout(() => {
-                document.getElementById('step-printing').classList.add('hidden');
-                document.getElementById('step-receipt').classList.remove('hidden');
-            }, 2000);
-        }
+                scene1.style.display = 'none';
+                scene2.style.display = 'flex';
+                
+                // 3. ปิดม่านแช่ไว้สักพัก แล้วค่อยเปิดออก (รวมเวลาทั้งหมดประมาน 3-4 วินาที)
+                setTimeout(() => {
+                    curtainLeft.classList.remove('close-left');
+                    curtainRight.classList.remove('close-right');
+                }, 1500); // แช่ม่านไว้ 1.5 วิ ก่อนเปิด
 
-        function showSuccessAlert() { document.getElementById('success-modal').classList.remove('hidden'); }
-
-        function finalResetHome() {
-            document.getElementById('success-modal').classList.add('hidden');
-            document.getElementById('amount').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('secure-file-input').value = '';
-            document.getElementById('step-receipt').classList.add('hidden');
-            document.getElementById('step-form').classList.remove('hidden');
+            }, 1500); // ระยะเวลาที่ม่านกำลังเคลื่อนที่มาปิด
         }
     </script>
 </body>
