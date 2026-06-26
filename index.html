@@ -82,12 +82,11 @@
         .hbd-main-text { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 25px; color: #2c3e50; }
         .hbd-main-text span { color: #d4af37; }
 
-        /* ปุ่มหลักสำหรับเข้าเขียนข้อความ */
         .btn-main-start {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
-        /* โซนบริจาคร่างกายที่ย้ายมาไว้ด้านล่างตามสั่ง */
+        /* โซนบริจาคร่างกายแบบใหม่ คลีนๆ บนพื้นหลังเว็บ */
         .donation-bottom-zone {
             width: 100%;
             display: flex;
@@ -97,26 +96,21 @@
             margin-top: 10px;
         }
 
-        /* ดีไซน์ช่องไฟวิ่งแอลอีดีแบบคลาสสิก พร้อมบล็อกล็อกรูปโลโก้สภากาชาด */
-        .led-marquee-box {
+        /* ปรับปรุง: เอาพื้นหลังกล่องดำออก ให้รันบนพื้นขาวของเว็บโดยตรง */
+        .white-bg-marquee-box {
             display: flex;
             align-items: center;
-            background: #0a0a0a;
-            border: 3px solid #333;
-            border-radius: 10px;
-            padding: 6px 10px;
+            background: transparent; /* โปร่งใส ไม่มีกล่องดำ */
             width: 100%;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.15);
+            padding: 5px 0;
             overflow: hidden;
         }
         
+        /* โลโก้สภากาชาดตั้งอยู่ด้านหน้า */
         .redcross-led-logo {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             object-fit: contain;
-            background: white;
-            border-radius: 4px;
-            padding: 2px;
             margin-right: 12px;
             flex-shrink: 0;
         }
@@ -127,14 +121,14 @@
             white-space: nowrap;
         }
         
+        /* ตัวอักษรสีแดงสด วิ่งบนพื้นขาวของเว็บโดยตรง */
         .led-flash-text {
             display: inline-block;
             animation: ledScroll 12s linear infinite;
-            font-size: 1rem;
-            color: #ff3333; /* ไฟแอลอีดีสีแดงเด่นชัด */
-            font-weight: bold;
-            text-shadow: 0 0 8px #ff0000, 0 0 12px #ff0000;
-            letter-spacing: 1px;
+            font-size: 1.05rem;
+            color: #d63031; /* สีแดงสดสภากาชาด */
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         
         @keyframes ledScroll {
@@ -263,13 +257,13 @@
             85%, 95% { transform: rotate(0); }
         }
 
-        /* --- Donation Pop-up Modal (ถอดพื้นหลังสีดำออกหมดจด) --- */
+        /* --- Donation Pop-up Modal --- */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 255, 255, 0.85); /* เปลี่ยนเป็นพื้นหลังขาวโปร่งแสงนุ่มๆ สบายตา */
-            backdrop-filter: blur(5px); /* เพิ่มลูกเล่นเบลอหลังเพิ่มความพรีเมียม */
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -343,7 +337,7 @@
 
             <div class="donation-bottom-zone">
                 
-                <div class="led-marquee-box">
+                <div class="white-bg-marquee-box">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Thai_Red_Cross_Society_Logo_%282022%29.svg" alt="Thai Red Cross Logo" class="redcross-led-logo">
                     <div class="led-text-container">
                         <div class="led-flash-text">
