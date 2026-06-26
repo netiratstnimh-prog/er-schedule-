@@ -77,56 +77,68 @@
 
         /* --- Scene 1: Intro --- */
         #scene1 { display: flex; flex-direction: column; align-items: center; transition: opacity 0.4s; width: 100%; max-width: 480px; }
-        .puppy { font-size: 5rem; margin-bottom: 10px; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
-        .hbd-main-text { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; }
-        .hbd-main-text span { color: #d4af37; }
-
-        /* --- แถบเชิญชวนบริจาคร่างกาย --- */
-        .donation-banner {
-            background: #fff5f5;
-            border: 1px solid #ffccd5;
-            border-radius: 15px;
-            padding: 12px 15px;
-            width: 100%;
-            margin-bottom: 25px;
+        
+        /* ปรับดีไซน์โซนป้ายไฟวิ่งด้านบนน้องหมา */
+        .top-donation-zone {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            background: #fff0f3;
+            border: 2px solid #ffccd5;
+            border-radius: 20px;
+            padding: 8px 12px;
+            width: 100%;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.08);
+            overflow: hidden;
         }
-        .donation-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-align: left;
+        .banner-marquee-container {
+            flex: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            margin-right: 10px;
         }
-        .redcross-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-        .donation-text {
-            font-size: 0.85rem;
-            color: #c0392b;
-            line-height: 1.4;
+        .banner-marquee-text {
+            display: inline-block;
+            animation: bannerMarquee 10s linear infinite;
+            font-size: 0.9rem;
+            color: #d63031;
             font-weight: 600;
         }
-        .btn-pink {
-            background: #ff4d6d;
+        @keyframes bannerMarquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ดีไซน์ปุ่มบริจาคสุดพรีเมียมพร้อมโลโก้ */
+        .btn-pink-premium {
+            background: linear-gradient(135deg, #ff4d6d, #ff758f);
             color: white;
             border: none;
             padding: 8px 16px;
-            border-radius: 20px;
+            border-radius: 15px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
-            transition: 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             white-space: nowrap;
         }
-        .btn-pink:active { transform: scale(0.95); }
+        .btn-pink-premium img {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+            filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
+        }
+        .btn-pink-premium:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(255, 77, 109, 0.2); }
+
+        .puppy { font-size: 5rem; margin-bottom: 10px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+        .hbd-main-text { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 25px; color: #2c3e50; }
+        .hbd-main-text span { color: #d4af37; }
 
         /* --- Scene 2: Wish Form & Cards --- */
         #scene2 { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 480px; opacity: 0; transition: opacity 0.4s; }
@@ -219,7 +231,6 @@
             background: linear-gradient(90deg, #d4af37, #ffc796, #d4af37);
         }
         
-        /* เอฟเฟกต์สั่นฟีลกระดิ่งดึงดูดสายตา */
         .bell-icon {
             font-size: 4.5rem; 
             margin-bottom: 15px; 
@@ -304,18 +315,21 @@
     <div class="main-container">
         
         <div id="scene1">
-            <div class="puppy">🐶</div>
-            <div class="hbd-main-text">Happy Birthday<br><span>NAY</span></div>
             
-            <div class="donation-banner">
-                <div class="donation-info">
-                    <img src="https://www.redcross.or.th/wp-content/uploads/2019/08/logo.png" alt="สภากาชาดไทย" class="redcross-logo">
-                    <div class="donation-text">
-                        บริจาคร่างกาย 1 ร่างกาย ช่วยได้ 8 ชีวิต<br>ส่งต่อการให้ที่งดงาม 🙏❤️
+            <div class="top-donation-zone">
+                <div class="banner-marquee-container">
+                    <div class="banner-marquee-text">
+                        บริจาคร่างกาย 1 ร่างกาย ช่วยได้ 8 ชีวิต ส่งต่อการให้ที่งดงาม 🙏❤️
                     </div>
                 </div>
-                <button type="button" class="btn-pink" onclick="openDonateModal()">บริจาค 💖</button>
+                <button type="button" class="btn-pink-premium" onclick="openDonateModal()">
+                    <img src="https://e7.pngegg.com/pngimages/201/886/png-clipart-american-red-cross-international-committee-of-the-red-cross-symbol-indian-red-cross-society-kreuz-symbol-angle-flag-thumbnail.png" alt="Red Cross">
+                    บริจาค 💖
+                </button>
             </div>
+
+            <div class="puppy">🐶</div>
+            <div class="hbd-main-text">Happy Birthday<br><span>NAY</span></div>
 
             <button class="btn" onclick="goToWishScene()">ไปเขียนข้อความกัน ✨</button>
         </div>
@@ -403,11 +417,11 @@
             <h3 class="modal-title">❤️ ร่วมส่งต่อการให้สภากาชาดไทย</h3>
             <div class="modal-links-container">
                 <a href="https://bodydonate.redcross.or.th/register" target="_blank" class="donate-row-btn">
-                    <span>📝 แถบที่ 1: บริจาคร่างกาย</span>
+                    <span>📝 บริจาคร่างกาย</span>
                     <span class="arrow">➔</span>
                 </a>
                 <a href="https://eyeorgandonate.redcross.or.th" target="_blank" class="donate-row-btn" style="background: #fff4e6; border-color: #ffe0b2; color: #e67e22;">
-                    <span>👁️ แถบที่ 2: บริจาคอวัยวะ-ดวงตา</span>
+                    <span>👁️ บริจาคอวัยวะ-ดวงตา</span>
                     <span class="arrow" style="color: #e67e22;">➔</span>
                 </a>
             </div>
@@ -419,7 +433,6 @@
     </div>
 
     <script>
-        // เช็กสถานะเครื่องว่าเคยส่งคำอวยพรหรือยัง
         window.addEventListener('DOMContentLoaded', (event) => {
             if (localStorage.getItem('nay_hbd_sent') === 'true') {
                 document.getElementById('scene1').style.display = 'none';
@@ -427,7 +440,6 @@
             }
         });
 
-        /* --- ฟังก์ชันควบคุม ป๊อปอัปบริจาค --- */
         function openDonateModal() {
             const modal = document.getElementById('donateModal');
             modal.style.display = 'flex';
