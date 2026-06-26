@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HBD NETIRAT - Puppy & Blessing</title>
+    <title>HBD NETIRAT - Puppy, Cards & Blessing</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Playfair+Display:ital,wght=1,600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -23,7 +23,7 @@
         .header-bar {
             width: 100%;
             background: #fff;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             font-family: 'Playfair Display', serif;
             font-size: 1.2rem;
@@ -64,8 +64,10 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             position: relative;
+            overflow-y: auto;
+            padding-bottom: 60px;
         }
 
         /* --- Scene 1: Intro --- */
@@ -94,43 +96,78 @@
         .verse-ref { font-size: 1.8rem; margin-bottom: 20px; font-weight: 600; }
         .verse-text { font-size: 1.3rem; line-height: 1.6; font-style: italic; font-family: 'Playfair Display', serif; }
 
-        /* --- Scene 2: Wish Form --- */
-        #scene2 { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 450px; opacity: 1; }
+        /* --- Scene 2: Wish Form & Cards --- */
+        #scene2 { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 480px; opacity: 1; }
         textarea {
-            width: 100%; height: 120px; padding: 15px;
+            width: 100%; height: 100px; padding: 12px;
             border: 2px solid #d4af37; border-radius: 15px;
             font-size: 1rem; font-family: 'Kanit', sans-serif;
-            margin-bottom: 10px; outline: none;
+            margin-bottom: 10px; outline: none; resize: none;
         }
 
         /* --- Emoji Keyboard --- */
         .emoji-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;
         }
         .emoji-btn {
             background: #f9f9f9; border: 1px solid #ddd;
-            padding: 8px 12px; border-radius: 10px; cursor: pointer;
-            font-size: 1.2rem; transition: 0.2s;
+            padding: 6px 12px; border-radius: 10px; cursor: pointer;
+            font-size: 1.1rem; transition: 0.2s;
         }
-        .emoji-btn:active { transform: scale(0.9); background: #eee; }
+        .emoji-btn:active { transform: scale(0.9); }
+
+        /* --- Greeting Cards Section --- */
+        .cards-title { margin: 10px 0 5px 0; font-size: 0.95rem; color: #666; font-weight: 600; }
+        .cards-container {
+            display: flex; gap: 12px; width: 100%; overflow-x: auto; 
+            padding: 10px 5px; margin-bottom: 15px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        /* ซ่อน scrollbar สำหรับความสวยงาม */
+        .cards-container::-webkit-scrollbar { height: 5px; }
+        .cards-container::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
+        
+        .wish-card {
+            flex: 0 0 160px; height: 110px;
+            background: linear-gradient(135deg, #ffedbc, #ffc796);
+            border: 2px solid #d4af37; border-radius: 12px;
+            padding: 10px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            cursor: pointer; scroll-snap-align: start;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .wish-card:active { transform: scale(0.95); }
+        .wish-card.selected { border-color: #2c3e50; box-shadow: 0 0 10px rgba(44, 62, 80, 0.3); transform: scale(1.02); }
+        .card-icon { font-size: 1.5rem; margin-bottom: 4px; }
+        .card-text { font-size: 0.75rem; font-weight: bold; color: #2c3e50; line-height: 1.3; }
+
+        /* ดีไซน์การ์ดแต่ละใบให้สีต่างกัน */
+        .c1 { background: linear-gradient(135deg, #FFF3B0, #CAAE7A); }
+        .c2 { background: linear-gradient(135deg, #E3F2FD, #90CAF9); }
+        .c3 { background: linear-gradient(135deg, #FCE4EC, #F48FB1); }
+        .c4 { background: linear-gradient(135deg, #E8F5E9, #A5D6A7); }
+        .c5 { background: linear-gradient(135deg, #FFF3E0, #FFCC80); }
+        .c6 { background: linear-gradient(135deg, #EDE7F6, #B39DDB); }
+        .c7 { background: linear-gradient(135deg, #F9FBE7, #E6EE9C); }
+        .c8 { background: linear-gradient(135deg, #E0F7FA, #80DEEA); }
+        .c9 { background: linear-gradient(135deg, #FFFDE7, #FFF59D); }
+        .c10 { background: linear-gradient(135deg, #F5F5F5, #BDBDBD); }
 
         /* --- Buttons --- */
         .btn {
             background: #d4af37; color: white; border: none;
-            padding: 15px 40px; border-radius: 50px;
+            padding: 12px 35px; border-radius: 50px;
             font-size: 1.1rem; cursor: pointer; font-weight: 600;
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
             transition: 0.3s;
         }
         .btn:active { transform: scale(0.95); }
-        .btn-send { background: #2c3e50; }
+        .btn-send { background: #2c3e50; width: 100%; margin-top: 5px; }
 
         /* --- Dog Decorative --- */
-        .dog-footer { font-size: 2rem; margin-top: 10px; }
+        .dog-footer { font-size: 1.8rem; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -155,9 +192,54 @@
         </div>
 
         <div id="scene2">
-            <div style="margin-bottom: 15px; color: #555;">เขียนความในใจถึงเนติราช 🤍</div>
+            <div class="cards-title">เลือกการ์ดอวยพรสำเร็จรูปสำเร็จรูป (เลื่อนขวาได้) 👇</div>
+            <div class="cards-container">
+                <div class="wish-card c1" onclick="selectCard(this, 'สุขสันต์วันเกิดนะเนติราช! ขอพระเจ้าอวยพระพรและนำทางในทุกก้าวของชีวิต ให้มีความสุขมากๆ ในทุกๆ วันเลยนะ 🎂✨')">
+                    <div class="card-icon">👑</div>
+                    <div class="card-text">Blessing Card</div>
+                </div>
+                <div class="wish-card c2" onclick="selectCard(this, 'HBD จ้าเนติราช! ขอให้ปีนี้คิดทำสิ่งใดก็ประสบความสำเร็จ แผนงานราบรื่นและมีแต่รอยยิ้มตลอดปีนะ 🎉🥳')">
+                    <div class="card-icon">🐶</div>
+                    <div class="card-text">Happy Puppy</div>
+                </div>
+                <div class="wish-card c3" onclick="selectCard(this, 'Happy Birthday! ขอให้มีความสุขสมปรารถนา สุขภาพร่างกายแข็งแรง สมบูรณ์พูนสุขในทุกๆ เรื่องเลยนะ ❤️🎈')">
+                    <div class="card-icon">💖</div>
+                    <div class="card-text">Sweet Heart</div>
+                </div>
+                <div class="wish-card c4" onclick="selectCard(this, 'สุขสันต์วันเกิด! ขอให้เนเจอแต่สิ่งดีๆ มิตรภาพที่น่ารัก และเติบโตอย่างงดงามในทุกๆ วันนะ 🌿✨')">
+                    <div class="card-icon">🎁</div>
+                    <div class="card-text">Growing Up</div>
+                </div>
+                <div class="wish-card c5" onclick="selectCard(this, 'HBD นะเธอ! ขอให้ร่ำรวยความสุข ร่ำรวยเสียงหัวเราะ และพบเจอแต่ความโชคดีในขวบปีนี้นะ 💵🎂')">
+                    <div class="card-icon">✨</div>
+                    <div class="card-text">Lucky Year</div>
+                </div>
+                <div class="wish-card c6" onclick="selectCard(this, 'ขอพระเจ้าประทานสันติสุขและความยินดีเติมเต็มในใจของเนติราชเสมอ สุขสันต์วันเกิดจ้า 🕊️✨')">
+                    <div class="card-icon">🕊️</div>
+                    <div class="card-text">Peace & Joy</div>
+                </div>
+                <div class="wish-card c7" onclick="selectCard(this, 'HBD! วันเกิดปีนี้ขอให้เป็นจุดเริ่มต้นของสิ่งดีๆ มีพลังกายพลังใจเต็มเปี่ยมไปทำตามฝันเลยนะ สู้ๆ! 🌟🐾')">
+                    <div class="card-icon">🚀</div>
+                    <div class="card-text">Dream Big</div>
+                </div>
+                <div class="wish-card c8" onclick="selectCard(this, 'Happy Birthday Netirat! สุขสันต์วันเกิดนะเพื่อน มีความสุขล้นปรี่ในวันพิเศษนี้จ้า 🍰🎈')">
+                    <div class="card-icon">🍰</div>
+                    <div class="card-text">Cake Day</div>
+                </div>
+                <div class="wish-card c9" onclick="selectCard(this, 'วันเกิดเนติราชปีนี้ ขอให้มีแต่เรื่องให้หัวเราะและมีความสุขจนแก้มปริไปเลยนะ! 😆🎉')">
+                    <div class="card-icon">🌟</div>
+                    <div class="card-text">Smile Always</div>
+                </div>
+                <div class="wish-card c10" onclick="selectCard(this, 'สุขสันต์วันเกิดนะเนติราช! ขอพระเกียรติและพระคุณของพระเจ้าอยู่กับเธอเสมอในวันเกิดปีนี้ ✝️🤍')">
+                    <div class="card-icon">⛪</div>
+                    <div class="card-text">Faith Card</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 8px; font-size: 0.9rem; color: #555;">หรือแก้ไข/พิมพ์ข้อความเพิ่มเติมด้านล่างนี้ 🤍</div>
+            
             <form action="https://formspree.io/f/xwvdoqjb" method="POST" id="wishForm">
-                <textarea id="messageBox" name="message" placeholder="พิมพ์คำอวยพรที่นี่..." required></textarea>
+                <textarea id="messageBox" name="message" placeholder="พิมพ์คำอวยพร หรือเลือกการ์ดด้านบน..." required></textarea>
                 
                 <div class="emoji-bar">
                     <button type="button" class="emoji-btn" onclick="addEmoji('🎂')">🎂</button>
@@ -168,7 +250,7 @@
                     <button type="button" class="emoji-btn" onclick="addEmoji('🐶')">🐶</button>
                 </div>
 
-                <button type="submit" class="btn btn-send" onclick="playSubmitEffect()">ส่งคำอวยพรให้เพื่อน 💌</button>
+                <button type="submit" class="btn btn-send" onclick="playSubmitEffect()">ส่งคำอวยพรให้เนติราช 💌</button>
             </form>
             <div class="dog-footer">🐩🐾🐕</div>
         </div>
@@ -184,6 +266,26 @@
             const box = document.getElementById('messageBox');
             box.value += emoji;
             box.focus();
+        }
+
+        // ฟังก์ชันเลือกการ์ดสำเร็จรูป
+        function selectCard(cardElement, text) {
+            // ลบสถานะเลือกเก่าออกให้หมด
+            const allCards = document.querySelectorAll('.wish-card');
+            allCards.forEach(c => c.classList.remove('selected'));
+            
+            // ใส่ข้อความลงในกล่อง textarea
+            document.getElementById('messageBox').value = text;
+            
+            // ไฮไลต์การ์ดที่ถูกเลือก
+            cardElement.classList.add('selected');
+            
+            // เอฟเฟกต์วิ้งๆ เล็กน้อยตอนเลือกการ์ด
+            confetti({
+                particleCount: 20,
+                spread: 30,
+                origin: { y: 0.4 }
+            });
         }
 
         function goToTransition() {
@@ -230,7 +332,6 @@
         }
 
         function playSubmitEffect() {
-            // ยิงพลุส่งท้ายตอนกดส่งข้อความ
             confetti({
                 particleCount: 150,
                 spread: 80,
