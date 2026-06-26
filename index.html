@@ -217,6 +217,8 @@
             <div style="margin-bottom: 8px; font-size: 0.9rem; color: #555;">หรือแก้ไข/พิมพ์ข้อความเพิ่มเติมด้านล่างนี้ 🤍</div>
             
             <form action="https://formspree.io/f/xwvdoqjb" method="POST" id="wishForm">
+                <input type="hidden" name="_subject" value="🎉 มีคำอวยพรวันเกิดใหม่!">
+                
                 <textarea id="messageBox" name="message" placeholder="พิมพ์คำอวยพร หรือเลือกการ์ดด้านบน..." required></textarea>
                 
                 <div class="emoji-bar">
@@ -260,7 +262,7 @@
             });
         }
 
-        // ⚡ วาร์ปเข้าหน้าอวยพรทันทีเมื่อกดปุ่ม
+        // วาร์ปเข้าหน้าอวยพรทันทีแบบติดสปีด
         function goToWishScene() {
             const s1 = document.getElementById('scene1');
             const s2 = document.getElementById('scene2');
@@ -270,7 +272,6 @@
                 s1.style.display = 'none';
                 s2.style.display = 'flex';
                 
-                // ให้หน้าฟอร์มค่อยๆ ปรากฏขึ้นมาอย่างนุ่มนวล
                 setTimeout(() => {
                     s2.style.opacity = '1';
                     fireFestiveConfetti();
