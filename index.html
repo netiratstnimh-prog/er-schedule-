@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>โรงเรียนผู้ช่วยพยาบาล ศิริราช</title>
+    <title>ระบบทะเบียนศิษย์เก่า รุ่น 74 - โรงเรียนผู้ช่วยพยาบาล ศิริราช</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --mu-blue: #003366;
             --mu-gold: #F1B434;
+            --mu-gold-hover: #d49b26;
             --light-blue: #E6F0FA;
-            --dark-gray: #333333;
+            --dark-gray: #2c3e50;
+            --card-bg: linear-gradient(135deg, #ffffff 0%, #f4f7fb 100%);
         }
 
         * {
@@ -25,9 +27,10 @@
         }
 
         body {
-            background-color: #f4f7fa;
+            background-color: #f0f4f8;
             color: var(--dark-gray);
             overflow-x: hidden;
+            padding-bottom: 80px;
         }
 
         /* 1. Splash Screen Effect */
@@ -37,7 +40,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--mu-blue), #001f42);
+            background: linear-gradient(135deg, var(--mu-blue), #00152e);
             z-index: 9999;
             display: flex;
             justify-content: center;
@@ -57,28 +60,29 @@
             color: white;
             font-size: 1.8rem;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             opacity: 0;
             transform: translateY(20px);
-            animation: fadeInUp 1.2s forwards 0.3s;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s forwards 0.3s;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
         }
 
         .splash-subtext {
             color: var(--mu-gold);
             font-size: 1.2rem;
+            font-weight: 400;
             opacity: 0;
             transform: translateY(20px);
-            animation: fadeInUp 1.2s forwards 0.8s;
+            animation: fadeInUp 1s forwards 0.7s;
         }
 
         .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255,255,255,0.1);
-            border-top: 5px solid var(--mu-gold);
+            width: 45px;
+            height: 45px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top: 4px solid var(--mu-gold);
             border-radius: 50%;
-            margin-top: 30px;
+            margin-top: 35px;
             animation: spin 1s linear infinite;
         }
 
@@ -91,28 +95,34 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* 2. Top Header Bar */
+        /* 2. Top Header Bar ปรับการแบ่งบรรทัดและเพิ่มปุ่ม Login ด้านขวา */
         header {
             background-color: var(--mu-blue);
             color: white;
-            padding: 15px 20px;
+            padding: 12px 24px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 100;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border-bottom: 4px solid var(--mu-gold);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .menu-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             cursor: pointer;
-            margin-right: 15px;
             transition: color 0.3s;
         }
 
@@ -120,15 +130,45 @@
             color: var(--mu-gold);
         }
 
-        header h1 {
-            font-size: 1.1rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .brand-title {
+            display: flex;
+            flex-direction: column;
         }
 
-        /* 3. Sidebar Popup (3-dash menu) */
+        .brand-main {
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-sub {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 300;
+        }
+
+        .login-btn {
+            background-color: var(--mu-gold);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .login-btn:hover {
+            background-color: var(--mu-gold-hover);
+            transform: translateY(-2px);
+        }
+
+        /* 3. Sidebar Menu Popup */
         .sidebar {
             position: fixed;
             top: 0;
@@ -137,9 +177,9 @@
             height: 100%;
             background-color: white;
             z-index: 101;
-            transition: left 0.4s ease;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.15);
-            padding-top: 80px;
+            transition: left 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+            box-shadow: 5px 0 15px rgba(0,0,0,0.15);
+            padding-top: 90px;
         }
 
         .sidebar.open {
@@ -161,19 +201,12 @@
         .sidebar-menu li {
             padding: 15px 20px;
             border-bottom: 1px solid #eee;
-            color: #666;
+            color: #888;
             cursor: not-allowed;
             display: flex;
             align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-menu li::before {
-            content: "\f054";
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            font-size: 0.8rem;
-            color: #ccc;
+            gap: 12px;
+            font-size: 0.95rem;
         }
 
         .overlay {
@@ -185,68 +218,72 @@
             background: rgba(0,0,0,0.5);
             z-index: 99;
             display: none;
+            backdrop-filter: blur(2px);
         }
 
         .overlay.show {
             display: block;
         }
 
-        /* 4. Main Content */
+        /* 4. Main Content Area */
         main {
-            margin-top: 90px;
+            margin-top: 100px;
             padding: 20px;
-            max-width: 800px;
+            max-width: 900px;
             margin-left: auto;
             margin-right: auto;
-            margin-bottom: 100px;
         }
 
-        /* Search Block */
+        /* Search Section */
         .search-container {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-            border-top: 5px solid var(--mu-blue);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-top: 6px solid var(--mu-blue);
         }
 
         .search-container h2 {
             margin-bottom: 20px;
             color: var(--mu-blue);
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .form-group {
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
             margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-weight: 500;
             font-size: 0.9rem;
         }
 
         .form-group label .required {
-            color: red;
+            color: #e74c3c;
         }
 
         .form-control {
             width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+            padding: 10px 14px;
+            border: 1.5px solid #dcdde1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
         }
 
         .form-control:focus {
             outline: none;
             border-color: var(--mu-blue);
+            box-shadow: 0 0 0 3px rgba(0,51,102,0.15);
         }
 
         .btn-search {
@@ -255,41 +292,110 @@
             background-color: var(--mu-blue);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            font-weight: 500;
-            transition: background 0.3s;
-            margin-top: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-search:hover {
-            background-color: #002244;
+            background-color: #001f42;
+            box-shadow: 0 4px 12px rgba(0,51,102,0.25);
         }
 
-        /* Dev Block Placeholder */
+        /* Alumni Board (กระดานรายชื่อศิษย์เก่า) จะแสดงหลังจาก Login */
+        .board-container {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-top: 6px solid var(--mu-gold);
+            display: none; /* ซ่อนไว้ก่อนเข้าสู่ระบบ */
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 10px;
+        }
+
+        .board-header h3 {
+            color: var(--mu-blue);
+            font-size: 1.25rem;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .alumni-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .alumni-table th, .alumni-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #efefef;
+        }
+
+        .alumni-table th {
+            background-color: #f4f7fa;
+            color: var(--mu-blue);
+            font-weight: 600;
+        }
+
+        .btn-activate {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-activate:hover {
+            background-color: #27ae60;
+        }
+
+        /* Dev Block */
         .dev-block {
             background: #fff;
             border: 2px dashed #b8d4f0;
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
-            border-radius: 12px;
-            color: #888;
-            margin-bottom: 25px;
+            border-radius: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
         }
 
         /* Map Section */
         .map-container {
             background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
         }
 
         .map-container h3 {
             color: var(--mu-blue);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 1.1rem;
         }
 
@@ -297,13 +403,13 @@
             width: 100%;
             height: 350px;
             border: 0;
-            border-radius: 8px;
+            border-radius: 10px;
         }
 
         /* 5. Floating Action Button (FAB) */
         .fab-container {
             position: fixed;
-            bottom: 70px;
+            bottom: 75px;
             right: 25px;
             z-index: 98;
             display: flex;
@@ -312,13 +418,13 @@
         }
 
         .fab-main {
-            width: 150px;
+            width: 160px;
             height: 50px;
             background-color: #e74c3c;
             color: white;
             border-radius: 25px;
             border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
             cursor: pointer;
             font-weight: 500;
             display: flex;
@@ -326,11 +432,12 @@
             justify-content: center;
             gap: 8px;
             z-index: 2;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.2s;
         }
 
         .fab-main:hover {
             background-color: #c0392b;
+            transform: scale(1.03);
         }
 
         .fab-links {
@@ -352,8 +459,8 @@
             background: white;
             padding: 10px 18px;
             border-radius: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            font-size: 0.85rem;
             color: #555;
             cursor: not-allowed;
             white-space: nowrap;
@@ -363,25 +470,12 @@
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* เอฟเฟกต์เด้งโค้งลงมาทีละรายการ (Staggered Curve Animation) */
-        .fab-container.open .fab-item:nth-child(1) {
-            opacity: 1;
-            transform: translateY(65px) translateX(-15px) scale(1);
-            transition-delay: 0.1s;
-        }
-        .fab-container.open .fab-item:nth-child(2) {
-            opacity: 1;
-            transform: translateY(115px) translateX(-35px) scale(1);
-            transition-delay: 0.2s;
-        }
-        .fab-container.open .fab-item:nth-child(3) {
-            opacity: 1;
-            transform: translateY(165px) translateX(-65px) scale(1);
-            transition-delay: 0.3s;
-        }
+        .fab-container.open .fab-item:nth-child(1) { opacity: 1; transform: translateY(65px) translateX(-15px) scale(1); transition-delay: 0.1s; }
+        .fab-container.open .fab-item:nth-child(2) { opacity: 1; transform: translateY(115px) translateX(-35px) scale(1); transition-delay: 0.2s; }
+        .fab-container.open .fab-item:nth-child(3) { opacity: 1; transform: translateY(165px) translateX(-65px) scale(1); transition-delay: 0.3s; }
 
-        /* 6. Student Card Modal */
-        .modal {
+        /* 6. Modals & Popups System */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -394,134 +488,180 @@
             align-items: center;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s, visibility 0.3s;
+            transition: all 0.3s ease;
             padding: 20px;
+            backdrop-filter: blur(3px);
         }
 
-        .modal.show {
+        .modal-overlay.show {
             opacity: 1;
             visibility: visible;
         }
 
-        .student-card {
-            background: linear-gradient(145deg, #ffffff, #f0f4f8);
-            width: 100%;
-            max-width: 420px;
+        /* หน้าต่างล็อกอินย่อย */
+        .login-box {
+            background: white;
+            padding: 30px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-            overflow: hidden;
-            position: relative;
-            border: 2px solid var(--mu-blue);
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-top: 5px solid var(--mu-blue);
+            transform: scale(0.8);
+            transition: transform 0.3s;
         }
 
-        .card-header {
+        .modal-overlay.show .login-box {
+            transform: scale(1);
+        }
+
+        .login-box h3 {
+            margin-bottom: 15px;
+            color: var(--mu-blue);
+            text-align: center;
+        }
+
+        /* 💥 ปรับโจทย์: บัตรประจำตัวรูปทรงสี่เหลี่ยมผืนผ้าแนวนอน สัดส่วนพอดีเว็บ */
+        .student-card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            max-width: 100%;
+        }
+
+        .modal-overlay.show .student-card-wrapper {
+            transform: scale(1);
+        }
+
+        .student-card-horizontal {
+            background: var(--card-bg);
+            width: 500px;
+            height: 280px;
+            border-radius: 15px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            border: 3px solid var(--mu-blue);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            max-width: 100%; /* รองรับ Mobile Responsive */
+        }
+
+        .card-top {
             background-color: var(--mu-blue);
             color: white;
-            padding: 15px;
+            padding: 12px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 4px solid var(--mu-gold);
         }
 
-        .card-header .logo-area {
-            font-size: 0.85rem;
-            font-weight: 600;
+        .card-top-title {
+            font-size: 0.9rem;
+            font-weight: 700;
             letter-spacing: 0.5px;
         }
 
-        .card-body {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 110px;
-            gap: 15px;
-        }
-
-        .card-info {
+        .card-middle {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            padding: 15px 20px;
+            flex: 1;
+            gap: 20px;
+            align-items: center;
         }
 
-        .card-info h4 {
-            font-size: 1.15rem;
+        .card-details {
+            flex: 1;
+        }
+
+        .card-details .batch-tag {
+            font-size: 0.75rem;
             color: var(--mu-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .card-details h4 {
+            font-size: 1.3rem;
+            color: #1a252f;
             margin-bottom: 8px;
         }
 
-        .card-info p {
+        .card-details p {
             font-size: 0.85rem;
             color: #555;
             margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .card-photo {
-            width: 110px;
-            height: 140px;
-            background: #e1e8ed;
-            border: 2px solid #ccc;
+        /* รูปภาพอยู่ด้านขวาบนของเนื้อหาบัตร */
+        .card-right-photo {
+            width: 105px;
+            height: 135px;
+            background: #e2e8f0;
+            border: 2px solid #cbd5e1;
             border-radius: 6px;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #888;
+            color: #94a3b8;
             font-size: 2.5rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .card-footer-barcode {
+        .card-bottom-barcode {
             background: white;
-            padding: 15px;
+            padding: 10px;
             text-align: center;
-            border-top: 1px dashed #ccc;
+            border-top: 1px dashed #cbd5e1;
         }
 
-        /* จำลอง Barcode ด้วย CSS */
-        .barcode {
-            width: 80%;
-            height: 40px;
-            margin: 0 auto 5px auto;
-            background: linear-gradient(90deg, 
-                #000 0%, #000 5%, #fff 5%, #fff 10%, 
-                #000 10%, #000 12%, #fff 12%, #fff 15%,
-                #000 15%, #000 25%, #fff 25%, #fff 30%,
-                #000 30%, #000 32%, #fff 32%, #fff 40%,
-                #000 40%, #000 50%, #fff 50%, #fff 55%,
-                #000 55%, #000 58%, #fff 58%, #fff 65%,
-                #000 65%, #000 75%, #fff 75%, #fff 80%,
-                #000 80%, #000 85%, #fff 85%, #fff 90%,
-                #000 90%, #000 100%);
+        .barcode-line {
+            width: 75%;
+            height: 30px;
+            margin: 0 auto 3px auto;
+            background: linear-gradient(90deg, #000 0%, #000 7%, #fff 7%, #fff 12%, #000 12%, #000 15%, #fff 15%, #fff 18%, #000 18%, #000 30%, #fff 30%, #fff 34%, #000 34%, #000 38%, #fff 38%, #fff 44%, #000 44%, #000 56%, #fff 56%, #fff 60%, #000 60%, #000 64%, #fff 64%, #fff 72%, #000 72%, #000 84%, #fff 84%, #fff 88%, #000 88%, #000 100%);
         }
 
-        .barcode-num {
+        .barcode-text {
             font-size: 0.75rem;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
+            font-weight: 500;
         }
 
-        .btn-close-modal {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.2);
-            border: none;
+        /* 💥 ปรับโจทย์: ปุ่มกดปิดหน้าต่าง ย้ายมาอยู่ด้านล่างตัวบัตร */
+        .btn-card-close {
+            background-color: #34495e;
             color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: background 0.3s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
+            gap: 8px;
         }
 
-        .btn-close-modal:hover {
-            background: rgba(255,255,255,0.4);
+        .btn-card-close:hover {
+            background-color: #2c3e50;
         }
 
-        /* 7. Footer */
+        /* 7. Footer Bar */
         footer {
-            background-color: #222;
-            color: #aaa;
+            background-color: #1e272e;
+            color: #95a5a6;
             text-align: center;
             padding: 15px;
             font-size: 0.85rem;
@@ -529,15 +669,32 @@
             bottom: 0;
             width: 100%;
             border-top: 3px solid var(--mu-blue);
+            z-index: 90;
         }
 
-        /* Responsive */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive สำหรับมือถือ */
         @media(max-width: 600px) {
-            header h1 {
-                font-size: 0.85rem;
+            .brand-main { font-size: 0.95rem; }
+            .brand-sub { font-size: 0.75rem; }
+            .student-card-horizontal {
+                width: 100%;
+                height: auto;
             }
-            .splash-text { font-size: 1.3rem; }
-            .splash-subtext { font-size: 0.9rem; }
+            .card-middle {
+                flex-direction: column-reverse;
+                padding: 12px;
+                gap: 10px;
+            }
+            .card-right-photo {
+                width: 80px;
+                height: 100px;
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
@@ -550,92 +707,172 @@
     </div>
 
     <header>
-        <button class="menu-btn" id="menuToggleBtn" onclick="toggleSidebar()">
-            <i class="fas fa-bars"></i>
+        <div class="header-left">
+            <button class="menu-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="brand-title">
+                <span class="brand-main">โรงเรียนผู้ช่วยพยาบาล</span>
+                <span class="brand-sub">คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</span>
+            </div>
+        </div>
+        <button class="login-btn" onclick="openModal('loginModal')">
+            <i class="fas fa-user-lock"></i> เข้าสู่ระบบศิษย์เก่า
         </button>
-        <h1>โรงเรียนผู้ช่วยพยาบาลคณะแพทยศาสตร์ศิริราชพยาบาลมหาวิทยาลัยมหิดล</h1>
     </header>
 
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
     <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">เมนูการใช้งาน (6 รายการ)</div>
+        <div class="sidebar-header"><i class="fas fa-th-list"></i> เมนูระบบ (6 รายการ)</div>
         <ul class="sidebar-menu">
-            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 1</li>
-            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 2</li>
-            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 3</li>
-            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 4</li>
-            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 5</li>
-            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 6</li>
+            <li><i class="fas fa-circle-notch"></i> ระบบตรวจสอบวุฒิบัตร (ปิดปรับปรุง)</li>
+            <li><i class="fas fa-circle-notch"></i> ทะเบียนสมาคมศิษย์เก่า (ปิดปรับปรุง)</li>
+            <li><i class="fas fa-circle-notch"></i> กองทุนพัฒนาโรงเรียน (ปิดปรับปรุง)</li>
+            <li><i class="fas fa-circle-notch"></i> ข้อมูลข่าวสารกิจกรรม (ปิดปรับปรุง)</li>
+            <li><i class="fas fa-circle-notch"></i> คลังภาพความทรงจำรุ่น 74 (ปิดปรับปรุง)</li>
+            <li><i class="fas fa-circle-notch"></i> ติดต่อเจ้าหน้าที่ทะเบียน (ปิดปรับปรุง)</li>
         </ul>
     </nav>
 
     <main>
         <section class="search-container">
-            <h2><i class="fas fa-id-card"></i> ค้นหาข้อมูลนักศึกษา</h2>
-            <form id="searchForm" onsubmit="handleSearch(event)">
-                <div class="form-group">
-                    <label>ชื่อ - นามสกุล <span class="required">*</span></label>
-                    <input type="text" id="inputName" class="form-control" placeholder="กรอกชื่อ นามสกุล" required>
-                </div>
-                <div class="form-group">
-                    <label>SAP ID <span class="required">*</span></label>
-                    <input type="text" id="inputSap" class="form-control" placeholder="กรอก SAP ID (ทดสอบ: 6770649)" required>
-                </div>
-                <div class="form-group">
-                    <label>เลขประจำตัวนักศึกษา (ไม่บังคับ)</label>
-                    <input type="text" id="inputStudentId" class="form-control" placeholder="กรอกเลขประจำตัวนักศึกษา">
+            <h2><i class="fas fa-search-user" style="color:var(--mu-blue);"></i> ค้นหาประวัติตรวจสอบรายชื่อศิษย์เก่า รุ่น 74</h2>
+            <form id="searchForm" onsubmit="handlePublicSearch(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>ชื่อ - นามสกุล <span class="required">*</span></label>
+                        <input type="text" id="inputName" class="form-control" placeholder="เนติราช นิ่มเจริญวัฒนกุล" required>
+                    </div>
+                    <div class="form-group">
+                        <label>SAP ID <span class="required">*</span></label>
+                        <input type="text" id="inputSap" class="form-control" placeholder="6770649" required>
+                    </div>
+                    <div class="form-group">
+                        <label>เลขประจำตัวนักศึกษาเดิม</label>
+                        <input type="text" class="form-control" placeholder="กรอกเลขประจำตัว (ถ้ามี)">
+                    </div>
                 </div>
                 <button type="submit" class="btn-search">
-                    <i class="fas fa-search"></i> กดเพื่อค้นหา
+                    <i class="fas fa-search"></i> ค้นหาฐานข้อมูลศิษย์เก่า
                 </button>
             </form>
         </section>
 
+        <section class="board-container" id="alumniBoard">
+            <div class="board-header">
+                <h3><i class="fas fa-clipboard-list" style="color:var(--mu-gold)"></i> กระดานรายชื่อศิษย์เก่าสำเร็จการศึกษา [รุ่น 74]</h3>
+                <span style="font-size:0.8rem; background:#e8f4f8; padding:4px 10px; border-radius:12px; font-weight:600; color:var(--mu-blue)">พบ 3 รายชื่อจำลอง</span>
+            </div>
+            <div class="table-responsive">
+                <table class="alumni-table">
+                    <thead>
+                        <tr>
+                            <th>รหัสศิษย์เก่า</th>
+                            <th>ชื่อ - นามสกุล</th>
+                            <th>สาขา/รุ่น</th>
+                            <th>การจัดการระบบ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>6770649</strong></td>
+                            <td>เนติราช นิ่มเจริญวัฒนกุล</td>
+                            <td>Practical Nurse 74</td>
+                            <td><button class="btn-activate" onclick="actionAlumniName('6770649', 'เนติราช นิ่มเจริญวัฒนกุล')">กดเพื่อใช้งานในชื่อนี้</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>7400102</strong></td>
+                            <td>สมชาย รักเรียนดี</td>
+                            <td>Practical Nurse 74</td>
+                            <td><button class="btn-activate" onclick="actionAlumniName('7400102', 'สมชาย รักเรียนดี')">กดเพื่อใช้งานในชื่อนี้</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>7400103</strong></td>
+                            <td>นางสาวศิริราช พยาบาลดี</td>
+                            <td>Practical Nurse 74</td>
+                            <td><button class="btn-activate" onclick="actionAlumniName('7400103', 'นางสาวศิริราช พยาบาลดี')">กดเพื่อใช้งานในชื่อนี้</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="dev-block">
-            <i class="fas fa-code-branch" style="font-size: 2rem; margin-bottom: 10px; color: var(--mu-blue);"></i>
-            <p>พื้นที่บล็อกสำหรับนักพัฒนา [ระบบอื่นๆ กำลังถูกพัฒนาเพิ่มเติมในอนาคต]</p>
+            <i class="fas fa-laptop-code" style="font-size: 2rem; margin-bottom: 8px; color: var(--mu-blue);"></i>
+            <p style="font-weight:500;">[ พื้นที่พัฒนาต่อยอดโครงสร้างข้อมูลฐานข้อมูลศิษย์เก่า ]</p>
+            <p style="font-size:0.8rem; color:#95a5a6; margin-top:4px;">ระบบสามารถเชื่อมต่อ API ภายนอกเข้ากับฐานข้อมูลเซิร์ฟเวอร์จริงได้ในอนาคต</p>
         </section>
 
         <section class="map-container">
-            <h3><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> แผนที่ตั้งโรงเรียนผู้ช่วยพยาบาล</h3>
+            <h3><i class="fas fa-map-marked-alt" style="color: #e74c3c;"></i> แผนที่ตั้ง โรงเรียนผู้ช่วยพยาบาล ศิริราช</h3>
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.4526040854407!2d100.48332157589578!3d13.757619197305597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e299ae4404096b%3A0x608b49e6f883da4c!2z4Lio4Li54LiZ4Lia4Liy4Lil4LiZ4Liy4LiH4LmE4LiX4LmI4LiZ4LiV4Lix4LiU4LiZ4Liy4LiX4Lij4Lix4LiB4Liy4Lil4LiZ4LiH4Lii4LiZ4Liy4LiH4Lih4Lir4Liy4Lil4LiZ4LmI4Liy4Lih4Lir4LiZ4LmI4Liy4LiH!5e0!3m2!1sth!2sth!4v1710000000000!5m2!1sth!2sth" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </section>
     </main>
 
     <div class="fab-container" id="fabContainer">
         <button class="fab-main" onclick="toggleFab()">
-            <i class="fas fa-comment-alt"></i> ต้องการความช่วยเหลือ
+            <i class="fas fa-hands-helping"></i> ต้องการความช่วยเหลือ
         </button>
         <div class="fab-links">
-            <div class="fab-item"><i class="fab fa-line" style="color:#06C755;"></i> เพิ่มเพื่อนไลน์ (เร็วๆ นี้)</div>
-            <div class="fab-item"><i class="fas fa-globe" style="color:var(--mu-blue);"></i> หน้าเว็ปไซต์หลักโรงเรียน (เร็วๆ นี้)</div>
-            <div class="fab-item"><i class="fas fa-users" style="color:var(--mu-gold);"></i> ค้นหารายชื่อเพื่อนในรุ่น (เร็วๆ นี้)</div>
+            <div class="fab-item"><i class="fab fa-line" style="color:#06C755;"></i> เพิ่มเพื่อนไลน์ (ระบบยังไม่เปิด)</div>
+            <div class="fab-item"><i class="fas fa-globe" style="color:var(--mu-blue);"></i> หน้าเว็ปไซต์หลักโรงเรียน (ระบบยังไม่เปิด)</div>
+            <div class="fab-item"><i class="fas fa-users" style="color:var(--mu-gold);"></i> ค้นหารายชื่อเพื่อนในรุ่น (ระบบยังไม่เปิด)</div>
         </div>
     </div>
 
-    <div class="modal" id="studentModal">
-        <div class="student-card">
-            <button class="btn-close-modal" onclick="closeModal()">&times;</button>
-            <div class="card-header">
-                <div class="logo-area"><i class="fas fa-university"></i> MAHIDOL UNIVERSITY</div>
-                <span style="font-size: 0.8rem; background: var(--mu-gold); color: #000; padding: 2px 6px; border-radius: 4px; font-weight:600;">STUDENT</span>
+    <div class="modal-overlay" id="loginModal">
+        <div class="login-box">
+            <h3>เข้าสู่ระบบศิษย์เก่า</h3>
+            <p style="font-size:0.8rem; color:#7f8c8d; text-align:center; margin-bottom:15px;">กรอกรหัสประจำตัวศิษย์เก่าเพื่อเปิดใช้งานกระดานรายชื่อ</p>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>รหัสประจำตัวเก่า (SAP ID) <span class="required">*</span></label>
+                <input type="text" id="oldIdInput" class="form-control" placeholder="ทดสอบใช้รหัส: 6770649" required>
             </div>
-            <div class="card-body">
-                <div class="card-info">
-                    <span style="font-size:0.75rem; color:var(--mu-blue); font-weight:600; display:block; margin-bottom:5px;">Mahidol Practical Nurse 74</span>
-                    <h4 id="resName">เนติราช นิ่มเจริญวัฒนกุล</h4>
-                    <p id="resSap"><strong>SAP ID:</strong> 6770649</p>
-                    <p><strong>เบอร์โทร:</strong> 081-XXX-XXXX</p>
-                    <p><strong>อีเมล:</strong> netiraj.nim@mahidol.ac.th</p>
+            <button class="btn-search" onclick="submitLogin()">ยืนยันเข้าสู่ระบบ</button>
+            <button class="form-control" style="margin-top:8px; background:#f1f2f6; border:none; cursor:pointer;" onclick="closeModal('loginModal')">ยกเลิก</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="passwordModal">
+        <div class="login-box" style="border-top-color: var(--mu-gold);">
+            <h3 id="pwdModalTitle">ตั้งรหัสผ่านคีย์การ์ด</h3>
+            <p id="pwdModalDesc" style="font-size:0.8rem; color:#7f8c8d; text-align:center; margin-bottom:15px;"></p>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>กรอกรหัสผ่านของคุณ</label>
+                <input type="password" id="securePasswordInput" class="form-control" placeholder="กรอกรหัสผ่านตรงนี้" required>
+            </div>
+            <button class="btn-search" style="background-color:var(--mu-gold); color:#000;" onclick="verifyOrSetPassword()">ตกลงดำเนินการ</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="cardModal">
+        <div class="student-card-wrapper">
+            <div class="student-card-horizontal">
+                <div class="card-top">
+                    <div class="card-top-title"><i class="fas fa-graduation-cap"></i> MAHIDOL UNIVERSITY ALUMNI</div>
+                    <span style="font-size: 0.75rem; background: var(--mu-gold); color: #000; padding: 2px 8px; border-radius: 4px; font-weight:700;">ศิษย์เก่า</span>
                 </div>
-                <div class="card-photo">
-                    <i class="fas fa-user-nurse"></i>
+                <div class="card-middle">
+                    <div class="card-details">
+                        <span class="batch-tag">Mahidol Practical Nurse 74</span>
+                        <h4 id="cardName">เนติราช นิ่มเจริญวัฒนกุล</h4>
+                        <p><strong>SAP ID:</strong> <span id="cardSap">6770649</span></p>
+                        <p><i class="fas fa-phone" style="color:#2ecc71; font-size:0.8rem;"></i> 081-XXX-XXXX</p>
+                        <p><i class="fas fa-envelope" style="color:#3498db; font-size:0.8rem;"></i> netiraj.nim@mahidol.ac.th</p>
+                    </div>
+                    <div class="card-right-photo">
+                        <i class="fas fa-user-nurse"></i>
+                    </div>
+                </div>
+                <div class="card-bottom-barcode">
+                    <div class="barcode-line"></div>
+                    <div class="barcode-text" id="cardBarcode">6770649</div>
                 </div>
             </div>
-            <div class="card-footer-barcode">
-                <div class="barcode"></div>
-                <div class="barcode-num" id="resBarcode">6770649</div>
-            </div>
+            
+            <button class="btn-card-close" onclick="closeModal('cardModal')">
+                <i class="fas fa-times-circle"></i> ปิดหน้าต่างแสดงบัตร
+            </button>
         </div>
     </div>
 
@@ -644,55 +881,118 @@
     </footer>
 
     <script>
-        // ควบคุมการปิด Splash Screen หลังเข้าเว็บ 2.5 วินาที
+        // ระบบจำลองฐานข้อมูลรหัสผ่านใน Browser (ลอจิก ตั้งรหัสผ่านครั้งแรก และกรอกในครั้งถัดไป)
+        let passwordsDatabase = {}; 
+        let activeSelectingId = "";
+        let activeSelectingName = "";
+
+        // ควบคุมปิด Splash Screen อัตโนมัติ (2.5 วินาที)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                splash.classList.add('fade-out');
+                if(splash) splash.classList.add('fade-out');
             }, 2500);
         });
 
-        // เปิด-ปิด Sidebar เมนู 3 ขีด
+        // เปิด-ปิด Sidebar (เมนู 3 ขีด)
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('show');
         }
 
-        // เปิด-ปิด ปุ่มลอย FAB (ต้องการความช่วยเหลือ)
+        // เปิด-ปิด เมนูปุ่มช่วยเหลือลอยตัว (FAB Curve Effect)
         function toggleFab() {
-            const fabContainer = document.getElementById('fabContainer');
-            fabContainer.classList.toggle('open');
+            document.getElementById('fabContainer').classList.toggle('open');
         }
 
-        // ระบบจำลองการค้นหา
-        function handleSearch(event) {
-            event.preventDefault();
-            
-            const nameInput = document.getElementById('inputName').value.trim();
-            const sapInput = document.getElementById('inputSap').value.trim();
+        // ฟังก์ชันเปิด/ปิดหน้าต่าง Modal ทั่วไป
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
 
-            // ข้อมูลจำลองตามที่โจทย์กำหนด
-            const mockSap = "6770649";
-            const mockName = "เนติราช นิ่มเจริญวัฒนกุล";
-
-            if (sapInput === mockSap && nameInput === mockName) {
-                // อัปเดตข้อมูลลงบนบัตร
-                document.getElementById('resName').innerText = mockName;
-                document.getElementById('resSap').innerHTML = `<strong>SAP ID:</strong> ${mockSap}`;
-                document.getElementById('resBarcode').innerText = mockSap;
-                
-                // เปิดตัว Modal บัตรนักศึกษา
-                document.getElementById('studentModal').classList.add('show');
+        // 1. ระบบยืนยัน Login ด้วยรหัสประจำตัวเก่าอย่างเดียว
+        function submitLogin() {
+            const oldId = document.getElementById('oldIdInput').value.trim();
+            if(oldId === "6770649") {
+                closeModal('loginModal');
+                // แสดงกระดานรายชื่อศิษย์เก่าทันที
+                document.getElementById('alumniBoard').style.display = 'block';
+                // Scroll เบาๆ ลงมาหากระดานรายชื่อ
+                document.getElementById('alumniBoard').scrollIntoView({ behavior: 'smooth' });
             } else {
-                alert("ไม่พบข้อมูลนักศึกษาในระบบทดลอง (กรุณาใช้ ชื่อ: เนติราช นิ่มเจริญวัฒนกุล และ SAP ID: 6770649 สำหรับการทดสอบ)");
+                alert("ระบุรหัสประจำตัวเก่าไม่ถูกต้อง! (สำหรับทดสอบระบบกรุณาพิมพ์: 6770649)");
             }
         }
 
-        // ปิด Modal บัตรนักศึกษา
-        function closeModal() {
-            document.getElementById('studentModal').classList.remove('show');
+        // 2. เมื่อกดปุ่ม "กดเพื่อใช้งานในชื่อนี้" ในกระดานรายชื่อ
+        function actionAlumniName(id, name) {
+            activeSelectingId = id;
+            activeSelectingName = name;
+            document.getElementById('securePasswordInput').value = ""; // เคลียร์ช่องกรอกเก่า
+
+            // ตรวจสอบว่า ID นี้เคยตั้งรหัสผ่านครั้งแรกไปหรือยัง
+            if (!passwordsDatabase[id]) {
+                // เคสใช้งานครั้งแรก -> ให้ตั้งรหัสผ่าน
+                document.getElementById('pwdModalTitle').innerText = "ตั้งรหัสผ่านเริ่มต้น";
+                document.getElementById('pwdModalDesc').innerText = `คุณกำลังลงทะเบียนเข้าใช้งานในชื่อ "${name}" กรุณาตั้งรหัสผ่านสำหรับการเข้าใช้งานในครั้งถัดไป`;
+            } else {
+                // เคสใช้งานครั้งถัดไป -> ต้องกรอกรหัสเดิมที่ตั้งไว้
+                document.getElementById('pwdModalTitle').innerText = "ยืนยันรหัสผ่านเข้าใช้งาน";
+                document.getElementById('pwdModalDesc').innerText = `ชื่อนี้ผ่านการตั้งรหัสผ่านแล้ว กรุณากรอกรหัสผ่านที่คุณตั้งไว้ครั้งแรกเพื่อเข้าถึงบัตรประจำตัว`;
+            }
+            openModal('passwordModal');
+        }
+
+        // 3. ฟังก์ชันประมวลผลการตั้งรหัสครั้งแรก / หรือตรวจสอบรหัสครั้งถัดไป
+        function verifyOrSetPassword() {
+            const pwdInput = document.getElementById('securePasswordInput').value.trim();
+            if(!pwdInput) {
+                alert("กรุณากรอกรหัสผ่านก่อนดำเนินการครับ");
+                return;
+            }
+
+            if (!passwordsDatabase[activeSelectingId]) {
+                // บันทึกรหัสผ่านครั้งแรก
+                passwordsDatabase[activeSelectingId] = pwdInput;
+                alert("ตั้งรหัสผ่านของคุณเรียบร้อยแล้ว! ระบบจะนำไปแสดงผลหน้าบัตรประจำตัว (ครั้งถัดไปชื่อนี้จะล็อกรหัสนี้ทันที)");
+                showAlumniCard(activeSelectingId, activeSelectingName);
+            } else {
+                // ตรวจสอบรหัสผ่านครั้งถัดไป
+                if(passwordsDatabase[activeSelectingId] === pwdInput) {
+                    showAlumniCard(activeSelectingId, activeSelectingName);
+                } else {
+                    alert("รหัสผ่านไม่ถูกต้อง! ไม่สามารถเปิดสิทธิ์ใช้งานชื่อนี้ได้");
+                }
+            }
+        }
+
+        // 4. ฟังก์ชันเปิดการแสดงผลหน้าบัตรศิษย์เก่า (สี่เหลี่ยมผืนผ้าแนวนอน)
+        function showAlumniCard(id, name) {
+            closeModal('passwordModal');
+            
+            // แมปปิ้งข้อมูลแสดงบนบัตรตาม ID จริง
+            document.getElementById('cardName').innerText = name;
+            document.getElementById('cardSap').innerText = id;
+            document.getElementById('cardBarcode').innerText = id;
+            
+            // เปิดแสดงหน้าต่างบัตร
+            openModal('cardModal');
+        }
+
+        // 5. ระบบฟอร์มค้นหาด่วนแบบ Public ด้านบนสุด
+        function handlePublicSearch(event) {
+            event.preventDefault();
+            const name = document.getElementById('inputName').value.trim();
+            const sap = document.getElementById('inputSap').value.trim();
+
+            if(sap === "6770649" && name === "เนติราช นิ่มเจริญวัฒนกุล") {
+                showAlumniCard(sap, name);
+            } else {
+                alert("ไม่พบข้อมูลศิษย์เก่าศิริราชในระบบทดลองภายนอก (แนะนำใช้ชื่อ: เนติราช นิ่มเจริญวัฒนกุล และ SAP: 6770649 หรือลองใช้ปุ่มเข้าสู่ระบบมุมขวาเพื่อเข้าใช้งานผ่านระบบกระดานรายชื่อ)");
+            }
         }
     </script>
 </body>
