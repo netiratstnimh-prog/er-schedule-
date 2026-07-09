@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ปิดการใช้งานระบบชั่วคราว - ศิษย์เก่า รุ่น 74</title>
+    <title>ระบบปิดการใช้งานชั่วคราว - ศิษย์เก่า รุ่น 74</title>
+    <!-- FontAwesome สำหรับ Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Prompt) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -13,7 +15,7 @@
         :root {
             --mu-blue: #003366;
             --mu-gold: #F1B434;
-            --bg-dark: #0a111a;
+            --glow-color: rgba(241, 180, 52, 0.6);
         }
 
         * {
@@ -24,7 +26,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #050c14 0%, #001f42 100%);
+            background: #02070f;
             color: white;
             height: 100vh;
             display: flex;
@@ -32,25 +34,67 @@
             justify-content: space-between;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
 
+        /* ==========================================
+           ลูกเล่น Background Animation (คลื่นแสงเคลื่อนไหว)
+           ========================================== */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,51,102,0.3) 0%, transparent 60%),
+                        radial-gradient(circle, rgba(241,180,52,0.05) 0%, transparent 50%);
+            animation: rotateBg 20s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* แอนิเมชันละอองไฟลอย (Particles Backdrop) */
+        .particle-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle 8s infinite linear;
+        }
+
+        /* ==========================================
+           Layout Layout Structure
+           ========================================== */
+        
         /* 1. แถบบน: นาฬิกาดิจิตอลเรียลไทม์ตัวใหญ่ยักษ์ */
         .top-time-bar {
             width: 100%;
-            background: rgba(0, 51, 102, 0.4);
-            backdrop-filter: blur(10px);
-            border-bottom: 3px solid var(--mu-gold);
+            background: rgba(0, 51, 102, 0.5);
+            backdrop-filter: blur(15px);
+            border-bottom: 4px solid var(--mu-gold);
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            z-index: 10;
         }
 
         #digital-clock {
-            font-size: 3.5rem;
+            font-size: 3.8rem;
             font-weight: 700;
             color: #ffffff;
             letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4), 0 0 40px rgba(241, 180, 52, 0.2);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 0 30px var(--mu-gold);
         }
 
         .time-label {
@@ -58,11 +102,11 @@
             color: var(--mu-gold);
             text-transform: uppercase;
             letter-spacing: 4px;
-            margin-top: -5px;
+            margin-top: -3px;
             font-weight: 600;
         }
 
-        /* 2. ตรงกลาง: สัญลักษณ์ตัวใหญ่ๆ พร้อมข้อความแจ้งเตือน */
+        /* 2. ตรงกลาง: สัญลักษณ์และข้อความตามสั่ง */
         .center-status-zone {
             text-align: center;
             display: flex;
@@ -71,102 +115,163 @@
             justify-content: center;
             padding: 20px;
             flex: 1;
+            z-index: 10;
         }
 
-        /* ลูกเล่นแอนิเมชันพัลส์เรืองแสงที่ตัวสัญลักษณ์ */
+        /* สัญลักษณ์ตัวใหญ่ๆ พร้อมลูกเล่นขยับแบบสั่นสะเทือน/หมุนเอฟเฟกต์ */
         .giant-status-icon {
-            font-size: 8rem;
+            font-size: 8.5rem;
             color: var(--mu-gold);
             margin-bottom: 25px;
-            filter: drop-shadow(0 0 15px rgba(241, 180, 52, 0.6));
-            animation: iconPulse 2s infinite ease-in-out;
+            filter: drop-shadow(0 0 25px var(--glow-color));
+            animation: iconFloat 4s infinite ease-in-out;
         }
 
         .status-title {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 700;
             letter-spacing: 1px;
             color: #ffffff;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .status-subtitle {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.6);
-            font-weight: 300;
+            font-size: 1.3rem;
+            color: #e74c3c; /* สีแดงสว่างเพื่อให้เด่นชัด */
+            font-weight: 600;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 8px 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            display: inline-block;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.1);
+            animation: blinkText 2.5s infinite ease-in-out;
         }
 
-        /* 3. แถบล่าง: ข้อความตามสั่ง */
+        /* 3. แถบล่าง: ข้อความอำลา */
         .bottom-farewell-bar {
             width: 100%;
-            background: #04090f;
-            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            background: #03060a;
+            border-top: 2px solid rgba(255, 255, 255, 0.08);
             padding: 25px;
             text-align: center;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.6);
+            z-index: 10;
         }
 
         .farewell-text {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 255, 255, 0.9);
             letter-spacing: 1.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
 
-        /* Keyframes สำหรับลูกเล่นขยับผ่อนคลายของไอคอน */
-        @keyframes iconPulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(241, 180, 52, 0.5)); }
-            50% { transform: scale(1.06); filter: drop-shadow(0 0 35px rgba(241, 180, 52, 0.9)); color: #ffffff; }
-            100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(241, 180, 52, 0.5)); }
+        /* ==========================================
+           Keyframes แอนิเมชันลูกเล่นเคลื่อนไหว
+           ========================================== */
+        @keyframes rotateBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes iconFloat {
+            0% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 20px var(--glow-color)); }
+            50% { transform: translateY(-15px) rotate(3deg); filter: drop-shadow(0 0 40px rgba(241, 180, 52, 0.9)); }
+            100% { transform: translateY(0px) rotate(0deg); filter: drop-shadow(0 0 20px var(--glow-color)); }
+        }
+
+        @keyframes blinkText {
+            0%, 100% { opacity: 0.85; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); color: #ff6b6b; box-shadow: 0 0 25px rgba(231, 76, 60, 0.3); }
+        }
+
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
         /* Responsive สำหรับหน้าจอมือถือ */
         @media(max-width: 600px) {
-            #digital-clock { font-size: 2.5rem; }
+            #digital-clock { font-size: 2.6rem; }
             .giant-status-icon { font-size: 6rem; }
-            .status-title { font-size: 1.4rem; }
+            .status-title { font-size: 1.6rem; }
+            .status-subtitle { font-size: 1rem; padding: 6px 18px; }
             .farewell-text { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
 
+    <!-- พื้นหลังเอฟเฟกต์ละอองไฟลอยเคลื่อนไหวแบบโมเดิร์น -->
+    <div class="particle-container" id="particles"></div>
+
+    <!-- แถบบน: เวลาเรียลไทม์ดิจิตอลตัวใหญ่ -->
     <div class="top-time-bar">
         <div id="digital-clock">00:00:00</div>
         <div class="time-label">Real-Time Digital Clock</div>
     </div>
 
+    <!-- ตรงกลาง: สัญลักษณ์และข้อความตามสั่ง -->
     <div class="center-status-zone">
+        <!-- สัญลักษณ์ตัวล็อกเกราะป้องกันขนาดใหญ่ -->
         <div class="giant-status-icon">
-            <i class="fas fa-shield-lock"></i>
+            <i class="fas fa-ban"></i>
         </div>
-        <h1 class="status-title">ระบบฐานข้อมูลศิษย์เก่า รุ่น 74</h1>
-        <p class="status-subtitle">ปิดการใช้งานระบบชั่วคราวเรียบร้อยแล้ว</p>
+        <h1 class="status-title">ระบบปิดการใช้งานชั่วคราว</h1>
+        <div class="status-subtitle">ขออภัยในความไม่สะดวก</div>
     </div>
 
+    <!-- แถบล่าง: ข้อความอำลา -->
     <div class="bottom-farewell-bar">
         <div class="farewell-text">แล้วพบกันใหม่ @2024</div>
     </div>
 
+    <!-- JavaScript สำหรับลอจิกเวลา และ สุ่มสร้างเอฟเฟกต์ละอองลอยเคลื่อนไหว -->
     <script>
+        // 1. ฟังก์ชันนาฬิกาเรียลไทม์
         function updateRealTimeClock() {
             const clockElement = document.getElementById('digital-clock');
             const now = new Date();
-            
-            // ดึงเวลา ชั่วโมง:นาที:วินาที และแปลงเป็นเลข 2 หลักเสมอ
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
-            
-            // แสดงผลลงหน้าเว็บ
             clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
-
-        // ตั้งค่าให้ฟังก์ชันทำงานในทุกๆ 1 วินาที (1000 มิลลิวินาที)
         setInterval(updateRealTimeClock, 1000);
-        
-        // เรียกใช้งานทันทีที่โหลดหน้าเว็บครั้งแรกเพื่อไม่ให้เกิดการหน่วงเวลา
         updateRealTimeClock();
+
+        // 2. ฟังก์ชันสร้างเอฟเฟกต์ละอองไฟ (Dynamic Particles Background)
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 20; // จำนวนเม็ดละอองลอยบนหน้าจอ
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // สุ่มขนาดของละออง
+                const size = Math.random() * 5 + 2; 
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // สุ่มตำแหน่งเริ่มต้นตามแนวนอน
+                particle.style.left = `${Math.random() * 100}%`;
+                
+                // สุ่มระยะเวลาหน่วงและเวลาในการเคลื่อนที่เพื่อไม่ให้ลอยพร้อมกันหมด
+                particle.style.animationDuration = `${Math.random() * 6 + 6}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                
+                // สุ่มสีโทนทอง/ฟ้า/ขาวจางๆ ให้เข้าธีมมหิดล
+                const colors = ['#ffffff', '#F1B434', '#003366'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
     </script>
 </body>
 </html>
