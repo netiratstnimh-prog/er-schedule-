@@ -3,119 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงทะเบียนพยาบาล / ผู้บริบาลหางานเฝ้าไข้</title>
-    <!-- ใช้ Tailwind CSS สำหรับตกแต่งหน้าตาเว็บ -->
+    <title>ระบบลงทะเบียนบุคลากรการพยาบาลและผู้บริบาล (Nurse Verification Platform)</title>
+    <!-- Tailwind CSS & Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
-    <div class="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full border border-gray-100">
-        <!-- หัวข้อ -->
-        <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-blue-600 mb-2">ลงทะเบียนเข้ากลุ่มหางาน</h1>
-            <p class="text-gray-500 text-sm">เพื่อป้องกันมิจฉาชีพ ระบบจำเป็นต้องตรวจสอบใบประกอบวิชาชีพก่อนเข้ากลุ่มพูดคุย</p>
+    <!-- Header / Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg font-bold text-lg tracking-wider">NVP</div>
+                <div>
+                    <span class="font-bold text-slate-900 block leading-tight">Nurse Verification</span>
+                    <span class="text-xs text-slate-500">ระบบคัดกรองพยาบาลและผู้บริบาลเพื่อความปลอดภัย</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 text-xs bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full font-medium border border-emerald-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>ระบบรักษาความปลอดภัย SSL Active</span>
+            </div>
         </div>
+    </header>
 
-        <!-- ฟอร์มลงทะเบียน -->
-        <form id="registerForm" class="space-y-5">
-            
-            <!-- ชื่อ-นามสกุล -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">ชื่อ - นามสกุลจริง *</label>
-                <input type="text" id="fullname" required 
-                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                    placeholder="นาย/นาง/นางสาว ดีใจ เกิดมาดี">
-            </div>
-
-            <!-- เบอร์โทรศัพท์ -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">เบอร์โทรศัพท์ที่ติดต่อได้ *</label>
-                <input type="tel" id="phone" required pattern="[0-9]{10}"
-                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                    placeholder="0812345678">
-            </div>
-
-            <!-- เลขที่ใบประกอบวิชาชีพ -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">เลขที่ใบอนุญาตประกอบวิชาชีพ *</label>
-                <input type="text" id="licenseNo" required 
-                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                    placeholder="เช่น 6011xxxxxx">
-            </div>
-
-            <!-- อัปโหลดรูปภาพใบประกอบ -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">แนบรูปถ่ายใบประกอบวิชาชีพ *</label>
-                <p class="text-xs text-amber-600 mb-2">⚠️ แนะนำให้เขียนลายน้ำทับว่า "ใช้สำหรับสมัครเข้ากลุ่มงานเฝ้าไข้เท่านั้น"</p>
-                <div class="flex items-center justify-center w-full">
-                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                            <p class="text-sm text-gray-500"><span class="font-semibold">คลิกเพื่ออัปโหลดรูปภาพ</span></p>
-                            <p class="text-xs text-gray-400">PNG, JPG (ไม่เกิน 5MB)</p>
-                        </div>
-                        <input type="file" id="licenseImage" accept="image/*" required class="hidden" />
-                    </label>
-                </div>
-                <!-- แสดงชื่อไฟล์ที่เลือก -->
-                <div id="fileNameDisplay" class="text-sm text-gray-600 mt-2 hidden"></div>
-            </div>
-
-            <!-- ข้อตกลงความปลอดภัย (PDPA) -->
-            <div class="flex items-start">
-                <div class="flex items-center h-5">
-                    <input type="checkbox" id="privacyAgree" required class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                </div>
-                <div class="ml-3 text-xs text-gray-500">
-                    <label for="privacyAgree">ฉันยินยอมให้ผู้ดูแลระบบตรวจสอบข้อมูลเพื่อความปลอดภัย และข้อมูลนี้จะถูกเก็บเป็นความลับ</label>
-                </div>
-            </div>
-
-            <!-- ปุ่มส่งข้อมูล -->
-            <button type="submit" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition shadow-md hover:shadow-lg">
-                ส่งข้อมูลเพื่อขออนุมัติเข้ากลุ่ม
-            </button>
-        </form>
-
-        <!-- ข้อความเมื่อส่งสำเร็จ -->
-        <div id="successMessage" class="hidden text-center py-8 space-y-4">
-            <div class="w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto text-3xl font-bold">✓</div>
-            <h2 class="text-xl font-bold text-gray-800">ส่งข้อมูลสำเร็จ!</h2>
-            <p class="text-gray-500 text-sm">แอดมินกำลังตรวจสอบใบประกอบวิชาชีพของท่าน หากถูกต้อง ลิงก์เข้ากลุ่มแชทส่งงานจะถูกส่งให้ท่านทันที</p>
-        </div>
-    </div>
-
-    <script>
-        // แสดงชื่อไฟล์เมื่อผู้ใช้เลือกรูป
-        const fileInput = document.getElementById('licenseImage');
-        const fileDisplay = document.getElementById('fileNameDisplay');
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-12 flex flex-col md:flex-row gap-8 items-start">
         
-        fileInput.addEventListener('change', (e) => {
-            if(e.target.files.length > 0) {
-                fileDisplay.textContent = `ไฟล์ที่เลือก: ${e.target.files[0].name}`;
-                fileDisplay.classList.remove('hidden');
+        <!-- Left Side: ข้อมูลความน่าเชื่อถือ / คำชี้แจง -->
+        <div class="w-full md:w-5/12 space-y-6 md:sticky md:top-24">
+            <div class="bg-gradient-to-br from-blue-700 to-indigo-800 text-white p-6 rounded-2xl shadow-xl">
+                <h2 class="text-xl font-bold mb-4">มาตรการรักษาความปลอดภัยขั้นสูง</h2>
+                <p class="text-blue-100 text-sm leading-relaxed mb-6">
+                    แพลตฟอร์มนี้จัดตั้งขึ้นเพื่อยกระดับมาตรฐานวิชาชีพงานเฝ้าไข้ และปกป้องสมาชิกจากการแอบอ้างและการทุจริตของมิจฉาชีพ
+                </p>
+                <ul class="space-y-3 text-sm text-blue-50">
+                    <li class="flex items-start gap-2.5">
+                        <span class="text-emerald-400 font-bold">✓</span>
+                        <span>ตรวจสอบเอกสารโดยเจ้าหน้าที่ (Manual Review) ทุกเคส</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="text-emerald-400 font-bold">✓</span>
+                        <span>เทียบฐานข้อมูลตรงกับสภาการพยาบาล</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                        <span class="text-emerald-400 font-bold">✓</span>
+                        <span>จัดเก็บข้อมูลตามกฎหมาย PDPA มิดชิดเป็นความลับ</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 text-sm text-amber-900">
+                <h4 class="font-bold flex items-center gap-2 mb-2 text-amber-800">
+                    ⚠️ คำแนะนำการส่งหลักฐานความปลอดภัย
+                </h4>
+                <p class="leading-relaxed text-amber-700">
+                    โปรดถ่ายรูปใบอนุญาตประกอบวิชาชีพพยาบาล หรือใบรับรองการฝึกอบรมผู้บริบาลให้ชัดเจน <strong class="text-amber-900">ท่านสามารถเขียนลายน้ำทับ</strong> (Watermark) ว่า <em class="not-italic bg-amber-100 px-1 font-semibold">"ใช้ตรวจสอบเข้ากลุ่มหางานเท่านั้น"</em> เพื่อความปลอดภัยสูงสุดของข้อมูลท่าน
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Side: ฟอร์มลงทะเบียน -->
+        <div class="w-full md:w-7/12 bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8">
+            
+            <form id="secureRegisterForm" class="space-y-6">
+                <h3 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">แบบฟอร์มยื่นความประสงค์เข้ากลุ่มวิชาชีพ</h3>
+                
+                <!-- ข้อมูลบุคคล -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">ชื่อจริง (ไม่ต้องระบุคำนำหน้า) *</label>
+                        <input type="text" id="firstname" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">นามสกุลจริง *</label>
+                        <input type="text" id="lastname" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-sm">
+                    </div>
+                </div>
+
+                <!-- ช่องทางติดต่อ & การตรวจสอบความปลอดภัยขั้นต้น -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">หมายเลขโทรศัพท์มือถือ *</label>
+                    <input type="tel" id="phoneNumber" required placeholder="เช่น 0812345678"
+                        class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-sm">
+                    <p id="phoneError" class="text-xs text-rose-600 mt-1 hidden">กรุณากรอกหมายเลขโทรศัพท์มือถือ 10 หลักให้ถูกต้อง</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">เลขที่ใบอนุญาตประกอบวิชาชีพ / เลขประจำตัวผู้บริบาล *</label>
+                    <input type="text" id="licenseId" required placeholder="ระบุเฉพาะตัวเลขหรือรหัสวิชาชีพหลัก"
+                        class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-sm">
+                </div>
+
+                <!-- พื้นที่อัปโหลดเอกสาร -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">เอกสารยืนยันตน (ใบประกอบวิชาชีพ / ใบรับรองงาน) *</label>
+                    <span class="text-[11px] text-slate-400 block mb-2">รองรับไฟล์รูปภาพ JPG, PNG หรือ PDF ขนาดไม่เกิน 5 MB</span>
+                    
+                    <div id="dropZone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-6 text-center cursor-pointer bg-slate-50 hover:bg-blue-50/30 transition">
+                        <input type="file" id="fileUpload" accept="image/jpeg, image/png, application/pdf" class="hidden" required>
+                        <svg class="mx-auto h-8 w-8 text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="text-sm font-medium text-slate-700 block">กดคลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวางที่นี่</span>
+                    </div>
+                    <p id="fileError" class="text-xs text-rose-600 mt-1 hidden">ประเภทไฟล์ไม่ถูกต้อง หรือไฟล์มีขนาดใหญ่เกิน 5MB</p>
+                    <div id="fileSuccess" class="text-xs text-emerald-600 mt-1 font-medium hidden"></div>
+                </div>
+
+                <!-- การยินยอมข้อมูล PDPA -->
+                <div class="flex items-start bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <div class="flex items-center h-5">
+                        <input type="checkbox" id="pdpaConsent" required class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
+                    </div>
+                    <div class="ml-3 text-xs leading-relaxed text-slate-500">
+                        <label for="pdpaConsent" class="cursor-pointer">
+                            ข้าพเจ้ายินยอมให้ระบบบันทึกและประมวลผลข้อมูลส่วนบุคคลเพื่อใช้วัตถุประสงค์ในการตรวจสอบสถานะวิชาชีพ และยืนยันความปลอดภัยในคอมมูนิตี้หางานเท่านั้น
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ปุ่ม Submit -->
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-3 px-4 rounded-lg shadow-sm hover:shadow transition duration-200">
+                    ส่งข้อมูลเข้าสู่ระบบตรวจสอบความปลอดภัย
+                </button>
+            </form>
+
+            <!-- กล่องข้อความเมื่อส่งสำเร็จ -->
+            <div id="secureSuccessBox" class="hidden py-12 text-center space-y-4">
+                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900">รับข้อมูลเข้าระบบเรียบร้อยแล้ว</h3>
+                <p class="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
+                    เจ้าหน้าที่กำลังดำเนินการตรวจสอบชื่อและการจดทะเบียนวิชาชีพของท่าน หากผ่านการอนุมัติ ระบบจะส่งลิงก์เชิญเข้ากลุ่มงานเฝ้าไข้ให้ท่านทันที
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
+        &copy; 2026 Nurse Verification Platform. All rights reserved. Secure Community System.
+    </footer>
+
+    <!-- Logic การตรวจสอบความปลอดภัยฝั่ง Client -->
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileError = document.getElementById('fileError');
+        const fileSuccess = document.getElementById('fileSuccess');
+        const phoneNumber = document.getElementById('phoneNumber');
+        const phoneError = document.getElementById('phoneError');
+
+        // ฟังก์ชันล้างค่าข้อความหลงเหลือ (XSS Protection เบื้องต้น)
+        function sanitizeInput(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }[m];
+            });
+        }
+
+        // คลิกลากไฟล์วาง
+        dropZone.addEventListener('click', () => fileUpload.click());
+        
+        fileUpload.addEventListener('change', handleFile);
+
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (!allowedTypes.includes(file.type) || file.size > maxSize) {
+                fileError.classList.remove('hidden');
+                fileSuccess.classList.add('hidden');
+                fileUpload.value = ''; // ล้างไฟล์ที่ไม่ได้มาตรฐานทิ้ง
+            } else {
+                fileError.classList.add('hidden');
+                fileSuccess.textContent = `✓ ตรวจสอบไฟล์สำเร็จ: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                fileSuccess.classList.remove('hidden');
             }
-        });
+        }
 
-        // จัดการเมื่อกดปุ่ม Submit ฟอร์ม
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // ป้องกันหน้าเว็บรีเฟรช
+        // จัดการเมื่อกดปุ่มส่งข้อมูล
+        document.getElementById('secureRegisterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-            // ดึงค่าจากฟอร์มมาเตรียมส่งต่อ
-            const fullname = document.getElementById('fullname').value;
-            const phone = document.getElementById('phone').value;
-            const licenseNo = document.getElementById('licenseNo').value;
-            const licenseFile = fileInput.files[0];
+            // 1. ตรวจสอบเบอร์โทรศัพท์ (ต้องขึ้นต้นด้วย 0 และมี 10 หลัก)
+            const phoneRegex = /^0[0-9]{9}$/;
+            if (!phoneRegex.test(phoneNumber.value)) {
+                phoneError.classList.remove('hidden');
+                phoneNumber.focus();
+                return;
+            } else {
+                phoneError.classList.add('hidden');
+            }
 
-            // --- จังหวะนี้ในอนาคต: เขียนโค้ดส่งข้อมูลไปเก็บที่ฐานข้อมูล (เช่น Firebase / Supabase) ---
-            console.log("ส่งข้อมูล:", { fullname, phone, licenseNo, fileName: licenseFile.name });
+            // 2. ดึงข้อมูลและคลีนค่า (Sanitization) ป้องกันโค้ดแทรกซึม
+            const finalData = {
+                firstname: sanitizeInput(document.getElementById('firstname').value),
+                lastname: sanitizeInput(document.getElementById('lastname').value),
+                phone: sanitizeInput(phoneNumber.value),
+                licenseId: sanitizeInput(document.getElementById('licenseId').value)
+            };
 
-            // ซ่อนฟอร์ม แล้วแสดงข้อความสำเร็จ
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('successMessage').classList.remove('hidden');
+            // แสดง Log ว่าข้อมูลฝั่งหน้าบ้านถูกตรวจสอบความปลอดภัยแล้ว
+            console.log("Secure Client-side Data Validated:", finalData);
+
+            // สลับการแสดงผล สู่หน้าส่งงานสำเร็จ
+            document.getElementById('secureRegisterForm').classList.add('hidden');
+            document.getElementById('secureSuccessBox').classList.remove('hidden');
         });
     </script>
 </body>
 </html>
-
