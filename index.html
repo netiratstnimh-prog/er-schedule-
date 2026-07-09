@@ -3,32 +3,697 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบปิดการใช้งาน</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>โรงเรียนผู้ช่วยพยาบาล ศิริราช</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Sarabun', sans-serif; }
+        :root {
+            --mu-blue: #003366;
+            --mu-gold: #F1B434;
+            --light-blue: #E6F0FA;
+            --dark-gray: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fa;
+            color: var(--dark-gray);
+            overflow-x: hidden;
+        }
+
+        /* 1. Splash Screen Effect */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--mu-blue), #001f42);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .splash-text {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1.2s forwards 0.3s;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .splash-subtext {
+            color: var(--mu-gold);
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1.2s forwards 0.8s;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.1);
+            border-top: 5px solid var(--mu-gold);
+            border-radius: 50%;
+            margin-top: 30px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 2. Top Header Bar */
+        header {
+            background-color: var(--mu-blue);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom: 4px solid var(--mu-gold);
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 15px;
+            transition: color 0.3s;
+        }
+
+        .menu-btn:hover {
+            color: var(--mu-gold);
+        }
+
+        header h1 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 3. Sidebar Popup (3-dash menu) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: white;
+            z-index: 101;
+            transition: left 0.4s ease;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.15);
+            padding-top: 80px;
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: var(--light-blue);
+            font-weight: 600;
+            color: var(--mu-blue);
+            border-bottom: 2px solid var(--mu-gold);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            color: #666;
+            cursor: not-allowed;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu li::before {
+            content: "\f054";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+            display: none;
+        }
+
+        .overlay.show {
+            display: block;
+        }
+
+        /* 4. Main Content */
+        main {
+            margin-top: 90px;
+            padding: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 100px;
+        }
+
+        /* Search Block */
+        .search-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border-top: 5px solid var(--mu-blue);
+        }
+
+        .search-container h2 {
+            margin-bottom: 20px;
+            color: var(--mu-blue);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group label .required {
+            color: red;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--mu-blue);
+        }
+
+        .btn-search {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--mu-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-search:hover {
+            background-color: #002244;
+        }
+
+        /* Dev Block Placeholder */
+        .dev-block {
+            background: #fff;
+            border: 2px dashed #b8d4f0;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 12px;
+            color: #888;
+            margin-bottom: 25px;
+        }
+
+        /* Map Section */
+        .map-container {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .map-container h3 {
+            color: var(--mu-blue);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        iframe {
+            width: 100%;
+            height: 350px;
+            border: 0;
+            border-radius: 8px;
+        }
+
+        /* 5. Floating Action Button (FAB) */
+        .fab-container {
+            position: fixed;
+            bottom: 70px;
+            right: 25px;
+            z-index: 98;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .fab-main {
+            width: 150px;
+            height: 50px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 25px;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            z-index: 2;
+            transition: background 0.3s;
+        }
+
+        .fab-main:hover {
+            background-color: #c0392b;
+        }
+
+        .fab-links {
+            position: absolute;
+            bottom: 0;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .fab-container.open .fab-links {
+            pointer-events: auto;
+        }
+
+        .fab-item {
+            background: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-size: 0.9rem;
+            color: #555;
+            cursor: not-allowed;
+            white-space: nowrap;
+            border-left: 4px solid var(--mu-gold);
+            opacity: 0;
+            transform: translateY(0) scale(0.7);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* เอฟเฟกต์เด้งโค้งลงมาทีละรายการ (Staggered Curve Animation) */
+        .fab-container.open .fab-item:nth-child(1) {
+            opacity: 1;
+            transform: translateY(65px) translateX(-15px) scale(1);
+            transition-delay: 0.1s;
+        }
+        .fab-container.open .fab-item:nth-child(2) {
+            opacity: 1;
+            transform: translateY(115px) translateX(-35px) scale(1);
+            transition-delay: 0.2s;
+        }
+        .fab-container.open .fab-item:nth-child(3) {
+            opacity: 1;
+            transform: translateY(165px) translateX(-65px) scale(1);
+            transition-delay: 0.3s;
+        }
+
+        /* 6. Student Card Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            padding: 20px;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .student-card {
+            background: linear-gradient(145deg, #ffffff, #f0f4f8);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--mu-blue);
+        }
+
+        .card-header {
+            background-color: var(--mu-blue);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--mu-gold);
+        }
+
+        .card-header .logo-area {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .card-body {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 110px;
+            gap: 15px;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-info h4 {
+            font-size: 1.15rem;
+            color: var(--mu-blue);
+            margin-bottom: 8px;
+        }
+
+        .card-info p {
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 4px;
+        }
+
+        .card-photo {
+            width: 110px;
+            height: 140px;
+            background: #e1e8ed;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #888;
+            font-size: 2.5rem;
+        }
+
+        .card-footer-barcode {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            border-top: 1px dashed #ccc;
+        }
+
+        /* จำลอง Barcode ด้วย CSS */
+        .barcode {
+            width: 80%;
+            height: 40px;
+            margin: 0 auto 5px auto;
+            background: linear-gradient(90deg, 
+                #000 0%, #000 5%, #fff 5%, #fff 10%, 
+                #000 10%, #000 12%, #fff 12%, #fff 15%,
+                #000 15%, #000 25%, #fff 25%, #fff 30%,
+                #000 30%, #000 32%, #fff 32%, #fff 40%,
+                #000 40%, #000 50%, #fff 50%, #fff 55%,
+                #000 55%, #000 58%, #fff 58%, #fff 65%,
+                #000 65%, #000 75%, #fff 75%, #fff 80%,
+                #000 80%, #000 85%, #fff 85%, #fff 90%,
+                #000 90%, #000 100%);
+        }
+
+        .barcode-num {
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+        }
+
+        .btn-close-modal {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .btn-close-modal:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        /* 7. Footer */
+        footer {
+            background-color: #222;
+            color: #aaa;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.85rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 3px solid var(--mu-blue);
+        }
+
+        /* Responsive */
+        @media(max-width: 600px) {
+            header h1 {
+                font-size: 0.85rem;
+            }
+            .splash-text { font-size: 1.3rem; }
+            .splash-subtext { font-size: 0.9rem; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4">
+<body>
 
-    <div class="text-center max-w-md mx-auto space-y-4">
-        <div class="inline-flex items-center justify-center w-20 h-20 bg-rose-50 border border-rose-200 rounded-full text-rose-600 mb-2 shadow-sm animate-pulse">
-            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-        </div>
-
-        <h1 class="text-3xl md:text-4xl font-extrabold text-rose-600 tracking-wide">
-            ระบบปิดการใช้งาน
-        </h1>
-        
-        <p class="text-slate-500 text-sm max-w-xs mx-auto leading-relaxed">
-            ขออภัยในความไม่สะดวก ขณะนี้ระบบอยู่ระหว่างการปรับปรุงระบบรักษาความปลอดภัย กรุณาติดต่อผู้ดูแลระบบเพื่อสอบถามข้อมูลเพิ่มเติม
-        </p>
+    <div id="splash-screen">
+        <div class="splash-text">School of Nursing Assistants, Faculty of Medicine Siriraj Hospital</div>
+        <div class="splash-subtext">Mahidol University</div>
+        <div class="loader"></div>
     </div>
 
+    <header>
+        <button class="menu-btn" id="menuToggleBtn" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1>โรงเรียนผู้ช่วยพยาบาลคณะแพทยศาสตร์ศิริราชพยาบาลมหาวิทยาลัยมหิดล</h1>
+    </header>
+
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">เมนูการใช้งาน (6 รายการ)</div>
+        <ul class="sidebar-menu">
+            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 1</li>
+            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 2</li>
+            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 3</li>
+            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 4</li>
+            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 5</li>
+            <li>ยังไม่เปิดใช้งานระบบย่อยที่ 6</li>
+        </ul>
+    </nav>
+
+    <main>
+        <section class="search-container">
+            <h2><i class="fas fa-id-card"></i> ค้นหาข้อมูลนักศึกษา</h2>
+            <form id="searchForm" onsubmit="handleSearch(event)">
+                <div class="form-group">
+                    <label>ชื่อ - นามสกุล <span class="required">*</span></label>
+                    <input type="text" id="inputName" class="form-control" placeholder="กรอกชื่อ นามสกุล" required>
+                </div>
+                <div class="form-group">
+                    <label>SAP ID <span class="required">*</span></label>
+                    <input type="text" id="inputSap" class="form-control" placeholder="กรอก SAP ID (ทดสอบ: 6770649)" required>
+                </div>
+                <div class="form-group">
+                    <label>เลขประจำตัวนักศึกษา (ไม่บังคับ)</label>
+                    <input type="text" id="inputStudentId" class="form-control" placeholder="กรอกเลขประจำตัวนักศึกษา">
+                </div>
+                <button type="submit" class="btn-search">
+                    <i class="fas fa-search"></i> กดเพื่อค้นหา
+                </button>
+            </form>
+        </section>
+
+        <section class="dev-block">
+            <i class="fas fa-code-branch" style="font-size: 2rem; margin-bottom: 10px; color: var(--mu-blue);"></i>
+            <p>พื้นที่บล็อกสำหรับนักพัฒนา [ระบบอื่นๆ กำลังถูกพัฒนาเพิ่มเติมในอนาคต]</p>
+        </section>
+
+        <section class="map-container">
+            <h3><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> แผนที่ตั้งโรงเรียนผู้ช่วยพยาบาล</h3>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.4526040854407!2d100.48332157589578!3d13.757619197305597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e299ae4404096b%3A0x608b49e6f883da4c!2z4Lio4Li54LiZ4Lia4Liy4Lil4LiZ4Liy4LiH4LmE4LiX4LmI4LiZ4LiV4Lix4LiU4LiZ4Liy4LiX4Lij4Lix4LiB4Liy4Lil4LiZ4LiH4Lii4LiZ4Liy4LiH4Lih4Lir4Liy4Lil4LiZ4LmI4Liy4Lih4Lir4LiZ4LmI4Liy4LiH!5e0!3m2!1sth!2sth!4v1710000000000!5m2!1sth!2sth" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </section>
+    </main>
+
+    <div class="fab-container" id="fabContainer">
+        <button class="fab-main" onclick="toggleFab()">
+            <i class="fas fa-comment-alt"></i> ต้องการความช่วยเหลือ
+        </button>
+        <div class="fab-links">
+            <div class="fab-item"><i class="fab fa-line" style="color:#06C755;"></i> เพิ่มเพื่อนไลน์ (เร็วๆ นี้)</div>
+            <div class="fab-item"><i class="fas fa-globe" style="color:var(--mu-blue);"></i> หน้าเว็ปไซต์หลักโรงเรียน (เร็วๆ นี้)</div>
+            <div class="fab-item"><i class="fas fa-users" style="color:var(--mu-gold);"></i> ค้นหารายชื่อเพื่อนในรุ่น (เร็วๆ นี้)</div>
+        </div>
+    </div>
+
+    <div class="modal" id="studentModal">
+        <div class="student-card">
+            <button class="btn-close-modal" onclick="closeModal()">&times;</button>
+            <div class="card-header">
+                <div class="logo-area"><i class="fas fa-university"></i> MAHIDOL UNIVERSITY</div>
+                <span style="font-size: 0.8rem; background: var(--mu-gold); color: #000; padding: 2px 6px; border-radius: 4px; font-weight:600;">STUDENT</span>
+            </div>
+            <div class="card-body">
+                <div class="card-info">
+                    <span style="font-size:0.75rem; color:var(--mu-blue); font-weight:600; display:block; margin-bottom:5px;">Mahidol Practical Nurse 74</span>
+                    <h4 id="resName">เนติราช นิ่มเจริญวัฒนกุล</h4>
+                    <p id="resSap"><strong>SAP ID:</strong> 6770649</p>
+                    <p><strong>เบอร์โทร:</strong> 081-XXX-XXXX</p>
+                    <p><strong>อีเมล:</strong> netiraj.nim@mahidol.ac.th</p>
+                </div>
+                <div class="card-photo">
+                    <i class="fas fa-user-nurse"></i>
+                </div>
+            </div>
+            <div class="card-footer-barcode">
+                <div class="barcode"></div>
+                <div class="barcode-num" id="resBarcode">6770649</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Siriraj PN74 @2024
+    </footer>
+
+    <script>
+        // ควบคุมการปิด Splash Screen หลังเข้าเว็บ 2.5 วินาที
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.classList.add('fade-out');
+            }, 2500);
+        });
+
+        // เปิด-ปิด Sidebar เมนู 3 ขีด
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+        }
+
+        // เปิด-ปิด ปุ่มลอย FAB (ต้องการความช่วยเหลือ)
+        function toggleFab() {
+            const fabContainer = document.getElementById('fabContainer');
+            fabContainer.classList.toggle('open');
+        }
+
+        // ระบบจำลองการค้นหา
+        function handleSearch(event) {
+            event.preventDefault();
+            
+            const nameInput = document.getElementById('inputName').value.trim();
+            const sapInput = document.getElementById('inputSap').value.trim();
+
+            // ข้อมูลจำลองตามที่โจทย์กำหนด
+            const mockSap = "6770649";
+            const mockName = "เนติราช นิ่มเจริญวัฒนกุล";
+
+            if (sapInput === mockSap && nameInput === mockName) {
+                // อัปเดตข้อมูลลงบนบัตร
+                document.getElementById('resName').innerText = mockName;
+                document.getElementById('resSap').innerHTML = `<strong>SAP ID:</strong> ${mockSap}`;
+                document.getElementById('resBarcode').innerText = mockSap;
+                
+                // เปิดตัว Modal บัตรนักศึกษา
+                document.getElementById('studentModal').classList.add('show');
+            } else {
+                alert("ไม่พบข้อมูลนักศึกษาในระบบทดลอง (กรุณาใช้ ชื่อ: เนติราช นิ่มเจริญวัฒนกุล และ SAP ID: 6770649 สำหรับการทดสอบ)");
+            }
+        }
+
+        // ปิด Modal บัตรนักศึกษา
+        function closeModal() {
+            document.getElementById('studentModal').classList.remove('show');
+        }
+    </script>
 </body>
 </html>
