@@ -7,110 +7,11 @@
                 </div>
 
                 <!-- การยินยอมข้อมูล PDPA -->
-                <div class="flex items-start bg-slate-50 p-3 rounded-lg border border-slate-200">
+                <div class="flex items-start bg-s-50 p-3 rounded-lg border border-slate-200">
                     <div class="flex items-center h-5">
                         <input type="checkbox" id="pdpaConsent" required class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
                     </div>
                     <div class="ml-3 text-xs leading-relaxed text-slate-500">
-                        <label for="pdpaConsent" class="cursor-pointer">
-                            ข้าพเจ้ายินยอมให้ระบบบันทึกและประมวลผลข้อมูลส่วนบุคคลเพื่อใช้วัตถุประสงค์ในการตรวจสอบสถานะวิชาชีพ และยืนยันความปลอดภัยในคอมมูนิตี้หางานเท่านั้น
-                        </label>
-                    </div>
-                </div>
+                        <label for=
 
-                <!-- ปุ่ม Submit -->
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold py-3 px-4 rounded-lg shadow-sm hover:shadow transition duration-200">
-                    ส่งข้อมูลเข้าสู่ระบบตรวจสอบความปลอดภัย
-                </button>
-            </form>
-
-            <!-- กล่องข้อความเมื่อส่งสำเร็จ -->
-            <div id="secureSuccessBox" class="hidden py-12 text-center space-y-4">
-                <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <h3 class="text-xl font-bold text-slate-900">รับข้อมูลเข้าระบบเรียบร้อยแล้ว</h3>
-                <p class="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
-                    เจ้าหน้าที่กำลังดำเนินการตรวจสอบชื่อและการจดทะเบียนวิชาชีพของท่าน หากผ่านการอนุมัติ ระบบจะส่งลิงก์เชิญเข้ากลุ่มงานเฝ้าไข้ให้ท่านทันที
-                </p>
-            </div>
-
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
-        &copy; 2026 Nurse Verification Platform. All rights reserved. Secure Community System.
-    </footer>
-
-    <!-- Logic การตรวจสอบความปลอดภัยฝั่ง Client -->
-    <script>
-        const dropZone = document.getElementById('dropZone');
-        const fileUpload = document.getElementById('fileUpload');
-        const fileError = document.getElementById('fileError');
-        const fileSuccess = document.getElementById('fileSuccess');
-        const phoneNumber = document.getElementById('phoneNumber');
-        const phoneError = document.getElementById('phoneError');
-
-        // ฟังก์ชันล้างค่าข้อความหลงเหลือ (XSS Protection เบื้องต้น)
-        function sanitizeInput(str) {
-            return str.replace(/[&<>"']/g, function(m) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' }[m];
-            });
-        }
-
-        // คลิกลากไฟล์วาง
-        dropZone.addEventListener('click', () => fileUpload.click());
-        
-        fileUpload.addEventListener('change', handleFile);
-
-        function handleFile(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-            const maxSize = 5 * 1024 * 1024; // 5MB
-
-            if (!allowedTypes.includes(file.type) || file.size > maxSize) {
-                fileError.classList.remove('hidden');
-                fileSuccess.classList.add('hidden');
-                fileUpload.value = ''; // ล้างไฟล์ที่ไม่ได้มาตรฐานทิ้ง
-            } else {
-                fileError.classList.add('hidden');
-                fileSuccess.textContent = `✓ ตรวจสอบไฟล์สำเร็จ: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-                fileSuccess.classList.remove('hidden');
-            }
-        }
-
-        // จัดการเมื่อกดปุ่มส่งข้อมูล
-        document.getElementById('secureRegisterForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // 1. ตรวจสอบเบอร์โทรศัพท์ (ต้องขึ้นต้นด้วย 0 และมี 10 หลัก)
-            const phoneRegex = /^0[0-9]{9}$/;
-            if (!phoneRegex.test(phoneNumber.value)) {
-                phoneError.classList.remove('hidden');
-                phoneNumber.focus();
-                return;
-            } else {
-                phoneError.classList.add('hidden');
-            }
-
-            // 2. ดึงข้อมูลและคลีนค่า (Sanitization) ป้องกันโค้ดแทรกซึม
-            const finalData = {
-                firstname: sanitizeInput(document.getElementById('firstname').value),
-                lastname: sanitizeInput(document.getElementById('lastname').value),
-                phone: sanitizeInput(phoneNumber.value),
-                licenseId: sanitizeInput(document.getElementById('licenseId').value)
-            };
-
-            // แสดง Log ว่าข้อมูลฝั่งหน้าบ้านถูกตรวจสอบความปลอดภัยแล้ว
-            console.log("Secure Client-side Data Validated:", finalData);
-
-            // สลับการแสดงผล สู่หน้าส่งงานสำเร็จ
-            document.getElementById('secureRegisterForm').classList.add('hidden');
-            document.getElementById('secureSuccessBox').classList.remove('hidden');
-        });
-    </script>
-</body>
-</html>
+                                  
