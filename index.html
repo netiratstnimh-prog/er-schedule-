@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบทะเบียนศิษย์เก่า รุ่น 74 - โรงเรียนผู้ช่วยพยาบาล ศิริราช</title>
+    <!-- FontAwesome สำหรับ Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Prompt) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -33,27 +35,40 @@
             padding-bottom: 80px;
         }
 
-        /* 1. Splash Screen Effect */
-        #splash-screen {
+        /* ========================================================
+           1. Splash Screen & iPhone Lock Screen (ระบบคัดกรองเข้าเว็บ)
+           ======================================================== */
+        #gatekeeper-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--mu-blue), #00152e);
+            background: linear-gradient(135deg, var(--mu-blue), #001124);
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            transition: opacity 0.6s ease, visibility 0.6s;
+            overflow-y: auto;
             padding: 20px;
-            text-align: center;
         }
 
-        #splash-screen.fade-out {
+        #gatekeeper-screen.unlocked {
             opacity: 0;
             visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* ข้อความเปิดตัวเฟสแรก */
+        .splash-text-container {
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+        .splash-text-container.hide {
+            opacity: 0;
+            display: none;
         }
 
         .splash-text {
@@ -61,41 +76,126 @@
             font-size: 1.8rem;
             font-weight: 600;
             margin-bottom: 15px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 1s forwards 0.3s;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
         }
 
         .splash-subtext {
             color: var(--mu-gold);
             font-size: 1.2rem;
-            font-weight: 400;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 1s forwards 0.7s;
         }
 
-        .loader {
-            width: 45px;
-            height: 45px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top: 4px solid var(--mu-gold);
+        /* เฟสสอง: หน้าจอล็อกสกรีน iPhone และโลโก้ลอยขึ้น */
+        .lock-container {
+            display: none; /* ซ่อนไว้รอเฟสแรกจบ */
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 320px;
+        }
+        .lock-container.active {
+            display: flex;
+        }
+
+        /* โลโก้มหิดลจำลองลอยขึ้นมาจากด้านล่าง */
+        .mu-logo-floating {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--mu-gold), #fff);
             border-radius: 50%;
-            margin-top: 35px;
-            animation: spin 1s linear infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
+            color: var(--mu-blue);
+            box-shadow: 0 0 20px rgba(241, 180, 52, 0.4);
+            margin-bottom: 15px;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: floatUpLogo 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes floatUpLogo {
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .instruction-text {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+            text-align: center;
         }
 
-        /* 2. Top Header Bar ปรับการแบ่งบรรทัดและเพิ่มปุ่ม Login ด้านขวา */
+        /* จุดไข่ปลาแสดงรหัสผ่านผ่านหน้าจอ */
+        .passcode-dots {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid #ffffff;
+            border-radius: 50%;
+            transition: background-color 0.15s ease;
+        }
+        .dot.active {
+            background-color: #ffffff;
+        }
+        
+        /* เอฟเฟกต์สั่นเมื่อกดรหัสผิด */
+        .shake {
+            animation: shakeAnim 0.4s ease;
+        }
+        @keyframes shakeAnim {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        /* แป้นพิมพ์ปุ่มกลม สไตล์ iPhone Passcode */
+        .iphone-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px 24px;
+            width: 100%;
+        }
+
+        .key-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            font-size: 1.7rem;
+            font-weight: 400;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.1s, transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .key-btn:active {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0.92);
+        }
+
+        .key-btn.action {
+            font-size: 0.9rem;
+            border: none;
+            background: none;
+        }
+        .key-btn.action:active {
+            background: none;
+        }
+
+        /* ========================================================
+           2. ส่วนโครงสร้างหลักของหน้าเว็บ (Main Web Styles)
+           ======================================================== */
         header {
             background-color: var(--mu-blue);
             color: white;
@@ -168,7 +268,7 @@
             transform: translateY(-2px);
         }
 
-        /* 3. Sidebar Menu Popup */
+        /* Sidebar Menu Popup (3 ขีด) */
         .sidebar {
             position: fixed;
             top: 0;
@@ -225,7 +325,7 @@
             display: block;
         }
 
-        /* 4. Main Content Area */
+        /* Main Zone */
         main {
             margin-top: 100px;
             padding: 20px;
@@ -234,7 +334,6 @@
             margin-right: auto;
         }
 
-        /* Search Section */
         .search-container {
             background: white;
             padding: 30px;
@@ -305,10 +404,9 @@
 
         .btn-search:hover {
             background-color: #001f42;
-            box-shadow: 0 4px 12px rgba(0,51,102,0.25);
         }
 
-        /* Alumni Board (กระดานรายชื่อศิษย์เก่า) จะแสดงหลังจาก Login */
+        /* Alumni Board กระดานศิษย์เก่า */
         .board-container {
             background: white;
             padding: 25px;
@@ -316,7 +414,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             margin-bottom: 30px;
             border-top: 6px solid var(--mu-gold);
-            display: none; /* ซ่อนไว้ก่อนเข้าสู่ระบบ */
+            display: none; 
             animation: fadeIn 0.5s ease forwards;
         }
 
@@ -342,19 +440,17 @@
         .alumni-table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
-            font-size: 0.95rem;
         }
 
         .alumni-table th, .alumni-table td {
             padding: 12px 15px;
             border-bottom: 1px solid #efefef;
+            text-align: left;
         }
 
         .alumni-table th {
             background-color: #f4f7fa;
             color: var(--mu-blue);
-            font-weight: 600;
         }
 
         .btn-activate {
@@ -363,17 +459,11 @@
             border: none;
             padding: 6px 12px;
             border-radius: 6px;
-            font-size: 0.85rem;
             cursor: pointer;
             font-weight: 500;
-            transition: background 0.2s;
         }
 
-        .btn-activate:hover {
-            background-color: #27ae60;
-        }
-
-        /* Dev Block */
+        /* Dev Block & Map */
         .dev-block {
             background: #fff;
             border: 2px dashed #b8d4f0;
@@ -384,19 +474,12 @@
             margin-bottom: 30px;
         }
 
-        /* Map Section */
         .map-container {
             background: white;
             padding: 20px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             margin-bottom: 30px;
-        }
-
-        .map-container h3 {
-            color: var(--mu-blue);
-            margin-bottom: 12px;
-            font-size: 1.1rem;
         }
 
         iframe {
@@ -406,7 +489,7 @@
             border-radius: 10px;
         }
 
-        /* 5. Floating Action Button (FAB) */
+        /* Floating Action Button (FAB) Help */
         .fab-container {
             position: fixed;
             bottom: 75px;
@@ -432,12 +515,6 @@
             justify-content: center;
             gap: 8px;
             z-index: 2;
-            transition: background 0.3s, transform 0.2s;
-        }
-
-        .fab-main:hover {
-            background-color: #c0392b;
-            transform: scale(1.03);
         }
 
         .fab-links {
@@ -451,10 +528,7 @@
             z-index: 1;
         }
 
-        .fab-container.open .fab-links {
-            pointer-events: auto;
-        }
-
+        .fab-container.open .fab-links { pointer-events: auto; }
         .fab-item {
             background: white;
             padding: 10px 18px;
@@ -469,12 +543,11 @@
             transform: translateY(0) scale(0.7);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
         .fab-container.open .fab-item:nth-child(1) { opacity: 1; transform: translateY(65px) translateX(-15px) scale(1); transition-delay: 0.1s; }
         .fab-container.open .fab-item:nth-child(2) { opacity: 1; transform: translateY(115px) translateX(-35px) scale(1); transition-delay: 0.2s; }
         .fab-container.open .fab-item:nth-child(3) { opacity: 1; transform: translateY(165px) translateX(-65px) scale(1); transition-delay: 0.3s; }
 
-        /* 6. Modals & Popups System */
+        /* Modals Overlays */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -493,12 +566,8 @@
             backdrop-filter: blur(3px);
         }
 
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
 
-        /* หน้าต่างล็อกอินย่อย */
         .login-box {
             background: white;
             padding: 30px;
@@ -507,38 +576,21 @@
             max-width: 360px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             border-top: 5px solid var(--mu-blue);
-            transform: scale(0.8);
-            transition: transform 0.3s;
         }
 
-        .modal-overlay.show .login-box {
-            transform: scale(1);
-        }
-
-        .login-box h3 {
-            margin-bottom: 15px;
-            color: var(--mu-blue);
-            text-align: center;
-        }
-
-        /* 💥 ปรับโจทย์: บัตรประจำตัวรูปทรงสี่เหลี่ยมผืนผ้าแนวนอน สัดส่วนพอดีเว็บ */
+        /* บัตรสี่เหลี่ยมผืนผ้าแนวนอน พอดีหน้าเว็บ */
         .student-card-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-            max-width: 100%;
-        }
-
-        .modal-overlay.show .student-card-wrapper {
-            transform: scale(1);
+            width: 100%;
+            max-width: 500px;
         }
 
         .student-card-horizontal {
             background: var(--card-bg);
-            width: 500px;
+            width: 100%;
             height: 280px;
             border-radius: 15px;
             box-shadow: 0 12px 35px rgba(0,0,0,0.3);
@@ -546,8 +598,6 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            position: relative;
-            max-width: 100%; /* รองรับ Mobile Responsive */
         }
 
         .card-top {
@@ -560,12 +610,6 @@
             border-bottom: 4px solid var(--mu-gold);
         }
 
-        .card-top-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
         .card-middle {
             display: flex;
             padding: 15px 20px;
@@ -574,35 +618,9 @@
             align-items: center;
         }
 
-        .card-details {
-            flex: 1;
-        }
+        .card-details h4 { font-size: 1.3rem; color: #1a252f; margin-bottom: 8px;}
+        .card-details p { font-size: 0.85rem; color: #555; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;}
 
-        .card-details .batch-tag {
-            font-size: 0.75rem;
-            color: var(--mu-blue);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .card-details h4 {
-            font-size: 1.3rem;
-            color: #1a252f;
-            margin-bottom: 8px;
-        }
-
-        .card-details p {
-            font-size: 0.85rem;
-            color: #555;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* รูปภาพอยู่ด้านขวาบนของเนื้อหาบัตร */
         .card-right-photo {
             width: 105px;
             height: 135px;
@@ -614,7 +632,6 @@
             align-items: center;
             color: #94a3b8;
             font-size: 2.5rem;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .card-bottom-barcode {
@@ -625,40 +642,22 @@
         }
 
         .barcode-line {
-            width: 75%;
-            height: 30px;
-            margin: 0 auto 3px auto;
+            width: 75%; height: 30px; margin: 0 auto 3px auto;
             background: linear-gradient(90deg, #000 0%, #000 7%, #fff 7%, #fff 12%, #000 12%, #000 15%, #fff 15%, #fff 18%, #000 18%, #000 30%, #fff 30%, #fff 34%, #000 34%, #000 38%, #fff 38%, #fff 44%, #000 44%, #000 56%, #fff 56%, #fff 60%, #000 60%, #000 64%, #fff 64%, #fff 72%, #000 72%, #000 84%, #fff 84%, #fff 88%, #000 88%, #000 100%);
         }
 
-        .barcode-text {
-            font-size: 0.75rem;
-            letter-spacing: 4px;
-            font-weight: 500;
-        }
-
-        /* 💥 ปรับโจทย์: ปุ่มกดปิดหน้าต่าง ย้ายมาอยู่ด้านล่างตัวบัตร */
         .btn-card-close {
             background-color: #34495e;
             color: white;
             border: none;
             padding: 10px 24px;
             border-radius: 25px;
-            font-size: 0.95rem;
-            font-weight: 500;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: background 0.3s;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .btn-card-close:hover {
-            background-color: #2c3e50;
-        }
-
-        /* 7. Footer Bar */
         footer {
             background-color: #1e272e;
             color: #95a5a6;
@@ -677,35 +676,65 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsive สำหรับมือถือ */
         @media(max-width: 600px) {
             .brand-main { font-size: 0.95rem; }
             .brand-sub { font-size: 0.75rem; }
-            .student-card-horizontal {
-                width: 100%;
-                height: auto;
-            }
-            .card-middle {
-                flex-direction: column-reverse;
-                padding: 12px;
-                gap: 10px;
-            }
-            .card-right-photo {
-                width: 80px;
-                height: 100px;
-                font-size: 1.8rem;
-            }
+            .student-card-horizontal { height: auto; }
+            .card-middle { flex-direction: column-reverse; padding: 12px; gap: 10px; }
+            .card-right-photo { width: 80px; height: 100px; font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <div class="splash-text">School of Nursing Assistants, Faculty of Medicine Siriraj Hospital</div>
-        <div class="splash-subtext">Mahidol University</div>
-        <div class="loader"></div>
+    <!-- ========================================================
+       1. ระบบคัดกรองความปลอดภัย (Splash Screen & iPhone Lock Screen)
+       ======================================================== -->
+    <div id="gatekeeper-screen">
+        <!-- เฟสที่ 1: แอนิเมชันเปิดตัวปรับเปลี่ยนข้อความเป็น Practical Nurse -->
+        <div class="splash-text-container" id="splashPhase">
+            <div class="splash-text">School of Practical Nurse, Faculty of Medicine Siriraj Hospital</div>
+            <div class="splash-subtext">Mahidol University</div>
+        </div>
+
+        <!-- เฟสที่ 2: หน้าจอป้อนรหัสสไตล์ iPhone พร้อมโลโก้มหิดลลอยจากด้านล่าง -->
+        <div class="lock-container" id="lockPhase">
+            <div class="mu-logo-floating">
+                <i class="fas fa-university"></i>
+            </div>
+            
+            <!-- ข้อความสั่งการตามโจทย์ (ไม่บอกใบ้รหัสผ่าน) -->
+            <div class="instruction-text">กรุณาใส่รหัสที่ได้จากทางกลุ่มรุ่น</div>
+            
+            <!-- จุดไข่ปลาแสดงความยาวรหัสผ่าน 4 ตัว -->
+            <div class="passcode-dots" id="dotsWrapper">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+
+            <!-- แป้นป้อนรหัสแบบปุ่มกลมสไตล์ iPhone -->
+            <div class="iphone-keypad">
+                <button class="key-btn" onclick="pressIphoneKey(1)">1</button>
+                <button class="key-btn" onclick="pressIphoneKey(2)">2</button>
+                <button class="key-btn" onclick="pressIphoneKey(3)">3</button>
+                <button class="key-btn" onclick="pressIphoneKey(4)">4</button>
+                <button class="key-btn" onclick="pressIphoneKey(5)">5</button>
+                <button class="key-btn" onclick="pressIphoneKey(6)">6</button>
+                <button class="key-btn" onclick="pressIphoneKey(7)">7</button>
+                <button class="key-btn" onclick="pressIphoneKey(8)">8</button>
+                <button class="key-btn" onclick="pressIphoneKey(9)">9</button>
+                <button class="key-btn action"></button> <!-- ปุ่มเว้นว่างซ้าย -->
+                <button class="key-btn" onclick="pressIphoneKey(0)">0</button>
+                <button class="key-btn action" onclick="deleteIphoneKey()" style="color: rgba(255,255,255,0.7);"><i class="fas fa-backspace"></i></button>
+            </div>
+        </div>
     </div>
 
+    <!-- ========================================================
+       2. โครงสร้างหลักเว็บบอร์ด (จะถูกล็อกไว้จนกว่ารหัสจะถูกต้อง)
+       ======================================================== -->
     <header>
         <div class="header-left">
             <button class="menu-btn" onclick="toggleSidebar()">
@@ -721,6 +750,7 @@
         </button>
     </header>
 
+    <!-- Sidebar Menu Popup (3 ขีด) -->
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header"><i class="fas fa-th-list"></i> เมนูระบบ (6 รายการ)</div>
@@ -735,6 +765,7 @@
     </nav>
 
     <main>
+        <!-- แบบฟอร์มค้นหาด่วนสาธารณะ -->
         <section class="search-container">
             <h2><i class="fas fa-search-user" style="color:var(--mu-blue);"></i> ค้นหาประวัติตรวจสอบรายชื่อศิษย์เก่า รุ่น 74</h2>
             <form id="searchForm" onsubmit="handlePublicSearch(event)">
@@ -758,6 +789,7 @@
             </form>
         </section>
 
+        <!-- กระดานศิษย์เก่า (แสดงหลังป้อน SAP ID สำเร็จ) -->
         <section class="board-container" id="alumniBoard">
             <div class="board-header">
                 <h3><i class="fas fa-clipboard-list" style="color:var(--mu-gold)"></i> กระดานรายชื่อศิษย์เก่าสำเร็จการศึกษา [รุ่น 74]</h3>
@@ -800,7 +832,6 @@
         <section class="dev-block">
             <i class="fas fa-laptop-code" style="font-size: 2rem; margin-bottom: 8px; color: var(--mu-blue);"></i>
             <p style="font-weight:500;">[ พื้นที่พัฒนาต่อยอดโครงสร้างข้อมูลฐานข้อมูลศิษย์เก่า ]</p>
-            <p style="font-size:0.8rem; color:#95a5a6; margin-top:4px;">ระบบสามารถเชื่อมต่อ API ภายนอกเข้ากับฐานข้อมูลเซิร์ฟเวอร์จริงได้ในอนาคต</p>
         </section>
 
         <section class="map-container">
@@ -809,6 +840,7 @@
         </section>
     </main>
 
+    <!-- ปุ่มลอยช่วยเหลือช่วยเหลือ -->
     <div class="fab-container" id="fabContainer">
         <button class="fab-main" onclick="toggleFab()">
             <i class="fas fa-hands-helping"></i> ต้องการความช่วยเหลือ
@@ -820,6 +852,7 @@
         </div>
     </div>
 
+    <!-- ล็อกอิน Modal -->
     <div class="modal-overlay" id="loginModal">
         <div class="login-box">
             <h3>เข้าสู่ระบบศิษย์เก่า</h3>
@@ -833,6 +866,7 @@
         </div>
     </div>
 
+    <!-- ตั้งค่า / ยืนยันรหัสผ่านย่อยสำหรับชื่อศิษย์เก่า -->
     <div class="modal-overlay" id="passwordModal">
         <div class="login-box" style="border-top-color: var(--mu-gold);">
             <h3 id="pwdModalTitle">ตั้งรหัสผ่านคีย์การ์ด</h3>
@@ -845,6 +879,7 @@
         </div>
     </div>
 
+    <!-- บัตรประจำตัวศิษย์เก่าสี่เหลี่ยมผืนผ้าแนวนอน ปุ่มปิดอยู่ด้านล่าง -->
     <div class="modal-overlay" id="cardModal">
         <div class="student-card-wrapper">
             <div class="student-card-horizontal">
@@ -854,7 +889,7 @@
                 </div>
                 <div class="card-middle">
                     <div class="card-details">
-                        <span class="batch-tag">Mahidol Practical Nurse 74</span>
+                        <span style="font-size:0.75rem; color:var(--mu-blue); font-weight:700; display:block; margin-bottom:4px;">Mahidol Practical Nurse 74</span>
                         <h4 id="cardName">เนติราช นิ่มเจริญวัฒนกุล</h4>
                         <p><strong>SAP ID:</strong> <span id="cardSap">6770649</span></p>
                         <p><i class="fas fa-phone" style="color:#2ecc71; font-size:0.8rem;"></i> 081-XXX-XXXX</p>
@@ -869,7 +904,6 @@
                     <div class="barcode-text" id="cardBarcode">6770649</div>
                 </div>
             </div>
-            
             <button class="btn-card-close" onclick="closeModal('cardModal')">
                 <i class="fas fa-times-circle"></i> ปิดหน้าต่างแสดงบัตร
             </button>
@@ -880,19 +914,79 @@
         Siriraj PN74 @2024
     </footer>
 
+    <!-- JavaScript ลอจิกการทำงานทั้งหมด -->
     <script>
-        // ระบบจำลองฐานข้อมูลรหัสผ่านใน Browser (ลอจิก ตั้งรหัสผ่านครั้งแรก และกรอกในครั้งถัดไป)
+        // ระบบจำลองฐานข้อมูล
         let passwordsDatabase = {}; 
         let activeSelectingId = "";
         let activeSelectingName = "";
+        
+        // ตัวแปรเก็บรหัสผ่านล็อกสกรีนหน้าเว็บหลัก
+        let iphoneEnteredCode = "";
 
-        // ควบคุมปิด Splash Screen อัตโนมัติ (2.5 วินาที)
+        // ควบคุมเฟสแรก -> เปลี่ยนเป็นเฟสล็อกสกรีน iPhone
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if(splash) splash.classList.add('fade-out');
+                // ซ่อนข้อความเฟสแรก
+                document.getElementById('splashPhase').classList.add('hide');
+                // เปิดการทำงานหน้าจอป้อนรหัสสไตล์ iPhone พร้อมโลโก้ลอยขึ้นมา
+                document.getElementById('lockPhase').classList.add('active');
             }, 2500);
         });
+
+        // ลอจิกการกดปุ่มสไตล์หน้าจอไอโฟน
+        function pressIphoneKey(num) {
+            if (iphoneEnteredCode.length < 4) {
+                iphoneEnteredCode += num;
+                updateIphoneDots();
+                
+                // ถ้ารหัสครบ 4 หลัก ทำการตรวจสอบทันที
+                if (iphoneEnteredCode.length === 4) {
+                    setTimeout(checkIphonePasscode, 200);
+                }
+            }
+        }
+
+        // ลบหลักรหัสผ่านล่าสุด
+        function deleteIphoneKey() {
+            if (iphoneEnteredCode.length > 0) {
+                iphoneEnteredCode = iphoneEnteredCode.slice(0, -1);
+                updateIphoneDots();
+            }
+        }
+
+        // อัปเดตสีสถานะของจุดไข่ปลาบนหน้าจอ
+        function updateIphoneDots() {
+            const dots = document.querySelectorAll('#dotsWrapper .dot');
+            dots.forEach((dot, index) => {
+                if (index < iphoneEnteredCode.length) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // ฟังก์ชันตรวจเช็ครหัสผ่านลับเข้าหน้าแรก (1323) ไม่มีคำใบ้แสดงผลบน UI
+        function checkIphonePasscode() {
+            const masterSecretCode = "1323";
+            if (iphoneEnteredCode === masterSecretCode) {
+                // ผ่านการตรวจสอบ -> ปลดล็อกนำเข้าสู่ตัวหน้าหลักเว็บไซต์
+                const gatekeeper = document.getElementById('gatekeeper-screen');
+                gatekeeper.classList.add('unlocked');
+            } else {
+                // รหัสผ่านไม่ถูกต้อง -> สั่นแจ้งเตือน และเคลียร์จุดใหม่
+                const dotsWrapper = document.getElementById('dotsWrapper');
+                dotsWrapper.classList.add('shake');
+                
+                // ล้างค่าสถานะ
+                iphoneEnteredCode = "";
+                setTimeout(() => {
+                    dotsWrapper.classList.remove('shake');
+                    updateIphoneDots();
+                }, 400);
+            }
+        }
 
         // เปิด-ปิด Sidebar (เมนู 3 ขีด)
         function toggleSidebar() {
@@ -900,89 +994,67 @@
             document.getElementById('overlay').classList.toggle('show');
         }
 
-        // เปิด-ปิด เมนูปุ่มช่วยเหลือลอยตัว (FAB Curve Effect)
+        // เปิด-ปิด เมนูปุ่มช่วยเหลือลอยตัว (FAB)
         function toggleFab() {
             document.getElementById('fabContainer').classList.toggle('open');
         }
 
-        // ฟังก์ชันเปิด/ปิดหน้าต่าง Modal ทั่วไป
-        function openModal(id) {
-            document.getElementById(id).classList.add('show');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('show');
-        }
+        function openModal(id) { document.getElementById(id).classList.add('show'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-        // 1. ระบบยืนยัน Login ด้วยรหัสประจำตัวเก่าอย่างเดียว
+        // เข้าสู่ระบบด้วยรหัสศิษย์เก่าเดิมเพื่อเปิดหน้ากระดานรายชื่อ
         function submitLogin() {
             const oldId = document.getElementById('oldIdInput').value.trim();
             if(oldId === "6770649") {
                 closeModal('loginModal');
-                // แสดงกระดานรายชื่อศิษย์เก่าทันที
                 document.getElementById('alumniBoard').style.display = 'block';
-                // Scroll เบาๆ ลงมาหากระดานรายชื่อ
                 document.getElementById('alumniBoard').scrollIntoView({ behavior: 'smooth' });
             } else {
-                alert("ระบุรหัสประจำตัวเก่าไม่ถูกต้อง! (สำหรับทดสอบระบบกรุณาพิมพ์: 6770649)");
+                alert("ระบุรหัสประจำตัวไม่ถูกต้อง! (สำหรับทดสอบกรุณาป้อน: 6770649)");
             }
         }
 
-        // 2. เมื่อกดปุ่ม "กดเพื่อใช้งานในชื่อนี้" ในกระดานรายชื่อ
+        // ฟังก์ชันระบบกระดานรายชื่อศิษย์เก่า
         function actionAlumniName(id, name) {
             activeSelectingId = id;
             activeSelectingName = name;
-            document.getElementById('securePasswordInput').value = ""; // เคลียร์ช่องกรอกเก่า
+            document.getElementById('securePasswordInput').value = "";
 
-            // ตรวจสอบว่า ID นี้เคยตั้งรหัสผ่านครั้งแรกไปหรือยัง
             if (!passwordsDatabase[id]) {
-                // เคสใช้งานครั้งแรก -> ให้ตั้งรหัสผ่าน
                 document.getElementById('pwdModalTitle').innerText = "ตั้งรหัสผ่านเริ่มต้น";
                 document.getElementById('pwdModalDesc').innerText = `คุณกำลังลงทะเบียนเข้าใช้งานในชื่อ "${name}" กรุณาตั้งรหัสผ่านสำหรับการเข้าใช้งานในครั้งถัดไป`;
             } else {
-                // เคสใช้งานครั้งถัดไป -> ต้องกรอกรหัสเดิมที่ตั้งไว้
                 document.getElementById('pwdModalTitle').innerText = "ยืนยันรหัสผ่านเข้าใช้งาน";
                 document.getElementById('pwdModalDesc').innerText = `ชื่อนี้ผ่านการตั้งรหัสผ่านแล้ว กรุณากรอกรหัสผ่านที่คุณตั้งไว้ครั้งแรกเพื่อเข้าถึงบัตรประจำตัว`;
             }
             openModal('passwordModal');
         }
 
-        // 3. ฟังก์ชันประมวลผลการตั้งรหัสครั้งแรก / หรือตรวจสอบรหัสครั้งถัดไป
         function verifyOrSetPassword() {
             const pwdInput = document.getElementById('securePasswordInput').value.trim();
-            if(!pwdInput) {
-                alert("กรุณากรอกรหัสผ่านก่อนดำเนินการครับ");
-                return;
-            }
+            if(!pwdInput) { alert("กรุณากรอกรหัสผ่านก่อนครับ"); return; }
 
             if (!passwordsDatabase[activeSelectingId]) {
-                // บันทึกรหัสผ่านครั้งแรก
                 passwordsDatabase[activeSelectingId] = pwdInput;
-                alert("ตั้งรหัสผ่านของคุณเรียบร้อยแล้ว! ระบบจะนำไปแสดงผลหน้าบัตรประจำตัว (ครั้งถัดไปชื่อนี้จะล็อกรหัสนี้ทันที)");
+                alert("ตั้งรหัสผ่านของคุณเรียบร้อยแล้ว!");
                 showAlumniCard(activeSelectingId, activeSelectingName);
             } else {
-                // ตรวจสอบรหัสผ่านครั้งถัดไป
                 if(passwordsDatabase[activeSelectingId] === pwdInput) {
                     showAlumniCard(activeSelectingId, activeSelectingName);
                 } else {
-                    alert("รหัสผ่านไม่ถูกต้อง! ไม่สามารถเปิดสิทธิ์ใช้งานชื่อนี้ได้");
+                    alert("รหัสผ่านประจำชื่อนี้ไม่ถูกต้อง!");
                 }
             }
         }
 
-        // 4. ฟังก์ชันเปิดการแสดงผลหน้าบัตรศิษย์เก่า (สี่เหลี่ยมผืนผ้าแนวนอน)
         function showAlumniCard(id, name) {
             closeModal('passwordModal');
-            
-            // แมปปิ้งข้อมูลแสดงบนบัตรตาม ID จริง
             document.getElementById('cardName').innerText = name;
             document.getElementById('cardSap').innerText = id;
             document.getElementById('cardBarcode').innerText = id;
-            
-            // เปิดแสดงหน้าต่างบัตร
             openModal('cardModal');
         }
 
-        // 5. ระบบฟอร์มค้นหาด่วนแบบ Public ด้านบนสุด
         function handlePublicSearch(event) {
             event.preventDefault();
             const name = document.getElementById('inputName').value.trim();
@@ -991,7 +1063,7 @@
             if(sap === "6770649" && name === "เนติราช นิ่มเจริญวัฒนกุล") {
                 showAlumniCard(sap, name);
             } else {
-                alert("ไม่พบข้อมูลศิษย์เก่าศิริราชในระบบทดลองภายนอก (แนะนำใช้ชื่อ: เนติราช นิ่มเจริญวัฒนกุล และ SAP: 6770649 หรือลองใช้ปุ่มเข้าสู่ระบบมุมขวาเพื่อเข้าใช้งานผ่านระบบกระดานรายชื่อ)");
+                alert("ไม่พบข้อมูลศิษย์เก่าในระบบค้นหาสาธารณะภายนอก");
             }
         }
     </script>
