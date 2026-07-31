@@ -3,152 +3,205 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบบันทึกรายงานการดูแลผู้ป่วย</title>
+  <title>ระบบบันทึกการดูแลผู้ป่วย 24 ชั่วโมง</title>
   <!-- Tailwind CSS สำหรับจัดสไตล์ -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- html2pdf.js สำหรับแปลงหน้าเว็บเป็น PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Sarabun', sans-serif; }
+    
+    /* สไตล์สำหรับจำลองหน้ากระดาษ A4 สำหรับ Preview และ PDF */
+    .a4-page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 15mm;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+<body class="bg-gray-100 min-h-screen p-2 md:p-6">
 
-  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 print:shadow-none print:max-w-full">
-    
-    <!-- Header -->
-    <div class="border-b pb-4 mb-6 text-center">
-      <h1 class="text-2xl font-bold text-blue-700">รายงานการดูแลผู้ป่วย (Patient Care Log)</h1>
-      <p class="text-sm text-gray-500 mt-1">ระบบบันทึกข้อมูลประจำวัน</p>
-    </div>
+  <!-- Container หลัก -->
+  <div class="max-w-4xl mx-auto">
 
     <!-- ================= Step 1: ข้อมูลทั่วไป ================= -->
-    <div id="step1" class="space-y-4">
-      <h2 class="text-lg font-semibold text-gray-800 border-l-4 border-blue-500 pl-2">ขั้นตอนที่ 1: ข้อมูลผู้ป่วยและผู้ดูแล</h2>
-      
-      <div>
-        <label class="block text-sm font-medium text-gray-700">หมายเลขห้อง <span class="text-red-500">*</span></label>
-        <input type="text" id="roomNo" placeholder="เช่น 101, VIP-2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+    <div id="step1" class="bg-white rounded-xl shadow-md p-6 space-y-4">
+      <div class="border-b pb-4 text-center">
+        <h1 class="text-2xl font-bold text-blue-700">ระบบบันทึกรายงานการดูแลผู้ป่วย (24 ชั่วโมง)</h1>
+        <p class="text-sm text-gray-500 mt-1">ขั้นตอนที่ 1: ข้อมูลประจำตัวผู้ป่วยและผู้ดูแล</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">หมายเลขห้อง <span class="text-red-500">*</span></label>
+          <input type="text" id="roomNo" placeholder="เช่น 101, VIP-2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">เพศผู้ป่วย <span class="text-red-500">*</span></label>
+          <select id="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+            <option value="">-- เลือกเพศ --</option>
+            <option value="ชาย">ชาย</option>
+            <option value="หญิง">หญิง</option>
+            <option value="ไม่ระบุ">ไม่ระบุ</option>
+          </select>
+        </div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700">เพศผู้ป่วย <span class="text-red-500">*</span></label>
-        <select id="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
-          <option value="">-- เลือกเพศ --</option>
-          <option value="ชาย">ชาย</option>
-          <option value="หญิง">หญิง</option>
-          <option value="ไม่ระบุ">ไม่ระบุ</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">ชื่อผู้ดูแล <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-medium text-gray-700">ชื่อผู้ดูแลหลัก / เวรประจำวัน <span class="text-red-500">*</span></label>
         <input type="text" id="caretaker" placeholder="ชื่อ-นามสกุล ผู้ดูแล" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
       </div>
 
       <div class="pt-4 flex justify-end">
         <button onclick="nextStep()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow transition">
-          ถัดไป &rarr;
+          ถัดไป (เริ่มบันทึกกิจกรรม) &rarr;
         </button>
       </div>
     </div>
 
-    <!-- ================= Step 2: ข้อมูลการดูแลและ Vitals ================= -->
-    <div id="step2" class="space-y-4 hidden">
-      <h2 class="text-lg font-semibold text-gray-800 border-l-4 border-blue-500 pl-2">ขั้นตอนที่ 2: บันทึกกิจกรรมและสัญญาณชีพ</h2>
+    <!-- ================= Step 2: กรอกรายการดูแล (บันทึกได้หลายรายการ) ================= -->
+    <div id="step2" class="space-y-6 hidden">
+      
+      <!-- การ์ดฟอร์มสำหรับกดเพิ่มรายการ -->
+      <div class="bg-white rounded-xl shadow-md p-6 border-t-4 border-blue-600">
+        <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center justify-between">
+          <span>+ เพิ่มรายการบันทึกระหว่างวัน</span>
+          <span id="patientInfoBadge" class="text-sm font-normal bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200"></span>
+        </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">เวลา <span class="text-red-500">*</span></label>
-          <input type="time" id="logTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">เวลา <span class="text-red-500">*</span></label>
+            <input type="time" id="logTime" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">ความดันโลหิต (BP)</label>
+            <input type="text" id="bp" placeholder="เช่น 120/80" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">อัตราการเต้นหัวใจ (HR)</label>
+            <input type="text" id="hr" placeholder="เช่น 75" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+          </div>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">ความดันโลหิต (BP)</label>
-          <input type="text" id="bp" placeholder="เช่น 120/80 mmHg" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">กิจกรรมการดูแล / รายละเอียด</label>
+            <textarea id="activity" rows="2" placeholder="เช่น เช็ดตัว, ทานยา, ป้อนอาหาร, พลิกตัว" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">การกายภาพบำบัด</label>
+            <textarea id="pt" rows="2" placeholder="เช่น นวดประคบ, ยืดข้อต่อ, นั่งข้างเตียง 15 นาที" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"></textarea>
+          </div>
+        </div>
+
+        <button onclick="addLogEntry()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+          บันทึกรายการนี้
+        </button>
+      </div>
+
+      <!-- รายการที่ถูกบันทึกไว้ชั่วคราว -->
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h3 class="text-md font-bold text-gray-800 mb-3 border-b pb-2">รายการที่บันทึกแล้ว (<span id="logCount">0</span> รายการ)</h3>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-600 border-collapse">
+            <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+              <tr>
+                <th class="p-2 border">เวลา</th>
+                <th class="p-2 border">BP / HR</th>
+                <th class="p-2 border">กิจกรรม</th>
+                <th class="p-2 border">กายภาพบำบัด</th>
+                <th class="p-2 border text-center">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="tempLogTable">
+              <!-- รายการจะมาแสดงตรงนี้ -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6 flex justify-between items-center border-t pt-4">
+          <button onclick="prevStep()" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition">
+            &larr; แก้ไขข้อมูลผู้ป่วย
+          </button>
+          <button onclick="generateA4Report()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+            สรุปเป็นรายงาน A4 &rarr;
+          </button>
         </div>
       </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">อัตราการเต้นของหัวใจ (HR)</label>
-        <input type="text" id="hr" placeholder="เช่น 75 bpm" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500">
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">กิจกรรมการดูแลประจำวัน</label>
-        <textarea id="activity" rows="3" placeholder="ระบุกิจกรรม เช่น เช็ดตัว ทานยา ป้อนอาหาร" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"></textarea>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">การกายภาพบำบัด</label>
-        <textarea id="pt" rows="3" placeholder="ระบุการทำกายภาพ เช่น ยืดข้อต่อ ฝึกเดิน 15 นาที" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring-blue-500 focus:border-blue-500"></textarea>
-      </div>
-
-      <div class="pt-4 flex justify-between">
-        <button onclick="prevStep()" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-6 rounded-lg transition">
-          &larr; ย้อนกลับ
-        </button>
-        <button onclick="generateReport()" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg shadow transition">
-          สร้างรายงาน
-        </button>
-      </div>
     </div>
 
-    <!-- ================= Step 3: หน้าสรุปรายงาน PDF ================= -->
+    <!-- ================= Step 3: หน้าสรุปรายงาน PDF (A4 Format) ================= -->
     <div id="step3" class="hidden">
-      <!-- ส่วนที่จะบันทึกเป็น PDF -->
-      <div id="pdfContent" class="p-6 bg-white border rounded-lg">
-        <div class="text-center border-b pb-4 mb-4">
-          <h2 class="text-xl font-bold text-gray-800">ใบบันทึกรายงานการดูแลผู้ป่วย</h2>
-          <p class="text-xs text-gray-500" id="reportDate"></p>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 text-sm mb-4">
-          <div><strong>หมายเลขห้อง:</strong> <span id="summaryRoom"></span></div>
-          <div><strong>เพศผู้ป่วย:</strong> <span id="summaryGender"></span></div>
-          <div class="col-span-2"><strong>ผู้ดูแล:</strong> <span id="summaryCaretaker"></span></div>
-        </div>
-
-        <hr class="my-3">
-
-        <h3 class="font-bold text-gray-700 mb-2 text-sm">ข้อมูล Vital Signs & กิจกรรม</h3>
-        <div class="grid grid-cols-2 gap-4 text-sm mb-4 bg-gray-50 p-3 rounded">
-          <div><strong>เวลา:</strong> <span id="summaryTime"></span></div>
-          <div><strong>ความดันโลหิต (BP):</strong> <span id="summaryBP"></span></div>
-          <div class="col-span-2"><strong>อัตราการเต้นหัวใจ (HR):</strong> <span id="summaryHR"></span></div>
-        </div>
-
-        <div class="text-sm space-y-3">
-          <div>
-            <strong>กิจกรรมการดูแล:</strong>
-            <p id="summaryActivity" class="bg-gray-50 p-2 rounded mt-1 text-gray-700 whitespace-pre-wrap"></p>
-          </div>
-          <div>
-            <strong>การกายภาพบำบัด:</strong>
-            <p id="summaryPT" class="bg-gray-50 p-2 rounded mt-1 text-gray-700 whitespace-pre-wrap"></p>
-          </div>
-        </div>
-
-        <div class="mt-12 text-right text-xs text-gray-400">
-          <p>ลงชื่อผู้บันทึก: .......................................................</p>
-        </div>
+      <div class="mb-4 flex justify-between items-center print:hidden">
+        <button onclick="backToEdit()" class="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition">
+          &larr; กลับไปเพิ่ม/แก้ไขข้อมูล
+        </button>
+        <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg shadow transition flex items-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          บันทึกเป็นไฟล์ PDF
+        </button>
       </div>
 
-      <!-- ปุ่มดาวน์โหลด/เริ่มใหม่ -->
-      <div class="mt-6 flex justify-between">
-        <button onclick="resetForm()" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition">
-          เริ่มกรอกใหม่
-        </button>
-        <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg shadow transition">
-          บันทึกเป็น PDF
-        </button>
+      <!-- ส่วนโครงสร้างหน้ากระดาษ A4 สำหรับ Export -->
+      <div id="pdfContent" class="a4-page">
+        <!-- หัวเอกสาร -->
+        <div class="border-b-2 border-gray-800 pb-3 mb-4 text-center">
+          <h1 class="text-xl font-bold text-gray-900">แบบบันทึกทางการพยาบาลและการดูแลผู้ป่วย 24 ชั่วโมง</h1>
+          <p class="text-xs text-gray-600 mt-1" id="reportDateText"></p>
+        </div>
+
+        <!-- ข้อมูลหัวตารางผู้ป่วย -->
+        <div class="grid grid-cols-3 gap-2 text-xs border p-3 rounded mb-4 bg-gray-50">
+          <div><strong>หมายเลขห้อง:</strong> <span id="pdfRoom"></span></div>
+          <div><strong>เพศ:</strong> <span id="pdfGender"></span></div>
+          <div><strong>ผู้ดูแลประจำวัน:</strong> <span id="pdfCaretaker"></span></div>
+        </div>
+
+        <!-- ตารางแบ่งคอลัมน์ A4 -->
+        <table class="w-full text-xs border-collapse border border-gray-400 mb-6">
+          <thead>
+            <tr class="bg-gray-200 text-gray-800 border-b border-gray-400">
+              <th class="border border-gray-400 p-2 w-16 text-center">เวลา</th>
+              <th class="border border-gray-400 p-2 w-24 text-center">BP (mmHg)</th>
+              <th class="border border-gray-400 p-2 w-20 text-center">HR (bpm)</th>
+              <th class="border border-gray-400 p-2 text-left">กิจกรรมการดูแลประจำวัน</th>
+              <th class="border border-gray-400 p-2 text-left">การกายภาพบำบัด</th>
+            </tr>
+          </thead>
+          <tbody id="pdfTableBody">
+            <!-- ตารางจริงจะถูก Render ตรงนี้ -->
+          </tbody>
+        </table>
+
+        <!-- ท้ายเอกสาร / ลายเซ็น -->
+        <div class="mt-auto pt-8 flex justify-between items-end text-xs text-gray-600">
+          <div>
+            <p>หมายเหตุ: บันทึกข้อมูลตามความเป็นจริงตลอดรอบการดูแล 24 ชั่วโมง</p>
+          </div>
+          <div class="text-center">
+            <p class="mb-8">ลงชื่อ..........................................................ผู้บันทึก</p>
+            <p>( <span id="pdfSignName"></span> )</p>
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 
   <script>
-    // ตั้งค่าเวลาเริ่มต้นเป็นเวลาปัจจุบัน
+    // ตัวแปรเก็บอาเรย์ของรายการบันทึก
+    let logEntries = [];
+
+    // ตั้งเวลาปัจจุบันในช่องเวลาตั้งต้น
     document.getElementById('logTime').value = new Date().toTimeString().substring(0, 5);
 
     function nextStep() {
@@ -157,10 +210,11 @@
       const caretaker = document.getElementById('caretaker').value.trim();
 
       if (!room || !gender || !caretaker) {
-        alert('กรุณากรอกข้อมูลในขั้นตอนที่ 1 ให้ครบถ้วน');
+        alert('กรุณากรอกข้อมูลผู้ป่วยและผู้ดูแลให้ครบถ้วน');
         return;
       }
 
+      document.getElementById('patientInfoBadge').innerText = `ห้อง: ${room} | เพศ: ${gender} | ผู้ดูแล: ${caretaker}`;
       document.getElementById('step1').classList.add('hidden');
       document.getElementById('step2').classList.remove('hidden');
     }
@@ -170,60 +224,122 @@
       document.getElementById('step1').classList.remove('hidden');
     }
 
-    function generateReport() {
+    function backToEdit() {
+      document.getElementById('step3').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+    }
+
+    // เพิ่มรายการลงตารางชั่วคราว
+    function addLogEntry() {
       const time = document.getElementById('logTime').value;
+      const bp = document.getElementById('bp').value.trim() || '-';
+      const hr = document.getElementById('hr').value.trim() || '-';
+      const activity = document.getElementById('activity').value.trim() || '-';
+      const pt = document.getElementById('pt').value.trim() || '-';
+
       if (!time) {
         alert('กรุณาระบุเวลา');
         return;
       }
 
-      // ดึงค่าใส่ตัวอย่างรายงาน
-      document.getElementById('summaryRoom').innerText = document.getElementById('roomNo').value;
-      document.getElementById('summaryGender').innerText = document.getElementById('gender').value;
-      document.getElementById('summaryCaretaker').innerText = document.getElementById('caretaker').value;
-      document.getElementById('summaryTime').innerText = time + ' น.';
-      document.getElementById('summaryBP').innerText = document.getElementById('bp').value || '-';
-      document.getElementById('summaryHR').innerText = document.getElementById('hr').value || '-';
-      document.getElementById('summaryActivity').innerText = document.getElementById('activity').value || '-';
-      document.getElementById('summaryPT').innerText = document.getElementById('pt').value || '-';
+      const entry = { id: Date.now(), time, bp, hr, activity, pt };
+      logEntries.push(entry);
 
-      // ใส่วันที่ปัจจุบัน
+      // เรียงลำดับรายการตามเวลาที่บันทึก
+      logEntries.sort((a, b) => a.time.localeCompare(b.time));
+
+      // ล้างค่าในฟอร์มกิจกรรม
+      document.getElementById('bp').value = '';
+      document.getElementById('hr').value = '';
+      document.getElementById('activity').value = '';
+      document.getElementById('pt').value = '';
+
+      renderTempTable();
+    }
+
+    // ลบรายการ
+    function deleteEntry(id) {
+      logEntries = logEntries.filter(item => item.id !== id);
+      renderTempTable();
+    }
+
+    // แสดงผลตารางชั่วคราวใน Step 2
+    function renderTempTable() {
+      const tbody = document.getElementById('tempLogTable');
+      document.getElementById('logCount').innerText = logEntries.length;
+
+      if (logEntries.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-400">ยังไม่มีรายการบันทึก กดปุ่ม "บันทึกรายการนี้" ด้านบนเพื่อเพิ่มข้อมูล</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = logEntries.map(item => `
+        <tr class="border-b hover:bg-gray-50">
+          <td class="p-2 border font-bold text-blue-600">${item.time} น.</td>
+          <td class="p-2 border">BP: ${item.bp}<br>HR: ${item.hr}</td>
+          <td class="p-2 border whitespace-pre-wrap">${item.activity}</td>
+          <td class="p-2 border whitespace-pre-wrap">${item.pt}</td>
+          <td class="p-2 border text-center">
+            <button onclick="deleteEntry(${item.id})" class="text-red-500 hover:text-red-700 font-medium text-xs">ลบ</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // สร้างรายงาน A4
+    function generateA4Report() {
+      if (logEntries.length === 0) {
+        alert('กรุณาเพิ่มรายการบันทึกอย่างน้อย 1 รายการก่อนสร้างรายงาน');
+        return;
+      }
+
+      // ดึงข้อมูลผู้ป่วย
+      document.getElementById('pdfRoom').innerText = document.getElementById('roomNo').value;
+      document.getElementById('pdfGender').innerText = document.getElementById('gender').value;
+      const caretaker = document.getElementById('caretaker').value;
+      document.getElementById('pdfCaretaker').innerText = caretaker;
+      document.getElementById('pdfSignName').innerText = caretaker;
+
+      // ใส่วันที่
       const now = new Date();
-      document.getElementById('reportDate').innerText = 'วันที่บันทึก: ' + now.toLocaleDateString('th-TH', {
-        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      document.getElementById('reportDateText').innerText = 'วันที่ออกรายงาน: ' + now.toLocaleDateString('th-TH', {
+        year: 'numeric', month: 'long', day: 'numeric'
       });
+
+      // Render ตารางใน A4
+      const pdfTbody = document.getElementById('pdfTableBody');
+      pdfTbody.innerHTML = logEntries.map(item => `
+        <tr class="border-b border-gray-300">
+          <td class="border border-gray-400 p-2 text-center font-bold">${item.time}</td>
+          <td class="border border-gray-400 p-2 text-center">${item.bp}</td>
+          <td class="border border-gray-400 p-2 text-center">${item.hr}</td>
+          <td class="border border-gray-400 p-2 whitespace-pre-wrap align-top">${item.activity}</td>
+          <td class="border border-gray-400 p-2 whitespace-pre-wrap align-top">${item.pt}</td>
+        </tr>
+      `).join('');
 
       document.getElementById('step2').classList.add('hidden');
       document.getElementById('step3').classList.remove('hidden');
     }
 
+    // บันทึก PDF
     function downloadPDF() {
       const element = document.getElementById('pdfContent');
       const room = document.getElementById('roomNo').value;
       
       const opt = {
-        margin:       10,
-        filename:     `Patient_Report_Room_${room}.pdf`,
+        margin:       0,
+        filename:     `รายงานการดูแล_ห้อง_${room}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
+        html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
       html2pdf().set(opt).from(element).save();
     }
 
-    function resetForm() {
-      document.getElementById('roomNo').value = '';
-      document.getElementById('gender').value = '';
-      document.getElementById('caretaker').value = '';
-      document.getElementById('bp').value = '';
-      document.getElementById('hr').value = '';
-      document.getElementById('activity').value = '';
-      document.getElementById('pt').value = '';
-      
-      document.getElementById('step3').classList.add('hidden');
-      document.getElementById('step1').classList.remove('hidden');
-    }
+    // แสดงตารางว่างเริ่มต้น
+    renderTempTable();
   </script>
 </body>
 </html>
