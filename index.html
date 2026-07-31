@@ -13,8 +13,16 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Sarabun', sans-serif; }
-    
-    /* โครงสร้างกระดาษ A4 สไตล์ทางการแพทย์ */
+
+    /* คอนเทนเนอร์แสดงผล A4 บนหน้าจอแบบ Responsive */
+    .a4-wrapper {
+      width: 100%;
+      max-width: 210mm;
+      margin: 0 auto;
+      overflow-x: auto;
+    }
+
+    /* โครงสร้างกระดาษ A4 มาตรฐาน (794px x 1123px ที่ 96 DPI) */
     .a4-page {
       width: 210mm;
       min-height: 297mm;
@@ -32,6 +40,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 11px;
+      table-layout: fixed; /* บังคับความกว้างคอลัมน์ให้ตรงเป๊ะ */
     }
     .med-table th {
       background-color: #1e3a8a; /* Deep Navy Blue */
@@ -46,20 +55,20 @@
       padding: 6px 8px;
       vertical-align: top;
       color: #1e293b;
+      word-wrap: break-word; /* ป้องกันข้อความยาวดันตารางล้น */
     }
     .med-table tr:nth-child(even) {
       background-color: #f8fafc;
     }
 
-    /* Color Marking Badges สำหรับใช้แทน Emoji */
+    /* Color Marking Badges แทน Emoji */
     .badge-mark {
       display: inline-block;
-      padding: 1px 6px;
+      padding: 1px 5px;
       border-radius: 3px;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 600;
-      margin-right: 4px;
-      margin-bottom: 2px;
+      margin-right: 3px;
     }
     .badge-blue { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
     .badge-green { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
@@ -67,6 +76,7 @@
 
     @media print {
       body { background: white; padding: 0; }
+      .a4-wrapper { max-width: 100%; }
       .a4-page { box-shadow: none; width: 100%; margin: 0; padding: 10mm; }
       .no-print { display: none !important; }
     }
@@ -106,7 +116,7 @@
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">ชื่อ / รหัสประจำตัวผู้ดูแล <span class="text-red-500">*</span></label>
           <input type="text" id="caretaker" placeholder="เช่น CG-8849 หรือ นายสมชาย" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-          <span class="text-[11px] text-slate-400">*ข้อมูลนี้จะถูกแปลงเป็น Barcode บนเอกสาร A4</span>
+          <span class="text-[11px] text-slate-400">*แปลงเป็น Barcode มุมขวาล่าง A4</span>
         </div>
 
         <div>
@@ -156,7 +166,7 @@
 
         <!-- Dynamic Form: Vital Signs -->
         <div id="vitalsBox" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 transition-all duration-300">
-          <div class="text-sm font-bold text-blue-900 mb-2 flex items-center gap-2">
+          <div class="text-sm font-bold text-blue-900 mb-2">
             บันทึกสัญญาณชีพ (Vital Signs) สำหรับการกายภาพ
           </div>
           <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -248,16 +258,16 @@
           &larr; กลับไปแก้ไขข้อมูล
         </button>
         <button onclick="downloadPDF()" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow-md transition flex items-center gap-2">
-          บันทึกเป็นไฟล์ PDF
+          📄 บันทึกเป็นไฟล์ PDF (เต็มหน้า)
         </button>
       </div>
 
-      <!-- คอนเทนเนอร์สำหรับเรนเดอร์ PDF (ไม่มีการบดบังขนาด) -->
-      <div class="overflow-x-auto">
-        <!-- เอกสาร A4 สไตล์ทางการแพทย์ (ปราศจาก Emoji แต่ใช้ Color Marking แทน) -->
-        <div id="pdfContent" class="a4-page shadow-lg">
+      <!-- Wrapper ควบคุมให้พอดีกับหน้าจอ -->
+      <div class="a4-wrapper">
+        <!-- ตัวกระดาษ A4 -->
+        <div id="pdfContent" class="a4-page shadow-xl border border-slate-200">
           
-          <!-- Header แบบทางการแพทย์ -->
+          <!-- Header ทางการแพทย์ -->
           <div class="border-b-2 border-blue-900 pb-2 mb-3 flex justify-between items-end">
             <div>
               <h1 class="text-lg font-bold text-blue-950 uppercase tracking-wide">PATIENT CARE FLOWSHEET & LOG</h1>
@@ -272,10 +282,10 @@
           <!-- กล่องข้อมูล Patient & Caregiver Profile -->
           <div class="border border-slate-300 rounded p-2.5 mb-4 bg-slate-50 text-xs">
             <div class="grid grid-cols-4 gap-2 border-b border-slate-200 pb-2 mb-2">
-              <div><span class="text-slate-500">หมายเลขห้อง (Room):</span> <strong id="pdfRoom" class="text-blue-900"></strong></div>
-              <div><span class="text-slate-500">เพศ (Gender):</span> <strong id="pdfGender"></strong></div>
-              <div><span class="text-slate-500">เวรปฏิบัติงาน (Shift):</span> <strong id="pdfShift" class="text-blue-900"></strong></div>
-              <div><span class="text-slate-500">ระยะเวลา (Hours):</span> <strong id="pdfWorkHours"></strong> ชม.</div>
+              <div><span class="text-slate-500">หมายเลขห้อง:</span> <strong id="pdfRoom" class="text-blue-900"></strong></div>
+              <div><span class="text-slate-500">เพศ:</span> <strong id="pdfGender"></strong></div>
+              <div><span class="text-slate-500">เวรปฏิบัติงาน:</span> <strong id="pdfShift" class="text-blue-900"></strong></div>
+              <div><span class="text-slate-500">ระยะเวลา:</span> <strong id="pdfWorkHours"></strong> ชม.</div>
             </div>
             <div>
               <span class="text-slate-500">ผู้บันทึก/ผู้ดูแล (Caregiver):</span> <strong id="pdfCaretaker"></strong>
@@ -287,9 +297,9 @@
             <thead>
               <tr>
                 <th style="width: 12%;">เวลา</th>
-                <th style="text-align: left;">รายละเอียดกิจกรรมการดูแล</th>
-                <th style="width: 25%; text-align: left;">กายภาพบำบัด</th>
-                <th style="width: 32%; text-align: left;">สัญญาณชีพ (Vital Signs)</th>
+                <th style="width: 38%; text-align: left;">รายละเอียดกิจกรรมการดูแล</th>
+                <th style="width: 22%; text-align: left;">กายภาพบำบัด</th>
+                <th style="width: 28%; text-align: left;">สัญญาณชีพ (Vital Signs)</th>
               </tr>
             </thead>
             <tbody id="pdfTableBody">
@@ -300,22 +310,22 @@
           <!-- ส่วนท้ายกระดาษ A4 (Footer & Signature & Barcode) -->
           <div class="mt-auto pt-4 border-t border-slate-300 flex justify-between items-end">
             
-            <!-- ฝั่งซ้าย: หมายเหตุเอกสาร -->
+            <!-- ฝั่งซ้าย: หมายเหตุ -->
             <div class="text-[10px] text-slate-500 space-y-1">
               <p>• เอกสารนี้เป็นบันทึกข้อมูลการพยาบาลและการดูแลผู้ป่วยประจำวัน</p>
               <p>• Verified by Nursing & Caregiver Staff</p>
             </div>
 
-            <!-- ฝั่งขวา: ลายเซ็น + Barcode รหัสผู้ดูแล -->
-            <div class="flex items-end gap-4 text-right">
+            <!-- ฝั่งขวา: ลายเซ็น + Barcode รหัสผู้ดูแล (มุมขวาล่าง) -->
+            <div class="flex items-end gap-3 text-right">
               
               <div class="text-xs">
-                <p class="mb-6">ลงชื่อ..........................................................ผู้บันทึก</p>
+                <p class="mb-5">ลงชื่อ..........................................................ผู้บันทึก</p>
                 <p class="text-[11px] text-slate-700">( <span id="pdfSignName"></span> )</p>
               </div>
 
-              <!-- กล่องแสดง Barcode สแกนได้จริง -->
-              <div class="border border-slate-200 p-1 bg-white rounded text-center">
+              <!-- Barcode สี่เหลี่ยมผืนผ้าขนาดพอดี สแกนได้จริง -->
+              <div class="border border-slate-300 p-1 bg-white rounded flex items-center justify-center">
                 <svg id="barcode"></svg>
               </div>
 
@@ -325,6 +335,7 @@
 
         </div>
       </div>
+
     </div>
 
   </div>
@@ -512,30 +523,29 @@
         year: 'numeric', month: 'short', day: 'numeric'
       });
 
-      // Render Table Data (ใช้ Color Marking แทน Emoji)
+      // Render Table Data (ใช้ Color Marking Badges แทน Emoji)
       const pdfTbody = document.getElementById('pdfTableBody');
       pdfTbody.innerHTML = logEntries.map(e => {
         let vitalsText = '-';
         if (e.vitals) {
           const v = e.vitals;
           let parts = [];
-          if (v.bp) parts.push(`<span class="badge-mark badge-blue">BP</span> ${v.bp}`);
-          if (v.hr) parts.push(`<span class="badge-mark badge-blue">HR</span> ${v.hr}`);
-          if (v.rr) parts.push(`<span class="badge-mark badge-blue">RR</span> ${v.rr}`);
-          if (v.o2) parts.push(`<span class="badge-mark badge-blue">O2</span> ${v.o2}%`);
-          if (v.temp) parts.push(`<span class="badge-mark badge-blue">T</span> ${v.temp}°C`);
+          if (v.bp) parts.push(`<span class="badge-mark badge-blue">BP</span>${v.bp}`);
+          if (v.hr) parts.push(`<span class="badge-mark badge-blue">HR</span>${v.hr}`);
+          if (v.rr) parts.push(`<span class="badge-mark badge-blue">RR</span>${v.rr}`);
+          if (v.o2) parts.push(`<span class="badge-mark badge-blue">O2</span>${v.o2}%`);
+          if (v.temp) parts.push(`<span class="badge-mark badge-blue">T</span>${v.temp}°C`);
           vitalsText = parts.length > 0 ? parts.join(' ') : '-';
         }
 
-        // ปรับแต่งการแสดงผลกิจกรรมด้วย Color Badges
         let activityFormatted = e.activity;
         if (activityFormatted.includes('[FLUID:')) {
-          activityFormatted = activityFormatted.replace(/\[FLUID:(.*?)\]/g, '<span class="badge-mark badge-orange">FLUID</span> $1');
+          activityFormatted = activityFormatted.replace(/\[FLUID:(.*?)\]/g, '<span class="badge-mark badge-orange">FLUID</span>$1');
         }
 
         let ptFormatted = e.pt;
         if (ptFormatted !== '-') {
-          ptFormatted = `<span class="badge-mark badge-green">PT</span> ` + ptFormatted;
+          ptFormatted = `<span class="badge-mark badge-green">PT</span>` + ptFormatted;
         }
 
         return `
@@ -543,44 +553,45 @@
             <td class="text-center font-bold text-slate-800">${e.time}</td>
             <td class="whitespace-pre-wrap">${activityFormatted}</td>
             <td class="whitespace-pre-wrap">${ptFormatted}</td>
-            <td class="text-[10px] leading-relaxed">${vitalsText}</td>
+            <td class="text-[10px] leading-normal">${vitalsText}</td>
           </tr>
         `;
       }).join('');
 
-      // สร้าง Barcode ผู้ดูแล สแกนได้จริง
+      // สร้าง Barcode ผู้ดูแล
       try {
         JsBarcode("#barcode", caretaker || "CARE-101", {
           format: "CODE128",
-          width: 1.2,
-          height: 30,
+          width: 1.1,
+          height: 26,
           displayValue: true,
-          fontSize: 9,
-          margin: 2
+          fontSize: 8,
+          margin: 0
         });
       } catch (err) {
-        console.log("Barcode generation fallback");
+        console.log("Barcode error");
       }
 
       document.getElementById('step2').classList.add('hidden');
       document.getElementById('step3').classList.remove('hidden');
     }
 
+    /* แก้ไขการส่งออก PDF ให้พอดีเต็มหน้า 100% ป้องกันข้อมูลขาดหาย */
     function downloadPDF() {
       const element = document.getElementById('pdfContent');
       const room = document.getElementById('roomNo').value;
       const shift = document.getElementById('shift').value;
-      
-      // การตั้งค่า html2pdf แบบเต็มหน้ากระดาษ A4 ไม่ให้ข้อมูลขาดหายหรือครึ่งซีก
+
       const opt = {
-        margin:       [0, 0, 0, 0],
+        margin:       0,
         filename:     `Medical_Report_Room_${room}_Shift_${shift}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { 
           scale: 2, 
-          useCORS: true, 
+          useCORS: true,
+          scrollX: 0,
           scrollY: 0,
-          windowWidth: 1024 
+          windowWidth: 794 /* บังคับหน้ากว้างมาตรฐาน A4 (Pixel Perfect) */
         },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
