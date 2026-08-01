@@ -3,30 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>บันทึกการดูแลผู้ป่วย พาร์ทไทม์ประจำวัน</title>
+  <title>ระบบบันทึกการดูแลผู้ป่วย - Patient Care Log</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <!-- JsBarcode สำหรับแปลงรหัสเป็น Barcode -->
+  <!-- JsBarcode -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <!-- HTML5-QRCode สแกนบาร์โค้ดผ่านกล้อง -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Sarabun', sans-serif; }
 
-    /* คอนเทนเนอร์แสดงผล A4 บนหน้าจอแบบ Responsive */
+    /* สัญลักษณ์กากบาทพยาบาล (Medical Cross Component) */
+    .med-cross {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      background: #dc2626; /* แดง */
+      display: inline-block;
+      border-radius: 4px;
+    }
+    .med-cross::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #dc2626;
+      transform: rotate(90deg);
+      border-radius: 4px;
+    }
+    .med-cross-inner {
+      position: absolute;
+      z-index: 2;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* A4 Structure */
     .a4-wrapper {
       width: 100%;
       max-width: 210mm;
       margin: 0 auto;
       overflow-x: auto;
     }
-
-    /* โครงสร้างกระดาษ A4 มาตรฐาน (794px x 1123px ที่ 96 DPI) */
     .a4-page {
       width: 210mm;
       min-height: 297mm;
-      padding: 12mm 15mm;
+      padding: 10mm 12mm;
       margin: 0 auto;
       background: #ffffff;
       box-sizing: border-box;
@@ -35,304 +63,347 @@
       flex-direction: column;
     }
 
-    /* สไตล์ตารางทางการแพทย์ (ปราศจาก Emoji) */
+    /* ตารางPDF ธีมน้ำเงินตัดแดง */
     .med-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 11px;
-      table-layout: fixed; /* บังคับความกว้างคอลัมน์ให้ตรงเป๊ะ */
+      table-layout: fixed;
     }
     .med-table th {
-      background-color: #1e3a8a; /* Deep Navy Blue */
+      background-color: #1e3a8a; /* น้ำเงินเข้ม */
       color: #ffffff;
-      border: 1px solid #1e3a8a;
-      padding: 6px 8px;
-      font-weight: 600;
+      border: 1px solid #1d4ed8;
+      border-bottom: 3px solid #dc2626; /* แดงตัดขอบ */
+      padding: 6px;
+      font-weight: 700;
       text-align: center;
     }
     .med-table td {
       border: 1px solid #cbd5e1;
       padding: 6px 8px;
       vertical-align: top;
-      color: #1e293b;
-      word-wrap: break-word; /* ป้องกันข้อความยาวดันตารางล้น */
+      color: #0f172a;
+      word-wrap: break-word;
     }
-    .med-table tr:nth-child(even) {
-      background-color: #f8fafc;
-    }
+    .med-table tr:nth-child(even) { background-color: #f8fafc; }
 
-    /* Color Marking Badges แทน Emoji */
+    /* Color Badges */
     .badge-mark {
       display: inline-block;
       padding: 1px 5px;
       border-radius: 3px;
       font-size: 9px;
-      font-weight: 600;
+      font-weight: 700;
       margin-right: 3px;
     }
-    .badge-blue { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-    .badge-green { background-color: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
-    .badge-orange { background-color: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+    .badge-blue { background-color: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .badge-red { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .badge-green { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
 
     @media print {
       body { background: white; padding: 0; }
       .a4-wrapper { max-width: 100%; }
-      .a4-page { box-shadow: none; width: 100%; margin: 0; padding: 10mm; }
+      .a4-page { box-shadow: none; width: 100%; margin: 0; padding: 8mm; }
       .no-print { display: none !important; }
     }
   </style>
 </head>
-<body class="bg-slate-100 min-h-screen p-2 md:p-6 text-slate-800">
+<body class="bg-slate-900 min-h-screen text-slate-800">
 
-  <div class="max-w-4xl mx-auto">
-
-    <!-- ================= STEP 1: ข้อมูลทั่วไป ================= -->
-    <div id="step1" class="bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-6 border border-slate-200">
-      <div class="border-b pb-4 text-center">
-        <h1 class="text-2xl font-bold text-blue-900 flex items-center justify-center gap-2">
-          📋 บันทึกการดูแลผู้ป่วย พาร์ทไทม์ประจำวัน
-        </h1>
-        <p class="text-sm text-slate-500 mt-1">กรอกข้อมูลผู้ป่วยและช่วงเวลาการปฏิบัติงาน</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <!-- ================= HEADER BAR (แสดงนาฬิกาเรียลไทม์ + วันที่) ================= -->
+  <header class="bg-gradient-to-r from-blue-900 via-blue-950 to-red-900 text-white p-3.5 shadow-xl border-b-2 border-red-600 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="med-cross"><span class="med-cross-inner">+</span></div>
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">หมายเลขห้อง <span class="text-red-500">*</span></label>
-          <input type="text" id="roomNo" placeholder="เช่น 101, VIP-2" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">เพศผู้ป่วย <span class="text-red-500">*</span></label>
-          <select id="gender" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-            <option value="">-- เลือกเพศ --</option>
-            <option value="ชาย">ชาย</option>
-            <option value="หญิง">หญิง</option>
-            <option value="ไม่ระบุ">ไม่ระบุ</option>
-          </select>
+          <h1 class="font-bold text-base md:text-lg leading-none text-white">NURSING CARE SYSTEM</h1>
+          <p class="text-[10px] text-red-300 font-medium tracking-wider">ระบบบันทึกการดูแลผู้ป่วยพาร์ทไทม์</p>
         </div>
       </div>
+      
+      <!-- เวลาเรียลไทม์ + วันที่ -->
+      <div class="text-right bg-black/30 px-3 py-1.5 rounded-lg border border-white/10">
+        <div id="clockTime" class="text-sm md:text-base font-extrabold text-red-400 font-mono tracking-wider">00:00:00</div>
+        <div id="clockDate" class="text-[10px] md:text-xs text-blue-200">1 สิงหาคม 2026</div>
+      </div>
+    </div>
+  </header>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">ชื่อ / รหัสประจำตัวผู้ดูแล <span class="text-red-500">*</span></label>
-          <input type="text" id="caretaker" placeholder="เช่น CG-8849 หรือ นายสมชาย" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-          <span class="text-[11px] text-slate-400">*แปลงเป็น Barcode มุมขวาล่าง A4</span>
-        </div>
+  <div class="max-w-5xl mx-auto p-3 md:p-6">
 
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">เลือกเวรปฏิบัติงาน <span class="text-red-500">*</span></label>
-          <select id="shift" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-            <option value="Day">Day (เช้า)</option>
-            <option value="Evening">Evening (บ่าย)</option>
-            <option value="Night">Night (ดึก)</option>
-          </select>
+    <!-- ================= AUTH GATEWAY (ยืนยันรหัสประจำตัว 6770649) ================= -->
+    <div id="authScreen" class="max-w-md mx-auto my-12 bg-white rounded-3xl shadow-2xl overflow-hidden border-2 border-red-600">
+      <div class="bg-gradient-to-r from-blue-900 to-red-700 p-6 text-center text-white relative">
+        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 border border-white/20">
+          <div class="med-cross scale-125"><span class="med-cross-inner">+</span></div>
         </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">จำนวนชั่วโมงปฏิบัติงาน <span class="text-red-500">*</span></label>
-          <input type="number" id="workHours" min="1" max="24" placeholder="เช่น 8, 12" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-        </div>
+        <h2 class="text-xl font-bold">เข้าสู่ระบบพนักงาน</h2>
+        <p class="text-xs text-red-200 mt-1">ยืนยันรหัสพนักงานด้วย บาร์โค้ด หรือ รหัสประจำตัว</p>
       </div>
 
-      <div class="pt-4 flex justify-end">
-        <button onclick="nextStep()" class="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-2.5 px-6 rounded-lg shadow-md transition flex items-center gap-2">
-          ถัดไป (เริ่มบันทึกกิจกรรม) &rarr;
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="block text-xs font-bold text-blue-900 uppercase mb-1.5">รหัสพนักงานประจำตัว (6770649)</label>
+          <input type="password" id="authCode" placeholder="กรอกรหัสพนักงาน..." class="w-full text-center text-lg font-bold tracking-widest rounded-xl border-2 border-slate-300 p-3 focus:ring-2 focus:ring-red-500 focus:border-blue-900 transition">
+        </div>
+
+        <button onclick="validateAuthCode()" class="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 rounded-xl shadow-lg border-b-4 border-blue-950 transition">
+          เข้าสู่ระบบ (LOGIN)
         </button>
+
+        <div class="relative flex py-1 items-center">
+          <div class="flex-grow border-t border-slate-300"></div>
+          <span class="flex-shrink mx-3 text-slate-400 text-xs font-bold">หรือ</span>
+          <div class="flex-grow border-t border-slate-300"></div>
+        </div>
+
+        <!-- ปุ่มเปิดกล้องสแกนบาร์โค้ด -->
+        <button onclick="startScanner()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg border-b-4 border-red-800 transition flex items-center justify-center gap-2">
+          <span>📷 สแกนบาร์โค้ดผ่านกล้อง</span>
+        </button>
+
+        <!-- พื้นที่แสดงกล้องสแกน -->
+        <div id="scannerContainer" class="hidden border-2 border-red-500 rounded-xl overflow-hidden bg-black p-2">
+          <div id="interactive" class="w-full"></div>
+          <button onclick="stopScanner()" class="w-full mt-2 bg-slate-700 text-white text-xs py-1.5 rounded">ปิดกล้อง</button>
+        </div>
+
+        <div id="authError" class="hidden text-center text-xs font-bold text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200">
+          ❌ รหัสพนักงานหรือบาร์โค้ดไม่ถูกต้อง! (ต้องเป็น 6770649 เท่านั้น)
+        </div>
       </div>
     </div>
 
-    <!-- ================= STEP 2: บันทึกกิจกรรมประจำวัน ================= -->
-    <div id="step2" class="space-y-6 hidden">
-      
-      <div class="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-blue-800">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-3 mb-4 gap-2">
-          <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-            เพิ่มรายการบันทึกระหว่างเวร
-          </h2>
-          <span id="shiftBadge" class="bg-blue-50 text-blue-800 font-medium text-xs px-3 py-1 rounded-full border border-blue-200"></span>
+    <!-- ================= MAIN APP (จะเปิดเมื่อยืนยันรหัสถูกต้อง) ================= -->
+    <div id="mainApp" class="hidden space-y-6">
+
+      <!-- STEP 1: ข้อมูลทั่วไป -->
+      <div id="step1" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6 border-t-8 border-red-600">
+        <div class="border-b pb-4 flex justify-between items-center">
+          <div>
+            <h2 class="text-xl font-bold text-blue-950 flex items-center gap-2">
+              <span class="med-cross"><span class="med-cross-inner">+</span></span> ข้อมูลการดูแลผู้ป่วย
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">กรอกข้อมูลผู้ป่วยและช่วงเวลาปฏิบัติงาน</p>
+          </div>
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-300">
+            พนักงาน: <span id="staffIdDisplay">6770649</span>
+          </span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">เวลา <span class="text-red-500">*</span></label>
-            <input type="time" id="logTime" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
+            <label class="block text-xs font-bold text-blue-900 mb-1">หมายเลขห้อง <span class="text-red-600">*</span></label>
+            <input type="text" id="roomNo" placeholder="เช่น 101, VIP-2" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500 focus:ring-0">
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">กายภาพบำบัด (ระบุถ้ามี)</label>
-            <input type="text" id="ptInput" oninput="toggleVitalsForm()" placeholder="เช่น ฝึกเดิน, ยืดข้อต่อ (ระบบจะเปิดช่อง Vital Signs ให้อัตโนมัติ)" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
-          </div>
-        </div>
-
-        <!-- Dynamic Form: Vital Signs -->
-        <div id="vitalsBox" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 transition-all duration-300">
-          <div class="text-sm font-bold text-blue-900 mb-2">
-            บันทึกสัญญาณชีพ (Vital Signs) สำหรับการกายภาพ
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">BP (mmHg)</label>
-              <input type="text" id="bp" placeholder="120/80" class="w-full text-sm rounded-md border-slate-300 p-2 border">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">HR (bpm)</label>
-              <input type="text" id="hr" placeholder="75" class="w-full text-sm rounded-md border-slate-300 p-2 border">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">RR (/min)</label>
-              <input type="text" id="rr" placeholder="18" class="w-full text-sm rounded-md border-slate-300 p-2 border">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">O2 (%)</label>
-              <input type="text" id="o2" placeholder="98" class="w-full text-sm rounded-md border-slate-300 p-2 border">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">T (°C)</label>
-              <input type="text" id="temp" placeholder="36.6" class="w-full text-sm rounded-md border-slate-300 p-2 border">
-            </div>
-          </div>
-        </div>
-
-        <!-- รายละเอียดกิจกรรม & Smart Keywords -->
-        <div class="space-y-3 mb-4">
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">รายละเอียดกิจกรรม</label>
-            <textarea id="activity" oninput="checkSmartKeywords()" rows="2" placeholder="พิมพ์รายละเอียดกิจกรรม... (พิมพ์ RN, URINE หรือ FECES เพื่อใช้ระบบช่วยเติมคำ)" class="w-full rounded-lg border-slate-300 shadow-sm p-2.5 border focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
-          </div>
-
-          <div id="fluidBox" class="hidden bg-blue-50/70 border border-blue-200 rounded-xl p-3 flex flex-wrap items-center gap-3">
-            <span id="fluidLabel" class="text-sm font-bold text-blue-900"></span>
-            <input type="number" id="fluidAmount" placeholder="ระบุจำนวน" class="w-32 text-sm rounded-md border-blue-300 p-1.5 border">
-            <select id="fluidUnit" class="text-sm rounded-md border-blue-300 p-1.5 border bg-white">
-              <option value="cc">cc</option>
-              <option value="ML">ML</option>
+            <label class="block text-xs font-bold text-blue-900 mb-1">เพศผู้ป่วย <span class="text-red-600">*</span></label>
+            <select id="gender" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500 focus:ring-0 bg-white">
+              <option value="">-- เลือกเพศ --</option>
+              <option value="ชาย">ชาย</option>
+              <option value="หญิง">หญิง</option>
+              <option value="ไม่ระบุ">ไม่ระบุ</option>
             </select>
           </div>
         </div>
 
-        <button onclick="addLogEntry()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition flex items-center justify-center gap-2">
-          <span>บันทึกรายการนี้</span>
-        </button>
-      </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-blue-900 mb-1">ชื่อ / รหัสผู้ดูแล <span class="text-red-600">*</span></label>
+            <input type="text" id="caretaker" value="6770649" class="w-full rounded-xl border-2 border-slate-200 p-2.5 bg-slate-100 font-bold text-blue-900" readonly>
+          </div>
 
-      <!-- ตารางรายการที่บันทึกแล้ว -->
-      <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-        <h3 class="text-md font-bold text-slate-800 mb-3 border-b pb-2 flex items-center justify-between">
-          <span>รายการกิจกรรมที่บันทึกไว้</span>
-          <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-full"><span id="logCount">0</span> รายการ</span>
-        </h3>
+          <div>
+            <label class="block text-xs font-bold text-blue-900 mb-1">เลือกเวรปฏิบัติงาน <span class="text-red-600">*</span></label>
+            <select id="shift" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500 bg-white">
+              <option value="Day">Day (เช้า)</option>
+              <option value="Evening">Evening (บ่าย)</option>
+              <option value="Night">Night (ดึก)</option>
+            </select>
+          </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left text-slate-600 border-collapse">
-            <thead class="bg-slate-100 text-slate-700 text-xs uppercase">
-              <tr>
-                <th class="p-2.5 border">เวลา</th>
-                <th class="p-2.5 border">รายละเอียดกิจกรรม</th>
-                <th class="p-2.5 border">กายภาพบำบัด</th>
-                <th class="p-2.5 border">สัญญาณชีพ</th>
-                <th class="p-2.5 border text-center">จัดการ</th>
-              </tr>
-            </thead>
-            <tbody id="tempLogTable">
-              <!-- Render Table Row -->
-            </tbody>
-          </table>
+          <div>
+            <label class="block text-xs font-bold text-blue-900 mb-1">จำนวนชั่วโมง <span class="text-red-600">*</span></label>
+            <input type="number" id="workHours" min="1" max="24" value="8" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500">
+          </div>
         </div>
 
-        <div class="mt-6 flex justify-between items-center border-t pt-4">
-          <button onclick="prevStep()" class="bg-slate-500 hover:bg-slate-600 text-white font-medium py-2 px-4 rounded-lg transition">
-            &larr; แก้ไขข้อมูลทั่วไป
-          </button>
-          <button onclick="generateReport()" class="bg-blue-800 hover:bg-blue-900 text-white font-semibold py-2.5 px-6 rounded-lg shadow transition">
-            สร้างรายงานทางการแพทย์ A4 &rarr;
+        <div class="pt-2 flex justify-end">
+          <button onclick="nextStep()" class="bg-gradient-to-r from-blue-900 to-red-600 hover:from-blue-950 hover:to-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
+            ถัดไป (เริ่มบันทึกกิจกรรม) &rarr;
           </button>
         </div>
       </div>
 
-    </div>
+      <!-- STEP 2: บันทึกกิจกรรม -->
+      <div id="step2" class="space-y-6 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-6 border-t-8 border-blue-900">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-3 mb-4 gap-2">
+            <h3 class="text-lg font-bold text-blue-950 flex items-center gap-2">
+              <span class="med-cross"><span class="med-cross-inner">+</span></span> เพิ่มรายการกิจกรรมระหว่างเวร
+            </h3>
+            <span id="shiftBadge" class="bg-red-50 text-red-700 font-bold text-xs px-3 py-1 rounded-full border border-red-200"></span>
+          </div>
 
-    <!-- ================= STEP 3: หน้ารายงาน A4 ทางการแพทย์ / PDF ================= -->
-    <div id="step3" class="hidden">
-      <div class="mb-4 flex justify-between items-center no-print">
-        <button onclick="backToEdit()" class="bg-slate-600 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition">
-          &larr; กลับไปแก้ไขข้อมูล
-        </button>
-        <button onclick="downloadPDF()" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-2.5 px-6 rounded-lg shadow-md transition flex items-center gap-2">
-          📄 บันทึกเป็นไฟล์ PDF (เต็มหน้า)
-        </button>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-bold text-blue-900 mb-1">เวลา <span class="text-red-600">*</span></label>
+              <input type="time" id="logTime" class="w-full rounded-xl border-2 border-slate-200 p-2.5">
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-blue-900 mb-1">กายภาพบำบัด (ระบุถ้ามี)</label>
+              <input type="text" id="ptInput" oninput="toggleVitalsForm()" placeholder="เช่น ฝึกเดิน, ยืดข้อต่อ (เปิด Vital Signs อัตโนมัติ)" class="w-full rounded-xl border-2 border-slate-200 p-2.5">
+            </div>
+          </div>
+
+          <!-- Dynamic Vital Signs -->
+          <div id="vitalsBox" class="hidden bg-red-50/60 border-2 border-red-200 rounded-xl p-4 mb-4">
+            <div class="text-xs font-bold text-red-800 mb-2 flex items-center gap-1.5">
+              <span>🩺 Vital Signs (สัญญาณชีพสำหรับกายภาพ)</span>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <div><label class="block text-[10px] font-bold text-slate-700">BP (mmHg)</label><input type="text" id="bp" placeholder="120/80" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
+              <div><label class="block text-[10px] font-bold text-slate-700">HR (bpm)</label><input type="text" id="hr" placeholder="75" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
+              <div><label class="block text-[10px] font-bold text-slate-700">RR (/min)</label><input type="text" id="rr" placeholder="18" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
+              <div><label class="block text-[10px] font-bold text-slate-700">O2 (%)</label><input type="text" id="o2" placeholder="98" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
+              <div><label class="block text-[10px] font-bold text-slate-700">T (°C)</label><input type="text" id="temp" placeholder="36.6" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
+            </div>
+          </div>
+
+          <!-- กิจกรรม & Keyword -->
+          <div class="space-y-3 mb-4">
+            <div>
+              <label class="block text-xs font-bold text-blue-900 mb-1">รายละเอียดกิจกรรม</label>
+              <textarea id="activity" oninput="checkSmartKeywords()" rows="2" placeholder="รายละเอียด... (พิมพ์ RN, URINE หรือ FECES เพื่อช่วยเติมคำ)" class="w-full rounded-xl border-2 border-slate-200 p-2.5"></textarea>
+            </div>
+
+            <div id="fluidBox" class="hidden bg-blue-50 border-2 border-blue-200 rounded-xl p-3 flex flex-wrap items-center gap-3">
+              <span id="fluidLabel" class="text-xs font-bold text-blue-900"></span>
+              <input type="number" id="fluidAmount" placeholder="จำนวน" class="w-28 text-xs rounded-lg border-blue-300 p-2 border bg-white">
+              <select id="fluidUnit" class="text-xs rounded-lg border-blue-300 p-2 border bg-white">
+                <option value="cc">cc</option>
+                <option value="ML">ML</option>
+              </select>
+            </div>
+          </div>
+
+          <button onclick="addLogEntry()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-md transition">
+            + เพิ่มบันทึกรายการนี้
+          </button>
+        </div>
+
+        <!-- รายการบันทึกแล้ว -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 border border-slate-200">
+          <h3 class="text-sm font-bold text-blue-950 mb-3 border-b pb-2 flex justify-between">
+            <span>รายการที่บันทึกไว้</span>
+            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full"><span id="logCount">0</span> รายการ</span>
+          </h3>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead class="bg-slate-100 text-blue-950 uppercase font-bold">
+                <tr>
+                  <th class="p-2 border">เวลา</th>
+                  <th class="p-2 border">กิจกรรม</th>
+                  <th class="p-2 border">กายภาพ</th>
+                  <th class="p-2 border">สัญญาณชีพ</th>
+                  <th class="p-2 border text-center">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="tempLogTable"></tbody>
+            </table>
+          </div>
+
+          <div class="mt-6 flex justify-between items-center border-t pt-4">
+            <button onclick="prevStep()" class="bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-xl text-xs">
+              &larr; แก้ไขข้อมูลทั่วไป
+            </button>
+            <button onclick="generateReport()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg text-xs">
+              สร้างรายงาน A4 (PDF) &rarr;
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- Wrapper ควบคุมให้พอดีกับหน้าจอ -->
-      <div class="a4-wrapper">
-        <!-- ตัวกระดาษ A4 -->
-        <div id="pdfContent" class="a4-page shadow-xl border border-slate-200">
-          
-          <!-- Header ทางการแพทย์ -->
-          <div class="border-b-2 border-blue-900 pb-2 mb-3 flex justify-between items-end">
-            <div>
-              <h1 class="text-lg font-bold text-blue-950 uppercase tracking-wide">PATIENT CARE FLOWSHEET & LOG</h1>
-              <p class="text-xs text-slate-600 font-semibold">แบบบันทึกการดูแลผู้ป่วย พาร์ทไทม์ประจำวัน (Medical Record)</p>
-            </div>
-            <div class="text-right text-[10px] text-slate-500">
-              <p id="reportDateText"></p>
-              <p class="font-bold text-blue-900">CONFIDENTIAL MEDICAL DOCUMENT</p>
-            </div>
-          </div>
+      <!-- STEP 3: พรีวิวรายงาน A4 / ส่งออก PDF -->
+      <div id="step3" class="hidden space-y-4">
+        <div class="flex justify-between items-center no-print">
+          <button onclick="backToEdit()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl text-xs">
+            &larr; ย้อนกลับไปแก้ไข
+          </button>
+          <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg text-xs flex items-center gap-2">
+            📄 บันทึกเป็นไฟล์ PDF (เต็มหน้า A4)
+          </button>
+        </div>
 
-          <!-- กล่องข้อมูล Patient & Caregiver Profile -->
-          <div class="border border-slate-300 rounded p-2.5 mb-4 bg-slate-50 text-xs">
-            <div class="grid grid-cols-4 gap-2 border-b border-slate-200 pb-2 mb-2">
-              <div><span class="text-slate-500">หมายเลขห้อง:</span> <strong id="pdfRoom" class="text-blue-900"></strong></div>
-              <div><span class="text-slate-500">เพศ:</span> <strong id="pdfGender"></strong></div>
-              <div><span class="text-slate-500">เวรปฏิบัติงาน:</span> <strong id="pdfShift" class="text-blue-900"></strong></div>
-              <div><span class="text-slate-500">ระยะเวลา:</span> <strong id="pdfWorkHours"></strong> ชม.</div>
-            </div>
-            <div>
-              <span class="text-slate-500">ผู้บันทึก/ผู้ดูแล (Caregiver):</span> <strong id="pdfCaretaker"></strong>
-            </div>
-          </div>
-
-          <!-- ตารางข้อมูลทางการแพทย์ -->
-          <table class="med-table mb-4">
-            <thead>
-              <tr>
-                <th style="width: 12%;">เวลา</th>
-                <th style="width: 38%; text-align: left;">รายละเอียดกิจกรรมการดูแล</th>
-                <th style="width: 22%; text-align: left;">กายภาพบำบัด</th>
-                <th style="width: 28%; text-align: left;">สัญญาณชีพ (Vital Signs)</th>
-              </tr>
-            </thead>
-            <tbody id="pdfTableBody">
-              <!-- Dynamic PDF Rows -->
-            </tbody>
-          </table>
-
-          <!-- ส่วนท้ายกระดาษ A4 (Footer & Signature & Barcode) -->
-          <div class="mt-auto pt-4 border-t border-slate-300 flex justify-between items-end">
+        <div class="a4-wrapper">
+          <div id="pdfContent" class="a4-page shadow-2xl">
             
-            <!-- ฝั่งซ้าย: หมายเหตุ -->
-            <div class="text-[10px] text-slate-500 space-y-1">
-              <p>• เอกสารนี้เป็นบันทึกข้อมูลการพยาบาลและการดูแลผู้ป่วยประจำวัน</p>
-              <p>• Verified by Nursing & Caregiver Staff</p>
+            <!-- PDF Header -->
+            <div class="border-b-2 border-blue-900 pb-2 mb-3 flex justify-between items-end">
+              <div class="flex items-center gap-3">
+                <div class="med-cross"><span class="med-cross-inner">+</span></div>
+                <div>
+                  <h1 class="text-base font-bold text-blue-950 tracking-wide uppercase">PATIENT CARE FLOWSHEET</h1>
+                  <p class="text-[10px] text-red-600 font-bold">รายงานบันทึกการดูแลผู้ป่วยพาร์ทไทม์ (Medical Record)</p>
+                </div>
+              </div>
+              <div class="text-right text-[9px] text-slate-500">
+                <p id="reportDateText"></p>
+                <p class="font-bold text-blue-900">STAFF ID: 6770649</p>
+              </div>
             </div>
 
-            <!-- ฝั่งขวา: ลายเซ็น + Barcode รหัสผู้ดูแล (มุมขวาล่าง) -->
-            <div class="flex items-end gap-3 text-right">
-              
-              <div class="text-xs">
-                <p class="mb-5">ลงชื่อ..........................................................ผู้บันทึก</p>
-                <p class="text-[11px] text-slate-700">( <span id="pdfSignName"></span> )</p>
+            <!-- Profile Patient & Staff -->
+            <div class="border-l-4 border-l-red-600 border border-slate-300 rounded p-2.5 mb-3 bg-slate-50 text-[11px]">
+              <div class="grid grid-cols-4 gap-2 border-b border-slate-200 pb-1.5 mb-1.5">
+                <div><span class="text-slate-500">ห้อง:</span> <strong id="pdfRoom" class="text-blue-900"></strong></div>
+                <div><span class="text-slate-500">เพศ:</span> <strong id="pdfGender"></strong></div>
+                <div><span class="text-slate-500">เวร:</span> <strong id="pdfShift" class="text-blue-900"></strong></div>
+                <div><span class="text-slate-500">ระยะเวลา:</span> <strong id="pdfWorkHours"></strong> ชม.</div>
+              </div>
+              <div>
+                <span class="text-slate-500">ผู้ดูแลประจำเวร (Staff ID):</span> <strong id="pdfCaretaker" class="text-red-700"></strong>
+              </div>
+            </div>
+
+            <!-- ตารางข้อมูล PDF -->
+            <table class="med-table mb-4">
+              <thead>
+                <tr>
+                  <th style="width: 12%;">เวลา</th>
+                  <th style="width: 38%; text-align: left;">รายละเอียดกิจกรรม</th>
+                  <th style="width: 22%; text-align: left;">กายภาพบำบัด</th>
+                  <th style="width: 28%; text-align: left;">สัญญาณชีพ (Vital Signs)</th>
+                </tr>
+              </thead>
+              <tbody id="pdfTableBody"></tbody>
+            </table>
+
+            <!-- PDF Footer -->
+            <div class="mt-auto pt-3 border-t border-slate-300 flex justify-between items-end">
+              <div class="text-[9px] text-slate-500 space-y-0.5">
+                <p>• Verified by Nursing Staff (รหัสประจำตัว: 6770649)</p>
+                <p>• เอกสารทางการแพทย์ชั้นความลับ (Confidential)</p>
               </div>
 
-              <!-- Barcode สี่เหลี่ยมผืนผ้าขนาดพอดี สแกนได้จริง -->
-              <div class="border border-slate-300 p-1 bg-white rounded flex items-center justify-center">
-                <svg id="barcode"></svg>
+              <div class="flex items-end gap-3 text-right">
+                <div class="text-[11px]">
+                  <p class="mb-4">ลงชื่อ..........................................................ผู้บันทึก</p>
+                  <p class="text-[10px] text-slate-700">( รหัสพนักงาน: <span id="pdfSignName">6770649</span> )</p>
+                </div>
+                
+                <!-- Barcode 6770649 -->
+                <div class="border border-slate-300 p-1 bg-white rounded">
+                  <svg id="barcode"></svg>
+                </div>
               </div>
-
             </div>
 
           </div>
-
         </div>
       </div>
 
@@ -341,10 +412,72 @@
   </div>
 
   <script>
+    const VALID_STAFF_ID = "6770649";
     let logEntries = [];
     let detectedFluidType = null;
+    let html5QrcodeScanner = null;
 
-    document.getElementById('logTime').value = new Date().toTimeString().substring(0, 5);
+    // อัปเดตเวลา Real-time
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clockTime').innerText = now.toLocaleTimeString('th-TH');
+      document.getElementById('clockDate').innerText = now.toLocaleDateString('th-TH', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ล็อกอินด้วยรหัสพนักงาน
+    function validateAuthCode() {
+      const code = document.getElementById('authCode').value.trim();
+      if (code === VALID_STAFF_ID) {
+        loginSuccess();
+      } else {
+        showAuthError();
+      }
+    }
+
+    function showAuthError() {
+      document.getElementById('authError').classList.remove('hidden');
+    }
+
+    function loginSuccess() {
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('mainApp').classList.remove('hidden');
+      if (html5QrcodeScanner) stopScanner();
+      document.getElementById('logTime').value = new Date().toTimeString().substring(0, 5);
+    }
+
+    // สแกนบาร์โค้ดด้วยกล้องมือถือ
+    function startScanner() {
+      document.getElementById('scannerContainer').classList.remove('hidden');
+      html5QrcodeScanner = new Html5Qrcode("interactive");
+      
+      html5QrcodeScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 150 } },
+        (decodedText) => {
+          if (decodedText.trim() === VALID_STAFF_ID) {
+            document.getElementById('authCode').value = decodedText.trim();
+            loginSuccess();
+          } else {
+            showAuthError();
+          }
+        },
+        (errorMessage) => {}
+      ).catch(err => {
+        alert("ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้งานกล้องในเบราว์เซอร์");
+      });
+    }
+
+    function stopScanner() {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().then(() => {
+          document.getElementById('scannerContainer').classList.add('hidden');
+        }).catch(err => console.log(err));
+      }
+    }
 
     function nextStep() {
       const room = document.getElementById('roomNo').value.trim();
@@ -354,11 +487,11 @@
       const workHours = document.getElementById('workHours').value;
 
       if (!room || !gender || !caretaker || !workHours) {
-        alert('กรุณากรอกข้อมูลผู้ป่วย ผู้ดูแล เวร และจำนวนชั่วโมงให้ครบถ้วน');
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
         return;
       }
 
-      document.getElementById('shiftBadge').innerText = `ห้อง ${room} | เวร ${shift} (${workHours} ชม.) | ผู้ดูแล: ${caretaker}`;
+      document.getElementById('shiftBadge').innerText = `ห้อง ${room} | เวร ${shift} (${workHours} ชม.)`;
       document.getElementById('step1').classList.add('hidden');
       document.getElementById('step2').classList.remove('hidden');
     }
@@ -380,16 +513,7 @@
         vitalsBox.classList.remove('hidden');
       } else {
         vitalsBox.classList.add('hidden');
-        clearVitalsFields();
       }
-    }
-
-    function clearVitalsFields() {
-      document.getElementById('bp').value = '';
-      document.getElementById('hr').value = '';
-      document.getElementById('rr').value = '';
-      document.getElementById('o2').value = '';
-      document.getElementById('temp').value = '';
     }
 
     function checkSmartKeywords() {
@@ -415,7 +539,6 @@
       } else {
         detectedFluidType = null;
         fluidBox.classList.add('hidden');
-        document.getElementById('fluidAmount').value = '';
       }
     }
 
@@ -447,14 +570,12 @@
         };
       }
 
-      const entry = { id: Date.now(), time, activity: activity || '-', pt: pt || '-', vitals };
-      logEntries.push(entry);
+      logEntries.push({ id: Date.now(), time, activity: activity || '-', pt: pt || '-', vitals });
       logEntries.sort((a, b) => a.time.localeCompare(b.time));
 
       document.getElementById('activity').value = '';
       document.getElementById('ptInput').value = '';
       document.getElementById('fluidAmount').value = '';
-      detectedFluidType = null;
       document.getElementById('fluidBox').classList.add('hidden');
       toggleVitalsForm();
 
@@ -471,7 +592,7 @@
       document.getElementById('logCount').innerText = logEntries.length;
 
       if (logEntries.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">ยังไม่มีรายการบันทึก</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-400">ยังไม่มีข้อมูล</td></tr>`;
         return;
       }
 
@@ -485,17 +606,17 @@
           if (v.rr) parts.push(`RR: ${v.rr}`);
           if (v.o2) parts.push(`O2: ${v.o2}%`);
           if (v.temp) parts.push(`T: ${v.temp}°C`);
-          vitalsText = parts.length > 0 ? parts.join(' | ') : 'ไม่ได้ระบุค่า';
+          vitalsText = parts.join(' | ');
         }
 
         return `
           <tr class="border-b hover:bg-slate-50">
-            <td class="p-2.5 border font-bold text-blue-800">${e.time} น.</td>
-            <td class="p-2.5 border whitespace-pre-wrap">${e.activity}</td>
-            <td class="p-2.5 border whitespace-pre-wrap">${e.pt}</td>
-            <td class="p-2.5 border text-xs text-slate-700">${vitalsText}</td>
-            <td class="p-2.5 border text-center">
-              <button onclick="deleteEntry(${e.id})" class="text-rose-600 hover:text-rose-800 font-medium text-xs">ลบ</button>
+            <td class="p-2 border font-bold text-blue-900">${e.time} น.</td>
+            <td class="p-2 border whitespace-pre-wrap">${e.activity}</td>
+            <td class="p-2 border whitespace-pre-wrap">${e.pt}</td>
+            <td class="p-2 border text-[11px] text-slate-700">${vitalsText}</td>
+            <td class="p-2 border text-center">
+              <button onclick="deleteEntry(${e.id})" class="text-red-600 font-bold hover:underline">ลบ</button>
             </td>
           </tr>
         `;
@@ -504,26 +625,21 @@
 
     function generateReport() {
       if (logEntries.length === 0) {
-        alert('กรุณาเพิ่มอย่างน้อย 1 รายการก่อนสร้างรายงาน');
+        alert('กรุณาเพิ่มรายการอย่างน้อย 1 รายการ');
         return;
       }
 
-      const room = document.getElementById('roomNo').value;
-      const caretaker = document.getElementById('caretaker').value;
-
-      document.getElementById('pdfRoom').innerText = room;
+      document.getElementById('pdfRoom').innerText = document.getElementById('roomNo').value;
       document.getElementById('pdfGender').innerText = document.getElementById('gender').value;
       document.getElementById('pdfShift').innerText = document.getElementById('shift').value;
       document.getElementById('pdfWorkHours').innerText = document.getElementById('workHours').value;
-      document.getElementById('pdfCaretaker').innerText = caretaker;
-      document.getElementById('pdfSignName').innerText = caretaker;
+      document.getElementById('pdfCaretaker').innerText = VALID_STAFF_ID;
 
       const now = new Date();
       document.getElementById('reportDateText').innerText = 'Date: ' + now.toLocaleDateString('th-TH', {
         year: 'numeric', month: 'short', day: 'numeric'
       });
 
-      // Render Table Data (ใช้ Color Marking Badges แทน Emoji)
       const pdfTbody = document.getElementById('pdfTableBody');
       pdfTbody.innerHTML = logEntries.map(e => {
         let vitalsText = '-';
@@ -535,12 +651,12 @@
           if (v.rr) parts.push(`<span class="badge-mark badge-blue">RR</span>${v.rr}`);
           if (v.o2) parts.push(`<span class="badge-mark badge-blue">O2</span>${v.o2}%`);
           if (v.temp) parts.push(`<span class="badge-mark badge-blue">T</span>${v.temp}°C`);
-          vitalsText = parts.length > 0 ? parts.join(' ') : '-';
+          vitalsText = parts.join(' ');
         }
 
         let activityFormatted = e.activity;
         if (activityFormatted.includes('[FLUID:')) {
-          activityFormatted = activityFormatted.replace(/\[FLUID:(.*?)\]/g, '<span class="badge-mark badge-orange">FLUID</span>$1');
+          activityFormatted = activityFormatted.replace(/\[FLUID:(.*?)\]/g, '<span class="badge-mark badge-red">FLUID</span>$1');
         }
 
         let ptFormatted = e.pt;
@@ -550,50 +666,39 @@
 
         return `
           <tr>
-            <td class="text-center font-bold text-slate-800">${e.time}</td>
+            <td class="text-center font-bold text-slate-900">${e.time}</td>
             <td class="whitespace-pre-wrap">${activityFormatted}</td>
             <td class="whitespace-pre-wrap">${ptFormatted}</td>
-            <td class="text-[10px] leading-normal">${vitalsText}</td>
+            <td class="text-[9px] leading-relaxed">${vitalsText}</td>
           </tr>
         `;
       }).join('');
 
-      // สร้าง Barcode ผู้ดูแล
-      try {
-        JsBarcode("#barcode", caretaker || "CARE-101", {
-          format: "CODE128",
-          width: 1.1,
-          height: 26,
-          displayValue: true,
-          fontSize: 8,
-          margin: 0
-        });
-      } catch (err) {
-        console.log("Barcode error");
-      }
+      // สร้าง บาร์โค้ด รหัส 6770649
+      JsBarcode("#barcode", VALID_STAFF_ID, {
+        format: "CODE128",
+        width: 1.2,
+        height: 25,
+        displayValue: true,
+        fontSize: 8,
+        margin: 0
+      });
 
       document.getElementById('step2').classList.add('hidden');
       document.getElementById('step3').classList.remove('hidden');
     }
 
-    /* แก้ไขการส่งออก PDF ให้พอดีเต็มหน้า 100% ป้องกันข้อมูลขาดหาย */
     function downloadPDF() {
       const element = document.getElementById('pdfContent');
       const room = document.getElementById('roomNo').value;
       const shift = document.getElementById('shift').value;
 
       const opt = {
-        margin:       0,
-        filename:     `Medical_Report_Room_${room}_Shift_${shift}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { 
-          scale: 2, 
-          useCORS: true,
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: 794 /* บังคับหน้ากว้างมาตรฐาน A4 (Pixel Perfect) */
-        },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        margin: 0,
+        filename: `Medical_Report_Room_${room}_Shift_${shift}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 794 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
 
       html2pdf().set(opt).from(element).save();
