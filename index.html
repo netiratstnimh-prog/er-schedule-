@@ -1,906 +1,484 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบบันทึกการดูแลผู้ป่วย - Modern Nursing Care</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- html2pdf.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <!-- JsBarcode -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <!-- HTML5-QRCode -->
-  <script src="https://unpkg.com/html5-qrcode"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>แจ้งชำระค่าบริการ</title>
+    <!-- Google Fonts & PromptPay Library -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/promptpay-qr@0.5.0/dist/promptpay-qr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-blue: #0d47a1;
+            --secondary-blue: #1565c0;
+            --accent-blue: #e3f2fd;
+            --text-main: #2b2b2b;
+            --text-sub: #666666;
+            --kbank-green: #138f2d;
+            --scb-purple: #4e2e85;
+            --bg-light: #f4f6f9;
+        }
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Sarabun', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    /* สัญลักษณ์กากบาทพยาบาล (Modern Medical Cross) */
-    .med-cross {
-      position: relative;
-      width: 26px;
-      height: 26px;
-      background: #ef4444;
-      display: inline-block;
-      border-radius: 6px;
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-    }
-    .med-cross::after {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: #ef4444;
-      transform: rotate(90deg);
-      border-radius: 6px;
-    }
-    .med-cross-inner {
-      position: absolute;
-      z-index: 2;
-      color: white;
-      font-weight: 800;
-      font-size: 16px;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-    }
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-    /* A4 Structure */
-    .a4-wrapper {
-      width: 100%;
-      max-width: 210mm;
-      margin: 0 auto;
-      overflow-x: auto;
-    }
-    .a4-page {
-      width: 210mm;
-      min-height: 297mm;
-      padding: 10mm 12mm;
-      margin: 0 auto;
-      background: #ffffff;
-      box-sizing: border-box;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
+        /* Mobile Container Limit */
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow-x: hidden;
+        }
 
-    /* ตาราง PDF ธีมน้ำเงินตัดแดง */
-    .med-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 10.5px;
-      table-layout: fixed;
-    }
-    .med-table th {
-      background-color: #1e3a8a;
-      color: #ffffff;
-      border: 1px solid #1d4ed8;
-      border-bottom: 3px solid #dc2626;
-      padding: 6px;
-      font-weight: 700;
-      text-align: center;
-    }
-    .med-table td {
-      border: 1px solid #cbd5e1;
-      padding: 6px 8px;
-      vertical-align: top;
-      color: #0f172a;
-      word-wrap: break-word;
-    }
-    .med-table tr:nth-child(even) { background-color: #f8fafc; }
+        /* Header Style */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-blue);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
-    /* Color Badges */
-    .badge {
-      display: inline-block;
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-size: 9px;
-      font-weight: 700;
-      margin-right: 4px;
-      margin-bottom: 2px;
-    }
-    .badge-red { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-    .badge-blue { background-color: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
-    .badge-green { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; }
-    .badge-purple { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-    @media print {
-      body { background: white; padding: 0; }
-      .a4-wrapper { max-width: 100%; }
-      .a4-page { box-shadow: none; width: 100%; margin: 0; padding: 8mm; }
-      .no-print { display: none !important; }
-    }
-  </style>
+        /* Main Content View Switcher */
+        .content {
+            padding: 24px 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .view.active {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons & Utilities */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.25);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            background-color: var(--secondary-blue);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid #ccc;
+            color: var(--text-sub);
+        }
+
+        /* Bank Selection Cards */
+        .bank-card {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .bank-card:active {
+            transform: scale(0.98);
+        }
+
+        .bank-card.kbank { border-color: var(--kbank-green); }
+        .bank-card.scb { border-color: var(--scb-purple); }
+
+        .bank-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            margin-right: 16px;
+            font-size: 1.1rem;
+        }
+
+        .kbank .bank-icon { background-color: var(--kbank-green); }
+        .scb .bank-icon { background-color: var(--scb-purple); }
+
+        .bank-info h3 { font-size: 1rem; color: var(--text-main); }
+        .bank-info p { font-size: 0.85rem; color: var(--text-sub); }
+
+        /* Modal / Popup */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #ffffff;
+            width: 100%;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popUp 0.25s ease-out;
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .form-group {
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .input-amount {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1.25rem;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            text-align: right;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .input-amount:focus {
+            border-color: var(--primary-blue);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* QR Ticket Box */
+        .qr-ticket {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .timer-box {
+            background-color: #fff3e0;
+            border: 1px solid #ffe0b2;
+            color: #e65100;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        #qrcode img {
+            border: 8px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        .payment-details {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            border-top: 1px dashed #ddd;
+            padding-top: 12px;
+            margin-top: 12px;
+            text-align: left;
+        }
+
+        .payment-details div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .amount-highlight {
+            font-weight: 700;
+            color: var(--primary-blue);
+            font-size: 1.1rem;
+        }
+    </style>
 </head>
-<body class="bg-slate-950 min-h-screen text-slate-800">
+<body>
 
-  <!-- ================= HEADER BAR ================= -->
-  <header class="bg-slate-900/90 backdrop-blur-md border-b border-red-600/30 text-white p-3.5 sticky top-0 z-50 shadow-2xl">
-    <div class="max-w-6xl mx-auto flex justify-between items-center">
-      <div class="flex items-center gap-3">
-        <div class="med-cross"><span class="med-cross-inner">+</span></div>
-        <div>
-          <h1 class="font-extrabold text-base md:text-lg tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-red-400">
-            NURSING CARE SYSTEM
-          </h1>
-          <p class="text-[10px] text-red-400 font-medium tracking-wider">ระบบจัดการการดูแลผู้ป่วยทางการแพทย์</p>
-        </div>
-      </div>
-      
-      <!-- เวลา Real-time -->
-      <div class="text-right bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60 shadow-inner">
-        <div id="clockTime" class="text-sm md:text-base font-black text-red-500 font-mono tracking-wider">00:00:00</div>
-        <div id="clockDate" class="text-[10px] text-slate-300">1 สิงหาคม 2026</div>
-      </div>
-    </div>
-  </header>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <h1>แจ้งชำระค่าบริการ</h1>
+        </header>
 
-  <div class="max-w-5xl mx-auto p-3 md:p-6">
-
-    <!-- ================= AUTH GATEWAY (หน้าล็อกอินดีไซน์ใหม่) ================= -->
-    <div id="authScreen" class="max-w-md mx-auto my-8 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden">
-      <div class="bg-gradient-to-br from-blue-900 via-slate-900 to-red-950 p-6 text-center text-white relative">
-        <div class="w-16 h-16 bg-red-600/20 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto mb-3 border border-red-500/30">
-          <div class="med-cross scale-125"><span class="med-cross-inner">+</span></div>
-        </div>
-        <h2 class="text-xl font-black tracking-wide">เข้าสู่ระบบพนักงาน</h2>
-        <p class="text-xs text-slate-300 mt-1">กรุณายืนยันตัวตนด้วยรหัสประจำตัว หรือสแกนบาร์โค้ด</p>
-      </div>
-
-      <div class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 uppercase mb-1.5">รหัสพนักงานประจำตัว</label>
-          <input type="password" id="authCode" placeholder="•••••••" class="w-full text-center text-lg font-bold tracking-widest rounded-xl bg-slate-800 border border-slate-700 text-white p-3 focus:outline-none focus:border-red-500 transition">
-        </div>
-
-        <button onclick="validateAuthCode()" class="w-full bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-3 rounded-xl shadow-lg border-b-2 border-blue-950 transition active:scale-[0.98]">
-          🔓 เข้าสู่ระบบ (LOGIN)
-        </button>
-
-        <div class="relative flex py-1 items-center">
-          <div class="flex-grow border-t border-slate-800"></div>
-          <span class="flex-shrink mx-3 text-slate-500 text-xs font-semibold">ยืนยันตัวตนด้วยบาร์โค้ด</span>
-          <div class="flex-grow border-t border-slate-800"></div>
-        </div>
-
-        <!-- ปุ่มกล้อง / อัปโหลดภาพ -->
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="startScanner()" class="bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5">
-            <span>📷 สแกนผ่านกล้อง</span>
-          </button>
-          
-          <label class="bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer text-center">
-            <span>🖼️ อัปโหลดรูปภาพ</span>
-            <input type="file" id="barcodeFileInput" accept="image/*" class="hidden" onchange="scanFromFile(event)">
-          </label>
-        </div>
-
-        <!-- พื้นที่กล้อง -->
-        <div id="scannerContainer" class="hidden border border-red-500/40 rounded-xl overflow-hidden bg-black p-2">
-          <div id="interactive" class="w-full"></div>
-          <button onclick="stopScanner()" class="w-full mt-2 bg-slate-800 text-slate-300 text-xs py-1.5 rounded-lg">ปิดกล้อง</button>
-        </div>
-
-        <div id="authError" class="hidden text-center text-xs font-bold text-red-400 bg-red-950/50 p-2.5 rounded-xl border border-red-800/50">
-          ❌ รหัสประจำตัวหรือบาร์โค้ดไม่ถูกต้อง!
-        </div>
-
-        <!-- เครื่องมือสร้างบาร์โค้ด (Barcode Generator) -->
-        <div class="mt-6 pt-4 border-t border-slate-800">
-          <details class="text-xs text-slate-400">
-            <summary class="cursor-pointer font-bold hover:text-slate-200 transition">⚙️ เครื่องมือสร้างและบันทึกรูปบาร์โค้ด</summary>
-            <div class="mt-3 p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
-              <input type="text" id="genBarcodeInput" placeholder="กรอกเลขที่ต้องการสร้าง..." class="w-full p-2 bg-slate-900 border border-slate-700 text-white text-xs rounded-lg text-center">
-              <div class="flex gap-2">
-                <button onclick="generateCustomBarcode()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-1.5 rounded-lg border border-slate-600">สร้างบาร์โค้ด</button>
-                <button onclick="downloadBarcodeImage()" class="flex-1 bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-1.5 rounded-lg">💾 เซฟรูปภาพ</button>
-              </div>
-              <div class="bg-white p-2 rounded-lg flex justify-center items-center">
-                <svg id="genBarcodeSvg"></svg>
-              </div>
-            </div>
-          </details>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ================= MAIN APP ================= -->
-    <div id="mainApp" class="hidden space-y-6">
-
-      <!-- STEP 1: ข้อมูลผู้ป่วย -->
-      <div id="step1" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 space-y-6 border-t-8 border-red-600">
-        <div class="border-b pb-4 flex justify-between items-center">
-          <div>
-            <h2 class="text-xl font-bold text-blue-950 flex items-center gap-2">
-              <span class="med-cross"><span class="med-cross-inner">+</span></span> ข้อมูลการดูแลผู้ป่วย
-            </h2>
-            <p class="text-xs text-slate-500 mt-0.5">ระบุข้อมูลทั่วไปและช่วงเวลาปฏิบัติงาน</p>
-          </div>
-          <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-300">
-            พนักงาน: <span id="staffIdDisplay"></span>
-          </span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-blue-950 mb-1">หมายเลขห้อง <span class="text-red-600">*</span></label>
-            <input type="text" id="roomNo" placeholder="เช่น 101, VIP-2" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500 focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-blue-950 mb-1">เพศผู้ป่วย <span class="text-red-600">*</span></label>
-            <select id="gender" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500 focus:outline-none bg-white">
-              <option value="">-- เลือกเพศ --</option>
-              <option value="ชาย">ชาย</option>
-              <option value="หญิง">หญิง</option>
-              <option value="ไม่ระบุ">ไม่ระบุ</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-xs font-bold text-blue-950 mb-1">รหัสผู้ดูแล <span class="text-red-600">*</span></label>
-            <input type="text" id="caretaker" class="w-full rounded-xl border-2 border-slate-200 p-2.5 bg-slate-100 font-bold text-blue-900" readonly>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-blue-950 mb-1">เลือกเวรปฏิบัติงาน <span class="text-red-600">*</span></label>
-            <select id="shift" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500 bg-white">
-              <option value="Day">Day (เช้า)</option>
-              <option value="Evening">Evening (บ่าย)</option>
-              <option value="Night">Night (ดึก)</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-blue-950 mb-1">จำนวนชั่วโมง <span class="text-red-600">*</span></label>
-            <input type="number" id="workHours" min="1" max="24" value="8" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-red-500">
-          </div>
-        </div>
-
-        <div class="pt-2 flex justify-end">
-          <button onclick="nextStep()" class="bg-gradient-to-r from-blue-900 to-red-600 hover:from-blue-950 hover:to-red-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition">
-            ถัดไป (เริ่มบันทึกกิจกรรม) &rarr;
-          </button>
-        </div>
-      </div>
-
-      <!-- STEP 2: บันทึกกิจกรรม ยา และ หัตถการ -->
-      <div id="step2" class="space-y-6 hidden">
-        <div class="bg-white rounded-3xl shadow-xl p-6 border-t-8 border-blue-900 space-y-4">
-          <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-3 gap-2">
-            <h3 class="text-lg font-bold text-blue-950 flex items-center gap-2">
-              <span class="med-cross"><span class="med-cross-inner">+</span></span> บันทึกการรักษา / ยา / หัตถการ
-            </h3>
-            <span id="shiftBadge" class="bg-red-50 text-red-700 font-bold text-xs px-3 py-1 rounded-full border border-red-200"></span>
-          </div>
-
-          <!-- เวลา & หัตถการ -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-bold text-blue-900 mb-1">เวลา <span class="text-red-600">*</span></label>
-              <input type="time" id="logTime" class="w-full rounded-xl border-2 border-slate-200 p-2.5 focus:border-blue-900">
-            </div>
-
-            <div class="md:col-span-2">
-              <label class="block text-xs font-bold text-blue-900 mb-1">✂️ หัตถการ (Procedures)</label>
-              <div class="flex gap-2">
-                <select id="procedureSelect" onchange="applyProcedure()" class="w-1/2 rounded-xl border-2 border-slate-200 p-2.5 bg-white text-xs">
-                  <option value="">-- เลือกหัตถการยอดนิยม --</option>
-                  <option value="Dressing (ทำแผล)">Dressing (ทำแผล)</option>
-                  <option value="Venipuncture (เจาะเลือด)">Venipuncture (เจาะเลือด)</option>
-                  <option value="NG Tube Insertion (ใส่สายอาหาร)">NG Tube Insertion (ใส่สายอาหาร)</option>
-                  <option value="Foley Cath Insertion (ใส่สายปัสสาวะ)">Foley Cath Insertion (ใส่สายปัสสาวะ)</option>
-                  <option value="Suction (ดูดเสมหะ)">Suction (ดูดเสมหะ)</option>
-                  <option value="Nebulization (พ่นยา)">Nebulization (พ่นยา)</option>
-                  <option value="On IV Cannula (เปิดเส้น IV)">On IV Cannula (เปิดเส้น IV)</option>
-                </select>
-                <input type="text" id="procedureInput" placeholder="หรือระบุหัตถการอื่นๆ..." class="w-1/2 rounded-xl border-2 border-slate-200 p-2.5 text-xs">
-              </div>
-            </div>
-          </div>
-
-          <!-- หมวดหมู่ยาฉีด & ยาทางสารน้ำ IV -->
-          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
-            <span class="text-xs font-bold text-blue-950 flex items-center gap-1">
-              💉 หมวดยาฉีด (Injections) & ยาทางสารน้ำ (IV Meds)
-            </span>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <!-- ยาฉีดทั่วไป -->
-              <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">ยาฉีดทั่วไป (IM / SC / Direct IV)</label>
-                <select id="injSelect" onchange="appendMedication('injSelect')" class="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white">
-                  <option value="">-- เลือกรายการยาฉีด --</option>
-                  <option value="Tramadol 50mg Inj.">Tramadol 50mg Inj. (แก้ปวด)</option>
-                  <option value="Morphine 10mg Inj.">Morphine 10mg Inj. (แก้ปวดรุนแรง)</option>
-                  <option value="Buscopan 20mg Inj.">Buscopan 20mg Inj. (แก้ปวดเกร็งท้อง)</option>
-                  <option value="Ondansetron 8mg Inj.">Ondansetron 8mg Inj. (แก้คลื่นไส้)</option>
-                  <option value="Plasil (Metoclopramide) 10mg">Plasil 10mg Inj. (แก้คลื่นไส้/อาเจียน)</option>
-                  <option value="Dexamethasone 5mg Inj.">Dexamethasone 5mg Inj. (ลดอักเสบ/สเตอร์รอยด์)</option>
-                  <option value="CPM (Chlorpheniramine) 10mg">CPM 10mg Inj. (แก้แพ้)</option>
-                  <option value="Furosemide 20mg Inj.">Furosemide 20mg Inj. (ขับปัสสาวะ)</option>
-                  <option value="Omeprazole 40mg IV Inj.">Omeprazole 40mg IV (ยาลดกรด)</option>
-                </select>
-              </div>
-
-              <!-- ยาฆ่าเชื้อทางสารน้ำ IV -->
-              <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">ยาฆ่าเชื้อ & สารน้ำ (IV Infusion / Antibiotics)</label>
-                <select id="ivSelect" onchange="appendMedication('ivSelect')" class="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white">
-                  <option value="">-- เลือกรายการยา IV --</option>
-                  <option value="Ceftriaxone 1g IV">Ceftriaxone 1g IV (ยาฆ่าเชื้อ)</option>
-                  <option value="Piperacillin/Tazobactam 4.5g IV">Piperacillin/Tazobactam 4.5g IV</option>
-                  <option value="Meropenem 1g IV">Meropenem 1g IV (ยาฆ่าเชื้อ)</option>
-                  <option value="Vancomycin 1g IV">Vancomycin 1g IV (ยาฆ่าเชื้อ)</option>
-                  <option value="Metronidazole 500mg IV">Metronidazole 500mg IV</option>
-                  <option value="Augmentin 1.2g IV">Augmentin 1.2g IV (ยาฆ่าเชื้อ)</option>
-                  <option value="Ciprofloxacin 400mg IV Drip">Ciprofloxacin 400mg IV Drip</option>
-                  <option value="0.9% Normal Saline Solution (NSS) 1000ml">0.9% NSS 1000ml (น้ำเกลือ)</option>
-                  <option value="5% Dextrose in Water (D5W) 500ml">5% D5W 500ml</option>
-                  <option value="Acetar Solution 1000ml">Acetar Solution 1000ml</option>
-                </select>
-              </div>
-
-              <!-- กรอกยาอื่นๆ -->
-              <div>
-                <label class="block text-[11px] font-bold text-slate-600 mb-1">กรอกชื่อยาเพิ่มเติมอื่นๆ</label>
-                <input type="text" id="otherMedInput" placeholder="ระบุชื่อยาเพิ่มเติม..." class="w-full rounded-xl border border-slate-300 p-2 text-xs bg-white">
-              </div>
-            </div>
-          </div>
-
-          <!-- กายภาพบำบัด -->
-          <div>
-            <label class="block text-xs font-bold text-blue-900 mb-1">🏃 กายภาพบำบัด (Physical Therapy)</label>
-            <input type="text" id="ptInput" oninput="toggleVitalsForm()" placeholder="เช่น ฝึกเดินรอบห้อง, ยืดข้อต่อ (พิมพ์แล้ว Vital Signs จะเปิดขึ้นมา)" class="w-full rounded-xl border-2 border-slate-200 p-2.5">
-          </div>
-
-          <!-- Dynamic Vital Signs -->
-          <div id="vitalsBox" class="hidden bg-red-50/70 border-2 border-red-200 rounded-2xl p-4">
-            <div class="text-xs font-bold text-red-800 mb-2">🩺 Vital Signs (สัญญาณชีพสำหรับกายภาพ)</div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <div><label class="block text-[10px] font-bold text-slate-700">BP (mmHg)</label><input type="text" id="bp" placeholder="120/80" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
-              <div><label class="block text-[10px] font-bold text-slate-700">HR (bpm)</label><input type="text" id="hr" placeholder="75" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
-              <div><label class="block text-[10px] font-bold text-slate-700">RR (/min)</label><input type="text" id="rr" placeholder="18" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
-              <div><label class="block text-[10px] font-bold text-slate-700">O2 (%)</label><input type="text" id="o2" placeholder="98" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
-              <div><label class="block text-[10px] font-bold text-slate-700">T (°C)</label><input type="text" id="temp" placeholder="36.6" class="w-full text-xs rounded-lg border-slate-300 p-2 border bg-white"></div>
-            </div>
-          </div>
-
-          <!-- รายละเอียดกิจกรรมทั่วไป -->
-          <div class="space-y-3">
-            <div>
-              <label class="block text-xs font-bold text-blue-900 mb-1">รายละเอียดกิจกรรม / บันทึกเพิ่มเติม</label>
-              <textarea id="activity" oninput="checkSmartKeywords()" rows="2" placeholder="รายละเอียดอื่นๆ... (พิมพ์ RN, URINE หรือ FECES เพื่อช่วยระบุสารน้ำ)" class="w-full rounded-xl border-2 border-slate-200 p-2.5 text-xs"></textarea>
-            </div>
-
-            <div id="fluidBox" class="hidden bg-blue-50 border-2 border-blue-200 rounded-xl p-3 flex flex-wrap items-center gap-3">
-              <span id="fluidLabel" class="text-xs font-bold text-blue-900"></span>
-              <input type="number" id="fluidAmount" placeholder="จำนวน" class="w-28 text-xs rounded-lg border-blue-300 p-2 border bg-white">
-              <select id="fluidUnit" class="text-xs rounded-lg border-blue-300 p-2 border bg-white">
-                <option value="cc">cc</option>
-                <option value="ML">ML</option>
-              </select>
-            </div>
-          </div>
-
-          <button onclick="addLogEntry()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl shadow-lg transition">
-            + บันทึกรายการนี้
-          </button>
-        </div>
-
-        <!-- รายการบันทึกแล้ว -->
-        <div class="bg-white rounded-3xl shadow-xl p-6 border border-slate-200">
-          <h3 class="text-sm font-bold text-blue-950 mb-3 border-b pb-2 flex justify-between">
-            <span>รายการที่บันทึกไว้ในเวรนี้</span>
-            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-0.5 rounded-full"><span id="logCount">0</span> รายการ</span>
-          </h3>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left border-collapse">
-              <thead class="bg-slate-100 text-blue-950 uppercase font-bold">
-                <tr>
-                  <th class="p-2 border">เวลา</th>
-                  <th class="p-2 border">กิจกรรม/ยา/หัตถการ</th>
-                  <th class="p-2 border">กายภาพ</th>
-                  <th class="p-2 border">สัญญาณชีพ</th>
-                  <th class="p-2 border text-center">จัดการ</th>
-                </tr>
-              </thead>
-              <tbody id="tempLogTable"></tbody>
-            </table>
-          </div>
-
-          <div class="mt-6 flex justify-between items-center border-t pt-4">
-            <button onclick="prevStep()" class="bg-slate-500 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-xl text-xs">
-              &larr; แก้ไขข้อมูลทั่วไป
-            </button>
-            <button onclick="generateReport()" class="bg-blue-900 hover:bg-blue-950 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg text-xs">
-              สร้างรายงาน A4 (PDF) &rarr;
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 3: พรีวิวรายงาน A4 / ส่งออก PDF -->
-      <div id="step3" class="hidden space-y-4">
-        <div class="flex justify-between items-center no-print">
-          <button onclick="backToEdit()" class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-xl text-xs">
-            &larr; ย้อนกลับไปแก้ไข
-          </button>
-          <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg text-xs flex items-center gap-2">
-            📄 บันทึกเป็นไฟล์ PDF (เต็มหน้า A4)
-          </button>
-        </div>
-
-        <div class="a4-wrapper">
-          <div id="pdfContent" class="a4-page shadow-2xl">
+        <!-- Main Body -->
+        <main class="content">
             
-            <!-- PDF Header -->
-            <div class="border-b-2 border-blue-900 pb-2 mb-3 flex justify-between items-end">
-              <div class="flex items-center gap-3">
-                <div class="med-cross"><span class="med-cross-inner">+</span></div>
-                <div>
-                  <h1 class="text-base font-bold text-blue-950 tracking-wide uppercase">PATIENT CARE FLOWSHEET</h1>
-                  <p class="text-[10px] text-red-600 font-bold">รายงานบันทึกการดูแลผู้ป่วยและการรักษา (Medical Record)</p>
+            <!-- View 1: Home Page -->
+            <div id="view-home" class="view active">
+                <div style="text-align: center; margin: auto 0;">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#0d47a1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                        <line x1="2" y1="10" x2="22" y2="10"/>
+                    </svg>
+                    <h2 style="margin-top: 15px; font-weight: 600;">ระบบชำระเงินออนไลน์</h2>
+                    <p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">สะดวกรวดเร็ว ปลอดภัย รองรับทุกธนาคาร</p>
                 </div>
-              </div>
-              <div class="text-right text-[9px] text-slate-500">
-                <p id="reportDateText"></p>
-                <p class="font-bold text-blue-900">STAFF ID: <span class="pdfStaffId"></span></p>
-              </div>
+                <button class="btn btn-primary" onclick="goToView('view-banks')">
+                    แจ้งชำระค่าบริการ
+                </button>
             </div>
 
-            <!-- Profile Patient & Staff -->
-            <div class="border-l-4 border-l-red-600 border border-slate-300 rounded p-2.5 mb-3 bg-slate-50 text-[11px]">
-              <div class="grid grid-cols-4 gap-2 border-b border-slate-200 pb-1.5 mb-1.5">
-                <div><span class="text-slate-500">ห้อง:</span> <strong id="pdfRoom" class="text-blue-900"></strong></div>
-                <div><span class="text-slate-500">เพศ:</span> <strong id="pdfGender"></strong></div>
-                <div><span class="text-slate-500">เวร:</span> <strong id="pdfShift" class="text-blue-900"></strong></div>
-                <div><span class="text-slate-500">ระยะเวลา:</span> <strong id="pdfWorkHours"></strong> ชม.</div>
-              </div>
-              <div>
-                <span class="text-slate-500">ผู้ดูแลประจำเวร (Staff ID):</span> <strong id="pdfCaretaker" class="text-red-700"></strong>
-              </div>
-            </div>
-
-            <!-- ตารางข้อมูล PDF -->
-            <table class="med-table mb-4">
-              <thead>
-                <tr>
-                  <th style="width: 11%;">เวลา</th>
-                  <th style="width: 41%; text-align: left;">กิจกรรม / การรักษา / หัตถการ</th>
-                  <th style="width: 22%; text-align: left;">กายภาพบำบัด</th>
-                  <th style="width: 26%; text-align: left;">สัญญาณชีพ (Vital Signs)</th>
-                </tr>
-              </thead>
-              <tbody id="pdfTableBody"></tbody>
-            </table>
-
-            <!-- PDF Footer -->
-            <div class="mt-auto pt-3 border-t border-slate-300 flex justify-between items-end">
-              <div class="text-[9px] text-slate-500 space-y-0.5">
-                <p>• Verified by Nursing Staff (รหัสประจำตัว: <span class="pdfStaffId"></span>)</p>
-                <p>• เอกสารทางการแพทย์ชั้นความลับ (Confidential Medical Document)</p>
-              </div>
-
-              <div class="flex items-end gap-3 text-right">
-                <div class="text-[11px]">
-                  <p class="mb-4">ลงชื่อ..........................................................ผู้บันทึก</p>
-                  <p class="text-[10px] text-slate-700">( รหัสพนักงาน: <span class="pdfStaffId"></span> )</p>
-                </div>
+            <!-- View 2: Bank Selection -->
+            <div id="view-banks" class="view">
+                <p style="color: var(--text-sub); font-size: 0.95rem; font-weight: 500;">โปรดเลือกธนาคารที่ต้องการชำระ:</p>
                 
-                <!-- Barcode SVG -->
-                <div class="border border-slate-300 p-1 bg-white rounded">
-                  <svg id="barcode"></svg>
+                <div class="bank-card kbank" onclick="openAmountModal('กสิกรไทย (KBANK)')">
+                    <div class="bank-icon">K</div>
+                    <div class="bank-info">
+                        <h3>ธนาคารกสิกรไทย</h3>
+                        <p>ชำระผ่าน QR PromptPay</p>
+                    </div>
                 </div>
-              </div>
+
+                <div class="bank-card scb" onclick="openAmountModal('ไทยพาณิชย์ (SCB)')">
+                    <div class="bank-icon">SCB</div>
+                    <div class="bank-info">
+                        <h3>ธนาคารไทยพาณิชย์</h3>
+                        <p>ชำระผ่าน QR PromptPay</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline" style="margin-top: auto;" onclick="goToView('view-home')">ย้อนกลับ</button>
             </div>
 
-          </div>
+            <!-- View 3: QR Code Display -->
+            <div id="view-qr" class="view">
+                <div class="qr-ticket">
+                    <div class="timer-box">
+                        กรุณาชำระภายใน <span id="timer">20:00</span> นาที
+                    </div>
+                    
+                    <p style="font-size: 0.85rem; color: var(--text-sub);">สแกน QR Code เพื่อชำระเงิน</p>
+                    
+                    <div id="qrcode"></div>
+
+                    <p style="font-size: 0.8rem; color: var(--text-sub);">PromptPay E-wallet<br><b>088983000001922</b></p>
+
+                    <div class="payment-details">
+                        <div><span>ธนาคารที่เลือก:</span> <b id="selected-bank-text">-</b></div>
+                        <div><span>ยอดชำระทั้งหมด:</span> <span class="amount-highlight" id="display-amount">0.00 บาท</span></div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveQRCode()">บันทึกรูปภาพ</button>
+                <button class="btn btn-outline" onclick="resetProcess()">เริ่มต้นสร้างใหม่</button>
+            </div>
+
+        </main>
+
+        <!-- Modal Popup for Amount Input -->
+        <div class="modal-overlay" id="amount-modal">
+            <div class="modal">
+                <h3 style="font-size: 1.1rem; color: var(--primary-blue);">กรอกจำนวนเงิน</h3>
+                <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;" id="modal-bank-title">ธนาคาร</p>
+                
+                <div class="form-group">
+                    <label for="amount-input">จำนวนเงินที่ต้องชำระ (บาท)</label>
+                    <input type="number" id="amount-input" class="input-amount" placeholder="0.00" step="0.01" min="1">
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="clearInput()" style="flex: 1;">ลบ</button>
+                    <button class="btn btn-primary" onclick="generateQR()" style="flex: 2;">ยืนยันสร้าง QR</button>
+                </div>
+            </div>
         </div>
-      </div>
 
     </div>
 
-  </div>
+    <script>
+        const PROMPTPAY_ID = "088983000001922";
+        let selectedBank = "";
+        let countdownInterval = null;
 
-  <script>
-    const AUTH_KEY = "6770649";
-    let currentUser = "";
-    let logEntries = [];
-    let detectedFluidType = null;
-    let html5QrcodeScanner = null;
-
-    // อัปเดตเวลา Real-time
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clockTime').innerText = now.toLocaleTimeString('th-TH');
-      document.getElementById('clockDate').innerText = now.toLocaleDateString('th-TH', {
-        day: 'numeric', month: 'long', year: 'numeric'
-      });
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // ล็อกอินด้วยการกรอกรหัส
-    function validateAuthCode() {
-      const code = document.getElementById('authCode').value.trim();
-      if (code === AUTH_KEY) {
-        loginSuccess(code);
-      } else {
-        showAuthError();
-      }
-    }
-
-    function showAuthError() {
-      document.getElementById('authError').classList.remove('hidden');
-    }
-
-    function loginSuccess(staffId) {
-      currentUser = staffId;
-      document.getElementById('authScreen').classList.add('hidden');
-      document.getElementById('mainApp').classList.remove('hidden');
-      document.getElementById('staffIdDisplay').innerText = staffId;
-      document.getElementById('caretaker').value = staffId;
-      document.querySelectorAll('.pdfStaffId').forEach(el => el.innerText = staffId);
-      if (html5QrcodeScanner) stopScanner();
-      document.getElementById('logTime').value = new Date().toTimeString().substring(0, 5);
-    }
-
-    // เปิดกล้องสแกนบาร์โค้ด
-    function startScanner() {
-      document.getElementById('scannerContainer').classList.remove('hidden');
-      html5QrcodeScanner = new Html5Qrcode("interactive");
-      
-      html5QrcodeScanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 150 } },
-        (decodedText) => {
-          if (decodedText.trim() === AUTH_KEY) {
-            loginSuccess(decodedText.trim());
-          } else {
-            showAuthError();
-          }
-        },
-        (errorMessage) => {}
-      ).catch(err => {
-        alert("ไม่สามารถเปิดกล้องได้ กรุณาอนุญาตการใช้งานกล้องในเบราว์เซอร์");
-      });
-    }
-
-    function stopScanner() {
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.stop().then(() => {
-          document.getElementById('scannerContainer').classList.add('hidden');
-        }).catch(err => console.log(err));
-      }
-    }
-
-    // สแกนบาร์โค้ดจากรูปภาพในเครื่อง
-    function scanFromFile(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const html5QrCode = new Html5Qrcode("interactive");
-      html5QrCode.scanFile(file, true)
-        .then(decodedText => {
-          if (decodedText.trim() === AUTH_KEY) {
-            loginSuccess(decodedText.trim());
-          } else {
-            showAuthError();
-          }
-        })
-        .catch(err => {
-          alert("ไม่พบบาร์โค้ดในรูปภาพ หรือรูปภาพไม่ชัดเจน");
-        });
-    }
-
-    // เครื่องมือสร้างและเซฟรูปบาร์โค้ด
-    function generateCustomBarcode() {
-      const val = document.getElementById('genBarcodeInput').value.trim();
-      if (!val) return;
-      JsBarcode("#genBarcodeSvg", val, {
-        format: "CODE128",
-        width: 1.5,
-        height: 40,
-        displayValue: true
-      });
-    }
-
-    function downloadBarcodeImage() {
-      const svg = document.getElementById('genBarcodeSvg');
-      if (!svg.hasChildNodes()) {
-        alert("กรุณากดสร้างบาร์โค้ดก่อน");
-        return;
-      }
-      
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-
-      img.onload = function () {
-        canvas.width = img.width + 20;
-        canvas.height = img.height + 20;
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 10, 10);
-        
-        const a = document.createElement("a");
-        a.download = "barcode.png";
-        a.href = canvas.toDataURL("image/png");
-        a.click();
-      };
-
-      img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
-    }
-
-    // เลือกหัตถการ
-    function applyProcedure() {
-      const select = document.getElementById('procedureSelect');
-      if (select.value) {
-        document.getElementById('procedureInput').value = select.value;
-      }
-    }
-
-    // เลือกยา
-    function appendMedication(selectId) {
-      const select = document.getElementById(selectId);
-      const val = select.value;
-      if (!val) return;
-
-      const actTextarea = document.getElementById('activity');
-      if (actTextarea.value.trim() !== "") {
-        actTextarea.value += `, ${val}`;
-      } else {
-        actTextarea.value = val;
-      }
-      select.value = "";
-    }
-
-    function nextStep() {
-      const room = document.getElementById('roomNo').value.trim();
-      const gender = document.getElementById('gender').value;
-      const caretaker = document.getElementById('caretaker').value.trim();
-      const shift = document.getElementById('shift').value;
-      const workHours = document.getElementById('workHours').value;
-
-      if (!room || !gender || !caretaker || !workHours) {
-        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
-        return;
-      }
-
-      document.getElementById('shiftBadge').innerText = `ห้อง ${room} | เวร ${shift} (${workHours} ชม.)`;
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('step2').classList.remove('hidden');
-    }
-
-    function prevStep() {
-      document.getElementById('step2').classList.add('hidden');
-      document.getElementById('step1').classList.remove('hidden');
-    }
-
-    function backToEdit() {
-      document.getElementById('step3').classList.add('hidden');
-      document.getElementById('step2').classList.remove('hidden');
-    }
-
-    function toggleVitalsForm() {
-      const ptValue = document.getElementById('ptInput').value.trim();
-      const vitalsBox = document.getElementById('vitalsBox');
-      if (ptValue.length > 0) {
-        vitalsBox.classList.remove('hidden');
-      } else {
-        vitalsBox.classList.add('hidden');
-      }
-    }
-
-    function checkSmartKeywords() {
-      const actInput = document.getElementById('activity');
-      let val = actInput.value;
-
-      if (val.includes('RN')) {
-        actInput.value = val.replace(/RN/g, 'Antibiotic Ciprofloxacin ให้ทาง IV');
-      }
-
-      const upperVal = actInput.value.toUpperCase();
-      const fluidBox = document.getElementById('fluidBox');
-      const fluidLabel = document.getElementById('fluidLabel');
-
-      if (upperVal.includes('URINE')) {
-        detectedFluidType = 'URINE';
-        fluidLabel.innerText = 'ระบุปริมาณ URINE:';
-        fluidBox.classList.remove('hidden');
-      } else if (upperVal.includes('FECES')) {
-        detectedFluidType = 'FECES';
-        fluidLabel.innerText = 'ระบุปริมาณ FECES:';
-        fluidBox.classList.remove('hidden');
-      } else {
-        detectedFluidType = null;
-        fluidBox.classList.add('hidden');
-      }
-    }
-
-    function addLogEntry() {
-      const time = document.getElementById('logTime').value;
-      let activity = document.getElementById('activity').value.trim();
-      const pt = document.getElementById('ptInput').value.trim();
-      const procedure = document.getElementById('procedureInput').value.trim();
-      const otherMed = document.getElementById('otherMedInput').value.trim();
-
-      if (!time) {
-        alert('กรุณาระบุเวลา');
-        return;
-      }
-
-      let fullActivityParts = [];
-      if (procedure) fullActivityParts.push(`[หัตถการ: ${procedure}]`);
-      if (otherMed) fullActivityParts.push(`[ยาเพิ่มเติม: ${otherMed}]`);
-      if (activity) fullActivityParts.push(activity);
-
-      const fluidAmount = document.getElementById('fluidAmount').value;
-      const fluidUnit = document.getElementById('fluidUnit').value;
-
-      if (detectedFluidType && fluidAmount) {
-        fullActivityParts.push(`[FLUID: ${detectedFluidType} ${fluidAmount} ${fluidUnit}]`);
-      }
-
-      const finalActivityStr = fullActivityParts.join(' ') || '-';
-
-      let vitals = null;
-      if (pt.length > 0) {
-        vitals = {
-          bp: document.getElementById('bp').value.trim(),
-          hr: document.getElementById('hr').value.trim(),
-          rr: document.getElementById('rr').value.trim(),
-          o2: document.getElementById('o2').value.trim(),
-          temp: document.getElementById('temp').value.trim()
-        };
-      }
-
-      logEntries.push({ id: Date.now(), time, activity: finalActivityStr, pt: pt || '-', vitals });
-      logEntries.sort((a, b) => a.time.localeCompare(b.time));
-
-      // Reset
-      document.getElementById('activity').value = '';
-      document.getElementById('ptInput').value = '';
-      document.getElementById('procedureInput').value = '';
-      document.getElementById('procedureSelect').value = '';
-      document.getElementById('otherMedInput').value = '';
-      document.getElementById('fluidAmount').value = '';
-      document.getElementById('fluidBox').classList.add('hidden');
-      toggleVitalsForm();
-
-      renderTempTable();
-    }
-
-    function deleteEntry(id) {
-      logEntries = logEntries.filter(e => e.id !== id);
-      renderTempTable();
-    }
-
-    function renderTempTable() {
-      const tbody = document.getElementById('tempLogTable');
-      document.getElementById('logCount').innerText = logEntries.length;
-
-      if (logEntries.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-400">ยังไม่มีข้อมูลรายการในเวรนี้</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = logEntries.map(e => {
-        let vitalsText = '-';
-        if (e.vitals) {
-          const v = e.vitals;
-          let parts = [];
-          if (v.bp) parts.push(`BP: ${v.bp}`);
-          if (v.hr) parts.push(`HR: ${v.hr}`);
-          if (v.rr) parts.push(`RR: ${v.rr}`);
-          if (v.o2) parts.push(`O2: ${v.o2}%`);
-          if (v.temp) parts.push(`T: ${v.temp}°C`);
-          vitalsText = parts.join(' | ');
+        function goToView(viewId) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
         }
 
-        return `
-          <tr class="border-b hover:bg-slate-50">
-            <td class="p-2 border font-bold text-blue-900">${e.time} น.</td>
-            <td class="p-2 border whitespace-pre-wrap">${e.activity}</td>
-            <td class="p-2 border whitespace-pre-wrap">${e.pt}</td>
-            <td class="p-2 border text-[11px] text-slate-700">${vitalsText}</td>
-            <td class="p-2 border text-center">
-              <button onclick="deleteEntry(${e.id})" class="text-red-600 font-bold hover:underline">ลบ</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function generateReport() {
-      if (logEntries.length === 0) {
-        alert('กรุณาเพิ่มรายการอย่างน้อย 1 รายการ');
-        return;
-      }
-
-      document.getElementById('pdfRoom').innerText = document.getElementById('roomNo').value;
-      document.getElementById('pdfGender').innerText = document.getElementById('gender').value;
-      document.getElementById('pdfShift').innerText = document.getElementById('shift').value;
-      document.getElementById('pdfWorkHours').innerText = document.getElementById('workHours').value;
-      document.getElementById('pdfCaretaker').innerText = currentUser;
-
-      const now = new Date();
-      document.getElementById('reportDateText').innerText = 'Date: ' + now.toLocaleDateString('th-TH', {
-        year: 'numeric', month: 'short', day: 'numeric'
-      });
-
-      const pdfTbody = document.getElementById('pdfTableBody');
-      pdfTbody.innerHTML = logEntries.map(e => {
-        let vitalsText = '-';
-        if (e.vitals) {
-          const v = e.vitals;
-          let parts = [];
-          if (v.bp) parts.push(`<span class="badge badge-blue">BP</span>${v.bp}`);
-          if (v.hr) parts.push(`<span class="badge badge-blue">HR</span>${v.hr}`);
-          if (v.rr) parts.push(`<span class="badge badge-blue">RR</span>${v.rr}`);
-          if (v.o2) parts.push(`<span class="badge badge-blue">O2</span>${v.o2}%`);
-          if (v.temp) parts.push(`<span class="badge badge-blue">T</span>${v.temp}°C`);
-          vitalsText = parts.join(' ');
+        function openAmountModal(bankName) {
+            selectedBank = bankName;
+            document.getElementById('modal-bank-title').innerText = "ช่องทาง: " + bankName;
+            document.getElementById('amount-input').value = "";
+            document.getElementById('amount-modal').style.display = 'flex';
+            document.getElementById('amount-input').focus();
         }
 
-        let activityFormatted = e.activity;
-        activityFormatted = activityFormatted.replace(/\[หัตถการ:(.*?)\]/g, '<span class="badge badge-purple">PROCEDURE</span>$1');
-        activityFormatted = activityFormatted.replace(/\[FLUID:(.*?)\]/g, '<span class="badge badge-red">FLUID</span>$1');
-        activityFormatted = activityFormatted.replace(/\[ยาเพิ่มเติม:(.*?)\]/g, '<span class="badge badge-blue">MED</span>$1');
-
-        let ptFormatted = e.pt;
-        if (ptFormatted !== '-') {
-          ptFormatted = `<span class="badge badge-green">PT</span>` + ptFormatted;
+        function clearInput() {
+            document.getElementById('amount-input').value = "";
+            document.getElementById('amount-input').focus();
         }
 
-        return `
-          <tr>
-            <td class="text-center font-bold text-slate-900">${e.time}</td>
-            <td class="whitespace-pre-wrap">${activityFormatted}</td>
-            <td class="whitespace-pre-wrap">${ptFormatted}</td>
-            <td class="text-[9px] leading-relaxed">${vitalsText}</td>
-          </tr>
-        `;
-      }).join('');
+        function generateQR() {
+            const amountInput = document.getElementById('amount-input').value;
+            const amount = parseFloat(amountInput);
 
-      // Render Barcode PDF
-      JsBarcode("#barcode", currentUser, {
-        format: "CODE128",
-        width: 1.2,
-        height: 25,
-        displayValue: true,
-        fontSize: 8,
-        margin: 0
-      });
+            if (!amountInput || isNaN(amount) || amount <= 0) {
+                alert("กรุณากรอกจำนวนเงินให้ถูกต้อง");
+                return;
+            }
 
-      document.getElementById('step2').classList.add('hidden');
-      document.getElementById('step3').classList.remove('hidden');
-    }
+            // Close Modal
+            document.getElementById('amount-modal').style.display = 'none';
 
-    function downloadPDF() {
-      const element = document.getElementById('pdfContent');
-      const room = document.getElementById('roomNo').value;
-      const shift = document.getElementById('shift').value;
+            // Set display text
+            document.getElementById('selected-bank-text').innerText = selectedBank;
+            document.getElementById('display-amount').innerText = amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " บาท";
 
-      const opt = {
-        margin: 0,
-        filename: `Medical_Report_Room_${room}_Shift_${shift}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, windowWidth: 794 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
+            // Generate Real PromptPay Payload
+            const payload = generatePayload(PROMPTPAY_ID, amount);
 
-      html2pdf().set(opt).from(element).save();
-    }
+            // Render QR Code
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: payload,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.M
+            });
 
-    renderTempTable();
-  </script>
+            // Start Timer (20 Minutes)
+            startTimer(20 * 60);
+
+            // Navigate to QR View
+            goToView('view-qr');
+        }
+
+        function generatePayload(target, amount) {
+            // Using promptpay-qr library loaded from CDN
+            if (window.promptpayQr) {
+                return window.promptpayQr(target, { amount: amount });
+            }
+            return target; // Fallback
+        }
+
+        function startTimer(durationSeconds) {
+            clearInterval(countdownInterval);
+            let timer = durationSeconds;
+            const timerDisplay = document.getElementById('timer');
+
+            countdownInterval = setInterval(() => {
+                const minutes = Math.floor(timer / 60);
+                const seconds = timer % 60;
+
+                timerDisplay.innerText = 
+                    (minutes < 10 ? "0" : "") + minutes + ":" + 
+                    (seconds < 10 ? "0" : "") + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(countdownInterval);
+                    alert("หมดเวลาในการชำระเงิน กรุณาทำรายการใหม่");
+                    resetProcess();
+                }
+            }, 1000);
+        }
+
+        function resetProcess() {
+            clearInterval(countdownInterval);
+            document.getElementById('amount-input').value = "";
+            document.getElementById('qrcode').innerHTML = "";
+            goToView('view-home');
+        }
+
+        function saveQRCode() {
+            const qrImg = document.querySelector('#qrcode img');
+            if (qrImg) {
+                const link = document.createElement('a');
+                link.href = qrImg.src;
+                link.download = `PromptPay-QR-${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("ไม่พบรูปภาพ QR Code");
+            }
+        }
+    </script>
 </body>
 </html>
