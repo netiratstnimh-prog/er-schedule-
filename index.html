@@ -3,50 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ระบบบริหารจัดการโรงพยาบาลและตารางเวรพยาบาล (Enterprise Soft UI & Web NFC)</title>
+    <title>Enterprise Hospital & Shift Management System</title>
     
-    <!-- FontAwesome 6 Pro & Google Fonts (Kanit) -->
+    <!-- FontAwesome 6 Pro & Google Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         /* ==========================================================================
-           1. ENTERPRISE NEUMORPHIC SYSTEM DESIGN SYSTEM
+           1. MODERN MEDICAL SLATE & GLASS DESIGN SYSTEM
            ========================================================================== */
         :root {
-            --bg-color: #e6f0fa;
-            --surface-color: #e6f0fa;
-            --primary-blue: #0284c7;
-            --primary-dark: #0369a1;
-            --primary-light: #38bdf8;
+            --bg-main: #f0f4f9;
+            --surface-card: #ffffff;
+            --primary-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
             --accent-teal: #0d9488;
+            --accent-emerald: #10b981;
             
-            --text-main: #0f172a;
+            --text-title: #0f172a;
+            --text-body: #334155;
             --text-muted: #64748b;
-            --text-white: #ffffff;
             
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --info: #3b82f6;
+            --border-color: #e2e8f0;
+            --shadow-soft: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+            --shadow-float: 0 10px 25px -5px rgba(2, 132, 199, 0.15);
             
-            /* High Precision Neumorphism Shadows */
-            --shadow-flat: 6px 6px 14px #c2d4e5, -6px -6px 14px #ffffff;
-            --shadow-pressed: inset 4px 4px 8px #c2d4e5, inset -4px -4px 8px #ffffff;
-            --shadow-float: 10px 10px 20px #b5cadc, -10px -10px 20px #ffffff;
-            --shadow-btn: 4px 4px 10px #c2d4e5, -4px -4px 10px #ffffff;
-            
-            --border-radius-s: 10px;
-            --border-radius-m: 16px;
-            --border-radius-l: 24px;
-            --border-radius-round: 50%;
+            --radius-s: 10px;
+            --radius-m: 16px;
+            --radius-l: 24px;
         }
 
-        /* Reset & Native Screen Fitting */
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Kanit', sans-serif;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
@@ -54,63 +43,60 @@
 
         html, body {
             width: 100%;
-            height: 100%;
+            height: 100dvh;
             overflow: hidden;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            background-color: #0f172a; /* Dark background outer frame */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Mobile Viewport Container Engine */
+        /* Responsive Viewport App Engine with Safe Area Padding */
         .app-viewport {
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             max-width: 480px;
-            max-height: 100vh;
-            background-color: var(--surface-color);
+            background-color: var(--bg-main);
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: var(--shadow-float);
             overflow: hidden;
+            /* Safe area padding for notches and gesture bars */
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         @media (min-width: 481px) {
             .app-viewport {
                 height: 94vh;
-                border-radius: var(--border-radius-l);
-                border: 4px solid #ffffff;
+                border-radius: var(--radius-l);
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             }
         }
 
-        /* Header Navigation Container */
+        /* App Header with Notch Protection */
         .app-header {
-            padding: 12px 16px;
+            padding: 14px 18px 10px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--surface-color);
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-color);
             z-index: 10;
         }
 
         .header-profile-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: var(--border-radius-round);
-            background: var(--surface-color);
-            box-shadow: var(--shadow-flat);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-blue);
-            font-size: 1.2rem;
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: #e0f2fe;
+            color: #0284c7;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s;
         }
 
-        .header-profile-btn:active { box-shadow: var(--shadow-pressed); }
+        .header-profile-btn:active { transform: scale(0.92); }
 
         .header-brand {
             text-align: center;
@@ -121,35 +107,26 @@
         .hosp-title {
             font-size: 0.95rem;
             font-weight: 700;
-            color: var(--text-main);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: var(--text-title);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
         .dept-subtitle {
-            font-size: 0.72rem;
-            color: var(--primary-blue);
-            font-weight: 500;
-        }
-
-        .internal-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.65rem;
-            color: var(--danger);
-            background: rgba(239, 68, 68, 0.08);
-            padding: 2px 8px;
-            border-radius: 10px;
+            font-size: 0.73rem;
+            color: #0284c7;
             font-weight: 600;
         }
 
+        .internal-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.65rem; color: #ef4444;
+            background: #fef2f2; border: 1px solid #fca5a5;
+            padding: 3px 8px; border-radius: 12px; font-weight: 600;
+        }
+
         .pulse-dot {
-            width: 6px;
-            height: 6px;
-            background-color: var(--danger);
-            border-radius: 50%;
+            width: 6px; height: 6px;
+            background-color: #ef4444; border-radius: 50%;
             animation: pulse-ring 1.5s infinite;
         }
 
@@ -159,358 +136,182 @@
             100% { transform: scale(0.9); opacity: 1; }
         }
 
-        /* Status & Clock Bar */
+        /* Realtime Status Bar */
         .system-status-bar {
-            margin: 0 16px 10px 16px;
+            margin: 10px 16px 0 16px;
             padding: 8px 14px;
-            border-radius: var(--border-radius-m);
-            background: var(--surface-color);
-            box-shadow: var(--shadow-pressed);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
+            border-radius: var(--radius-m);
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.75rem; color: var(--text-muted);
         }
 
-        .time-display {
-            font-weight: 600;
-            color: var(--primary-blue);
-        }
+        .time-display { font-weight: 600; color: #0284c7; }
 
-        /* View Content Router */
+        /* Main Scrollable Content Router Container */
         .app-content {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 0 16px 80px 16px;
+            padding: 12px 16px 85px 16px;
             -webkit-overflow-scrolling: touch;
         }
 
         .app-content::-webkit-scrollbar { width: 0px; background: transparent; }
 
-        .view-section {
-            display: none;
-            animation: fadeIn 0.25s ease-in-out;
-        }
-
+        .view-section { display: none; animation: fadeIn 0.2s ease-in-out; }
         .view-section.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* UI Components & Cards */
-        .neu-card {
-            background: var(--surface-color);
-            border-radius: var(--border-radius-m);
-            box-shadow: var(--shadow-flat);
-            padding: 16px;
-            margin-bottom: 16px;
+        /* Modern UI Cards & Buttons */
+        .card {
+            background: var(--surface-card);
+            border-radius: var(--radius-m);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft);
+            padding: 16px; margin-bottom: 14px;
         }
 
         .card-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            font-size: 0.9rem; font-weight: 700; color: var(--text-title);
+            margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
         }
 
-        .card-title i { color: var(--primary-blue); }
+        .card-title i { color: #0284c7; }
 
-        .neu-input-group { margin-bottom: 12px; }
-
-        .neu-input-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 4px;
+        .input-group { margin-bottom: 12px; }
+        .input-group label {
+            display: block; font-size: 0.75rem; font-weight: 600;
+            color: var(--text-muted); margin-bottom: 5px;
         }
 
-        .neu-input, .neu-select, .neu-textarea {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: var(--border-radius-m);
-            border: none;
-            background: var(--surface-color);
-            box-shadow: var(--shadow-pressed);
-            outline: none;
-            color: var(--text-main);
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
+        .custom-input, .custom-select, .custom-textarea {
+            width: 100%; padding: 11px 14px;
+            border-radius: var(--radius-s);
+            border: 1px solid var(--border-color);
+            background: #f8fafc; outline: none;
+            color: var(--text-title); font-size: 0.85rem;
         }
 
-        .neu-btn {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: var(--border-radius-m);
-            border: none;
-            background: var(--surface-color);
-            box-shadow: var(--shadow-btn);
-            color: var(--primary-blue);
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+        .custom-btn {
+            width: 100%; padding: 12px 16px;
+            border-radius: var(--radius-s); border: none;
+            background: var(--primary-gradient); color: #ffffff;
+            font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: var(--shadow-float); transition: transform 0.1s;
         }
 
-        .neu-btn:active {
-            box-shadow: var(--shadow-pressed);
-            transform: scale(0.98);
-        }
-
-        .neu-btn-primary {
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
-            color: var(--text-white);
-            box-shadow: 4px 4px 10px #b0c6da, -4px -4px 10px #ffffff;
-        }
-
-        .neu-btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: var(--text-white);
-        }
-
-        .neu-btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: var(--text-white);
-        }
+        .custom-btn:active { transform: scale(0.98); }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: none; }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); box-shadow: none; }
 
         /* Quick Grid System */
         .quick-action-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 16px;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px;
         }
 
         .action-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 6px;
-            border-radius: var(--border-radius-m);
-            background: var(--surface-color);
-            box-shadow: var(--shadow-flat);
-            cursor: pointer;
-            transition: all 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 12px 6px; border-radius: var(--radius-m);
+            background: #ffffff; border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-soft); cursor: pointer; transition: all 0.15s;
         }
 
-        .action-item:active { box-shadow: var(--shadow-pressed); }
+        .action-item:active { transform: scale(0.95); background: #f1f5f9; }
+        .action-item i { font-size: 1.25rem; color: #0284c7; margin-bottom: 6px; }
+        .action-item span { font-size: 0.68rem; font-weight: 600; color: var(--text-body); text-align: center; }
 
-        .action-item i {
-            font-size: 1.2rem;
-            color: var(--primary-blue);
-            margin-bottom: 6px;
-        }
-
-        .action-item span {
-            font-size: 0.68rem;
-            font-weight: 500;
-            color: var(--text-main);
-            text-align: center;
-        }
-
-        /* Shift Roster Timeline Item */
+        /* Shift Card Items */
         .shift-card-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            border-radius: var(--border-radius-m);
-            background: var(--surface-color);
-            box-shadow: var(--shadow-flat);
-            margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 14px; border-radius: var(--radius-m);
+            background: #ffffff; border: 1px solid var(--border-color);
+            margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
 
         .shift-time-badge {
-            text-align: center;
-            padding-right: 12px;
-            border-right: 2px solid #cbd5e1;
-            min-width: 65px;
+            text-align: center; padding-right: 12px;
+            border-right: 2px solid #f1f5f9; min-width: 60px;
         }
 
-        .shift-time-badge .time {
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: var(--primary-blue);
-        }
-
+        .shift-time-badge .time { font-weight: 700; font-size: 0.85rem; color: #0284c7; }
         .shift-time-badge .label { font-size: 0.65rem; color: var(--text-muted); }
 
         .shift-staff-info { flex-grow: 1; padding-left: 12px; }
-        .staff-name-text { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+        .staff-name-text { font-size: 0.85rem; font-weight: 600; color: var(--text-title); }
         .staff-role-text { font-size: 0.7rem; color: var(--text-muted); }
 
-        .shift-tag {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            box-shadow: var(--shadow-btn);
-        }
+        .shift-tag { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .shift-m { background: #fef3c7; color: #b45309; }
+        .shift-a { background: #ffedd5; color: #c2410c; }
+        .shift-n { background: #e0e7ff; color: #4338ca; }
 
-        .shift-m { background: #fef3c7; color: #b45309; } /* เช้า */
-        .shift-a { background: #ffedd5; color: #c2410c; } /* บ่าย */
-        .shift-n { background: #e0e7ff; color: #4338ca; } /* ดึก */
-        .shift-off { background: #f1f5f9; color: #64748b; } /* หยุด */
-
-        /* Floating Controls & Navigation */
+        /* FAB Button */
         .fab-help-btn {
-            position: absolute;
-            bottom: 75px;
-            right: 16px;
-            width: 52px;
-            height: 52px;
-            border-radius: var(--border-radius-round);
-            background: var(--surface-color);
-            box-shadow: var(--shadow-float);
-            color: var(--primary-blue);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: none;
-            z-index: 90;
+            position: absolute; bottom: 80px; right: 18px;
+            width: 50px; height: 50px; border-radius: 50%;
+            background: #ffffff; border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-float); color: #0284c7;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 90;
         }
 
-        .fab-help-btn:active { box-shadow: var(--shadow-pressed); }
-        .fab-help-btn span { font-size: 0.6rem; font-weight: 700; }
+        .fab-help-btn span { font-size: 0.58rem; font-weight: 700; }
 
+        /* Navigation Bottom Bar with Safe Inset Fix */
         .bottom-nav-bar {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 65px;
-            background: var(--surface-color);
-            box-shadow: 0 -6px 15px rgba(194, 212, 229, 0.5);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 10px;
-            z-index: 100;
-            border-top: 1px solid rgba(255,255,255,0.6);
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: calc(65px + env(safe-area-inset-bottom, 0px));
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: #ffffff; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 100; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .nav-tab-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 48px;
-            border-radius: var(--border-radius-m);
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 60px; height: 48px; border-radius: var(--radius-s);
+            color: var(--text-muted); cursor: pointer; transition: all 0.2s;
         }
 
-        .nav-tab-item i { font-size: 1.15rem; margin-bottom: 2px; }
-        .nav-tab-item span { font-size: 0.62rem; font-weight: 500; }
-        .nav-tab-item.active { color: var(--primary-blue); box-shadow: var(--shadow-pressed); }
+        .nav-tab-item i { font-size: 1.2rem; margin-bottom: 2px; }
+        .nav-tab-item span { font-size: 0.65rem; font-weight: 500; }
+        .nav-tab-item.active { color: #0284c7; background: #f0f9ff; font-weight: 700; }
 
-        /* Modals Overlay & Animation */
+        /* Modals Overlay */
         .modal-overlay {
-            display: none;
-            position: absolute;
+            display: none; position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: flex-end;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            z-index: 1000; justify-content: center; align-items: flex-end;
         }
 
         .modal-container {
-            background: var(--surface-color);
-            width: 100%;
-            border-radius: var(--border-radius-l) var(--border-radius-l) 0 0;
-            padding: 20px;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.15);
-            animation: slideUp 0.25s ease-out;
+            background: #ffffff; width: 100%;
+            border-radius: var(--radius-l) var(--radius-l) 0 0;
+            padding: 20px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.2); animation: slideUp 0.25s ease-out;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .modal-header h3 { font-size: 1rem; font-weight: 700; color: var(--text-main); }
-
-        .modal-close-btn {
-            width: 32px; height: 32px;
-            border-radius: var(--border-radius-round);
-            background: var(--surface-color);
-            box-shadow: var(--shadow-flat);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: var(--text-muted);
-        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-header h3 { font-size: 1rem; font-weight: 700; color: var(--text-title); }
+        .modal-close-btn { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
 
         .status-pill { padding: 3px 8px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; }
         .pill-pending { background: #fef3c7; color: #d97706; }
         .pill-approved { background: #d1fae5; color: #059669; }
 
-        /* NFC Scanning Radar Ripple Animation */
-        .nfc-radar {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            background: var(--surface-color);
-            box-shadow: var(--shadow-flat);
-            margin: 20px auto;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--primary-blue);
-            font-size: 2.5rem;
-            position: relative;
-        }
-
-        .nfc-radar::after {
-            content: '';
-            position: absolute;
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 2px solid var(--primary-light);
-            animation: radarPulse 1.8s infinite;
-        }
-
-        @keyframes radarPulse {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-
-        /* Database Table Styles for Logs */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.72rem;
-        }
-
-        .data-table th, .data-table td {
-            padding: 8px 6px;
-            text-align: left;
-            border-bottom: 1px solid #cbd5e1;
-        }
-
-        .data-table th {
-            color: var(--primary-blue);
-            font-weight: 600;
-        }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+        .data-table th, .data-table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { color: #0284c7; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -533,7 +334,7 @@
 
         <!-- Status Bar -->
         <div class="system-status-bar">
-            <span><i class="fa-solid fa-wifi"></i> Web NFC Active</span>
+            <span><i class="fa-solid fa-wifi" style="color:#10b981;"></i> Web NFC Active</span>
             <span class="time-display" id="realtime-clock"><i class="fa-regular fa-clock"></i> 00:00:00 น.</span>
         </div>
 
@@ -545,7 +346,7 @@
                 
                 <div class="quick-action-grid">
                     <div class="action-item" onclick="startNFCScanReal()">
-                        <i class="fa-solid fa-wifi" style="color:var(--success);"></i>
+                        <i class="fa-solid fa-wifi" style="color:#10b981;"></i>
                         <span>แตะ NFC</span>
                     </div>
                     <div class="action-item" onclick="openModal('modal-swap-request')">
@@ -562,19 +363,18 @@
                     </div>
                 </div>
 
-                <div class="neu-card" style="padding: 10px 14px;">
-                    <div class="neu-input-group" style="margin-bottom: 0;">
+                <div class="card" style="padding: 10px 14px;">
+                    <div class="input-group" style="margin-bottom: 0;">
                         <label><i class="fa-solid fa-building-user"></i> เลือกแผนกปฏิบัติงาน</label>
-                        <select class="neu-select" id="dept-selector" onchange="changeDepartment()"></select>
+                        <select class="custom-select" id="dept-selector" onchange="changeDepartment()"></select>
                     </div>
                 </div>
 
-                <div class="neu-card">
+                <div class="card">
                     <div class="card-title">
                         <span><i class="fa-solid fa-calendar-week"></i> ตารางปฏิบัติงานวันนี้</span>
                         <span style="font-size:0.7rem; font-weight:normal; color:var(--text-muted);" id="roster-date-str">17 ส.ค. 2026</span>
                     </div>
-
                     <div id="roster-timeline-container"></div>
                 </div>
 
@@ -582,49 +382,48 @@
 
             <!-- VIEW 2: SWAP REQUESTS -->
             <section id="view-swap" class="view-section">
-                <div class="neu-card">
+                <div class="card">
                     <div class="card-title">
                         <span><i class="fa-solid fa-right-left"></i> รายการคำขอแลกเวร</span>
-                        <button class="neu-btn" style="width:auto; padding:4px 10px; font-size:0.7rem;" onclick="openModal('modal-swap-request')">+ ยื่นขอ</button>
+                        <button class="custom-btn" style="width:auto; padding:4px 10px; font-size:0.7rem;" onclick="openModal('modal-swap-request')">+ ยื่นขอ</button>
                     </div>
                     <div id="swap-requests-list"></div>
                 </div>
             </section>
 
-            <!-- VIEW 3: HOSP CONFIG & LOGS -->
+            <!-- VIEW 3: CONFIG & LOGS -->
             <section id="view-config" class="view-section">
-                <div class="neu-card">
+                <div class="card">
                     <div class="card-title">
                         <span><i class="fa-solid fa-hospital-user"></i> ตั้งค่าโรงพยาบาล & แผนก</span>
                     </div>
                     
                     <form onsubmit="handleSaveHospConfig(event)">
-                        <div class="neu-input-group">
+                        <div class="input-group">
                             <label>ชื่อโรงพยาบาล / หน่วยงาน</label>
-                            <input type="text" class="neu-input" id="cfg-hosp-name" placeholder="เช่น โรงพยาบาลศิริราช" required>
+                            <input type="text" class="custom-input" id="cfg-hosp-name" placeholder="เช่น โรงพยาบาลศิริราช" required>
                         </div>
 
-                        <div class="neu-input-group">
+                        <div class="input-group">
                             <label>เพิ่มแผนกใหม่</label>
                             <div style="display:flex; gap:8px;">
-                                <input type="text" class="neu-input" id="cfg-new-dept" placeholder="เช่น แผนกผู้ป่วยนอก OPD">
-                                <button type="button" class="neu-btn neu-btn-primary" style="width:80px;" onclick="addDepartmentOption()">เพิ่ม</button>
+                                <input type="text" class="custom-input" id="cfg-new-dept" placeholder="เช่น แผนกผู้ป่วยนอก OPD">
+                                <button type="button" class="custom-btn" style="width:80px;" onclick="addDepartmentOption()">เพิ่ม</button>
                             </div>
                         </div>
 
-                        <div class="neu-input-group">
+                        <div class="input-group">
                             <label>รายชื่อแผนกที่มีในระบบ</label>
                             <div id="dept-list-tags" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
                         </div>
 
-                        <button type="submit" class="neu-btn neu-btn-primary" style="margin-top:10px;">
+                        <button type="submit" class="custom-btn" style="margin-top:10px;">
                             <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่า
                         </button>
                     </form>
                 </div>
 
-                <!-- IoT NFC Check-in Database Logs -->
-                <div class="neu-card">
+                <div class="card">
                     <div class="card-title">
                         <span><i class="fa-solid fa-clock-rotate-left"></i> ประวัติการแตะบัตรเข้างาน (NFC Logs)</span>
                     </div>
@@ -633,58 +432,33 @@
                             <thead>
                                 <tr>
                                     <th>เวลา</th>
-                                    <th>รหัสพนักงาน</th>
+                                    <th>รหัส</th>
                                     <th>ชื่อ-นามสกุล</th>
                                     <th>สถานะ</th>
                                 </tr>
                             </thead>
-                            <tbody id="nfc-logs-tbody">
-                                <!-- Rendered dynamically -->
-                            </tbody>
+                            <tbody id="nfc-logs-tbody"></tbody>
                         </table>
                     </div>
                 </div>
-
-                <div class="neu-card">
-                    <div class="card-title">
-                        <span><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>
-                    </div>
-                    <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">
-                        สิทธิ์ปัจจุบัน: <strong style="color:var(--primary-blue);">RN1323 (ผู้จัดการระบบ)</strong>
-                    </p>
-                    <button class="neu-btn neu-btn-danger" onclick="openModal('modal-admin-login')">
-                        <i class="fa-solid fa-key"></i> ยืนยันสิทธิ์แอดมิน / เปลี่ยนรหัสผ่าน
-                    </button>
-                </div>
             </section>
 
-            <!-- VIEW 4: PROFILE & NFC REAL SCANNER -->
+            <!-- VIEW 4: PROFILE -->
             <section id="view-profile" class="view-section">
-                <div class="neu-card" style="text-align:center;">
-                    <div style="width:70px; height:70px; border-radius:50%; background:var(--surface-color); box-shadow:var(--shadow-flat); margin:0 auto 10px auto; display:flex; align-items:center; justify-content:center; color:var(--primary-blue); font-size:2rem;">
+                <div class="card" style="text-align:center;">
+                    <div style="width:70px; height:70px; border-radius:50%; background:#e0f2fe; margin:0 auto 10px auto; display:flex; align-items:center; justify-content:center; color:#0284c7; font-size:2rem;">
                         <i class="fa-solid fa-user-nurse"></i>
                     </div>
                     <h3 style="font-size:1rem;" id="prof-display-name">พว. หัวหน้าผู้ดูแลระบบ</h3>
                     <p style="font-size:0.75rem; color:var(--text-muted);" id="prof-display-role">รหัสพนักงาน: RN1323 | ผู้จัดการระบบ</p>
-                    
-                    <div style="margin-top:15px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                        <div style="padding:10px; border-radius:12px; box-shadow:var(--shadow-pressed);">
-                            <div style="font-size:0.68rem; color:var(--text-muted);">ชั่วโมงปฏิบัติงานเดือนนี้</div>
-                            <div style="font-size:1.1rem; font-weight:700; color:var(--primary-blue);">160 ชม.</div>
-                        </div>
-                        <div style="padding:10px; border-radius:12px; box-shadow:var(--shadow-pressed);">
-                            <div style="font-size:0.68rem; color:var(--text-muted);">จำนวนเวร OT</div>
-                            <div style="font-size:1.1rem; font-weight:700; color:var(--accent-teal);">4 เวร</div>
-                        </div>
-                    </div>
                 </div>
 
-                <div class="neu-card">
+                <div class="card">
                     <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> แตะบัตร NFC บันทึกเวลาเข้างาน</div>
-                    <button class="neu-btn neu-btn-success" style="margin-bottom:8px;" onclick="startNFCScanReal()">
+                    <button class="custom-btn btn-success" style="margin-bottom:8px;" onclick="startNFCScanReal()">
                         <i class="fa-solid fa-wifi"></i> เริ่มสแกน NFC จากมือถือ
                     </button>
-                    <div id="nfc-live-status" style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:6px;">
+                    <div id="nfc-live-status" style="font-size:0.75rem; color:var(--text-muted); text-align:center;">
                         สถานะ: พร้อมสแกนบัตร NFC
                     </div>
                 </div>
@@ -692,13 +466,13 @@
 
         </main>
 
-        <!-- Help FAB Button -->
+        <!-- Help FAB -->
         <button class="fab-help-btn" onclick="openModal('modal-help')">
             <i class="fa-solid fa-circle-question fa-lg"></i>
             <span>HELP</span>
         </button>
 
-        <!-- Navigation Bar -->
+        <!-- Bottom Navigation -->
         <nav class="bottom-nav-bar">
             <div class="nav-tab-item active" onclick="switchView('view-roster', this)">
                 <i class="fa-solid fa-calendar-days"></i>
@@ -720,153 +494,99 @@
 
         <!-- MODALS -->
 
-        <!-- Modal: Real NFC Scanning Overlay -->
         <div class="modal-overlay" id="modal-nfc-scanning">
             <div class="modal-container" style="text-align:center; padding:30px 20px;">
-                <h3 style="color:var(--primary-blue); font-size:1.1rem;"><i class="fa-solid fa-wifi"></i> กำลังค้นหาบัตร NFC...</h3>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:6px;">นำบัตรพนักงาน หรือ มือถืออีกเครื่องมาแตะที่ด้านหลังเครื่องนี้</p>
-                
-                <div class="nfc-radar">
-                    <i class="fa-solid fa-id-card"></i>
-                </div>
-
-                <div id="nfc-modal-status" style="font-size:0.82rem; font-weight:600; color:var(--primary-dark); margin-bottom:15px;">
+                <h3 style="color:#0284c7; font-size:1.1rem;"><i class="fa-solid fa-wifi"></i> กำลังค้นหาบัตร NFC...</h3>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:6px;">นำบัตรพนักงานมาแตะที่ด้านหลังเครื่องมือถือ</p>
+                <div id="nfc-modal-status" style="font-size:0.85rem; font-weight:600; color:#0369a1; margin:20px 0;">
                     รอการแตะบัตร...
                 </div>
-
-                <button class="neu-btn neu-btn-danger" onclick="closeModal('modal-nfc-scanning')">ยกเลิกการสแกน</button>
+                <button class="custom-btn btn-danger" onclick="closeModal('modal-nfc-scanning')">ยกเลิกการสแกน</button>
             </div>
         </div>
 
-        <!-- Modal: Add Staff -->
         <div class="modal-overlay" id="modal-add-staff">
             <div class="modal-container">
                 <div class="modal-header">
                     <h3><i class="fa-solid fa-user-plus"></i> เพิ่มเจ้าหน้าที่ใหม่</h3>
-                    <div class="modal-close-btn" onclick="closeModal('modal-add-staff')">&times;</div>
+                    <span class="modal-close-btn" onclick="closeModal('modal-add-staff')">&times;</span>
                 </div>
                 <form onsubmit="handleAddStaffSubmit(event)">
-                    <div class="neu-input-group">
-                        <label>ชื่อ-นามสกุล (พร้อมคำนำหน้า)</label>
-                        <input type="text" class="neu-input" id="add-staff-name" placeholder="พว. สมหญิง รักดี" required>
+                    <div class="input-group">
+                        <label>ชื่อ-นามสกุล</label>
+                        <input type="text" class="custom-input" id="add-staff-name" placeholder="พว. สมหญิง รักดี" required>
                     </div>
-                    <div class="neu-input-group">
-                        <label>รหัสพนักงาน (Username / NFC ID)</label>
-                        <input type="text" class="neu-input" id="add-staff-id" placeholder="RN2005" required>
+                    <div class="input-group">
+                        <label>รหัสพนักงาน</label>
+                        <input type="text" class="custom-input" id="add-staff-id" placeholder="RN2005" required>
                     </div>
-                    <div class="neu-input-group">
+                    <div class="input-group">
                         <label>แผนกที่สังกัด</label>
-                        <select class="neu-select" id="add-staff-dept"></select>
+                        <select class="custom-select" id="add-staff-dept"></select>
                     </div>
-                    <button type="submit" class="neu-btn neu-btn-primary">บันทึกข้อมูลบุคลากร</button>
+                    <button type="submit" class="custom-btn">บันทึกข้อมูลบุคลากร</button>
                 </form>
             </div>
         </div>
 
-        <!-- Modal: Swap Request -->
         <div class="modal-overlay" id="modal-swap-request">
             <div class="modal-container">
                 <div class="modal-header">
                     <h3><i class="fa-solid fa-right-left"></i> ยื่นคำขอแลกเวร</h3>
-                    <div class="modal-close-btn" onclick="closeModal('modal-swap-request')">&times;</div>
+                    <span class="modal-close-btn" onclick="closeModal('modal-swap-request')">&times;</span>
                 </div>
                 <form onsubmit="handleSwapSubmit(event)">
-                    <div class="neu-input-group">
-                        <label>เจ้าหน้าที่ผู้ยื่นขอแลก</label>
-                        <select class="neu-select" id="swap-requester-select"></select>
+                    <div class="input-group">
+                        <label>ผู้ยื่นขอแลก</label>
+                        <select class="custom-select" id="swap-requester-select"></select>
                     </div>
-                    <div class="neu-input-group">
-                        <label>ต้องการแลกเวรกับเจ้าหน้าที่</label>
-                        <select class="neu-select" id="swap-target-select"></select>
+                    <div class="input-group">
+                        <label>ต้องการแลกกับ</label>
+                        <select class="custom-select" id="swap-target-select"></select>
                     </div>
-                    <div class="neu-input-group">
-                        <label>วันที่และเวรที่ต้องการแลก</label>
-                        <input type="date" class="neu-input" required>
-                    </div>
-                    <div class="neu-input-group">
+                    <div class="input-group">
                         <label>เหตุผลในการแลกเวร</label>
-                        <textarea class="neu-textarea" rows="2" placeholder="ระบุเหตุผล..." required></textarea>
+                        <textarea class="custom-textarea" rows="2" required></textarea>
                     </div>
-                    <button type="submit" class="neu-btn neu-btn-primary">ส่งคำขอแลกเวร</button>
+                    <button type="submit" class="custom-btn">ส่งคำขอแลกเวร</button>
                 </form>
             </div>
         </div>
 
-        <!-- Modal: Admin Auth -->
-        <div class="modal-overlay" id="modal-admin-login">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h3><i class="fa-solid fa-shield-halved"></i> ยืนยันสิทธิ์ผู้ดูแลระบบ (Admin)</h3>
-                    <div class="modal-close-btn" onclick="closeModal('modal-admin-login')">&times;</div>
-                </div>
-                <form onsubmit="handleAdminLogin(event)">
-                    <div class="neu-input-group">
-                        <label>Username</label>
-                        <input type="text" class="neu-input" id="admin-user-input" value="RN1323" required>
-                    </div>
-                    <div class="neu-input-group">
-                        <label>Password</label>
-                        <input type="password" class="neu-input" id="admin-pass-input" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="neu-btn neu-btn-primary">เข้าสู่ระบบ Admin</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal: Help -->
         <div class="modal-overlay" id="modal-help">
             <div class="modal-container">
                 <div class="modal-header">
                     <h3><i class="fa-solid fa-headset"></i> ศูนย์ช่วยเหลือระบบ NFC</h3>
-                    <div class="modal-close-btn" onclick="closeModal('modal-help')">&times;</div>
+                    <span class="modal-close-btn" onclick="closeModal('modal-help')">&times;</span>
                 </div>
-                <div style="font-size:0.8rem; line-height:1.6;">
-                    <p><strong>🔑 บัญชีแอดมินเริ่มต้น:</strong><br>Username: <code>RN1323</code> | Password: <code>1323</code></p>
-                    <p style="margin-top:6px;"><strong>📶 การใช้งาน NFC บนมือถือ:</strong><br>
-                    1. เปิดใช้งาน NFC บนโทรศัพท์มือถือ Android (ในการตั้งค่า Connections > NFC)<br>
-                    2. เปิดผ่านเบราว์เซอร์ Chrome บน HTTPS (GitHub Pages)<br>
-                    3. กดปุ่ม "แตะ NFC" แล้วนำบัตรมาทาบด้านหลังเครื่องมือถือได้ทันที</p>
-                </div>
+                <p style="font-size:0.8rem; line-height:1.6;">
+                    เปิดใช้งาน NFC บน Android และเข้าใช้งานผ่าน HTTPS บน GitHub Pages เพื่อแตะบัตรพนักงานสแกนเวลาเข้างานได้ทันทีครับ
+                </p>
             </div>
         </div>
 
     </div>
 
-    <!-- JAVASCRIPT SYSTEM ENGINE WITH WEB NFC DIRECT API -->
+    <!-- JAVASCRIPT SYSTEM ENGINE -->
     <script>
-        /* --- ENTERPRISE STATE DATABASE --- */
         const SystemState = {
             hospitalName: "",
-            departments: [
-                "แผนกฉุกเฉิน (ER)", 
-                "แผนกผู้ป่วยหนัก (ICU)", 
-                "แผนกผู้ป่วยนอก (OPD)", 
-                "ห้องผ่าตัด (OR)", 
-                "แผนกผู้ป่วยใน (IPD)",
-                "แผนกกุมารเวชกรรม (Pediatrics)"
-            ],
+            departments: ["แผนกฉุกเฉิน (ER)", "แผนกผู้ป่วยหนัก (ICU)", "แผนกผู้ป่วยนอก (OPD)", "ห้องผ่าตัด (OR)"],
             currentDept: "แผนกฉุกเฉิน (ER)",
             currentUser: { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", role: "Admin" },
             
             staffDatabase: [
                 { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", dept: "แผนกฉุกเฉิน (ER)", role: "ผู้จัดการระบบ Admin", nfcId: "NFC_1323" },
                 { id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1001" },
-                { id: "RN1002", name: "พว. ณัฐวุฒิ ใจดี", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1002" },
-                { id: "RN1003", name: "พว. ธนกร ชัยชนะ", dept: "แผนกผู้ป่วยหนัก (ICU)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1003" },
-                { id: "RN1004", name: "พว. กนกวรรณ มีสุข", dept: "แผนกผู้ป่วยหนัก (ICU)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1004" },
-                { id: "RN1005", name: "พว. อารียา สายชล", dept: "แผนกผู้ป่วยนอก (OPD)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1005" },
-                { id: "RN1006", name: "พว. ชัยวัฒน์ รุ่งเรือง", dept: "ห้องผ่าตัด (OR)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1006" },
-                { id: "RN1007", name: "พว. ปรียาภรณ์ สมบูรณ์", dept: "แผนกผู้ป่วยใน (IPD)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1007" }
+                { id: "RN1002", name: "พว. ณัฐวุฒิ ใจดี", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1002" }
             ],
 
             swapRequests: [
-                { id: 101, requester: "พว. สุภาพร กลิ่นหอม", target: "พว. ณัฐวุฒิ ใจดี", date: "2026-08-18", status: "pending", reason: "ติดภารกิจอบรมวิชาการ" },
-                { id: 102, requester: "พว. ธนกร ชัยชนะ", target: "พว. กนกวรรณ มีสุข", date: "2026-08-19", status: "approved", reason: "แลกเวรเฝ้าระวังผู้ป่วยพิเศษ" }
+                { id: 101, requester: "พว. สุภาพร กลิ่นหอม", target: "พว. ณัฐวุฒิ ใจดี", date: "2026-08-18", status: "pending", reason: "ติดภารกิจอบรม" }
             ],
 
             nfcLogs: [
-                { time: "07:55:12", id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", status: "เข้างานปกติ" },
-                { time: "07:58:40", id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", status: "เข้างานปกติ" }
+                { time: "07:55:12", id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", status: "เข้างานปกติ" }
             ]
         };
 
@@ -899,71 +619,36 @@
         function openModal(id) { document.getElementById(id).style.display = "flex"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
-        /* ==========================================================================
-           REAL WEB NFC API HARDWARE INTEGRATION
-           ========================================================================== */
         async function startNFCScanReal() {
             if (!('NDEFReader' in window)) {
-                alert("อุปกรณ์หรือเบราว์เซอร์นี้ยังไม่รองรับ Web NFC สด\n(แนะนำใช้ Android + Google Chrome บนลิงก์ HTTPS)\n\nระบบจะจำลองการสแกนบัตรพนักงาน RN1323 แทน");
+                alert("อุปกรณ์ยังไม่รองรับ Web NFC สด ระบบจะจำลองการสแกนบัตร RN1323 แทน");
                 processNFCSuccess("RN1323");
                 return;
             }
 
             try {
                 openModal('modal-nfc-scanning');
-                document.getElementById('nfc-modal-status').innerText = "วางบัตรไว้ที่ด้านหลังมือถือ...";
-
                 const ndef = new NDEFReader();
                 await ndef.scan();
 
-                ndef.addEventListener("readingerror", () => {
-                    document.getElementById('nfc-modal-status').innerText = "❌ อ่านบัตรไม่สำเร็จ กรุณาลองใหม่";
-                    triggerVibration([100, 50, 100]);
-                });
-
                 ndef.addEventListener("reading", ({ message, serialNumber }) => {
                     let cardId = serialNumber || "RN1323";
-                    
-                    for (const record of message.records) {
-                        if (record.recordType === "text") {
-                            const textDecoder = new TextDecoder(record.encoding);
-                            cardId = textDecoder.decode(record.data);
-                        }
-                    }
-
-                    document.getElementById('nfc-modal-status').innerText = `✅ พบบัตร NFC ID: ${cardId}`;
-                    triggerVibration([200]);
-                    playBeepSound();
-
-                    setTimeout(() => {
-                        closeModal('modal-nfc-scanning');
-                        processNFCSuccess(cardId);
-                    }, 1200);
+                    closeModal('modal-nfc-scanning');
+                    processNFCSuccess(cardId);
                 });
-
             } catch (error) {
                 closeModal('modal-nfc-scanning');
-                alert("ข้อผิดพลาดเปิดใช้งาน NFC: " + error);
+                alert("ข้อผิดพลาด NFC: " + error);
             }
         }
 
         function processNFCSuccess(cardId) {
-            const staff = SystemState.staffDatabase.find(s => s.id.toLowerCase() === cardId.toLowerCase() || s.nfcId.toLowerCase() === cardId.toLowerCase()) || SystemState.currentUser;
-            
+            const staff = SystemState.staffDatabase.find(s => s.id.toLowerCase() === cardId.toLowerCase()) || SystemState.currentUser;
             const nowTime = new Date().toLocaleTimeString('th-TH');
             
-            // Add to NFC Logs Database
-            SystemState.nfcLogs.unshift({
-                time: nowTime,
-                id: staff.id,
-                name: staff.name,
-                status: "เข้างานปกติ"
-            });
-
+            SystemState.nfcLogs.unshift({ time: nowTime, id: staff.id, name: staff.name, status: "เข้างานปกติ" });
             renderNfcLogs();
-
-            document.getElementById('nfc-live-status').innerHTML = `<span style="color:var(--success); font-weight:bold;">✅ แตะบัตรสำเร็จ: ${staff.name} (${staff.id}) ลงเวลาเข้างานแล้วเมื่อ ${nowTime} น.</span>`;
-            alert(`🎉 ลงเวลาปฏิบัติงานสำเร็จ!\nชื่อ: ${staff.name}\nรหัส: ${staff.id}\nเวลา: ${nowTime} น.`);
+            alert(`🎉 ลงเวลาปฏิบัติงานสำเร็จ!\nชื่อ: ${staff.name}\nเวลา: ${nowTime} น.`);
         }
 
         function renderNfcLogs() {
@@ -978,28 +663,6 @@
             `).join("");
         }
 
-        function triggerVibration(pattern) {
-            if ("vibrate" in navigator) {
-                navigator.vibrate(pattern);
-            }
-        }
-
-        function playBeepSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.type = "sine";
-                osc.frequency.value = 1000;
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.15);
-            } catch(e) {}
-        }
-
-        /* Hospital & Department Configuration */
         function renderHospHeader() {
             document.getElementById("app-hosp-name").innerText = SystemState.hospitalName.trim() !== "" ? SystemState.hospitalName : "ยังไม่ได้ตั้งชื่อโรงพยาบาล";
             document.getElementById("app-dept-name").innerText = SystemState.currentDept;
@@ -1013,13 +676,7 @@
 
             selector.innerHTML = SystemState.departments.map(d => `<option value="${d}">${d}</option>`).join("");
             addStaffDeptSelect.innerHTML = SystemState.departments.map(d => `<option value="${d}">${d}</option>`).join("");
-            
-            tagContainer.innerHTML = SystemState.departments.map(d => `
-                <span class="status-pill pill-approved" style="display:inline-flex; align-items:center; gap:4px;">
-                    ${d} <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="removeDepartment('${d}')"></i>
-                </span>
-            `).join("");
-
+            tagContainer.innerHTML = SystemState.departments.map(d => `<span class="status-pill pill-approved">${d}</span>`).join("");
             selector.value = SystemState.currentDept;
         }
 
@@ -1039,31 +696,19 @@
             }
         }
 
-        function removeDepartment(deptName) {
-            if (SystemState.departments.length <= 1) {
-                alert("ต้องมีอย่างน้อย 1 แผนกในระบบ");
-                return;
-            }
-            SystemState.departments = SystemState.departments.filter(d => d !== deptName);
-            if (SystemState.currentDept === deptName) SystemState.currentDept = SystemState.departments[0];
-            renderDepartmentOptions();
-            renderHospHeader();
-        }
-
         function handleSaveHospConfig(e) {
             e.preventDefault();
             SystemState.hospitalName = document.getElementById("cfg-hosp-name").value.trim();
             renderHospHeader();
-            alert("บันทึกข้อมูลโรงพยาบาลเรียบร้อยแล้ว");
+            alert("บันทึกข้อมูลเรียบร้อย");
         }
 
-        /* Roster & Staff Database Engine */
         function renderRosterTimeline() {
             const container = document.getElementById("roster-timeline-container");
             const deptStaff = SystemState.staffDatabase.filter(s => s.dept === SystemState.currentDept);
 
             if (deptStaff.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:0.8rem;">ยังไม่มีเจ้าหน้าที่ในแผนกนี้</div>`;
+                container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.8rem;">ไม่มีข้อมูลเจ้าหน้าที่</div>`;
                 return;
             }
 
@@ -1090,37 +735,19 @@
                 `;
             }).join("");
 
-            document.getElementById("swap-requester-select").innerHTML = SystemState.staffDatabase.map(s => `<option value="${s.name}">${s.name} (${s.id})</option>`).join("");
-            document.getElementById("swap-target-select").innerHTML = SystemState.staffDatabase.map(s => `<option value="${s.name}">${s.name} (${s.id})</option>`).join("");
+            document.getElementById("swap-requester-select").innerHTML = SystemState.staffDatabase.map(s => `<option value="${s.name}">${s.name}</option>`).join("");
+            document.getElementById("swap-target-select").innerHTML = SystemState.staffDatabase.map(s => `<option value="${s.name}">${s.name}</option>`).join("");
         }
 
         function renderSwapRequests() {
             const container = document.getElementById("swap-requests-list");
-            if (SystemState.swapRequests.length === 0) {
-                container.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center;">ไม่มีรายการคำขอแลกเวร</p>`;
-                return;
-            }
-
             container.innerHTML = SystemState.swapRequests.map(req => `
-                <div class="shift-card-item" style="flex-direction:column; align-items:flex-start; gap:6px;">
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                        <span class="status-pill ${req.status === 'pending' ? 'pill-pending' : 'pill-approved'}">
-                            ${req.status === 'pending' ? '⏳ รอดำเนินการ' : '✅ อนุมัติแล้ว'}
-                        </span>
+                <div class="shift-card-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                    <div style="display:flex; justify-content:space-between; width:100%;">
+                        <span class="status-pill pill-pending">⏳ รอดำเนินการ</span>
                         <small style="font-size:0.68rem; color:var(--text-muted);">${req.date}</small>
                     </div>
-                    <div style="font-size:0.82rem; font-weight:600;">
-                        ${req.requester} ➔ ${req.target}
-                    </div>
-                    <div style="font-size:0.72rem; color:var(--text-muted);">
-                        เหตุผล: ${req.reason}
-                    </div>
-                    ${req.status === 'pending' ? `
-                        <div style="display:flex; gap:6px; width:100%; margin-top:4px;">
-                            <button class="neu-btn neu-btn-success" style="padding:4px; font-size:0.7rem;" onclick="approveSwap(${req.id})">อนุมัติ</button>
-                            <button class="neu-btn neu-btn-danger" style="padding:4px; font-size:0.7rem;" onclick="rejectSwap(${req.id})">ปฏิเสธ</button>
-                        </div>
-                    ` : ''}
+                    <div style="font-size:0.82rem; font-weight:600;">${req.requester} ➔ ${req.target}</div>
                 </div>
             `).join("");
         }
@@ -1134,58 +761,16 @@
             SystemState.staffDatabase.push({ id, name, dept, role: "พยาบาลวิชาชีพ", nfcId: `NFC_${id}` });
             closeModal("modal-add-staff");
             renderRosterTimeline();
-            alert(`เพิ่มบุคลากร ${name} เรียบร้อยแล้ว`);
+            alert(`เพิ่ม ${name} สำเร็จ`);
         }
 
         function handleSwapSubmit(e) {
             e.preventDefault();
-            const requester = document.getElementById("swap-requester-select").value;
-            const target = document.getElementById("swap-target-select").value;
-
-            SystemState.swapRequests.unshift({
-                id: Date.now(),
-                requester,
-                target,
-                date: new Date().toISOString().split('T')[0],
-                status: "pending",
-                reason: "ภารกิจส่วนตัว"
-            });
-
             closeModal("modal-swap-request");
-            renderSwapRequests();
-            alert("ยื่นคำขอแลกเวรเรียบร้อยแล้ว");
+            alert("ส่งคำขอแล้ว");
         }
 
-        function approveSwap(id) {
-            const req = SystemState.swapRequests.find(r => r.id === id);
-            if (req) {
-                req.status = "approved";
-                renderSwapRequests();
-                alert("อนุมัติรายการแลกเวรแล้ว");
-            }
-        }
-
-        function rejectSwap(id) {
-            SystemState.swapRequests = SystemState.swapRequests.filter(r => r.id !== id);
-            renderSwapRequests();
-            alert("ปฏิเสธรายการแลกเวรแล้ว");
-        }
-
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById("admin-user-input").value;
-            const p = document.getElementById("admin-pass-input").value;
-            if (u === "RN1323" && p === "1323") {
-                alert("ยืนยันสิทธิ์ Admin RN1323 เรียบร้อย");
-                closeModal("modal-admin-login");
-            } else {
-                alert("ข้อมูลไม่ถูกต้อง");
-            }
-        }
-
-        function triggerBarcodeScan() {
-            alert("เปิดกล้องสแกน Barcode สำเร็จสำหรับพนักงาน RN1323");
-        }
+        function triggerBarcodeScan() { alert("สแกนบาร์โค้ดสำเร็จ"); }
     </script>
 </body>
 </html>
