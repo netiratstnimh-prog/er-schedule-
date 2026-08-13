@@ -3,223 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบตรวจสอบใบประกาศนียบัตร Practical Nurse (PN)</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Sarabun -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>ShopNRT - ร้านค้าออนไลน์</title>
     <style>
-        body {
-            font-family: 'Sarabun', sans-serif;
+        :root {
+            --primary: #4f46e5;
+            --success: #10b981;
+            --bg: #f3f4f6;
+            --dark: #1f2937;
         }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--dark); padding-bottom: 80px; }
+        
+        /* Header & Nav */
+        header { background: var(--primary); color: white; padding: 1rem; text-align: center; }
+        nav { display: flex; justify-content: center; gap: 10px; background: #3730a3; padding: 10px; }
+        nav button { background: none; border: 1px solid white; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; }
+        nav button:hover, nav button.active { background: white; color: var(--primary); font-weight: bold; }
+        
+        /* Container Section */
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        /* Product Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 5px; }
+        .card h3 { margin: 10px 0 5px; }
+        .card p { color: var(--primary); font-weight: bold; margin-bottom: 10px; }
+        .btn { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; }
+        .btn:hover { opacity: 0.9; }
+        .btn-success { background: var(--success); }
+
+        /* Form Controls */
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        
+        /* Call Float Button */
+        .btn-call-float {
+            position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white;
+            padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* Admin Table */
+        table { width: 100%; border-collapse: collapse; background: white; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: var(--primary); color: white; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col justify-between">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <!-- Medical Symbol (Rod of Asclepius) -->
-                <div class="bg-white p-2 rounded-full shadow-inner text-blue-900">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 fill-current" viewBox="0 0 24 24">
-                        <path d="M12 2a1 1 0 0 1 1 1v1.07a3.5 3.5 0 0 1 1.942 6.069l-.738.64a1.5 1.5 0 0 0-.504 1.127v.094a3.5 3.5 0 0 1-1.7 3.023l-.001 2.052a2.502 2.502 0 0 1 2 2.425 1 1 0 1 1-2 0 2.5 2.5 0 0 1 1-2.05v-1.077c.365-.187.7-.438.988-.748a3.5 3.5 0 0 0 .912-2.38v-.094a3.5 3.5 0 0 0-1.176-2.63l.738-.64A3.5 3.5 0 0 0 13 4.07V3a1 1 0 0 1-1-1zm-1 3.07V4a1 1 0 1 0-2 0v1.07a3.5 3.5 0 0 0 1.942 6.069l-.738.64A1.5 1.5 0 0 1 9.7 12.906v.094a3.5 3.5 0 0 0 1.176 2.63l-.738.64A3.5 3.5 0 0 0 9 18.93V20a1 1 0 1 0 2 0v-1.07a3.5 3.5 0 0 0-1.942-6.069l.738-.64a1.5 1.5 0 0 1 .504-1.127v-.094a3.5 3.5 0 0 0-1.176-2.63l.738-.64A3.5 3.5 0 0 0 11 5.07z"/>
-                        <circle cx="12" cy="2" r="1.5"/>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-lg md:text-xl font-bold tracking-wide">
-                        ค้นหาผู้มีใบประกาศสำหรับ Practical Nurse ( PN )
-                    </h1>
-                    <p class="text-xs text-blue-200">ระบบตรวจสอบสถานะและรายชื่อผู้ผ่านการอบรมผู้ช่วยพยาบาล</p>
-                </div>
-            </div>
-            <div class="text-xs bg-blue-800 text-blue-100 px-3 py-1.5 rounded-full border border-blue-700">
-                อัปเดตข้อมูลล่าสุด: 2569
-            </div>
-        </div>
+    <header>
+        <h1>🛍️ ShopNRT</h1>
+        <p>ร้านค้าออนไลน์ ครบจบในที่เดียว</p>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 py-10 w-full flex-grow">
-        
-        <!-- Search Card -->
-        <div class="bg-white rounded-2xl shadow-xl border border-blue-100 p-6 md:p-8 mb-8">
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-blue-900 mb-2">ตรวจสอบรายชื่อและคุณวุฒิ</h2>
-                <p class="text-slate-600 text-sm">กรอกชื่อ หรือ นามสกุล เพื่อทำการค้นหาข้อมูลในระบบ</p>
+    <nav>
+        <button class="tab-btn active" onclick="switchPage('shop')">หน้าแรก</button>
+        <button class="tab-btn" onclick="switchPage('cart')">🛒 ตะกร้า (<span id="cart-count">0</span>)</button>
+        <button class="tab-btn" onclick="switchPage('tracking')">📦 ติดตามออเดอร์</button>
+        <button class="tab-btn" onclick="switchPage('admin')">⚙️ หลังบ้าน (Admin)</button>
+    </nav>
+
+    <div class="container">
+        <!-- 1. หน้าร้านค้า -->
+        <section id="shop" class="page active">
+            <h2>สินค้าทั้งหมด</h2><br>
+            <div id="product-list" class="grid"></div>
+        </section>
+
+        <!-- 2. หน้าตะกร้าสินค้า & ชำระเงิน -->
+        <section id="cart" class="page">
+            <h2>🛒 ตะกร้าสินค้า</h2><br>
+            <div id="cart-items" style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;"></div>
+            <h3>ราคารวมทั้งหมด: <span id="cart-total" style="color: var(--primary);">0</span> บาท</h3>
+            <br><hr><br>
+            <h3>💳 ชำระเงิน</h3><br>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <p>สแกน QR Code เพื่อชำระเงิน (PromptPay)</p>
+                <img src="https://via.placeholder.com/150?text=PromptPay+QR" alt="QR Code" style="margin: 10px 0;">
             </div>
-
-            <form id="searchForm" onsubmit="event.preventDefault(); handleSearch();" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="firstName" class="block text-sm font-semibold text-slate-700 mb-1">ชื่อ (First Name)</label>
-                        <input type="text" id="firstName" placeholder="เช่น เนติราช" 
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
-                    </div>
-                    <div>
-                        <label for="lastName" class="block text-sm font-semibold text-slate-700 mb-1">นามสกุล (Last Name)</label>
-                        <input type="text" id="lastName" placeholder="เช่น นิ่มเจริญวัฒนกุล" 
-                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
-                    </div>
+            <form id="checkout-form" onsubmit="handleCheckout(event)">
+                <div class="form-group">
+                    <label>ชื่อ-นามสกุล ผู้รับ:</label>
+                    <input type="text" id="cust-name" required>
                 </div>
-
-                <div class="pt-2 flex gap-3">
-                    <button type="submit" 
-                        class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        ค้นหารายชื่อ
-                    </button>
-                    <button type="button" onclick="resetForm()" 
-                        class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-3 px-5 rounded-lg transition-all">
-                        ล้างค่า
-                    </button>
+                <div class="form-group">
+                    <label>เบอร์โทรศัพท์:</label>
+                    <input type="tel" id="cust-phone" required>
                 </div>
+                <div class="form-group">
+                    <label>แนบหลักฐานการโอน (สลิป):</label>
+                    <input type="file" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-success">ยืนยันการสั่งซื้อ</button>
             </form>
-        </div>
+        </section>
 
-        <!-- Search Results Area -->
-        <div id="resultsContainer" class="hidden space-y-4">
-            <div class="flex justify-between items-center px-2">
-                <h3 class="text-lg font-bold text-slate-800">ผลการค้นหา</h3>
-                <span id="resultCount" class="text-sm font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200"></span>
+        <!-- 3. หน้าติดตามออเดอร์ -->
+        <section id="tracking" class="page">
+            <h2>📦 ติดตามสถานะคำสั่งซื้อ</h2><br>
+            <div class="form-group">
+                <input type="text" id="search-order-id" placeholder="ใส่รหัสคำสั่งซื้อ เช่น NRT-1234">
+            </div>
+            <button class="btn" onclick="trackOrder()">ค้นหา</button>
+            <div id="tracking-result" style="margin-top: 20px;"></div>
+        </section>
+
+        <!-- 4. หน้าหลังบ้าน (Admin) -->
+        <section id="admin" class="page">
+            <h2>⚙️ ระบบหลังบ้าน ShopNRT</h2><br>
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h3>➕ เพิ่มสินค้าใหม่</h3><br>
+                <form onsubmit="handleAddProduct(event)">
+                    <div class="form-group">
+                        <label>ชื่อสินค้า:</label>
+                        <input type="text" id="add-prod-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ราคา (บาท):</label>
+                        <input type="number" id="add-prod-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>URL รูปภาพ:</label>
+                        <input type="url" id="add-prod-img" value="https://via.placeholder.com/150" required>
+                    </div>
+                    <button type="submit" class="btn">เพิ่มสินค้า</button>
+                </form>
             </div>
 
-            <div id="resultsList" class="space-y-4">
-                <!-- Dynamic Content Injected Here -->
-            </div>
-        </div>
+            <h3>📋 รายการสั่งซื้อทั้งหมด</h3>
+            <table id="admin-order-table">
+                <thead>
+                    <tr>
+                        <th>รหัส</th>
+                        <th>ชื่อผู้สั่ง</th>
+                        <th>เบอร์โทร</th>
+                        <th>ยอดรวม</th>
+                        <th>สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+    </div>
 
-        <!-- Empty / No Result State -->
-        <div id="noResult" class="hidden bg-white rounded-xl p-8 text-center border border-slate-200 shadow-sm">
-            <div class="inline-flex p-3 bg-red-50 text-red-500 rounded-full mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-            </div>
-            <h4 class="text-lg font-bold text-slate-800 mb-1">ไม่พบข้อมูลในระบบ</h4>
-            <p class="text-slate-500 text-sm">กรุณาตรวจสอบการพิมพ์ชื่อ-นามสกุล สะกดใหม่อีกครั้ง</p>
-        </div>
+    <!-- ปุ่มโทรด่วน -->
+    <a href="tel:0800000000" class="btn-call-float">
+        📞 โทรสั่งซื้อด่วน
+    </a>
 
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-sm">
-        <div class="max-w-6xl mx-auto px-4 space-y-2">
-            <p>© ระบบตรวจสอบใบประกาศนียบัตรหลักสูตรผู้ช่วยพยาบาล (Practical Nurse)</p>
-            <p class="text-xs text-slate-500">ข้อมูลนี้ใช้เพื่อการรับรองและตรวจสอบคุณวุฒิตามมาตรฐานการพยาบาลเท่านั้น</p>
-        </div>
-    </footer>
-
-    <!-- JavaScript Logic -->
     <script>
-        // -------------------------------------------------------------
-        // จำลองฐานข้อมูลรายชื่อ (Mock Database)
-        // -------------------------------------------------------------
-        const mockDatabase = [
-            { 
-                id: "PN-68001", 
-                prefix: "นาย",
-                firstName: "เนติราช", 
-                lastName: "นิ่มเจริญวัฒนกุล", 
-                institute: "มหาวิทยาลัยมหิดล (คณะแพทยศาสตร์ศิริราชพยาบาล)", 
-                year: "2568", 
-                status: "ผู้มีใบประกาศ" 
-            },
-            { 
-                id: "PN-66001", 
-                prefix: "นางสาว",
-                firstName: "สมหญิง", 
-                lastName: "รักดี", 
-                institute: "วิทยาลัยพยาบาลบรมราชชนนี กรุงเทพ", 
-                year: "2566", 
-                status: "ผู้มีใบประกาศ" 
-            },
-            { 
-                id: "PN-66002", 
-                prefix: "นาย",
-                firstName: "สมชาย", 
-                lastName: "ใจดี", 
-                institute: "คณะพยาบาลศาสตร์ มหาวิทยาลัยมหิดล", 
-                year: "2565", 
-                status: "ผู้มีใบประกาศ" 
-            }
+        // ข้อมูลเริ่มต้น (Mock Data)
+        let products = JSON.parse(localStorage.getItem('shopnrt_products')) || [
+            { id: 1, name: 'สินค้าตัวอย่าง 1', price: 290, img: 'https://via.placeholder.com/150' },
+            { id: 2, name: 'สินค้าตัวอย่าง 2', price: 590, img: 'https://via.placeholder.com/150' }
         ];
+        let cart = [];
+        let orders = JSON.parse(localStorage.getItem('shopnrt_orders')) || [];
 
-        function handleSearch() {
-            const fnameInput = document.getElementById('firstName').value.trim().toLowerCase();
-            const lnameInput = document.getElementById('lastName').value.trim().toLowerCase();
+        // สลับหน้า (Tab Switching)
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+            if(pageId === 'admin') renderAdminOrders();
+        }
 
-            const resultsContainer = document.getElementById('resultsContainer');
-            const resultsList = document.getElementById('resultsList');
-            const noResult = document.getElementById('noResult');
-            const resultCount = document.getElementById('resultCount');
+        // แสดงรายการสินค้า
+        function renderProducts() {
+            const list = document.getElementById('product-list');
+            list.innerHTML = products.map(p => `
+                <div class="card">
+                    <img src="${p.img}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <p>${p.price} บาท</p>
+                    <button class="btn" onclick="addToCart(${p.id})">เพิ่มลงตะกร้า</button>
+                </div>
+            `).join('');
+        }
 
-            // ถ้าไม่ได้กรอกอะไรเลย
-            if (!fnameInput && !lnameInput) {
-                alert('กรุณากรอก ชื่อ หรือ นามสกุล อย่างน้อยหนึ่งช่องเพื่อค้นหา');
+        // ระบบตะกร้า
+        function addToCart(pId) {
+            const item = products.find(p => p.id === pId);
+            cart.push(item);
+            document.getElementById('cart-count').innerText = cart.length;
+            renderCart();
+            alert(`เพิ่ม ${item.name} ลงในตะกร้าแล้ว`);
+        }
+
+        function renderCart() {
+            const cartContainer = document.getElementById('cart-items');
+            if(cart.length === 0) {
+                cartContainer.innerHTML = '<p>ไม่มีสินค้าในตะกร้า</p>';
+                document.getElementById('cart-total').innerText = '0';
                 return;
             }
+            let total = 0;
+            cartContainer.innerHTML = cart.map(item => {
+                total += item.price;
+                return `<div style="display:flex; justify-between; margin-bottom: 5px;"><span>${item.name}</span> <span><b>${item.price} บาท</b></span></div>`;
+            }).join('');
+            document.getElementById('cart-total').innerText = total;
+        }
 
-            // ค้นหาข้อมูลจาก Mock Database
-            const filteredResults = mockDatabase.filter(person => {
-                const matchFname = fnameInput ? person.firstName.toLowerCase().includes(fnameInput) : true;
-                const matchLname = lnameInput ? person.lastName.toLowerCase().includes(lnameInput) : true;
-                return matchFname && matchLname;
-            });
+        // ชำระเงิน & สร้างออเดอร์
+        function handleCheckout(e) {
+            e.preventDefault();
+            if(cart.length === 0) return alert('กรุณาเลือกสินค้าก่อนครับ');
+            
+            const orderId = 'NRT-' + Math.floor(1000 + Math.random() * 9000);
+            const newOrder = {
+                id: orderId,
+                name: document.getElementById('cust-name').value,
+                phone: document.getElementById('cust-phone').value,
+                total: cart.reduce((a,b) => a + b.price, 0),
+                status: 'รอตรวจสอบ'
+            };
 
-            // ล้างผลลัพธ์เก่า
-            resultsList.innerHTML = '';
+            orders.push(newOrder);
+            localStorage.setItem('shopnrt_orders', JSON.stringify(orders));
+            
+            alert(`ชำระเงินสำเร็จ! รหัสการสั่งซื้อของคุณคือ: ${orderId}`);
+            cart = [];
+            document.getElementById('cart-count').innerText = 0;
+            renderCart();
+            document.getElementById('checkout-form').reset();
+            switchPage('tracking');
+        }
 
-            if (filteredResults.length > 0) {
-                noResult.classList.add('hidden');
-                resultsContainer.classList.remove('hidden');
-                resultCount.textContent = `พบ ${filteredResults.length} รายการ`;
-
-                filteredResults.forEach(person => {
-                    const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-xl border border-blue-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden";
-                    
-                    card.innerHTML = `
-                        <div class="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-bl-lg shadow-sm flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            ${person.status}
-                        </div>
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div class="space-y-1">
-                                <div class="text-xs text-blue-700 font-bold tracking-wider">รหัสทะเบียน: ${person.id}</div>
-                                <h4 class="text-xl font-bold text-slate-800">${person.prefix} ${person.firstName} ${person.lastName}</h4>
-                                <div class="text-sm text-slate-600 flex items-center gap-1.5 pt-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                    <span><strong>สถาบันที่จบ:</strong> ${person.institute}</span>
-                                </div>
-                            </div>
-                            <div class="md:text-right border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
-                                <span class="text-xs text-slate-400 block">ปีที่สำเร็จการศึกษา</span>
-                                <span class="text-lg font-bold text-blue-900">พ.ศ. ${person.year}</span>
-                            </div>
-                        </div>
-                    `;
-                    resultsList.appendChild(card);
-                });
+        // เช็คสถานะ
+        function trackOrder() {
+            const id = document.getElementById('search-order-id').value;
+            const order = orders.find(o => o.id === id);
+            const res = document.getElementById('tracking-result');
+            if(order) {
+                res.innerHTML = `
+                    <div style="background:white; padding:15px; border-radius:5px;">
+                        <h3>รหัส: ${order.id}</h3>
+                        <p>ชื่อผู้สั่ง: ${order.name}</p>
+                        <p>ยอดรวม: ${order.total} บาท</p>
+                        <p>สถานะ: <b style="color:orange">${order.status}</b></p>
+                    </div>
+                `;
             } else {
-                resultsContainer.classList.add('hidden');
-                noResult.classList.remove('hidden');
+                res.innerHTML = '<p style="color:red">ไม่พบข้อมูลออเดอร์นี้</p>';
             }
         }
 
-        function resetForm() {
-            document.getElementById('firstName').value = '';
-            document.getElementById('lastName').value = '';
-            document.getElementById('resultsContainer').classList.add('hidden');
-            document.getElementById('noResult').classList.add('hidden');
+        // หลังบ้าน (Admin)
+        function handleAddProduct(e) {
+            e.preventDefault();
+            const newP = {
+                id: Date.now(),
+                name: document.getElementById('add-prod-name').value,
+                price: Number(document.getElementById('add-prod-price').value),
+                img: document.getElementById('add-prod-img').value
+            };
+            products.push(newP);
+            localStorage.setItem('shopnrt_products', JSON.stringify(products));
+            renderProducts();
+            alert('เพิ่มสินค้าเรียบร้อย');
+            e.target.reset();
         }
+
+        function renderAdminOrders() {
+            const tbody = document.querySelector('#admin-order-table tbody');
+            tbody.innerHTML = orders.map(o => `
+                <tr>
+                    <td>${o.id}</td>
+                    <td>${o.name}</td>
+                    <td>${o.phone}</td>
+                    <td>${o.total}</td>
+                    <td>${o.status}</td>
+                </tr>
+            `).join('');
+        }
+
+        // เริ่มทำงานเมื่อเปิดหน้าเว็บ
+        renderProducts();
     </script>
 </body>
 </html>
