@@ -20,7 +20,7 @@
     <header class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center space-x-3">
-                <!-- Medical Symbol (Rod of Asclepius / Snake & Staff Icon) -->
+                <!-- Medical Symbol (Rod of Asclepius) -->
                 <div class="bg-white p-2 rounded-full shadow-inner text-blue-900">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 fill-current" viewBox="0 0 24 24">
                         <path d="M12 2a1 1 0 0 1 1 1v1.07a3.5 3.5 0 0 1 1.942 6.069l-.738.64a1.5 1.5 0 0 0-.504 1.127v.094a3.5 3.5 0 0 1-1.7 3.023l-.001 2.052a2.502 2.502 0 0 1 2 2.425 1 1 0 1 1-2 0 2.5 2.5 0 0 1 1-2.05v-1.077c.365-.187.7-.438.988-.748a3.5 3.5 0 0 0 .912-2.38v-.094a3.5 3.5 0 0 0-1.176-2.63l.738-.64A3.5 3.5 0 0 0 13 4.07V3a1 1 0 0 1-1-1zm-1 3.07V4a1 1 0 1 0-2 0v1.07a3.5 3.5 0 0 0 1.942 6.069l-.738.64A1.5 1.5 0 0 1 9.7 12.906v.094a3.5 3.5 0 0 0 1.176 2.63l-.738.64A3.5 3.5 0 0 0 9 18.93V20a1 1 0 1 0 2 0v-1.07a3.5 3.5 0 0 0-1.942-6.069l.738-.64a1.5 1.5 0 0 1 .504-1.127v-.094a3.5 3.5 0 0 0-1.176-2.63l.738-.64A3.5 3.5 0 0 0 11 5.07z"/>
@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="text-xs bg-blue-800 text-blue-100 px-3 py-1.5 rounded-full border border-blue-700">
-                อัปเดตข้อมูลล่าสุด: 2567
+                อัปเดตข้อมูลล่าสุด: 2569
             </div>
         </div>
     </header>
@@ -54,12 +54,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="firstName" class="block text-sm font-semibold text-slate-700 mb-1">ชื่อ (First Name)</label>
-                        <input type="text" id="firstName" placeholder="เช่น สมหญิง" 
+                        <input type="text" id="firstName" placeholder="เช่น เนติราช" 
                             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
                     </div>
                     <div>
                         <label for="lastName" class="block text-sm font-semibold text-slate-700 mb-1">นามสกุล (Last Name)</label>
-                        <input type="text" id="lastName" placeholder="เช่น ใจดี" 
+                        <input type="text" id="lastName" placeholder="เช่น นิ่มเจริญวัฒนกุล" 
                             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
                     </div>
                 </div>
@@ -117,15 +117,35 @@
     <script>
         // -------------------------------------------------------------
         // จำลองฐานข้อมูลรายชื่อ (Mock Database)
-        // สำหรับใช้งานจริงที่มีรายชื่อหลายหมื่นคน แนะนำให้แยกเป็นไฟล์ JSON หรือดึงผ่าน API
         // -------------------------------------------------------------
         const mockDatabase = [
-            { id: "PN-66001", firstName: "สมหญิง", lastName: "รักดี", institute: "วิทยาลัยพยาบาลบรมราชชนนี กรุงเทพ", year: "2566", status: "ปกติ" },
-            { id: "PN-66002", firstName: "สมชาย", lastName: "ใจดี", institute: "คณะพยาบาลศาสตร์ มหาวิทยาลัยมหิดล", year: "2565", status: "ปกติ" },
-            { id: "PN-65012", firstName: "กานดา", lastName: "สว่างจิต", institute: "มหาวิทยาลัยเชียงใหม่", year: "2565", status: "ปกติ" },
-            { id: "PN-64089", firstName: "ณัฐพล", lastName: "ประเสริฐสุข", institute: "มหาวิทยาลัยสงขลานครินทร์", year: "2564", status: "ปกติ" },
-            { id: "PN-66105", firstName: "สุดารัตน์", lastName: "รักดี", institute: "มหาวิทยาลัยขอนแก่น", year: "2566", status: "ปกติ" },
-            { id: "PN-63045", firstName: "สมหญิง", lastName: "ประกายแก้ว", institute: "วิทยาลัยพยาบาลบรมราชชนนี นนทบุรี", year: "2563", status: "ปกติ" }
+            { 
+                id: "PN-68001", 
+                prefix: "นาย",
+                firstName: "เนติราช", 
+                lastName: "นิ่มเจริญวัฒนกุล", 
+                institute: "มหาวิทยาลัยมหิดล (คณะแพทยศาสตร์ศิริราชพยาบาล)", 
+                year: "2568", 
+                status: "ผู้มีใบประกาศ" 
+            },
+            { 
+                id: "PN-66001", 
+                prefix: "นางสาว",
+                firstName: "สมหญิง", 
+                lastName: "รักดี", 
+                institute: "วิทยาลัยพยาบาลบรมราชชนนี กรุงเทพ", 
+                year: "2566", 
+                status: "ผู้มีใบประกาศ" 
+            },
+            { 
+                id: "PN-66002", 
+                prefix: "นาย",
+                firstName: "สมชาย", 
+                lastName: "ใจดี", 
+                institute: "คณะพยาบาลศาสตร์ มหาวิทยาลัยมหิดล", 
+                year: "2565", 
+                status: "ผู้มีใบประกาศ" 
+            }
         ];
 
         function handleSearch() {
@@ -160,18 +180,21 @@
 
                 filteredResults.forEach(person => {
                     const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden";
+                    card.className = "bg-white p-6 rounded-xl border border-blue-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden";
                     
                     card.innerHTML = `
-                        <div class="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
-                            สถานะ: ${person.status}
+                        <div class="absolute top-0 right-0 bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-bl-lg shadow-sm flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            ${person.status}
                         </div>
                         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div class="space-y-1">
                                 <div class="text-xs text-blue-700 font-bold tracking-wider">รหัสทะเบียน: ${person.id}</div>
-                                <h4 class="text-xl font-bold text-slate-800">${person.firstName} ${person.lastName}</h4>
+                                <h4 class="text-xl font-bold text-slate-800">${person.prefix} ${person.firstName} ${person.lastName}</h4>
                                 <div class="text-sm text-slate-600 flex items-center gap-1.5 pt-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                     </svg>
                                     <span><strong>สถาบันที่จบ:</strong> ${person.institute}</span>
