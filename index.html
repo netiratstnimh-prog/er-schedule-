@@ -3,737 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบจัดการบริหารเวรสำหรับโรงพยาบาล (Hospital Duty Roster System)</title>
+    <title>ระบบบริหารเวรโรงพยาบาล - Soft UI App</title>
     <!-- FontAwesome & Google Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
+            --bg-app: #e0f2fe;
+            --soft-bg: #e2f1fc;
             --primary-blue: #0284c7;
-            --primary-light: #f0f9ff;
-            --accent-blue: #0284c7;
-            --bg-light: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
+            --accent-blue: #0369a1;
+            --text-dark: #1e3a8a;
             --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --danger-red: #ef4444;
-            --success-green: #10b981;
-            --warning-amber: #f59e0b;
+            
+            /* Neumorphism Shadow Effect */
+            --shadow-flat: 8px 8px 16px #c4dbe8, -8px -8px 16px #ffffff;
+            --shadow-inset: inset 4px 4px 8px #c4dbe8, inset -4px -4px 8px #ffffff;
+            --shadow-btn: 5px 5px 12px #badaf0, -5px -5px 12px #ffffff;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Kanit', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-light);
-            color: var(--text-main);
-            padding-bottom: 90px;
-            overflow-x: hidden;
-        }
-
-        /* Top Header Area Responsive */
-        header {
-            background: linear-gradient(135deg, #0284c7, #0369a1);
-            color: white;
-            padding: 12px 16px;
-            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-top {
+            background-color: var(--bg-app);
+            color: var(--text-dark);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-
-        .internal-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .red-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--danger-red);
-            border-radius: 50%;
-            box-shadow: 0 0 6px var(--danger-red);
-            animation: pulse-red 1.5s infinite;
-        }
-
-        @keyframes pulse-red {
-            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        .clock-bar {
-            background: rgba(255, 255, 255, 0.12);
-            margin-top: 8px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Responsive Navigation Bar */
-        nav {
-            background-color: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
-            padding: 10px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .dept-select-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .dept-select-group select {
-            flex-grow: 1;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #bae6fd;
-            background-color: var(--primary-light);
-            color: var(--primary-blue);
-            font-weight: 700;
-            font-size: 0.9rem;
-            outline: none;
-        }
-
-        .nav-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .btn-action {
-            background: var(--primary-light);
-            color: var(--primary-blue);
-            border: 1px solid #bae6fd;
-            padding: 9px 12px;
-            border-radius: 8px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-action:active {
-            background: var(--primary-blue);
-            color: white;
-        }
-
-        /* Container Layout */
-        .main-container {
-            padding: 12px;
-            max-width: 100%;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            padding: 14px;
-            margin-bottom: 14px;
-        }
-
-        .card-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            display: flex;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 12px;
+            min-height: 100vh;
+            padding: 10px;
         }
 
-        /* Touch-Friendly Security Panel */
-        .sec-method {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .btn-sec {
-            padding: 12px 8px;
-            border-radius: 10px;
-            border: 1px dashed var(--primary-blue);
-            background: var(--primary-light);
-            color: var(--primary-blue);
-            font-weight: 600;
-            font-size: 0.8rem;
+        /* Smartphone App Wrapper Container */
+        .app-frame {
+            width: 100%;
+            max-width: 420px;
+            background-color: var(--soft-bg);
+            border-radius: 35px;
+            box-shadow: 15px 15px 30px #b0ccdf, -15px -15px 30px #ffffff;
+            padding: 20px 18px 80px 18px;
+            position: relative;
+            min-height: 840px;
             display: flex;
             flex-direction: column;
+            border: 4px solid #ffffff;
+        }
+
+        /* Top Header Area */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 6px;
+            margin-bottom: 15px;
         }
 
-        /* Forms Mobile Optimized */
-        .form-group {
-            margin-bottom: 10px;
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--soft-bg);
+            box-shadow: var(--shadow-btn);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
         }
 
-        .form-group label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: var(--text-muted);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-
-        /* Roster Table Mobile Scroll */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .roster-table {
-            width: 100%;
-            min-width: 650px;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
-
-        .roster-table th, .roster-table td {
-            border: 1px solid var(--border-color);
-            padding: 8px 4px;
+        .hospital-brand-info {
             text-align: center;
         }
 
-        .roster-table th {
-            background-color: var(--primary-light);
-            color: var(--primary-blue);
-            font-weight: 700;
-            white-space: nowrap;
+        .hosp-name-text {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
-        .staff-info {
-            text-align: left !important;
-            padding-left: 8px !important;
-            min-width: 130px;
-            position: sticky;
-            left: 0;
-            background: white;
-            z-index: 2;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        .internal-tag {
+            font-size: 0.68rem;
+            color: #ef4444;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
         }
 
-        .staff-name { font-weight: 700; color: var(--text-main); font-size: 0.82rem; }
-        .staff-role { font-size: 0.7rem; color: var(--text-muted); }
-
-        /* Badges */
-        .badge-shift {
-            padding: 3px 6px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.72rem;
-            display: inline-block;
-        }
-
-        .shift-m { background-color: #fef3c7; color: #b45309; }
-        .shift-a { background-color: #ffedd5; color: #c2410c; }
-        .shift-n { background-color: #e0e7ff; color: #4338ca; }
-        .shift-off { background-color: #f1f5f9; color: #64748b; }
-
-        .btn-swap-mini {
-            margin-top: 3px;
-            font-size: 0.65rem;
-            background: none;
-            border: 1px solid var(--border-color);
-            padding: 2px 4px;
-            border-radius: 4px;
-            color: var(--primary-blue);
-            width: 100%;
-        }
-
-        /* Floating Action Button (FAB) Mobile */
-        .fab-container {
-            position: fixed;
-            bottom: 20px;
-            right: 16px;
-            z-index: 999;
-        }
-
-        .fab-main {
-            width: 56px;
-            height: 56px;
+        .red-dot {
+            width: 7px;
+            height: 7px;
+            background-color: #ef4444;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-blue), #0369a1);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        /* Soft Cards */
+        .soft-card {
+            background: var(--soft-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-flat);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .card-header-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Inputs & Select Neumorphic Inset */
+        .soft-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            border: none;
+            background: var(--soft-bg);
+            box-shadow: var(--shadow-inset);
+            outline: none;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        /* Buttons Neumorphic */
+        .soft-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(145deg, #0284c7, #0369a1);
             color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 4px 4px 10px #badaf0, -4px -4px 10px #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .soft-btn:active {
+            transform: scale(0.98);
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Roster Timeline List Style */
+        .roster-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--soft-bg);
+            box-shadow: var(--shadow-btn);
+            padding: 10px 14px;
+            border-radius: 16px;
+            margin-bottom: 10px;
+        }
+
+        .time-box {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary-blue);
+            text-align: center;
+            padding-right: 10px;
+            border-right: 2px solid #cbd5e1;
+        }
+
+        .staff-detail {
+            flex-grow: 1;
+            padding-left: 12px;
+        }
+
+        .staff-name { font-size: 0.82rem; font-weight: 600; }
+        .staff-sub { font-size: 0.7rem; color: var(--text-muted); }
+
+        .shift-pill {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-btn);
+        }
+
+        .shift-m { background-color: #fef3c7; color: #d97706; }
+        .shift-a { background-color: #ffedd5; color: #ea580c; }
+        .shift-n { background-color: #e0e7ff; color: #4f46e5; }
+
+        /* Floating Action Button (HELP) */
+        .fab-help {
+            position: absolute;
+            bottom: 75px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--soft-bg);
+            box-shadow: var(--shadow-btn);
+            color: var(--primary-blue);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+            cursor: pointer;
             border: none;
+            font-size: 0.65rem;
+            font-weight: bold;
         }
 
-        .fab-menu {
+        /* Bottom Navigation Bar */
+        .bottom-nav {
             position: absolute;
-            bottom: 65px;
-            right: 0;
+            bottom: 12px;
+            left: 18px;
+            right: 18px;
+            height: 60px;
+            background: var(--soft-bg);
+            border-radius: 25px;
+            box-shadow: var(--shadow-flat);
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.2s ease;
-            width: 190px;
-        }
-
-        .fab-container.active .fab-menu {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .fab-item {
-            background: white;
-            padding: 10px 12px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-            border: 1px solid var(--border-color);
-            display: flex;
+            justify-content: space-around;
             align-items: center;
-            gap: 8px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            text-decoration: none;
-            color: var(--text-main);
+            padding: 0 10px;
         }
 
-        /* Modal */
+        .nav-item {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+            box-shadow: var(--shadow-inset);
+        }
+
+        /* Modal Soft UI */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(3px);
+            background: rgba(224, 242, 254, 0.7);
+            backdrop-filter: blur(5px);
             z-index: 2000;
             justify-content: center;
-            align-items: flex-end;
+            align-items: center;
+            padding: 20px;
         }
 
-        .modal-content {
-            background: white;
-            border-radius: 16px 16px 0 0;
+        .modal-box {
+            background: var(--soft-bg);
+            border-radius: 25px;
+            box-shadow: var(--shadow-flat);
             padding: 20px;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.25s ease-out;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
+            max-width: 360px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
-    <header>
-        <div class="header-top">
-            <div class="header-brand">
-                <i class="fa-solid fa-hospital fa-lg"></i>
-                <div class="header-title">ระบบบริหารเวรโรงพยาบาล</div>
+    <!-- Smartphone App Frame -->
+    <div class="app-frame">
+        
+        <!-- App Header -->
+        <div class="app-header">
+            <div class="user-avatar" onclick="openModal('modal-login')">
+                <i class="fa-solid fa-user"></i>
             </div>
-            <div class="internal-badge">
-                <div class="red-dot"></div>
-                <span>เฉพาะภายใน</span>
+            <div class="hospital-brand-info">
+                <div class="hosp-name-text" id="display-hosp-name">🏥 รพ. ศิริราชพยาบาล</div>
+                <div class="internal-tag">
+                    <div class="red-dot"></div> Specific Internal Only
+                </div>
+            </div>
+            <div class="user-avatar" onclick="openModal('modal-hosp-config')">
+                <i class="fa-solid fa-sliders"></i>
             </div>
         </div>
-        <div class="clock-bar">
-            <span id="realtime-clock"><i class="fa-regular fa-clock"></i> 00:00:00 น.</span>
-            <span id="user-badge" style="display:none; color:#e0f2fe; font-weight:bold;"><i class="fa-solid fa-user-check"></i> <span id="current-user">RN1323</span></span>
-        </div>
-    </header>
 
-    <!-- Navigation Bar -->
-    <nav>
-        <div class="dept-select-group">
-            <label for="dept-select"><i class="fa-solid fa-building-user"></i></label>
-            <select id="dept-select" onchange="switchDepartment()">
+        <!-- Realtime Clock Box -->
+        <div class="soft-card" style="padding: 10px 15px; text-align: center; margin-bottom: 12px;">
+            <div id="clock-text" style="font-size: 0.85rem; font-weight: 600; color: var(--primary-blue);">
+                <i class="fa-regular fa-clock"></i> 00:00:00 น.
+            </div>
+        </div>
+
+        <!-- Department Selector -->
+        <div class="soft-card" style="padding: 10px;">
+            <select class="soft-input" id="dept-select" style="margin-bottom: 0;" onchange="renderRoster()">
                 <option value="ER">แผนกฉุกเฉิน (ER)</option>
                 <option value="ICU">แผนกผู้ป่วยหนัก (ICU)</option>
                 <option value="OPD">แผนกผู้ป่วยนอก (OPD)</option>
-                <option value="IPD-3">แผนกผู้ป่วยใน ชั้น 3 (IPD-3)</option>
-                <option value="IPD-4">แผนกผู้ป่วยใน ชั้น 4 (IPD-4)</option>
-                <option value="IPD-5">แผนกผู้ป่วยใน ชั้น 5 (IPD-5)</option>
                 <option value="OR">ห้องผ่าตัด (OR)</option>
-                <option value="LR">ห้องคลอด (LR)</option>
-                <option value="NICU">แผนกทารกแรกเกิดวิกฤต (NICU)</option>
-                <option value="Peds">แผนกกุมารเวชกรรม (Peds)</option>
-                <option value="XRay">แผนกรังสีวิทยา (X-Ray)</option>
             </select>
         </div>
 
-        <div class="nav-actions">
-            <button class="btn-action" onclick="openModal('modal-add-staff')">
-                <i class="fa-solid fa-user-plus"></i> เพิ่มบุคลากร
-            </button>
-            <button class="btn-action" onclick="openModal('modal-first-login')">
-                <i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่าน
-            </button>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="main-container">
-
-        <!-- Login Card -->
-        <div class="card" id="login-card">
-            <div class="card-title"><i class="fa-solid fa-lock"></i> เข้าสู่ระบบเจ้าหน้าที่ / Admin</div>
-            <form onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label>Username (รหัสพนักงาน)</label>
-                    <input type="text" class="form-control" id="login-user" placeholder="ตัวอย่าง: RN1323" required>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" class="form-control" id="login-pass" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-action" style="width: 100%; background: var(--primary-blue); color: white; padding: 10px; margin-top: 5px;">
-                    เข้าสู่ระบบ
-                </button>
-            </form>
-        </div>
-
-        <!-- Security Card -->
-        <div class="card">
-            <div class="card-title"><i class="fa-solid fa-shield-halved"></i> ระบบยืนยันตัวตนด่วน</div>
-            <div class="sec-method">
-                <button class="btn-sec" onclick="triggerNFCScan()">
-                    <i class="fa-solid fa-wifi fa-xl"></i>
-                    <span>แท็บบัตร NFC</span>
-                </button>
-                <button class="btn-sec" onclick="triggerBarcodeScan()">
-                    <i class="fa-solid fa-barcode fa-xl"></i>
-                    <span>สแกนบาร์โค้ด</span>
-                </button>
+        <!-- Roster Timeline View (App Center View) -->
+        <div class="soft-card" style="flex-grow: 1; overflow-y: auto;">
+            <div class="card-header-title">
+                <i class="fa-solid fa-calendar-day"></i> ตารางเวรวันนี้ (<span id="dept-label">ER</span>)
             </div>
-            <div id="scan-status" style="font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 8px;">
-                แตะบัตรพนักงาน NFC หรือสแกน Barcode เพื่อลงเวลา
+            
+            <div id="roster-list">
+                <!-- Dynamic Roster Items -->
             </div>
         </div>
 
-        <!-- Roster Table Card -->
-        <div class="card">
-            <div class="card-title">
-                <i class="fa-solid fa-calendar-days"></i> ตารางเวร (<span id="current-dept-label">แผนกฉุกเฉิน ER</span>)
-            </div>
+        <!-- Floating HELP Button -->
+        <button class="fab-help" onclick="alert('ระบบช่วยเหลือ: ติดต่อแอดมิน โทร 1111 หรือ แอดไลน์ @HospitalRoster')">
+            <i class="fa-solid fa-circle-question fa-lg"></i>
+            <span>HELP</span>
+        </button>
 
-            <div style="margin-bottom: 8px; font-size: 0.75rem; display: flex; gap: 4px; flex-wrap: wrap;">
-                <span class="badge-shift shift-m">☀️ เช้า</span>
-                <span class="badge-shift shift-a">🌅 บ่าย</span>
-                <span class="badge-shift shift-n">🌙 ดึก</span>
-                <span class="badge-shift shift-off">💤 หยุด</span>
-            </div>
-
-            <div class="table-responsive">
-                <table class="roster-table">
-                    <thead>
-                        <tr>
-                            <th class="staff-info">เจ้าหน้าที่</th>
-                            <th>จ.<br><small>17</small></th>
-                            <th>อ.<br><small>18</small></th>
-                            <th>พ.<br><small>19</small></th>
-                            <th>พฤ.<br><small>20</small></th>
-                            <th>ศ.<br><small>21</small></th>
-                            <th>ส.<br><small>22</small></th>
-                            <th>อา.<br><small>23</small></th>
-                        </tr>
-                    </thead>
-                    <tbody id="roster-tbody">
-                        <!-- Rendered dynamically -->
-                    </tbody>
-                </table>
-            </div>
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchTab(this)"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="nav-item" onclick="openModal('modal-hosp-config')"><i class="fa-solid fa-hospital"></i></div>
+            <div class="nav-item" onclick="openModal('modal-add-staff')"><i class="fa-solid fa-plus"></i></div>
+            <div class="nav-item" onclick="triggerNFC()"><i class="fa-solid fa-wifi"></i></div>
+            <div class="nav-item" onclick="openModal('modal-login')"><i class="fa-solid fa-user-lock"></i></div>
         </div>
 
     </div>
 
-    <!-- Floating Action Button (FAB) -->
-    <div class="fab-container" id="fab-container">
-        <div class="fab-menu">
-            <a class="fab-item" onclick="openModal('modal-contact-admin')">
-                <i class="fa-solid fa-headset" style="color: var(--primary-blue);"></i> ติดต่อแอดมิน
-            </a>
-            <a class="fab-item" onclick="openModal('modal-urgent-roster')">
-                <i class="fa-solid fa-bolt" style="color: var(--warning-amber);"></i> จัดการตารางเวรด่วน
-            </a>
-            <a class="fab-item" href="https://line.me" target="_blank">
-                <i class="fa-brands fa-line" style="color: #06c755;"></i> เพิ่มเพื่อนไลน์
-            </a>
-            <a class="fab-item" onclick="openModal('modal-login-quick')">
-                <i class="fa-solid fa-user-check" style="color: var(--primary-blue);"></i> ลงชื่อเข้าใช้
-            </a>
+    <!-- MODAL: จัดการชื่อโรงพยาบาล & เพิ่มแผนก -->
+    <div class="modal" id="modal-hosp-config">
+        <div class="modal-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <h3 style="font-size:0.95rem; color:var(--primary-blue);"><i class="fa-solid fa-hospital"></i> ตั้งค่าโรงพยาบาล/แผนก</h3>
+                <span onclick="closeModal('modal-hosp-config')" style="cursor:pointer;">&times;</span>
+            </div>
+            <form onsubmit="handleSaveHosp(event)">
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-muted);">ชื่อโรงพยาบาล</label>
+                <input type="text" class="soft-input" id="input-hosp-name" value="รพ. ศิริราชพยาบาล" required>
+                
+                <label style="font-size:0.75rem; font-weight:600; color:var(--text-muted);">เพิ่มแผนกใหม่</label>
+                <input type="text" class="soft-input" id="input-new-dept" placeholder="เช่น แผนกเคมีบำบัด">
+                
+                <button type="submit" class="soft-btn">บันทึกข้อมูล</button>
+            </form>
         </div>
-        <button class="fab-main" onclick="toggleFab()">
-            <i class="fa-solid fa-circle-question fa-lg"></i>
-            <span style="font-size: 0.6rem; font-weight:bold;">HELP</span>
-        </button>
+    </div>
+
+    <!-- MODAL: เข้าสู่ระบบ (Admin RN1323) -->
+    <div class="modal" id="modal-login">
+        <div class="modal-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <h3 style="font-size:0.95rem; color:var(--primary-blue);"><i class="fa-solid fa-lock"></i> เข้าสู่ระบบเจ้าหน้าที่</h3>
+                <span onclick="closeModal('modal-login')" style="cursor:pointer;">&times;</span>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <input type="text" class="soft-input" id="login-user" placeholder="Username (เช่น RN1323)" required>
+                <input type="password" class="soft-input" id="login-pass" placeholder="Password (เช่น 1323)" required>
+                <button type="submit" class="soft-btn">ลงชื่อเข้าใช้</button>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL: เพิ่มบุคลากร -->
     <div class="modal" id="modal-add-staff">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-user-plus"></i> เพิ่มบุคลากรใหม่</h3>
-                <button style="background:none; border:none; font-size:1.2rem;" onclick="closeModal('modal-add-staff')">&times;</button>
+        <div class="modal-box">
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <h3 style="font-size:0.95rem; color:var(--primary-blue);"><i class="fa-solid fa-user-plus"></i> เพิ่มเจ้าหน้าที่</h3>
+                <span onclick="closeModal('modal-add-staff')" style="cursor:pointer;">&times;</span>
             </div>
             <form onsubmit="handleAddStaff(event)">
-                <div class="form-group">
-                    <label>ชื่อ-นามสกุล</label>
-                    <input type="text" class="form-control" id="new-staff-name" placeholder="พว. สมหญิง รักดี" required>
-                </div>
-                <div class="form-group">
-                    <label>รหัสพนักงาน / Username</label>
-                    <input type="text" class="form-control" id="new-staff-id" placeholder="RN2005" required>
-                </div>
-                <div class="form-group">
-                    <label>รหัสผ่านเริ่มต้น (Default Password)</label>
-                    <input type="text" class="form-control" value="NRT12345#" readonly style="background:#f1f5f9;">
-                </div>
-                <button type="submit" class="btn-action" style="width:100%; background:var(--primary-blue); color:white; padding:10px; margin-top:8px;">
-                    บันทึกข้อมูล
-                </button>
+                <input type="text" class="soft-input" id="staff-name" placeholder="ชื่อ-นามสกุล" required>
+                <input type="text" class="soft-input" id="staff-id" placeholder="รหัสพนักงาน (Username)" required>
+                <input type="text" class="soft-input" value="รหัสผ่านเริ่มต้น: NRT12345#" disabled>
+                <button type="submit" class="soft-btn">บันทึกบุคลากร</button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: เปลี่ยนรหัสผ่านแรกเข้า -->
-    <div class="modal" id="modal-first-login">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-key"></i> ตั้ง Username & Password ใหม่</h3>
-                <button style="background:none; border:none; font-size:1.2rem;" onclick="closeModal('modal-first-login')">&times;</button>
-            </div>
-            <form onsubmit="handleFirstLoginUpdate(event)">
-                <div class="form-group">
-                    <label>รหัสผ่านเดิม</label>
-                    <input type="password" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label>ตั้ง Username ใหม่</label>
-                    <input type="text" class="form-control" placeholder="อย่างน้อย 6 ตัวอักษร" required>
-                </div>
-                <div class="form-group">
-                    <label>ตั้ง Password ใหม่</label>
-                    <input type="password" class="form-control" placeholder="รหัสผ่านใหม่" required>
-                </div>
-                <button type="submit" class="btn-action" style="width:100%; background:var(--success-green); color:white; padding:10px; margin-top:8px;">
-                    บันทึกเปลี่ยนรหัสผ่าน
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: แลกเวร -->
-    <div class="modal" id="modal-swap-shift">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-arrow-rotate-left"></i> ยื่นคำขอแลกเวร</h3>
-                <button style="background:none; border:none; font-size:1.2rem;" onclick="closeModal('modal-swap-shift')">&times;</button>
-            </div>
-            <form onsubmit="handleSwapShift(event)">
-                <p style="font-size:0.85rem; margin-bottom:10px;">ผู้ขอแลก: <strong id="swap-from-staff">...</strong></p>
-                <div class="form-group">
-                    <label>เลือกผู้รับแลกเวร</label>
-                    <select class="form-control" id="swap-target-staff" required></select>
-                </div>
-                <div class="form-group">
-                    <label>เหตุผล</label>
-                    <textarea class="form-control" rows="2" placeholder="ระบุเหตุผลในการแลกเวร..." required></textarea>
-                </div>
-                <button type="submit" class="btn-action" style="width:100%; background:var(--primary-blue); color:white; padding:10px;">
-                    ส่งคำขอแลกเวร
-                </button>
-            </form>
-        </div>
-    </div>
-
+    <!-- JavaScript Logic -->
     <script>
-        // Database Mockup
-        const staffDatabase = [
-            { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", position: "ผู้จัดการระบบ Admin", dept: "ER" },
-            { id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", position: "พยาบาลวิชาชีพ", dept: "ER" },
-            { id: "RN1002", name: "พว. ณัฐวุฒิ ใจดี", position: "พยาบาลวิชาชีพ", dept: "ER" },
-            { id: "RN1003", name: "พว. ธนกร ชัยชนะ", position: "พยาบาลวิชาชีพ", dept: "ICU" }
+        const staffList = [
+            { id: 'RN1323', name: 'พว. หัวหน้าผู้ดูแลระบบ', time: '08:00 - 16:00', shift: '☀️ เช้า', class: 'shift-m' },
+            { id: 'RN1001', name: 'พว. สุภาพร กลิ่นหอม', time: '16:00 - 24:00', shift: '🌅 บ่าย', class: 'shift-a' },
+            { id: 'RN1002', name: 'พว. ณัฐวุฒิ ใจดี', time: '24:00 - 08:00', shift: '🌙 ดึก', class: 'shift-n' }
         ];
 
         // 1. Clock
         function updateClock() {
             const now = new Date();
-            document.getElementById('realtime-clock').innerHTML = `<i class="fa-regular fa-clock"></i> ${now.toLocaleTimeString('th-TH')} น.`;
+            document.getElementById('clock-text').innerHTML = `<i class="fa-regular fa-clock"></i> ${now.toLocaleTimeString('th-TH')} น.`;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // 2. FAB
-        function toggleFab() {
-            document.getElementById('fab-container').classList.toggle('active');
-        }
-
-        // 3. Modals
+        // 2. Modals
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // 4. Department Switch
-        function switchDepartment() {
-            const select = document.getElementById('dept-select');
-            document.getElementById('current-dept-label').innerText = select.options[select.selectedIndex].text;
-            renderRoster();
-        }
-
-        // 5. Render Roster
+        // 3. Render Roster Timeline
         function renderRoster() {
-            const tbody = document.getElementById('roster-tbody');
-            const shifts = [
-                { type: 'shift-m', label: '☀️ เช้า' },
-                { type: 'shift-a', label: '🌅 บ่าย' },
-                { type: 'shift-n', label: '🌙 ดึก' },
-                { type: 'shift-off', label: '💤 หยุด' }
-            ];
+            const list = document.getElementById('roster-list');
+            const dept = document.getElementById('dept-select').value;
+            document.getElementById('dept-label').innerText = dept;
 
-            tbody.innerHTML = staffDatabase.map(staff => {
-                let daysHtml = '';
-                for(let i=0; i<7; i++) {
-                    const rShift = shifts[Math.floor(Math.random() * shifts.length)];
-                    daysHtml += `
-                        <td>
-                            <span class="badge-shift ${rShift.type}">${rShift.label}</span>
-                            <button class="btn-swap-mini" onclick="openSwapModal('${staff.name}')">แลก</button>
-                        </td>
-                    `;
-                }
-                return `
-                    <tr>
-                        <td class="staff-info">
-                            <div class="staff-name">${staff.name}</div>
-                            <div class="staff-role">${staff.id}</div>
-                        </td>
-                        ${daysHtml}
-                    </tr>
-                `;
-            }).join('');
+            list.innerHTML = staffList.map(s => `
+                <div class="roster-item">
+                    <div class="time-box">${s.time.split('-')[0]}<br><small style="font-size:0.65rem; color:#64748b;">น.</small></div>
+                    <div class="staff-detail">
+                        <div class="staff-name">${s.name}</div>
+                        <div class="staff-sub">${s.id} • ${s.time}</div>
+                    </div>
+                    <span class="shift-pill ${s.class}">${s.shift}</span>
+                </div>
+            `).join('');
         }
 
-        // 6. Auth Handler (Support RN1323 / 1323)
+        // 4. Save Hosp & Add Dept
+        function handleSaveHosp(e) {
+            e.preventDefault();
+            const hName = document.getElementById('input-hosp-name').value;
+            const newDept = document.getElementById('input-new-dept').value;
+
+            document.getElementById('display-hosp-name').innerText = '🏥 ' + hName;
+
+            if(newDept.trim() !== '') {
+                const select = document.getElementById('dept-select');
+                const opt = document.createElement('option');
+                opt.value = newDept;
+                opt.innerText = newDept;
+                select.appendChild(opt);
+                select.value = newDept;
+                document.getElementById('input-new-dept').value = '';
+            }
+
+            closeModal('modal-hosp-config');
+            renderRoster();
+            alert('บันทึกการตั้งค่าโรงพยาบาลเรียบร้อย');
+        }
+
+        // 5. Auth (RN1323 / 1323)
         function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('login-user').value;
             const p = document.getElementById('login-pass').value;
 
             if(u === 'RN1323' && p === '1323') {
-                alert('ยินดีต้อนรับ ผู้ดูแลระบบ (Admin) RN1323 เข้าสู่ระบบสำเร็จ');
+                alert('ยินดีต้อนรับผู้ดูแลระบบ RN1323 เข้าสู่ระบบ');
             } else {
-                alert('เข้าสู่ระบบสำเร็จสำหรับบัญชีทั่วไป');
+                alert('ลงชื่อเข้าใช้สำเร็จสำหรับเจ้าหน้าที่ทั่วไป');
             }
-
-            document.getElementById('user-badge').style.display = 'inline';
-            document.getElementById('current-user').innerText = u;
-            document.getElementById('login-card').style.display = 'none';
-        }
-
-        // Security Actions
-        async function triggerNFCScan() {
-            if ('NDEFReader' in window) {
-                try {
-                    const ndef = new NDEFReader();
-                    await ndef.scan();
-                    document.getElementById('scan-status').innerText = 'กำลังแตะบัตร NFC...';
-                } catch (e) { alert('ข้อผิดพลาด NFC: ' + e); }
-            } else { alert('อุปกรณ์/เบราว์เซอร์นี้ยังไม่รองรับ Web NFC'); }
-        }
-
-        function triggerBarcodeScan() {
-            alert('กำลังเปิดกล้องสแกนบาร์โค้ดบัตรพนักงาน...');
+            closeModal('modal-login');
         }
 
         function handleAddStaff(e) {
             e.preventDefault();
-            const name = document.getElementById('new-staff-name').value;
-            const id = document.getElementById('new-staff-id').value;
-            staffDatabase.push({ id, name, position: 'พยาบาลวิชาชีพ', dept: 'ER' });
+            const name = document.getElementById('staff-name').value;
+            const id = document.getElementById('staff-id').value;
+            staffList.push({ id, name, time: '08:00 - 16:00', shift: '☀️ เช้า', class: 'shift-m' });
             renderRoster();
             closeModal('modal-add-staff');
-            alert('เพิ่มบุคลากรสำเร็จ');
+            alert('เพิ่มเจ้าหน้าที่เรียบร้อย');
         }
 
-        function handleFirstLoginUpdate(e) {
-            e.preventDefault();
-            closeModal('modal-first-login');
-            alert('เปลี่ยนรหัสผ่านเรียบร้อย');
+        function triggerNFC() {
+            alert('กำลังแตะบัตรพนักงาน NFC...');
         }
 
-        function openSwapModal(staffName) {
-            document.getElementById('swap-from-staff').innerText = staffName;
-            const select = document.getElementById('swap-target-staff');
-            select.innerHTML = staffDatabase.filter(s => s.name !== staffName).map(s => `<option>${s.name} (${s.id})</option>`).join('');
-            openModal('modal-swap-shift');
-        }
-
-        function handleSwapShift(e) {
-            e.preventDefault();
-            closeModal('modal-swap-shift');
-            alert('ยื่นคำขอแลกเวรเรียบร้อย');
+        function switchTab(el) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
         }
 
         renderRoster();
