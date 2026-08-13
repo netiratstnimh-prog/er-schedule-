@@ -2,534 +2,200 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบแจ้งชำระค่าบริการ - High-Tech Gateway</title>
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตรวจสอบใบประกาศนียบัตร Practical Nurse (PN)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #0a0f1d;
-            --card-bg: rgba(16, 26, 48, 0.85);
-            --neon-blue: #00f0ff;
-            --neon-purple: #7000ff;
-            --kbank: #00a94f;
-            --scb: #4e2e85;
-            --text-light: #f0f6fc;
-            --text-dim: #8b949e;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Prompt', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         body {
-            background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.15), transparent 70%),
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
-            color: var(--text-light);
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 440px;
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Top Header */
-        .header {
-            background: linear-gradient(180deg, rgba(0, 240, 255, 0.1) 0%, rgba(0,0,0,0) 100%);
-            padding: 20px 16px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
-            position: relative;
-        }
-
-        .header h1 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-            letter-spacing: 1px;
-        }
-
-        .system-status {
-            font-size: 0.75rem;
-            color: #00ff88;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00ff88;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff88;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-
-        .admin-btn-icon {
-            position: absolute;
-            right: 15px;
-            top: 20px;
-            color: var(--text-dim);
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .admin-btn-icon:hover {
-            color: var(--neon-blue);
-        }
-
-        /* Views Body */
-        .content {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .view {
-            display: none;
-            animation: fadeIn 0.3s ease-out forwards;
-        }
-
-        .view.active {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Sci-Fi UI Elements */
-        .cyber-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
-            position: relative;
-        }
-
-        .btn-cyber {
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            color: #fff;
-            border: none;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
-        }
-
-        .btn-cyber:active {
-            transform: scale(0.98);
-            box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
-        }
-
-        .btn-outline-cyber {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--text-light);
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        /* Bank Select Cards */
-        .bank-card {
-            display: flex;
-            align-items: center;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(255, 255, 255, 0.02);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .bank-card:hover {
-            border-color: var(--neon-blue);
-            background: rgba(0, 240, 255, 0.05);
-        }
-
-        .bank-badge {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            margin-right: 14px;
-        }
-
-        .kbank .bank-badge { background: var(--kbank); }
-        .scb .bank-badge { background: var(--scb); }
-
-        /* QR Ticket Container */
-        .qr-card-img-wrapper {
-            background: #fff;
-            border-radius: 16px;
-            padding: 10px;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
-            text-align: center;
-        }
-
-        .qr-card-img-wrapper img {
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            display: block;
-        }
-
-        .timer-display {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            color: #ff3366;
-            text-shadow: 0 0 8px rgba(ff, 51, 102, 0.5);
-            text-align: center;
-            background: rgba(255, 51, 102, 0.1);
-            padding: 8px;
-            border-radius: 8px;
-            border: 1px solid rgba(ff, 51, 102, 0.3);
-        }
-
-        /* Modal Overlay */
-        .modal-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(5, 10, 20, 0.85);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            padding: 20px;
-        }
-
-        .modal-box {
-            background: #101a30;
-            border: 1px solid var(--neon-blue);
-            border-radius: 16px;
-            width: 100%;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-        }
-
-        .cyber-input {
-            width: 100%;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            color: var(--neon-blue);
-            padding: 12px 16px;
-            font-size: 1.2rem;
-            border-radius: 8px;
-            text-align: right;
-            outline: none;
-            font-family: 'Orbitron', sans-serif;
-            margin: 15px 0;
-        }
-
-        /* Admin Table */
-        .admin-table {
-            width: 100%;
-            font-size: 0.8rem;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .admin-table th, .admin-table td {
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 8px;
-            text-align: left;
-        }
-
-        .admin-table th {
-            color: var(--neon-blue);
+            font-family: 'Sarabun', sans-serif;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen flex flex-col justify-between">
 
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <h1>แจ้งชำระค่าบริการ</h1>
-            <div class="system-status">
-                <div class="pulse-dot"></div>
-                <span>SYSTEM ONLINE • SECURE 256-BIT</span>
-            </div>
-            <i class="fa-solid fa-user-shield admin-btn-icon" onclick="openAdminModal()" title="เข้าสู่ระบบ Admin"></i>
-        </header>
-
-        <!-- Main Body View -->
-        <main class="content">
-
-            <!-- View 1: Main Home -->
-            <div id="view-home" class="view active">
-                <div class="cyber-box" style="text-align: center; padding: 30px 15px; margin: auto 0;">
-                    <i class="fa-solid fa-shield-halved" style="font-size: 3.5rem; color: var(--neon-blue); margin-bottom: 15px;"></i>
-                    <h2 style="font-size: 1.2rem; font-weight: 600;">GATEWAY PAYMENT</h2>
-                    <p style="font-size: 0.85rem; color: var(--text-dim); margin-top: 5px;">ระบบรับชำระเงินอัตโนมัติความเร็วสูง</p>
+    <!-- Header / Navbar -->
+    <header class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <!-- Medical Symbol (Rod of Asclepius / Snake & Staff Icon) -->
+                <div class="bg-white p-2 rounded-full shadow-inner text-blue-900">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2a1 1 0 0 1 1 1v1.07a3.5 3.5 0 0 1 1.942 6.069l-.738.64a1.5 1.5 0 0 0-.504 1.127v.094a3.5 3.5 0 0 1-1.7 3.023l-.001 2.052a2.502 2.502 0 0 1 2 2.425 1 1 0 1 1-2 0 2.5 2.5 0 0 1 1-2.05v-1.077c.365-.187.7-.438.988-.748a3.5 3.5 0 0 0 .912-2.38v-.094a3.5 3.5 0 0 0-1.176-2.63l.738-.64A3.5 3.5 0 0 0 13 4.07V3a1 1 0 0 1-1-1zm-1 3.07V4a1 1 0 1 0-2 0v1.07a3.5 3.5 0 0 0 1.942 6.069l-.738.64A1.5 1.5 0 0 1 9.7 12.906v.094a3.5 3.5 0 0 0 1.176 2.63l-.738.64A3.5 3.5 0 0 0 9 18.93V20a1 1 0 1 0 2 0v-1.07a3.5 3.5 0 0 0-1.942-6.069l.738-.64a1.5 1.5 0 0 1 .504-1.127v-.094a3.5 3.5 0 0 0-1.176-2.63l.738-.64A3.5 3.5 0 0 0 11 5.07z"/>
+                        <circle cx="12" cy="2" r="1.5"/>
+                    </svg>
                 </div>
-                <button class="btn-cyber" onclick="goToView('view-banks')">
-                    <i class="fa-solid fa-bolt"></i> แจ้งชำระค่าบริการ
-                </button>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide">
+                        ค้นหาผู้มีใบประกาศสำหรับ Practical Nurse ( PN )
+                    </h1>
+                    <p class="text-xs text-blue-200">ระบบตรวจสอบสถานะและรายชื่อผู้ผ่านการอบรมผู้ช่วยพยาบาล</p>
+                </div>
+            </div>
+            <div class="text-xs bg-blue-800 text-blue-100 px-3 py-1.5 rounded-full border border-blue-700">
+                อัปเดตข้อมูลล่าสุด: 2567
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-10 w-full flex-grow">
+        
+        <!-- Search Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-blue-100 p-6 md:p-8 mb-8">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-blue-900 mb-2">ตรวจสอบรายชื่อและคุณวุฒิ</h2>
+                <p class="text-slate-600 text-sm">กรอกชื่อ หรือ นามสกุล เพื่อทำการค้นหาข้อมูลในระบบ</p>
             </div>
 
-            <!-- View 2: Bank Selection -->
-            <div id="view-banks" class="view">
-                <p style="font-size: 0.9rem; color: var(--text-dim);">เลือกช่องทางชำระเงิน:</p>
-                
-                <div class="bank-card kbank" onclick="openAmountModal('กสิกรไทย (KBANK)')">
-                    <div class="bank-badge">K</div>
+            <form id="searchForm" onsubmit="event.preventDefault(); handleSearch();" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <h3 style="font-size: 0.95rem;">ธนาคารกสิกรไทย</h3>
-                        <p style="font-size: 0.75rem; color: var(--text-dim);">QR PromptPay Direct</p>
+                        <label for="firstName" class="block text-sm font-semibold text-slate-700 mb-1">ชื่อ (First Name)</label>
+                        <input type="text" id="firstName" placeholder="เช่น สมหญิง" 
+                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
+                    </div>
+                    <div>
+                        <label for="lastName" class="block text-sm font-semibold text-slate-700 mb-1">นามสกุล (Last Name)</label>
+                        <input type="text" id="lastName" placeholder="เช่น ใจดี" 
+                            class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all">
                     </div>
                 </div>
 
-                <div class="bank-card scb" onclick="openAmountModal('ไทยพาณิชย์ (SCB)')">
-                    <div class="bank-badge">SCB</div>
-                    <div>
-                        <h3 style="font-size: 0.95rem;">ธนาคารไทยพาณิชย์</h3>
-                        <p style="font-size: 0.75rem; color: var(--text-dim);">QR PromptPay Direct</p>
-                    </div>
+                <div class="pt-2 flex gap-3">
+                    <button type="submit" 
+                        class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        ค้นหารายชื่อ
+                    </button>
+                    <button type="button" onclick="resetForm()" 
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-3 px-5 rounded-lg transition-all">
+                        ล้างค่า
+                    </button>
                 </div>
+            </form>
+        </div>
 
-                <button class="btn-outline-cyber" style="margin-top: auto;" onclick="goToView('view-home')">ย้อนกลับ</button>
+        <!-- Search Results Area -->
+        <div id="resultsContainer" class="hidden space-y-4">
+            <div class="flex justify-between items-center px-2">
+                <h3 class="text-lg font-bold text-slate-800">ผลการค้นหา</h3>
+                <span id="resultCount" class="text-sm font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200"></span>
             </div>
 
-            <!-- View 3: QR Code Display -->
-            <div id="view-qr" class="view">
-                <div class="timer-display">
-                    ชำระภายใน <span id="timer">20:00</span> นาที
-                </div>
-
-                <!-- Custom Image QR Embed -->
-                <div class="qr-card-img-wrapper" id="qr-download-area">
-                    <img id="qr-image" src="https://via.placeholder.com/350x500?text=QR+Code+Loading" alt="PromptPay QR Code">
-                </div>
-
-                <div class="cyber-box" style="font-size: 0.85rem; display: flex; justify-content: space-between;">
-                    <span>ยอดชำระเงิน:</span>
-                    <b id="display-amount" style="color: var(--neon-blue); font-family: 'Orbitron'; font-size: 1.1rem;">0.00 THB</b>
-                </div>
-
-                <button class="btn-cyber" onclick="saveImage()">
-                    <i class="fa-solid fa-download"></i> บันทึกรูปภาพ QR
-                </button>
-                <button class="btn-outline-cyber" onclick="resetProcess()">เริ่มต้นสร้างใหม่</button>
-            </div>
-
-            <!-- View 4: Admin Panel -->
-            <div id="view-admin" class="view">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="color: var(--neon-blue); font-size: 1rem;"><i class="fa-solid fa-database"></i> Admin Dashboard</h3>
-                    <button class="btn-outline-cyber" style="padding: 4px 10px; font-size: 0.75rem;" onclick="goToView('view-home')">ออก</button>
-                </div>
-
-                <div class="cyber-box" style="padding: 10px;">
-                    <p style="font-size: 0.8rem; color: var(--text-dim);">ประวัติการสร้าง QR ล่าสุด</p>
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>เวลา</th>
-                                <th>ธนาคาร</th>
-                                <th>ยอดเงิน</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-log-body">
-                            <!-- Logs will be added here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </main>
-
-        <!-- Amount Input Modal -->
-        <div class="modal-overlay" id="modal-amount">
-            <div class="modal-box">
-                <h3 style="color: var(--neon-blue); font-size: 1rem;">ระบุจำนวนเงิน</h3>
-                <p id="target-bank-text" style="font-size: 0.8rem; color: var(--text-dim); margin-top: 4px;">ธนาคารกสิกรไทย</p>
-                
-                <input type="number" id="input-amount" class="cyber-input" placeholder="0.00" min="1" step="0.01">
-
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-outline-cyber" style="flex: 1;" onclick="document.getElementById('input-amount').value=''">ลบ</button>
-                    <button class="btn-cyber" style="flex: 2;" onclick="confirmAmountAndShowQR()">ยืนยันสร้าง QR</button>
-                </div>
+            <div id="resultsList" class="space-y-4">
+                <!-- Dynamic Content Injected Here -->
             </div>
         </div>
 
-        <!-- Admin Login Modal -->
-        <div class="modal-overlay" id="modal-admin-login">
-            <div class="modal-box">
-                <h3 style="color: var(--neon-blue); font-size: 1rem;"><i class="fa-solid fa-lock"></i> Admin Authentication</h3>
-                <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 4px;">ใส่รหัสผ่านเพื่อเข้าสู่ระบบ (Pass: 1234)</p>
-                
-                <input type="password" id="admin-pass-input" class="cyber-input" placeholder="PASSWORD" style="text-align: center; letter-spacing: 4px;">
-
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-outline-cyber" style="flex: 1;" onclick="closeAdminModal()">ยกเลิก</button>
-                    <button class="btn-cyber" style="flex: 1;" onclick="loginAdmin()">เข้าสู่ระบบ</button>
-                </div>
+        <!-- Empty / No Result State -->
+        <div id="noResult" class="hidden bg-white rounded-xl p-8 text-center border border-slate-200 shadow-sm">
+            <div class="inline-flex p-3 bg-red-50 text-red-500 rounded-full mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
             </div>
+            <h4 class="text-lg font-bold text-slate-800 mb-1">ไม่พบข้อมูลในระบบ</h4>
+            <p class="text-slate-500 text-sm">กรุณาตรวจสอบการพิมพ์ชื่อ-นามสกุล สะกดใหม่อีกครั้ง</p>
         </div>
 
-    </div>
+    </main>
 
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-center text-sm">
+        <div class="max-w-6xl mx-auto px-4 space-y-2">
+            <p>© ระบบตรวจสอบใบประกาศนียบัตรหลักสูตรผู้ช่วยพยาบาล (Practical Nurse)</p>
+            <p class="text-xs text-slate-500">ข้อมูลนี้ใช้เพื่อการรับรองและตรวจสอบคุณวุฒิตามมาตรฐานการพยาบาลเท่านั้น</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
     <script>
-        // *** ใส่ URL รูปภาพ QR Code จากภาพของคุณที่ต้องการแสดง ***
-        const CUSTOM_QR_IMAGE_URL = "https://i.ibb.co/hR4y5t7/cliox-qr.png"; 
+        // -------------------------------------------------------------
+        // จำลองฐานข้อมูลรายชื่อ (Mock Database)
+        // สำหรับใช้งานจริงที่มีรายชื่อหลายหมื่นคน แนะนำให้แยกเป็นไฟล์ JSON หรือดึงผ่าน API
+        // -------------------------------------------------------------
+        const mockDatabase = [
+            { id: "PN-66001", firstName: "สมหญิง", lastName: "รักดี", institute: "วิทยาลัยพยาบาลบรมราชชนนี กรุงเทพ", year: "2566", status: "ปกติ" },
+            { id: "PN-66002", firstName: "สมชาย", lastName: "ใจดี", institute: "คณะพยาบาลศาสตร์ มหาวิทยาลัยมหิดล", year: "2565", status: "ปกติ" },
+            { id: "PN-65012", firstName: "กานดา", lastName: "สว่างจิต", institute: "มหาวิทยาลัยเชียงใหม่", year: "2565", status: "ปกติ" },
+            { id: "PN-64089", firstName: "ณัฐพล", lastName: "ประเสริฐสุข", institute: "มหาวิทยาลัยสงขลานครินทร์", year: "2564", status: "ปกติ" },
+            { id: "PN-66105", firstName: "สุดารัตน์", lastName: "รักดี", institute: "มหาวิทยาลัยขอนแก่น", year: "2566", status: "ปกติ" },
+            { id: "PN-63045", firstName: "สมหญิง", lastName: "ประกายแก้ว", institute: "วิทยาลัยพยาบาลบรมราชชนนี นนทบุรี", year: "2563", status: "ปกติ" }
+        ];
 
-        let selectedBank = "";
-        let timerInterval = null;
-        let transactionHistory = [];
+        function handleSearch() {
+            const fnameInput = document.getElementById('firstName').value.trim().toLowerCase();
+            const lnameInput = document.getElementById('lastName').value.trim().toLowerCase();
 
-        function goToView(viewId) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
-        }
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsList = document.getElementById('resultsList');
+            const noResult = document.getElementById('noResult');
+            const resultCount = document.getElementById('resultCount');
 
-        function openAmountModal(bank) {
-            selectedBank = bank;
-            document.getElementById('target-bank-text').innerText = "ช่องทาง: " + bank;
-            document.getElementById('input-amount').value = "";
-            document.getElementById('modal-amount').style.display = 'flex';
-            document.getElementById('input-amount').focus();
-        }
-
-        function confirmAmountAndShowQR() {
-            const amountVal = document.getElementById('input-amount').value;
-            const amount = parseFloat(amountVal);
-
-            if (!amountVal || isNaN(amount) || amount <= 0) {
-                alert("กรุณาระบุจำนวนเงินที่ถูกต้อง");
+            // ถ้าไม่ได้กรอกอะไรเลย
+            if (!fnameInput && !lnameInput) {
+                alert('กรุณากรอก ชื่อ หรือ นามสกุล อย่างน้อยหนึ่งช่องเพื่อค้นหา');
                 return;
             }
 
-            document.getElementById('modal-amount').style.display = 'none';
-            document.getElementById('display-amount').innerText = amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " THB";
-            
-            // Set image
-            document.getElementById('qr-image').src = CUSTOM_QR_IMAGE_URL;
+            // ค้นหาข้อมูลจาก Mock Database
+            const filteredResults = mockDatabase.filter(person => {
+                const matchFname = fnameInput ? person.firstName.toLowerCase().includes(fnameInput) : true;
+                const matchLname = lnameInput ? person.lastName.toLowerCase().includes(lnameInput) : true;
+                return matchFname && matchLname;
+            });
 
-            // Log to admin history
-            const timeStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-            transactionHistory.unshift({ time: timeStr, bank: selectedBank, amount: amount });
-            updateAdminTable();
+            // ล้างผลลัพธ์เก่า
+            resultsList.innerHTML = '';
 
-            // Start timer & Change View
-            startCountdown(20 * 60);
-            goToView('view-qr');
-        }
+            if (filteredResults.length > 0) {
+                noResult.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                resultCount.textContent = `พบ ${filteredResults.length} รายการ`;
 
-        function startCountdown(seconds) {
-            clearInterval(timerInterval);
-            let left = seconds;
-            const timerEl = document.getElementById('timer');
-
-            timerInterval = setInterval(() => {
-                const m = Math.floor(left / 60);
-                const s = left % 60;
-                timerEl.innerText = (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
-
-                if (--left < 0) {
-                    clearInterval(timerInterval);
-                    alert("หมดเวลาทำรายการ กรุณาสร้างรายการใหม่");
-                    resetProcess();
-                }
-            }, 1000);
-        }
-
-        function resetProcess() {
-            clearInterval(timerInterval);
-            goToView('view-home');
-        }
-
-        function saveImage() {
-            const imgUrl = document.getElementById('qr-image').src;
-            const a = document.createElement('a');
-            a.href = imgUrl;
-            a.download = `PromptPay-QR-${Date.now()}.png`;
-            a.target = "_blank";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        // Admin Auth System
-        function openAdminModal() {
-            document.getElementById('admin-pass-input').value = "";
-            document.getElementById('modal-admin-login').style.display = 'flex';
-        }
-
-        function closeAdminModal() {
-            document.getElementById('modal-admin-login').style.display = 'none';
-        }
-
-        function loginAdmin() {
-            const pass = document.getElementById('admin-pass-input').value;
-            if (pass === "1234") { // รหัสผ่านแอดมินคือ 1234
-                closeAdminModal();
-                goToView('view-admin');
+                filteredResults.forEach(person => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden";
+                    
+                    card.innerHTML = `
+                        <div class="absolute top-0 right-0 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                            สถานะ: ${person.status}
+                        </div>
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="text-xs text-blue-700 font-bold tracking-wider">รหัสทะเบียน: ${person.id}</div>
+                                <h4 class="text-xl font-bold text-slate-800">${person.firstName} ${person.lastName}</h4>
+                                <div class="text-sm text-slate-600 flex items-center gap-1.5 pt-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                    <span><strong>สถาบันที่จบ:</strong> ${person.institute}</span>
+                                </div>
+                            </div>
+                            <div class="md:text-right border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
+                                <span class="text-xs text-slate-400 block">ปีที่สำเร็จการศึกษา</span>
+                                <span class="text-lg font-bold text-blue-900">พ.ศ. ${person.year}</span>
+                            </div>
+                        </div>
+                    `;
+                    resultsList.appendChild(card);
+                });
             } else {
-                alert("รหัสผ่านไม่ถูกต้อง!");
+                resultsContainer.classList.add('hidden');
+                noResult.classList.remove('hidden');
             }
         }
 
-        function updateAdminTable() {
-            const tbody = document.getElementById('admin-log-body');
-            tbody.innerHTML = "";
-            transactionHistory.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${item.time}</td><td>${item.bank}</td><td style="color:var(--neon-blue);">${item.amount.toFixed(2)}</td>`;
-                tbody.appendChild(tr);
-            });
+        function resetForm() {
+            document.getElementById('firstName').value = '';
+            document.getElementById('lastName').value = '';
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('noResult').classList.add('hidden');
         }
     </script>
 </body>
