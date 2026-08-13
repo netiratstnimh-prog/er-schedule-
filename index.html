@@ -2,775 +2,665 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Enterprise Hospital & Shift Management System</title>
-    
-    <!-- FontAwesome 6 Pro & Google Fonts -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบสารสนเทศองค์กร</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Prompt) -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================================================
-           1. MODERN MEDICAL SLATE & GLASS DESIGN SYSTEM
-           ========================================================================== */
-        :root {
-            --bg-main: #f0f4f9;
-            --surface-card: #ffffff;
-            --primary-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-            --accent-teal: #0d9488;
-            --accent-emerald: #10b981;
-            
-            --text-title: #0f172a;
-            --text-body: #334155;
-            --text-muted: #64748b;
-            
-            --border-color: #e2e8f0;
-            --shadow-soft: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
-            --shadow-float: 0 10px 25px -5px rgba(2, 132, 199, 0.15);
-            
-            --radius-s: 10px;
-            --radius-m: 16px;
-            --radius-l: 24px;
+        * { font-family: 'Prompt', sans-serif; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0; padding: 0;
-            font-family: 'Kanit', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
         }
-
-        html, body {
-            width: 100%;
-            height: 100dvh;
-            overflow: hidden;
-            background-color: #0f172a; /* Dark background outer frame */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Responsive Viewport App Engine with Safe Area Padding */
-        .app-viewport {
-            width: 100vw;
-            height: 100dvh;
-            max-width: 480px;
-            background-color: var(--bg-main);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            /* Safe area padding for notches and gesture bars */
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-        }
-
-        @media (min-width: 481px) {
-            .app-viewport {
-                height: 94vh;
-                border-radius: var(--radius-l);
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            }
-        }
-
-        /* App Header with Notch Protection */
-        .app-header {
-            padding: 14px 18px 10px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #ffffff;
-            border-bottom: 1px solid var(--border-color);
-            z-index: 10;
-        }
-
-        .header-profile-btn {
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            background: #e0f2fe;
-            color: #0284c7;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .header-profile-btn:active { transform: scale(0.92); }
-
-        .header-brand {
-            text-align: center;
-            flex-grow: 1;
-            padding: 0 10px;
-        }
-
-        .hosp-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-title);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .dept-subtitle {
-            font-size: 0.73rem;
-            color: #0284c7;
-            font-weight: 600;
-        }
-
-        .internal-badge {
-            display: inline-flex; align-items: center; gap: 5px;
-            font-size: 0.65rem; color: #ef4444;
-            background: #fef2f2; border: 1px solid #fca5a5;
-            padding: 3px 8px; border-radius: 12px; font-weight: 600;
-        }
-
-        .pulse-dot {
-            width: 6px; height: 6px;
-            background-color: #ef4444; border-radius: 50%;
-            animation: pulse-ring 1.5s infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(0.9); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.4; }
-            100% { transform: scale(0.9); opacity: 1; }
-        }
-
-        /* Realtime Status Bar */
-        .system-status-bar {
-            margin: 10px 16px 0 16px;
-            padding: 8px 14px;
-            border-radius: var(--radius-m);
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-soft);
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.75rem; color: var(--text-muted);
-        }
-
-        .time-display { font-weight: 600; color: #0284c7; }
-
-        /* Main Scrollable Content Router Container */
-        .app-content {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 12px 16px 85px 16px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .app-content::-webkit-scrollbar { width: 0px; background: transparent; }
-
-        .view-section { display: none; animation: fadeIn 0.2s ease-in-out; }
-        .view-section.active { display: block; }
-
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Modern UI Cards & Buttons */
-        .card {
-            background: var(--surface-card);
-            border-radius: var(--radius-m);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-soft);
-            padding: 16px; margin-bottom: 14px;
-        }
-
-        .card-title {
-            font-size: 0.9rem; font-weight: 700; color: var(--text-title);
-            margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;
-        }
-
-        .card-title i { color: #0284c7; }
-
-        .input-group { margin-bottom: 12px; }
-        .input-group label {
-            display: block; font-size: 0.75rem; font-weight: 600;
-            color: var(--text-muted); margin-bottom: 5px;
-        }
-
-        .custom-input, .custom-select, .custom-textarea {
-            width: 100%; padding: 11px 14px;
-            border-radius: var(--radius-s);
-            border: 1px solid var(--border-color);
-            background: #f8fafc; outline: none;
-            color: var(--text-title); font-size: 0.85rem;
-        }
-
-        .custom-btn {
-            width: 100%; padding: 12px 16px;
-            border-radius: var(--radius-s); border: none;
-            background: var(--primary-gradient); color: #ffffff;
-            font-weight: 600; font-size: 0.85rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: var(--shadow-float); transition: transform 0.1s;
-        }
-
-        .custom-btn:active { transform: scale(0.98); }
-        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: none; }
-        .btn-success { background: linear-gradient(135deg, #10b981, #059669); box-shadow: none; }
-
-        /* Quick Grid System */
-        .quick-action-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px;
-        }
-
-        .action-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 12px 6px; border-radius: var(--radius-m);
-            background: #ffffff; border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-soft); cursor: pointer; transition: all 0.15s;
-        }
-
-        .action-item:active { transform: scale(0.95); background: #f1f5f9; }
-        .action-item i { font-size: 1.25rem; color: #0284c7; margin-bottom: 6px; }
-        .action-item span { font-size: 0.68rem; font-weight: 600; color: var(--text-body); text-align: center; }
-
-        /* Shift Card Items */
-        .shift-card-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 14px; border-radius: var(--radius-m);
-            background: #ffffff; border: 1px solid var(--border-color);
-            margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-
-        .shift-time-badge {
-            text-align: center; padding-right: 12px;
-            border-right: 2px solid #f1f5f9; min-width: 60px;
-        }
-
-        .shift-time-badge .time { font-weight: 700; font-size: 0.85rem; color: #0284c7; }
-        .shift-time-badge .label { font-size: 0.65rem; color: var(--text-muted); }
-
-        .shift-staff-info { flex-grow: 1; padding-left: 12px; }
-        .staff-name-text { font-size: 0.85rem; font-weight: 600; color: var(--text-title); }
-        .staff-role-text { font-size: 0.7rem; color: var(--text-muted); }
-
-        .shift-tag { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
-        .shift-m { background: #fef3c7; color: #b45309; }
-        .shift-a { background: #ffedd5; color: #c2410c; }
-        .shift-n { background: #e0e7ff; color: #4338ca; }
-
-        /* FAB Button */
-        .fab-help-btn {
-            position: absolute; bottom: 80px; right: 18px;
-            width: 50px; height: 50px; border-radius: 50%;
-            background: #ffffff; border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-float); color: #0284c7;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 90;
-        }
-
-        .fab-help-btn span { font-size: 0.58rem; font-weight: 700; }
-
-        /* Navigation Bottom Bar with Safe Inset Fix */
-        .bottom-nav-bar {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            height: calc(65px + env(safe-area-inset-bottom, 0px));
-            padding-bottom: env(safe-area-inset-bottom, 0px);
-            background: #ffffff; border-top: 1px solid var(--border-color);
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 100; box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .nav-tab-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 60px; height: 48px; border-radius: var(--radius-s);
-            color: var(--text-muted); cursor: pointer; transition: all 0.2s;
-        }
-
-        .nav-tab-item i { font-size: 1.2rem; margin-bottom: 2px; }
-        .nav-tab-item span { font-size: 0.65rem; font-weight: 500; }
-        .nav-tab-item.active { color: #0284c7; background: #f0f9ff; font-weight: 700; }
-
-        /* Modals Overlay */
-        .modal-overlay {
-            display: none; position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
-            z-index: 1000; justify-content: center; align-items: flex-end;
-        }
-
-        .modal-container {
-            background: #ffffff; width: 100%;
-            border-radius: var(--radius-l) var(--radius-l) 0 0;
-            padding: 20px; max-height: 85vh; overflow-y: auto;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.2); animation: slideUp 0.25s ease-out;
-        }
-
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .modal-header h3 { font-size: 1rem; font-weight: 700; color: var(--text-title); }
-        .modal-close-btn { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
-
-        .status-pill { padding: 3px 8px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; }
-        .pill-pending { background: #fef3c7; color: #d97706; }
-        .pill-approved { background: #d1fae5; color: #059669; }
-
-        .data-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
-        .data-table th, .data-table td { padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .data-table th { color: #0284c7; font-weight: 600; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen relative overflow-x-hidden">
 
-    <div class="app-viewport">
+    <!-- ================= 1. SPLASH SCREEN / EFFECT ================= -->
+    <div id="splashScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white transition-opacity duration-700">
+        <div class="text-center space-y-4 fade-in">
+            <div class="w-20 h-20 bg-indigo-600/30 rounded-2xl border border-indigo-400/30 flex items-center justify-center mx-auto mb-6 shadow-2xl backdrop-blur-md">
+                <i class="fa-solid fa-layer-group text-4xl text-indigo-400"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-200">
+                ยินดีต้อนรับผู้ใช้งาน
+            </h1>
+            <p class="text-indigo-300/80 font-light text-lg">ระบบสารสนเทศองค์กร (MIS)</p>
+            <div class="pt-6">
+                <div class="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 2. AUTH MODAL (LOGIN / RESET / FIRST TIME) ================= -->
+    <div id="authModal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-full max-w-md border border-slate-100 overflow-hidden fade-in">
+            <div class="bg-indigo-900 text-white p-6 relative">
+                <h2 id="authTitle" class="text-xl font-bold">เข้าสู่ระบบสารสนเทศ</h2>
+                <p id="authSubTitle" class="text-xs text-indigo-200 mt-1">กรุณากรอกข้อมูลเพื่อเข้าใช้งานระบบ</p>
+            </div>
+            
+            <div class="p-6">
+                <!-- Form Login -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">ชื่อผู้ใช้งาน</label>
+                        <input type="text" id="usernameInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm" placeholder="กรอกชื่อผู้ใช้">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">รหัสผ่าน</label>
+                        <input type="password" id="passwordInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm" placeholder="กรอกรหัสผ่าน">
+                    </div>
+                    <div id="firstTimeNotice" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+                        <i class="fa-solid fa-info-circle mr-1"></i> เข้าใช้งานครั้งแรก: รหัสที่คุณกรอกนี้จะถูกบันทึกเป็นรหัสผ่านสำหรับใช้งานครั้งต่อไป
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400" id="loginTypeHint"></span>
+                        <button type="button" onclick="showResetForm()" class="text-indigo-600 hover:underline">ลืมรหัสผ่าน?</button>
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-indigo-200 transition text-sm">
+                        เข้าสู่ระบบ
+                    </button>
+                </form>
+
+                <!-- Form Forgot Password / OTP -->
+                <form id="resetForm" onsubmit="handleResetOTP(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">อีเมลที่ลงทะเบียน</label>
+                        <input type="email" id="resetEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm" placeholder="example@domain.com">
+                    </div>
+                    <div id="otpSection" class="hidden space-y-2">
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">รหัส OTP (จำลอง: 1234)</label>
+                        <input type="text" id="otpInput" maxlength="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-center tracking-widest text-lg" placeholder="1234">
+                    </div>
+                    <button type="submit" id="resetBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition text-sm">
+                        ส่งรหัส OTP
+                    </button>
+                    <button type="button" onclick="showLoginForm()" class="w-full py-2 text-slate-500 text-xs hover:text-slate-700">กลับสู่หน้าล็อกอิน</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 3. MAIN DASHBOARD LAYOUT ================= -->
+    <div id="mainDashboard" class="hidden flex flex-col min-h-screen">
         
-        <!-- App Header -->
-        <header class="app-header">
-            <div class="header-profile-btn" onclick="switchView('view-profile')">
-                <i class="fa-solid fa-user-nurse"></i>
+        <!-- Header / Topbar -->
+        <header class="glass-effect sticky top-0 z-20 border-b border-slate-200/80 px-4 lg:px-8 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">MIS</div>
+                    <span class="font-semibold text-slate-800 text-sm hidden sm:inline">ระบบสารสนเทศ</span>
+                </div>
             </div>
-            <div class="header-brand">
-                <div class="hosp-title" id="app-hosp-name">ยังไม่ได้ตั้งชื่อโรงพยาบาล</div>
-                <div class="dept-subtitle" id="app-dept-name">กรุณาเลือกแผนก</div>
-            </div>
-            <div class="internal-badge">
-                <div class="pulse-dot"></div> เฉพาะภายใน
+
+            <!-- User Status & Realtime Clock -->
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden md:block">
+                    <div id="clockDisplay" class="text-xs font-semibold text-slate-700">--:--:--</div>
+                    <div id="dateDisplay" class="text-[10px] text-slate-400">--/--/----</div>
+                </div>
+
+                <div class="h-6 w-px bg-slate-200 hidden md:block"></div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="openProfileModal()" class="flex items-center gap-2 p-1.5 hover:bg-slate-100 rounded-xl transition border border-slate-200/60" title="ตั้งค่าโปรไฟล์">
+                        <img id="headerAvatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" class="w-7 h-7 rounded-lg object-cover">
+                        <span id="headerUserName" class="text-xs font-medium text-slate-700 max-w-[100px] truncate">ผู้ใช้งาน</span>
+                        <i class="fa-solid fa-key text-xs text-amber-500 ml-1"></i>
+                    </button>
+                </div>
             </div>
         </header>
 
-        <!-- Status Bar -->
-        <div class="system-status-bar">
-            <span><i class="fa-solid fa-wifi" style="color:#10b981;"></i> Web NFC Active</span>
-            <span class="time-display" id="realtime-clock"><i class="fa-regular fa-clock"></i> 00:00:00 น.</span>
-        </div>
-
         <!-- Main Content Area -->
-        <main class="app-content">
+        <main class="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+            
+            <!-- Notice Banner -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold">ยินดีต้อนรับสู่ระบบบริหารสารสนเทศ</h2>
+                    <p class="text-xs text-indigo-100 mt-1">จัดการข้อมูล ตารางเวรปฏิบัติงาน และติดต่อ AI ผู้ช่วยได้จากที่นี่</p>
+                </div>
+                <div class="hidden sm:block text-4xl opacity-20"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
 
-            <!-- VIEW 1: HOME ROSTER -->
-            <section id="view-roster" class="view-section active">
-                
-                <div class="quick-action-grid">
-                    <div class="action-item" onclick="startNFCScanReal()">
-                        <i class="fa-solid fa-wifi" style="color:#10b981;"></i>
-                        <span>แตะ NFC</span>
-                    </div>
-                    <div class="action-item" onclick="openModal('modal-swap-request')">
-                        <i class="fa-solid fa-arrow-rotate-left"></i>
-                        <span>ยื่นแลกเวร</span>
-                    </div>
-                    <div class="action-item" onclick="triggerBarcodeScan()">
-                        <i class="fa-solid fa-barcode"></i>
-                        <span>สแกนบาร์โค้ด</span>
-                    </div>
-                    <div class="action-item" onclick="openModal('modal-add-staff')">
-                        <i class="fa-solid fa-user-plus"></i>
-                        <span>เพิ่มเจ้าหน้าที่</span>
+            <!-- Section 1: ตารางเวร -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
+                        <i class="fa-solid fa-calendar-days text-indigo-600"></i> ตารางเวรปฏิบัติงานประจำสัปดาห์
+                    </h3>
+                    <span class="text-xs text-slate-400">อัปเดตล่าสุด: วันนี้</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-100 text-slate-400 font-medium">
+                                <th class="p-3">เจ้าหน้าที่</th>
+                                <th class="p-3">ตำแหน่ง</th>
+                                <th class="p-3">กะการทำงาน</th>
+                                <th class="p-3">สถานะ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700 flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs">👨‍💼</div>
+                                    นายสมชาย ใจดี
+                                </td>
+                                <td class="p-3 text-slate-500">เจ้าหน้าที่สารสนเทศ</td>
+                                <td class="p-3 text-slate-500">เช้า (08:30 - 16:30)</td>
+                                <td class="p-3"><span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 font-medium text-[10px]">ปฏิบัติงาน</span></td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium text-slate-700 flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs">👩‍💼</div>
+                                    นางสาววิภา รักดี
+                                </td>
+                                <td class="p-3 text-slate-500">ผู้ดูแลระบบ (Admin)</td>
+                                <td class="p-3 text-slate-500">บ่าย (16:30 - 00:30)</td>
+                                <td class="p-3"><span class="px-2 py-1 rounded-full bg-amber-50 text-amber-600 font-medium text-[10px]">เตรียมพร้อม</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section 2: ข้อมูลทั่วไป -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="text-slate-400 text-xs mb-1">ประกาศสำคัญ</div>
+                    <div class="font-bold text-slate-700 text-sm mb-2">ปิดปรับปรุงระบบเซิร์ฟเวอร์ประจำปี</div>
+                    <p class="text-slate-500 text-xs">ระบบจะปิดปรับปรุงชั่วคราวในวันศุกร์นี้ เวลา 22:00 น. - 02:00 น.</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="text-slate-400 text-xs mb-1">สถิติระบบ</div>
+                    <div class="font-bold text-slate-700 text-sm mb-2">จำนวนผู้เข้าใช้งานวันนี้</div>
+                    <div class="text-2xl font-bold text-indigo-600">128 <span class="text-xs text-slate-400 font-normal">ครั้ง</span></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="text-slate-400 text-xs mb-1">สถานะระบบ</div>
+                    <div class="font-bold text-slate-700 text-sm mb-2">การเชื่อมต่อเครือข่าย</div>
+                    <div class="flex items-center gap-2 text-xs text-emerald-600 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ทำงานปกติ (Online)
                     </div>
                 </div>
-
-                <div class="card" style="padding: 10px 14px;">
-                    <div class="input-group" style="margin-bottom: 0;">
-                        <label><i class="fa-solid fa-building-user"></i> เลือกแผนกปฏิบัติงาน</label>
-                        <select class="custom-select" id="dept-selector" onchange="changeDepartment()"></select>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        <span><i class="fa-solid fa-calendar-week"></i> ตารางปฏิบัติงานวันนี้</span>
-                        <span style="font-size:0.7rem; font-weight:normal; color:var(--text-muted);" id="roster-date-str">17 ส.ค. 2026</span>
-                    </div>
-                    <div id="roster-timeline-container"></div>
-                </div>
-
-            </section>
-
-            <!-- VIEW 2: SWAP REQUESTS -->
-            <section id="view-swap" class="view-section">
-                <div class="card">
-                    <div class="card-title">
-                        <span><i class="fa-solid fa-right-left"></i> รายการคำขอแลกเวร</span>
-                        <button class="custom-btn" style="width:auto; padding:4px 10px; font-size:0.7rem;" onclick="openModal('modal-swap-request')">+ ยื่นขอ</button>
-                    </div>
-                    <div id="swap-requests-list"></div>
-                </div>
-            </section>
-
-            <!-- VIEW 3: CONFIG & LOGS -->
-            <section id="view-config" class="view-section">
-                <div class="card">
-                    <div class="card-title">
-                        <span><i class="fa-solid fa-hospital-user"></i> ตั้งค่าโรงพยาบาล & แผนก</span>
-                    </div>
-                    
-                    <form onsubmit="handleSaveHospConfig(event)">
-                        <div class="input-group">
-                            <label>ชื่อโรงพยาบาล / หน่วยงาน</label>
-                            <input type="text" class="custom-input" id="cfg-hosp-name" placeholder="เช่น โรงพยาบาลศิริราช" required>
-                        </div>
-
-                        <div class="input-group">
-                            <label>เพิ่มแผนกใหม่</label>
-                            <div style="display:flex; gap:8px;">
-                                <input type="text" class="custom-input" id="cfg-new-dept" placeholder="เช่น แผนกผู้ป่วยนอก OPD">
-                                <button type="button" class="custom-btn" style="width:80px;" onclick="addDepartmentOption()">เพิ่ม</button>
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label>รายชื่อแผนกที่มีในระบบ</label>
-                            <div id="dept-list-tags" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
-                        </div>
-
-                        <button type="submit" class="custom-btn" style="margin-top:10px;">
-                            <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่า
-                        </button>
-                    </form>
-                </div>
-
-                <div class="card">
-                    <div class="card-title">
-                        <span><i class="fa-solid fa-clock-rotate-left"></i> ประวัติการแตะบัตรเข้างาน (NFC Logs)</span>
-                    </div>
-                    <div style="overflow-x:auto;">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>เวลา</th>
-                                    <th>รหัส</th>
-                                    <th>ชื่อ-นามสกุล</th>
-                                    <th>สถานะ</th>
-                                </tr>
-                            </thead>
-                            <tbody id="nfc-logs-tbody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- VIEW 4: PROFILE -->
-            <section id="view-profile" class="view-section">
-                <div class="card" style="text-align:center;">
-                    <div style="width:70px; height:70px; border-radius:50%; background:#e0f2fe; margin:0 auto 10px auto; display:flex; align-items:center; justify-content:center; color:#0284c7; font-size:2rem;">
-                        <i class="fa-solid fa-user-nurse"></i>
-                    </div>
-                    <h3 style="font-size:1rem;" id="prof-display-name">พว. หัวหน้าผู้ดูแลระบบ</h3>
-                    <p style="font-size:0.75rem; color:var(--text-muted);" id="prof-display-role">รหัสพนักงาน: RN1323 | ผู้จัดการระบบ</p>
-                </div>
-
-                <div class="card">
-                    <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> แตะบัตร NFC บันทึกเวลาเข้างาน</div>
-                    <button class="custom-btn btn-success" style="margin-bottom:8px;" onclick="startNFCScanReal()">
-                        <i class="fa-solid fa-wifi"></i> เริ่มสแกน NFC จากมือถือ
-                    </button>
-                    <div id="nfc-live-status" style="font-size:0.75rem; color:var(--text-muted); text-align:center;">
-                        สถานะ: พร้อมสแกนบัตร NFC
-                    </div>
-                </div>
-            </section>
+            </div>
 
         </main>
-
-        <!-- Help FAB -->
-        <button class="fab-help-btn" onclick="openModal('modal-help')">
-            <i class="fa-solid fa-circle-question fa-lg"></i>
-            <span>HELP</span>
-        </button>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav-bar">
-            <div class="nav-tab-item active" onclick="switchView('view-roster', this)">
-                <i class="fa-solid fa-calendar-days"></i>
-                <span>ตารางเวร</span>
-            </div>
-            <div class="nav-tab-item" onclick="switchView('view-swap', this)">
-                <i class="fa-solid fa-arrow-rotate-left"></i>
-                <span>แลกเวร</span>
-            </div>
-            <div class="nav-tab-item" onclick="switchView('view-config', this)">
-                <i class="fa-solid fa-hospital"></i>
-                <span>ตั้งค่าระบบ</span>
-            </div>
-            <div class="nav-tab-item" onclick="switchView('view-profile', this)">
-                <i class="fa-solid fa-user-nurse"></i>
-                <span>โปรไฟล์</span>
-            </div>
-        </nav>
-
-        <!-- MODALS -->
-
-        <div class="modal-overlay" id="modal-nfc-scanning">
-            <div class="modal-container" style="text-align:center; padding:30px 20px;">
-                <h3 style="color:#0284c7; font-size:1.1rem;"><i class="fa-solid fa-wifi"></i> กำลังค้นหาบัตร NFC...</h3>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:6px;">นำบัตรพนักงานมาแตะที่ด้านหลังเครื่องมือถือ</p>
-                <div id="nfc-modal-status" style="font-size:0.85rem; font-weight:600; color:#0369a1; margin:20px 0;">
-                    รอการแตะบัตร...
-                </div>
-                <button class="custom-btn btn-danger" onclick="closeModal('modal-nfc-scanning')">ยกเลิกการสแกน</button>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="modal-add-staff">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h3><i class="fa-solid fa-user-plus"></i> เพิ่มเจ้าหน้าที่ใหม่</h3>
-                    <span class="modal-close-btn" onclick="closeModal('modal-add-staff')">&times;</span>
-                </div>
-                <form onsubmit="handleAddStaffSubmit(event)">
-                    <div class="input-group">
-                        <label>ชื่อ-นามสกุล</label>
-                        <input type="text" class="custom-input" id="add-staff-name" placeholder="พว. สมหญิง รักดี" required>
-                    </div>
-                    <div class="input-group">
-                        <label>รหัสพนักงาน</label>
-                        <input type="text" class="custom-input" id="add-staff-id" placeholder="RN2005" required>
-                    </div>
-                    <div class="input-group">
-                        <label>แผนกที่สังกัด</label>
-                        <select class="custom-select" id="add-staff-dept"></select>
-                    </div>
-                    <button type="submit" class="custom-btn">บันทึกข้อมูลบุคลากร</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="modal-swap-request">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h3><i class="fa-solid fa-right-left"></i> ยื่นคำขอแลกเวร</h3>
-                    <span class="modal-close-btn" onclick="closeModal('modal-swap-request')">&times;</span>
-                </div>
-                <form onsubmit="handleSwapSubmit(event)">
-                    <div class="input-group">
-                        <label>ผู้ยื่นขอแลก</label>
-                        <select class="custom-select" id="swap-requester-select"></select>
-                    </div>
-                    <div class="input-group">
-                        <label>ต้องการแลกกับ</label>
-                        <select class="custom-select" id="swap-target-select"></select>
-                    </div>
-                    <div class="input-group">
-                        <label>เหตุผลในการแลกเวร</label>
-                        <textarea class="custom-textarea" rows="2" required></textarea>
-                    </div>
-                    <button type="submit" class="custom-btn">ส่งคำขอแลกเวร</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="modal-help">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <h3><i class="fa-solid fa-headset"></i> ศูนย์ช่วยเหลือระบบ NFC</h3>
-                    <span class="modal-close-btn" onclick="closeModal('modal-help')">&times;</span>
-                </div>
-                <p style="font-size:0.8rem; line-height:1.6;">
-                    เปิดใช้งาน NFC บน Android และเข้าใช้งานผ่าน HTTPS บน GitHub Pages เพื่อแตะบัตรพนักงานสแกนเวลาเข้างานได้ทันทีครับ
-                </p>
-            </div>
-        </div>
-
     </div>
 
-    <!-- JAVASCRIPT SYSTEM ENGINE -->
+    <!-- ================= 4. SIDEBAR POPUP (OFF-CANVAS) ================= -->
+    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-xs transition-opacity"></div>
+    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-72 bg-white z-40 shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col justify-between">
+        <div class="p-5">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-slate-800 text-sm">เมนูระบบสารสนเทศ</h3>
+                <button onclick="toggleSidebar()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- List 7 Items (กำลังพัฒนา) -->
+            <div class="space-y-1">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">รายการระบบ</div>
+                <template id="menuTemplate">
+                    <!-- JS Insert Loop -->
+                </template>
+                <div id="menuItemsList" class="space-y-1"></div>
+            </div>
+
+            <hr class="my-4 border-slate-100">
+
+            <!-- Call Buttons -->
+            <div class="space-y-2">
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-1">เบอร์โทรศัพท์ติดต่อ</div>
+                <button onclick="callPhone('เบอร์หลัก: 02-123-4567')" class="w-full text-left px-3 py-2 rounded-xl border border-slate-200/80 hover:bg-slate-50 transition flex justify-between items-center text-xs">
+                    <span class="text-slate-700"><i class="fa-solid fa-phone text-indigo-500 mr-2"></i> โทรเบอร์หลัก</span>
+                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">กำลังพัฒนา</span>
+                </button>
+                <button onclick="callPhone('เบอร์กลาง: 02-999-9999')" class="w-full text-left px-3 py-2 rounded-xl border border-slate-200/80 hover:bg-slate-50 transition flex justify-between items-center text-xs">
+                    <span class="text-slate-700"><i class="fa-solid fa-headset text-indigo-500 mr-2"></i> โทรเบอร์กลาง</span>
+                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">กำลังพัฒนา</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin & Logout Footer -->
+        <div class="p-4 border-t border-slate-100 bg-slate-50/50 space-y-2">
+            <button onclick="openAdminModal()" class="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-medium flex items-center justify-center gap-2 shadow-sm transition">
+                <i class="fa-solid fa-key"></i> เข้าสู่ระบบแอดมิน (Admin)
+            </button>
+            <button onclick="handleLogout()" class="w-full py-2.5 px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-medium flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
+            </button>
+        </div>
+    </aside>
+
+    <!-- ================= 5. PROFILE EDIT MODAL ================= -->
+    <div id="profileModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm border border-slate-100 overflow-hidden p-6 space-y-4">
+            <h3 class="font-bold text-slate-800 text-base">แก้ไขโปรไฟล์ & เปลี่ยนรหัสผ่าน</h3>
+            <div class="flex flex-col items-center gap-3">
+                <img id="profilePreview" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" class="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-500 shadow-sm">
+                <input type="file" id="avatarInput" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">เปลี่ยนชื่อผู้ใช้</label>
+                <input type="text" id="editUsername" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">ตั้งรหัสผ่านใหม่</label>
+                <input type="password" id="editPassword" placeholder="กรอกรหัสใหม่เพื่อเปลี่ยน" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
+            </div>
+            <p class="text-[10px] text-rose-500">* เมื่อเปลี่ยนรหัสผ่านสำเร็จ ระบบจะทำการล็อกเอาท์ให้อัตโนมัติเพื่อความปลอดภัย</p>
+            <div class="flex gap-2">
+                <button onclick="saveProfile()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-medium">บันทึกข้อมูล</button>
+                <button onclick="closeProfileModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 6. ADMIN LOGIN / PANEL MODAL ================= -->
+    <div id="adminModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md border border-slate-100 overflow-hidden p-6 space-y-4">
+            <div id="adminAuthView">
+                <h3 class="font-bold text-slate-800 text-base mb-1">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</h3>
+                <p id="adminPassHint" class="text-xs text-slate-500 mb-4">การเข้าใช้งานครั้งแรก ระบบจะบันทึกรหัสที่คุณตั้งไว้นี้</p>
+                <form onsubmit="handleAdminAuth(event)" class="space-y-3">
+                    <input type="password" id="adminPassInput" required placeholder="กรอกรหัสผ่าน Admin" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-amber-500">
+                    <button type="submit" class="w-full py-2.5 bg-amber-500 text-white font-medium rounded-xl text-xs shadow-md shadow-amber-100">ยืนยัน</button>
+                    <button type="button" onclick="closeAdminModal()" class="w-full py-2 text-slate-400 text-xs">ยกเลิก</button>
+                </form>
+            </div>
+
+            <div id="adminPanelView" class="hidden space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-slate-800 text-sm">แผงควบคุม Admin: เพิ่มผู้ใช้งาน</h3>
+                    <button onclick="closeAdminModal()" class="text-slate-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="p-3 bg-slate-50 rounded-xl space-y-2 border border-slate-100">
+                    <input type="text" id="newAdminUser" placeholder="ชื่อผู้ใช้งานใหม่" class="w-full px-3 py-2 border rounded-lg text-xs">
+                    <input type="password" id="newAdminPass" placeholder="กำหนดรหัสผ่าน" class="w-full px-3 py-2 border rounded-lg text-xs">
+                    <button onclick="addUserByAdmin()" class="w-full py-2 bg-indigo-600 text-white rounded-lg text-xs font-medium">เพิ่มผู้ใช้ในระบบ</button>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-600 mb-2">รายชื่อผู้ใช้ในระบบ</div>
+                    <ul id="userListDisplay" class="text-xs divide-y divide-slate-100 max-h-36 overflow-y-auto"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 7. FLOATING AI CHAT WIDGET ================= -->
+    <div class="fixed bottom-6 right-6 z-30">
+        <!-- Chat Window -->
+        <div id="aiChatWindow" class="hidden mb-3 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col h-96 fade-in">
+            <div class="bg-indigo-600 text-white p-3 flex justify-between items-center text-xs">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-robot"></i>
+                    <span class="font-semibold">ผู้ช่วย AI ประจำระบบ</span>
+                </div>
+                <button onclick="toggleAIChat()" class="text-indigo-200 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <!-- Message List -->
+            <div id="aiMessages" class="flex-1 p-3 overflow-y-auto space-y-3 text-xs bg-slate-50/50">
+                <div class="bg-white p-2.5 rounded-xl border border-slate-100 max-w-[85%] shadow-xs">
+                    สวัสดีครับ! ผมเป็น AI ผู้ช่วยประจำระบบสารสนเทศ มีอะไรให้ผมช่วยเหลือวันนี้ไหมครับ?
+                </div>
+            </div>
+            <!-- Input Area -->
+            <form onsubmit="sendAIMessage(event)" class="p-2 border-t border-slate-100 flex gap-1 bg-white">
+                <input type="text" id="aiInput" required placeholder="พิมพ์ข้อความคุยกับ AI..." class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
+                <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+        </div>
+
+        <!-- Floating Button -->
+        <button onclick="toggleAIChat()" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-xl flex items-center justify-center text-xl transition transform hover:scale-105 active:scale-95 ml-auto">
+            <i class="fa-solid fa-comments"></i>
+        </button>
+    </div>
+
+    <!-- ================= 8. JAVASCRIPT LOGIC ================= -->
     <script>
-        const SystemState = {
-            hospitalName: "",
-            departments: ["แผนกฉุกเฉิน (ER)", "แผนกผู้ป่วยหนัก (ICU)", "แผนกผู้ป่วยนอก (OPD)", "ห้องผ่าตัด (OR)"],
-            currentDept: "แผนกฉุกเฉิน (ER)",
-            currentUser: { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", role: "Admin" },
+        // Data State Keys
+        const USER_PASS_KEY = "app_user_password";
+        const USER_NAME_KEY = "app_user_name";
+        const ADMIN_PASS_KEY = "app_admin_password";
+        const AVATAR_KEY = "app_user_avatar";
+
+        let currentUserName = localStorage.getItem(USER_NAME_KEY) || "";
+        let isFirstTimeLogin = !localStorage.getItem(USER_PASS_KEY);
+
+        // --- Init App ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Splash Screen timing
+            setTimeout(() => {
+                document.getElementById('splashScreen').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('splashScreen').classList.add('hidden');
+                    checkAuthStatus();
+                }, 700);
+            }, 2000);
+
+            // Menu Items List Render
+            renderMenuItems();
             
-            staffDatabase: [
-                { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", dept: "แผนกฉุกเฉิน (ER)", role: "ผู้จัดการระบบ Admin", nfcId: "NFC_1323" },
-                { id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1001" },
-                { id: "RN1002", name: "พว. ณัฐวุฒิ ใจดี", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1002" }
-            ],
-
-            swapRequests: [
-                { id: 101, requester: "พว. สุภาพร กลิ่นหอม", target: "พว. ณัฐวุฒิ ใจดี", date: "2026-08-18", status: "pending", reason: "ติดภารกิจอบรม" }
-            ],
-
-            nfcLogs: [
-                { time: "07:55:12", id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", status: "เข้างานปกติ" }
-            ]
-        };
-
-        document.addEventListener("DOMContentLoaded", () => {
-            initClock();
-            renderHospHeader();
-            renderDepartmentOptions();
-            renderRosterTimeline();
-            renderSwapRequests();
-            renderNfcLogs();
+            // Start Realtime Clock
+            startClock();
         });
 
-        function initClock() {
-            setInterval(() => {
+        // --- Realtime Clock ---
+        function startClock() {
+            const update = () => {
                 const now = new Date();
-                document.getElementById("realtime-clock").innerHTML = `<i class="fa-regular fa-clock"></i> ${now.toLocaleTimeString("th-TH")} น.`;
-            }, 1000);
+                document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('th-TH');
+                document.getElementById('dateDisplay').innerText = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric'});
+            };
+            update();
+            setInterval(update, 1000);
         }
 
-        function switchView(viewId, tabElement = null) {
-            document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
-            document.getElementById(viewId).classList.add("active");
-
-            if (tabElement) {
-                document.querySelectorAll(".nav-tab-item").forEach(t => t.classList.remove("active"));
-                tabElement.classList.add("active");
+        // --- Auth Check ---
+        function checkAuthStatus() {
+            document.getElementById('authModal').classList.remove('hidden');
+            const storedPass = localStorage.getItem(USER_PASS_KEY);
+            if (!storedPass) {
+                document.getElementById('firstTimeNotice').classList.remove('hidden');
+                document.getElementById('loginTypeHint').innerText = "โหมด: ตั้งรหัสผ่านครั้งแรก";
+            } else {
+                document.getElementById('firstTimeNotice').classList.add('hidden');
+                document.getElementById('loginTypeHint').innerText = "โหมด: เข้าสู่ระบบปกติ";
             }
         }
 
-        function openModal(id) { document.getElementById(id).style.display = "flex"; }
-        function closeModal(id) { document.getElementById(id).style.display = "none"; }
-
-        async function startNFCScanReal() {
-            if (!('NDEFReader' in window)) {
-                alert("อุปกรณ์ยังไม่รองรับ Web NFC สด ระบบจะจำลองการสแกนบัตร RN1323 แทน");
-                processNFCSuccess("RN1323");
-                return;
-            }
-
-            try {
-                openModal('modal-nfc-scanning');
-                const ndef = new NDEFReader();
-                await ndef.scan();
-
-                ndef.addEventListener("reading", ({ message, serialNumber }) => {
-                    let cardId = serialNumber || "RN1323";
-                    closeModal('modal-nfc-scanning');
-                    processNFCSuccess(cardId);
-                });
-            } catch (error) {
-                closeModal('modal-nfc-scanning');
-                alert("ข้อผิดพลาด NFC: " + error);
-            }
-        }
-
-        function processNFCSuccess(cardId) {
-            const staff = SystemState.staffDatabase.find(s => s.id.toLowerCase() === cardId.toLowerCase()) || SystemState.currentUser;
-            const nowTime = new Date().toLocaleTimeString('th-TH');
-            
-            SystemState.nfcLogs.unshift({ time: nowTime, id: staff.id, name: staff.name, status: "เข้างานปกติ" });
-            renderNfcLogs();
-            alert(`🎉 ลงเวลาปฏิบัติงานสำเร็จ!\nชื่อ: ${staff.name}\nเวลา: ${nowTime} น.`);
-        }
-
-        function renderNfcLogs() {
-            const tbody = document.getElementById("nfc-logs-tbody");
-            tbody.innerHTML = SystemState.nfcLogs.map(log => `
-                <tr>
-                    <td>${log.time}</td>
-                    <td><strong>${log.id}</strong></td>
-                    <td>${log.name}</td>
-                    <td><span class="status-pill pill-approved">${log.status}</span></td>
-                </tr>
-            `).join("");
-        }
-
-        function renderHospHeader() {
-            document.getElementById("app-hosp-name").innerText = SystemState.hospitalName.trim() !== "" ? SystemState.hospitalName : "ยังไม่ได้ตั้งชื่อโรงพยาบาล";
-            document.getElementById("app-dept-name").innerText = SystemState.currentDept;
-            document.getElementById("cfg-hosp-name").value = SystemState.hospitalName;
-        }
-
-        function renderDepartmentOptions() {
-            const selector = document.getElementById("dept-selector");
-            const addStaffDeptSelect = document.getElementById("add-staff-dept");
-            const tagContainer = document.getElementById("dept-list-tags");
-
-            selector.innerHTML = SystemState.departments.map(d => `<option value="${d}">${d}</option>`).join("");
-            addStaffDeptSelect.innerHTML = SystemState.departments.map(d => `<option value="${d}">${d}</option>`).join("");
-            tagContainer.innerHTML = SystemState.departments.map(d => `<span class="status-pill pill-approved">${d}</span>`).join("");
-            selector.value = SystemState.currentDept;
-        }
-
-        function changeDepartment() {
-            SystemState.currentDept = document.getElementById("dept-selector").value;
-            renderHospHeader();
-            renderRosterTimeline();
-        }
-
-        function addDepartmentOption() {
-            const input = document.getElementById("cfg-new-dept");
-            const val = input.value.trim();
-            if (val && !SystemState.departments.includes(val)) {
-                SystemState.departments.push(val);
-                input.value = "";
-                renderDepartmentOptions();
-            }
-        }
-
-        function handleSaveHospConfig(e) {
+        // --- Handle Login ---
+        function handleLogin(e) {
             e.preventDefault();
-            SystemState.hospitalName = document.getElementById("cfg-hosp-name").value.trim();
-            renderHospHeader();
-            alert("บันทึกข้อมูลเรียบร้อย");
+            const username = document.getElementById('usernameInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+
+            const storedPass = localStorage.getItem(USER_PASS_KEY);
+
+            if (!storedPass) {
+                // First time setting password
+                localStorage.setItem(USER_NAME_KEY, username);
+                localStorage.setItem(USER_PASS_KEY, password);
+                alert("ตั้งชื่อผู้ใช้และรหัสผ่านครั้งแรกสำเร็จ!");
+                loginSuccess(username);
+            } else {
+                // Subsequent logins
+                if (password === storedPass) {
+                    loginSuccess(username);
+                } else {
+                    alert("รหัสผ่านไม่ถูกต้อง! กรุณาใช้รหัสที่คุณตั้งไว้ในครั้งแรก");
+                }
+            }
         }
 
-        function renderRosterTimeline() {
-            const container = document.getElementById("roster-timeline-container");
-            const deptStaff = SystemState.staffDatabase.filter(s => s.dept === SystemState.currentDept);
+        function loginSuccess(name) {
+            currentUserName = name;
+            localStorage.setItem(USER_NAME_KEY, name);
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            updateUserUI();
+        }
 
-            if (deptStaff.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.8rem;">ไม่มีข้อมูลเจ้าหน้าที่</div>`;
-                return;
+        function updateUserUI() {
+            const savedAvatar = localStorage.getItem(AVATAR_KEY);
+            document.getElementById('headerUserName').innerText = currentUserName || "ผู้ใช้งาน";
+            if (savedAvatar) {
+                document.getElementById('headerAvatar').src = savedAvatar;
+                document.getElementById('profilePreview').src = savedAvatar;
             }
+        }
 
-            const shifts = [
-                { time: "08:00 - 16:00", label: "☀️ เช้า", class: "shift-m" },
-                { time: "16:00 - 24:00", label: "🌅 บ่าย", class: "shift-a" },
-                { time: "24:00 - 08:00", label: "🌙 ดึก", class: "shift-n" }
+        function handleLogout() {
+            document.getElementById('mainDashboard').classList.add('hidden');
+            toggleSidebar(false);
+            checkAuthStatus();
+        }
+
+        // --- Reset Password / OTP Fake ---
+        function showResetForm() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('resetForm').classList.remove('hidden');
+            document.getElementById('authTitle').innerText = "รีเซ็ทรหัสผ่าน";
+        }
+
+        function showLoginForm() {
+            document.getElementById('resetForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('authTitle').innerText = "เข้าสู่ระบบสารสนเทศ";
+        }
+
+        function handleResetOTP(e) {
+            e.preventDefault();
+            const otpSec = document.getElementById('otpSection');
+            const btn = document.getElementById('resetBtn');
+
+            if (otpSec.classList.contains('hidden')) {
+                otpSec.classList.remove('hidden');
+                btn.innerText = "ยืนยัน OTP เพื่อรีเซ็ทรหัส";
+                alert("ระบบจำลองส่ง OTP ไปยังอีเมลแล้ว (ใช้รหัส: 1234)");
+            } else {
+                const otp = document.getElementById('otpInput').value;
+                if (otp === "1234") {
+                    localStorage.removeItem(USER_PASS_KEY);
+                    alert("รีเซ็ทรหัสผ่านสำเร็จ! กรุณาตั้งรหัสผ่านใหม่ในการเข้าสู่ระบบ");
+                    location.reload();
+                } else {
+                    alert("รหัส OTP ไม่ถูกต้อง");
+                }
+            }
+        }
+
+        // --- Sidebar Menu ---
+        function toggleSidebar(force) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            const isOpened = !sidebar.classList.contains('-translate-x-full');
+
+            if (force === false || isOpened) {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            }
+        }
+
+        function renderMenuItems() {
+            const container = document.getElementById('menuItemsList');
+            const menuNames = [
+                "ระบบจัดการเอกสารสารสนเทศ",
+                "ระบบบันทึกเวลาเข้า-ออกงาน",
+                "ระบบอนุมัติเอกสารออนไลน์",
+                "ระบบคลังอุปกรณ์ IT",
+                "ระบบรายงานสรุปผลประจำเดือน",
+                "ระบบติดตามสถานะงานโครงการ",
+                "ระบบฐานข้อมูลสมาชิกองค์กร"
             ];
 
-            container.innerHTML = deptStaff.map((staff, idx) => {
-                const shift = shifts[idx % shifts.length];
-                return `
-                    <div class="shift-card-item">
-                        <div class="shift-time-badge">
-                            <div class="time">${shift.time.split(" - ")[0]}</div>
-                            <div class="label">เวลาเข้างาน</div>
-                        </div>
-                        <div class="shift-staff-info">
-                            <div class="staff-name-text">${staff.name}</div>
-                            <div class="staff-role-text">${staff.id} • ${staff.role}</div>
-                        </div>
-                        <span class="shift-tag ${shift.class}">${shift.label}</span>
+            container.innerHTML = menuNames.map(name => `
+                <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/50 flex justify-between items-center text-xs">
+                    <span class="text-slate-600 truncate">${name}</span>
+                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">กำลังพัฒนา</span>
+                </div>
+            `).join('');
+        }
+
+        function callPhone(title) {
+            alert(`[ระบบติดต่อ] ${title} - (ฟังก์ชันนี้อยู่ระหว่างการพัฒนา)`);
+        }
+
+        // --- Profile Management ---
+        function openProfileModal() {
+            document.getElementById('editUsername').value = currentUserName;
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        // Handle Avatar File Upload Preview
+        document.getElementById('avatarInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    document.getElementById('profilePreview').src = evt.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function saveProfile() {
+            const newName = document.getElementById('editUsername').value.trim();
+            const newPass = document.getElementById('editPassword').value.trim();
+            const avatarSrc = document.getElementById('profilePreview').src;
+
+            if (newName) {
+                localStorage.setItem(USER_NAME_KEY, newName);
+                currentUserName = newName;
+            }
+
+            if (avatarSrc) {
+                localStorage.setItem(AVATAR_KEY, avatarSrc);
+            }
+
+            if (newPass) {
+                localStorage.setItem(USER_PASS_KEY, newPass);
+                alert("เปลี่ยนรหัสผ่านสำเร็จ! ระบบจะทำการล็อกเอาท์อัตโนมัติเพื่อความปลอดภัย");
+                closeProfileModal();
+                handleLogout();
+                return;
+            }
+
+            updateUserUI();
+            closeProfileModal();
+            alert("บันทึกข้อมูลโปรไฟล์เรียบร้อยแล้ว");
+        }
+
+        // --- Admin Modal ---
+        function openAdminModal() {
+            toggleSidebar(false);
+            document.getElementById('adminModal').classList.remove('hidden');
+            const adminPass = localStorage.getItem(ADMIN_PASS_KEY);
+            if (!adminPass) {
+                document.getElementById('adminPassHint').innerText = "การเข้าใช้งานครั้งแรก ระบบจะบันทึกรหัสที่คุณตั้งไว้นี้";
+            } else {
+                document.getElementById('adminPassHint').innerText = "กรอกรหัสผ่าน Admin ที่คุณได้ตั้งไว้";
+            }
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.add('hidden');
+            document.getElementById('adminAuthView').classList.remove('hidden');
+            document.getElementById('adminPanelView').classList.add('hidden');
+        }
+
+        function handleAdminAuth(e) {
+            e.preventDefault();
+            const pass = document.getElementById('adminPassInput').value.trim();
+            const storedAdminPass = localStorage.getItem(ADMIN_PASS_KEY);
+
+            if (!storedAdminPass) {
+                localStorage.setItem(ADMIN_PASS_KEY, pass);
+                alert("ตั้งรหัสผ่าน Admin ครั้งแรกสำเร็จ!");
+                showAdminPanel();
+            } else {
+                if (pass === storedAdminPass) {
+                    showAdminPanel();
+                } else {
+                    alert("รหัสผ่าน Admin ไม่ถูกต้อง!");
+                }
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('adminAuthView').classList.add('hidden');
+            document.getElementById('adminPanelView').classList.remove('hidden');
+            renderUserList();
+        }
+
+        function renderUserList() {
+            const list = document.getElementById('userListDisplay');
+            const currentUser = localStorage.getItem(USER_NAME_KEY) || "ไม่มีข้อมูล";
+            list.innerHTML = `
+                <li class="py-2 flex justify-between items-center text-slate-700">
+                    <span><i class="fa-solid fa-user text-indigo-500 mr-2"></i> ${currentUser} (ผู้ใช้ปัจจุบัน)</span>
+                    <span class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded">Active</span>
+                </li>
+            `;
+        }
+
+        function addUserByAdmin() {
+            const u = document.getElementById('newAdminUser').value.trim();
+            const p = document.getElementById('newAdminPass').value.trim();
+            if (u && p) {
+                alert(`เพิ่มผู้ใช้งาน ${u} เข้าสู่ระบบเรียบร้อยแล้ว`);
+                document.getElementById('newAdminUser').value = '';
+                document.getElementById('newAdminPass').value = '';
+            } else {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+            }
+        }
+
+        // --- AI Chat Logic ---
+        function toggleAIChat() {
+            const win = document.getElementById('aiChatWindow');
+            win.classList.toggle('hidden');
+        }
+
+        function sendAIMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('aiInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const box = document.getElementById('aiMessages');
+
+            // User Message
+            box.innerHTML += `
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl max-w-[85%] ml-auto text-xs shadow-xs">
+                    ${msg}
+                </div>
+            `;
+
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            // Simulated AI Response
+            setTimeout(() => {
+                let reply = "รับทราบครับ มีอะไรให้ผู้ช่วย AI ช่วยเหลือเพิ่มเติมเกี่ยวกับระบบสารสนเทศแจ้งได้เลยครับ";
+                if (msg.includes("สวัสดี")) reply = "สวัสดีครับยินดีที่ได้รู้จัก! มีอะไรให้ผมช่วยดูแลระบบวันนี้ไหมครับ?";
+                if (msg.includes("รหัสผ่าน") || msg.includes("รหัส")) reply = "คุณสามารถเปลี่ยนรหัสผ่านได้ที่มุมขวาบนตรงไอคอนรูปกุญแจครับ";
+
+                box.innerHTML += `
+                    <div class="bg-white p-2.5 rounded-xl border border-slate-100 max-w-[85%] text-xs shadow-xs">
+                        ${reply}
                     </div>
                 `;
-            }).join("");
-
-            document.getElementById("swap-requester-select").innerHTML = SystemState.staffDatabase.map(s => `<option value="${s.name}">${s.name}</option>`).join("");
-            document.getElementById("swap-target-select").innerHTML = SystemState.staffDatabase.map(s => `<option value="${s.name}">${s.name}</option>`).join("");
+                box.scrollTop = box.scrollHeight;
+            }, 600);
         }
-
-        function renderSwapRequests() {
-            const container = document.getElementById("swap-requests-list");
-            container.innerHTML = SystemState.swapRequests.map(req => `
-                <div class="shift-card-item" style="flex-direction:column; align-items:flex-start; gap:4px;">
-                    <div style="display:flex; justify-content:space-between; width:100%;">
-                        <span class="status-pill pill-pending">⏳ รอดำเนินการ</span>
-                        <small style="font-size:0.68rem; color:var(--text-muted);">${req.date}</small>
-                    </div>
-                    <div style="font-size:0.82rem; font-weight:600;">${req.requester} ➔ ${req.target}</div>
-                </div>
-            `).join("");
-        }
-
-        function handleAddStaffSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById("add-staff-name").value.trim();
-            const id = document.getElementById("add-staff-id").value.trim();
-            const dept = document.getElementById("add-staff-dept").value;
-
-            SystemState.staffDatabase.push({ id, name, dept, role: "พยาบาลวิชาชีพ", nfcId: `NFC_${id}` });
-            closeModal("modal-add-staff");
-            renderRosterTimeline();
-            alert(`เพิ่ม ${name} สำเร็จ`);
-        }
-
-        function handleSwapSubmit(e) {
-            e.preventDefault();
-            closeModal("modal-swap-request");
-            alert("ส่งคำขอแล้ว");
-        }
-
-        function triggerBarcodeScan() { alert("สแกนบาร์โค้ดสำเร็จ"); }
     </script>
 </body>
 </html>
