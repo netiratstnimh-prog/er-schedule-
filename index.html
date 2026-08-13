@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ระบบบริหารจัดการเวรโรงพยาบาล (Web NFC Real Integration)</title>
-    <!-- FontAwesome 6 & Google Fonts (Kanit) -->
+    <title>ระบบบริหารจัดการโรงพยาบาลและตารางเวรพยาบาล (Enterprise Soft UI & Web NFC)</title>
+    
+    <!-- FontAwesome 6 Pro & Google Fonts (Kanit) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
     <style>
+        /* ==========================================================================
+           1. ENTERPRISE NEUMORPHIC SYSTEM DESIGN SYSTEM
+           ========================================================================== */
         :root {
             --bg-color: #e6f0fa;
             --surface-color: #e6f0fa;
             --primary-blue: #0284c7;
             --primary-dark: #0369a1;
             --primary-light: #38bdf8;
-            --accent-color: #0d9488;
+            --accent-teal: #0d9488;
             
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -24,8 +28,9 @@
             --danger: #ef4444;
             --success: #10b981;
             --warning: #f59e0b;
+            --info: #3b82f6;
             
-            /* Neumorphism Shadow Configurations */
+            /* High Precision Neumorphism Shadows */
             --shadow-flat: 6px 6px 14px #c2d4e5, -6px -6px 14px #ffffff;
             --shadow-pressed: inset 4px 4px 8px #c2d4e5, inset -4px -4px 8px #ffffff;
             --shadow-float: 10px 10px 20px #b5cadc, -10px -10px 20px #ffffff;
@@ -37,6 +42,7 @@
             --border-radius-round: 50%;
         }
 
+        /* Reset & Native Screen Fitting */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -57,6 +63,7 @@
             align-items: center;
         }
 
+        /* Mobile Viewport Container Engine */
         .app-viewport {
             width: 100vw;
             height: 100vh;
@@ -72,13 +79,13 @@
 
         @media (min-width: 481px) {
             .app-viewport {
-                height: 92vh;
+                height: 94vh;
                 border-radius: var(--border-radius-l);
                 border: 4px solid #ffffff;
             }
         }
 
-        /* App Header */
+        /* Header Navigation Container */
         .app-header {
             padding: 12px 16px;
             display: flex;
@@ -103,9 +110,7 @@
             transition: all 0.2s ease;
         }
 
-        .header-profile-btn:active {
-            box-shadow: var(--shadow-pressed);
-        }
+        .header-profile-btn:active { box-shadow: var(--shadow-pressed); }
 
         .header-brand {
             text-align: center;
@@ -154,6 +159,7 @@
             100% { transform: scale(0.9); opacity: 1; }
         }
 
+        /* Status & Clock Bar */
         .system-status-bar {
             margin: 0 16px 10px 16px;
             padding: 8px 14px;
@@ -172,7 +178,7 @@
             color: var(--primary-blue);
         }
 
-        /* App Content Area */
+        /* View Content Router */
         .app-content {
             flex-grow: 1;
             overflow-y: auto;
@@ -194,7 +200,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Neumorphism Cards & Buttons */
+        /* UI Components & Cards */
         .neu-card {
             background: var(--surface-color);
             border-radius: var(--border-radius-m);
@@ -277,7 +283,7 @@
             color: var(--text-white);
         }
 
-        /* Quick Action Grid */
+        /* Quick Grid System */
         .quick-action-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -313,7 +319,7 @@
             text-align: center;
         }
 
-        /* Shift Roster Styling */
+        /* Shift Roster Timeline Item */
         .shift-card-item {
             display: flex;
             align-items: center;
@@ -352,11 +358,12 @@
             box-shadow: var(--shadow-btn);
         }
 
-        .shift-m { background: #fef3c7; color: #b45309; }
-        .shift-a { background: #ffedd5; color: #c2410c; }
-        .shift-n { background: #e0e7ff; color: #4338ca; }
+        .shift-m { background: #fef3c7; color: #b45309; } /* เช้า */
+        .shift-a { background: #ffedd5; color: #c2410c; } /* บ่าย */
+        .shift-n { background: #e0e7ff; color: #4338ca; } /* ดึก */
+        .shift-off { background: #f1f5f9; color: #64748b; } /* หยุด */
 
-        /* Floating Help & Bottom Navigation */
+        /* Floating Controls & Navigation */
         .fab-help-btn {
             position: absolute;
             bottom: 75px;
@@ -410,7 +417,7 @@
         .nav-tab-item span { font-size: 0.62rem; font-weight: 500; }
         .nav-tab-item.active { color: var(--primary-blue); box-shadow: var(--shadow-pressed); }
 
-        /* Modals */
+        /* Modals Overlay & Animation */
         .modal-overlay {
             display: none;
             position: absolute;
@@ -485,6 +492,24 @@
         @keyframes radarPulse {
             0% { transform: scale(1); opacity: 1; }
             100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        /* Database Table Styles for Logs */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.72rem;
+        }
+
+        .data-table th, .data-table td {
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .data-table th {
+            color: var(--primary-blue);
+            font-weight: 600;
         }
     </style>
 </head>
@@ -566,7 +591,7 @@
                 </div>
             </section>
 
-            <!-- VIEW 3: HOSP CONFIG -->
+            <!-- VIEW 3: HOSP CONFIG & LOGS -->
             <section id="view-config" class="view-section">
                 <div class="neu-card">
                     <div class="card-title">
@@ -598,6 +623,28 @@
                     </form>
                 </div>
 
+                <!-- IoT NFC Check-in Database Logs -->
+                <div class="neu-card">
+                    <div class="card-title">
+                        <span><i class="fa-solid fa-clock-rotate-left"></i> ประวัติการแตะบัตรเข้างาน (NFC Logs)</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>เวลา</th>
+                                    <th>รหัสพนักงาน</th>
+                                    <th>ชื่อ-นามสกุล</th>
+                                    <th>สถานะ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="nfc-logs-tbody">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="neu-card">
                     <div class="card-title">
                         <span><i class="fa-solid fa-user-shield"></i> ผู้ดูแลระบบ (Admin)</span>
@@ -627,7 +674,7 @@
                         </div>
                         <div style="padding:10px; border-radius:12px; box-shadow:var(--shadow-pressed);">
                             <div style="font-size:0.68rem; color:var(--text-muted);">จำนวนเวร OT</div>
-                            <div style="font-size:1.1rem; font-weight:700; color:var(--accent-color);">4 เวร</div>
+                            <div style="font-size:1.1rem; font-weight:700; color:var(--accent-teal);">4 เวร</div>
                         </div>
                     </div>
                 </div>
@@ -774,7 +821,8 @@
                     <div class="modal-close-btn" onclick="closeModal('modal-help')">&times;</div>
                 </div>
                 <div style="font-size:0.8rem; line-height:1.6;">
-                    <p><strong>📶 การใช้งาน NFC บนมือถือ:</strong><br>
+                    <p><strong>🔑 บัญชีแอดมินเริ่มต้น:</strong><br>Username: <code>RN1323</code> | Password: <code>1323</code></p>
+                    <p style="margin-top:6px;"><strong>📶 การใช้งาน NFC บนมือถือ:</strong><br>
                     1. เปิดใช้งาน NFC บนโทรศัพท์มือถือ Android (ในการตั้งค่า Connections > NFC)<br>
                     2. เปิดผ่านเบราว์เซอร์ Chrome บน HTTPS (GitHub Pages)<br>
                     3. กดปุ่ม "แตะ NFC" แล้วนำบัตรมาทาบด้านหลังเครื่องมือถือได้ทันที</p>
@@ -786,19 +834,40 @@
 
     <!-- JAVASCRIPT SYSTEM ENGINE WITH WEB NFC DIRECT API -->
     <script>
+        /* --- ENTERPRISE STATE DATABASE --- */
         const SystemState = {
             hospitalName: "",
-            departments: ["แผนกฉุกเฉิน (ER)", "แผนกผู้ป่วยหนัก (ICU)", "แผนกผู้ป่วยนอก (OPD)", "ห้องผ่าตัด (OR)"],
+            departments: [
+                "แผนกฉุกเฉิน (ER)", 
+                "แผนกผู้ป่วยหนัก (ICU)", 
+                "แผนกผู้ป่วยนอก (OPD)", 
+                "ห้องผ่าตัด (OR)", 
+                "แผนกผู้ป่วยใน (IPD)",
+                "แผนกกุมารเวชกรรม (Pediatrics)"
+            ],
             currentDept: "แผนกฉุกเฉิน (ER)",
             currentUser: { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", role: "Admin" },
             
             staffDatabase: [
-                { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", dept: "แผนกฉุกเฉิน (ER)", role: "ผู้จัดการระบบ Admin" },
-                { id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ" },
-                { id: "RN1002", name: "พว. ณัฐวุฒิ ใจดี", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ" }
+                { id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", dept: "แผนกฉุกเฉิน (ER)", role: "ผู้จัดการระบบ Admin", nfcId: "NFC_1323" },
+                { id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1001" },
+                { id: "RN1002", name: "พว. ณัฐวุฒิ ใจดี", dept: "แผนกฉุกเฉิน (ER)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1002" },
+                { id: "RN1003", name: "พว. ธนกร ชัยชนะ", dept: "แผนกผู้ป่วยหนัก (ICU)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1003" },
+                { id: "RN1004", name: "พว. กนกวรรณ มีสุข", dept: "แผนกผู้ป่วยหนัก (ICU)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1004" },
+                { id: "RN1005", name: "พว. อารียา สายชล", dept: "แผนกผู้ป่วยนอก (OPD)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1005" },
+                { id: "RN1006", name: "พว. ชัยวัฒน์ รุ่งเรือง", dept: "ห้องผ่าตัด (OR)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1006" },
+                { id: "RN1007", name: "พว. ปรียาภรณ์ สมบูรณ์", dept: "แผนกผู้ป่วยใน (IPD)", role: "พยาบาลวิชาชีพ", nfcId: "NFC_1007" }
             ],
 
-            swapRequests: []
+            swapRequests: [
+                { id: 101, requester: "พว. สุภาพร กลิ่นหอม", target: "พว. ณัฐวุฒิ ใจดี", date: "2026-08-18", status: "pending", reason: "ติดภารกิจอบรมวิชาการ" },
+                { id: 102, requester: "พว. ธนกร ชัยชนะ", target: "พว. กนกวรรณ มีสุข", date: "2026-08-19", status: "approved", reason: "แลกเวรเฝ้าระวังผู้ป่วยพิเศษ" }
+            ],
+
+            nfcLogs: [
+                { time: "07:55:12", id: "RN1323", name: "พว. หัวหน้าผู้ดูแลระบบ", status: "เข้างานปกติ" },
+                { time: "07:58:40", id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", status: "เข้างานปกติ" }
+            ]
         };
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -807,6 +876,7 @@
             renderDepartmentOptions();
             renderRosterTimeline();
             renderSwapRequests();
+            renderNfcLogs();
         });
 
         function initClock() {
@@ -833,10 +903,9 @@
            REAL WEB NFC API HARDWARE INTEGRATION
            ========================================================================== */
         async function startNFCScanReal() {
-            // Check Web NFC Browser Support
             if (!('NDEFReader' in window)) {
                 alert("อุปกรณ์หรือเบราว์เซอร์นี้ยังไม่รองรับ Web NFC สด\n(แนะนำใช้ Android + Google Chrome บนลิงก์ HTTPS)\n\nระบบจะจำลองการสแกนบัตรพนักงาน RN1323 แทน");
-                processNFCSuccess("RN1323 (Simulated)");
+                processNFCSuccess("RN1323");
                 return;
             }
 
@@ -853,7 +922,6 @@
                 });
 
                 ndef.addEventListener("reading", ({ message, serialNumber }) => {
-                    // Read NFC Serial Number or Text Payload
                     let cardId = serialNumber || "RN1323";
                     
                     for (const record of message.records) {
@@ -864,8 +932,8 @@
                     }
 
                     document.getElementById('nfc-modal-status').innerText = `✅ พบบัตร NFC ID: ${cardId}`;
-                    triggerVibration([200]); // สั่นเมื่อแตะสำเร็จ
-                    playBeepSound(); // เสียงปี๊บ
+                    triggerVibration([200]);
+                    playBeepSound();
 
                     setTimeout(() => {
                         closeModal('modal-nfc-scanning');
@@ -880,15 +948,36 @@
         }
 
         function processNFCSuccess(cardId) {
-            // Search Staff Database
-            const staff = SystemState.staffDatabase.find(s => s.id.toLowerCase() === cardId.toLowerCase()) || SystemState.currentUser;
+            const staff = SystemState.staffDatabase.find(s => s.id.toLowerCase() === cardId.toLowerCase() || s.nfcId.toLowerCase() === cardId.toLowerCase()) || SystemState.currentUser;
             
-            const now = new Date().toLocaleTimeString('th-TH');
-            document.getElementById('nfc-live-status').innerHTML = `<span style="color:var(--success); font-weight:bold;">✅ แตะบัตรสำเร็จ: ${staff.name} (${staff.id}) ลงเวลาเข้างานแล้วเมื่อ ${now} น.</span>`;
-            alert(`🎉 ลงเวลาปฏิบัติงานสำเร็จ!\nชื่อ: ${staff.name}\nรหัส: ${staff.id}\nเวลา: ${now} น.`);
+            const nowTime = new Date().toLocaleTimeString('th-TH');
+            
+            // Add to NFC Logs Database
+            SystemState.nfcLogs.unshift({
+                time: nowTime,
+                id: staff.id,
+                name: staff.name,
+                status: "เข้างานปกติ"
+            });
+
+            renderNfcLogs();
+
+            document.getElementById('nfc-live-status').innerHTML = `<span style="color:var(--success); font-weight:bold;">✅ แตะบัตรสำเร็จ: ${staff.name} (${staff.id}) ลงเวลาเข้างานแล้วเมื่อ ${nowTime} น.</span>`;
+            alert(`🎉 ลงเวลาปฏิบัติงานสำเร็จ!\nชื่อ: ${staff.name}\nรหัส: ${staff.id}\nเวลา: ${nowTime} น.`);
         }
 
-        // Haptic & Sound Effects
+        function renderNfcLogs() {
+            const tbody = document.getElementById("nfc-logs-tbody");
+            tbody.innerHTML = SystemState.nfcLogs.map(log => `
+                <tr>
+                    <td>${log.time}</td>
+                    <td><strong>${log.id}</strong></td>
+                    <td>${log.name}</td>
+                    <td><span class="status-pill pill-approved">${log.status}</span></td>
+                </tr>
+            `).join("");
+        }
+
         function triggerVibration(pattern) {
             if ("vibrate" in navigator) {
                 navigator.vibrate(pattern);
@@ -903,14 +992,14 @@
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.type = "sine";
-                osc.frequency.value = 1000; // 1kHz beep
+                osc.frequency.value = 1000;
                 gain.gain.setValueAtTime(0.1, ctx.currentTime);
                 osc.start();
                 osc.stop(ctx.currentTime + 0.15);
             } catch(e) {}
         }
 
-        /* Hospital & Department Config */
+        /* Hospital & Department Configuration */
         function renderHospHeader() {
             document.getElementById("app-hosp-name").innerText = SystemState.hospitalName.trim() !== "" ? SystemState.hospitalName : "ยังไม่ได้ตั้งชื่อโรงพยาบาล";
             document.getElementById("app-dept-name").innerText = SystemState.currentDept;
@@ -951,7 +1040,10 @@
         }
 
         function removeDepartment(deptName) {
-            if (SystemState.departments.length <= 1) return;
+            if (SystemState.departments.length <= 1) {
+                alert("ต้องมีอย่างน้อย 1 แผนกในระบบ");
+                return;
+            }
             SystemState.departments = SystemState.departments.filter(d => d !== deptName);
             if (SystemState.currentDept === deptName) SystemState.currentDept = SystemState.departments[0];
             renderDepartmentOptions();
@@ -965,7 +1057,7 @@
             alert("บันทึกข้อมูลโรงพยาบาลเรียบร้อยแล้ว");
         }
 
-        /* Roster & Staff Engine */
+        /* Roster & Staff Database Engine */
         function renderRosterTimeline() {
             const container = document.getElementById("roster-timeline-container");
             const deptStaff = SystemState.staffDatabase.filter(s => s.dept === SystemState.currentDept);
@@ -1002,22 +1094,81 @@
             document.getElementById("swap-target-select").innerHTML = SystemState.staffDatabase.map(s => `<option value="${s.name}">${s.name} (${s.id})</option>`).join("");
         }
 
+        function renderSwapRequests() {
+            const container = document.getElementById("swap-requests-list");
+            if (SystemState.swapRequests.length === 0) {
+                container.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted); text-align:center;">ไม่มีรายการคำขอแลกเวร</p>`;
+                return;
+            }
+
+            container.innerHTML = SystemState.swapRequests.map(req => `
+                <div class="shift-card-item" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                        <span class="status-pill ${req.status === 'pending' ? 'pill-pending' : 'pill-approved'}">
+                            ${req.status === 'pending' ? '⏳ รอดำเนินการ' : '✅ อนุมัติแล้ว'}
+                        </span>
+                        <small style="font-size:0.68rem; color:var(--text-muted);">${req.date}</small>
+                    </div>
+                    <div style="font-size:0.82rem; font-weight:600;">
+                        ${req.requester} ➔ ${req.target}
+                    </div>
+                    <div style="font-size:0.72rem; color:var(--text-muted);">
+                        เหตุผล: ${req.reason}
+                    </div>
+                    ${req.status === 'pending' ? `
+                        <div style="display:flex; gap:6px; width:100%; margin-top:4px;">
+                            <button class="neu-btn neu-btn-success" style="padding:4px; font-size:0.7rem;" onclick="approveSwap(${req.id})">อนุมัติ</button>
+                            <button class="neu-btn neu-btn-danger" style="padding:4px; font-size:0.7rem;" onclick="rejectSwap(${req.id})">ปฏิเสธ</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join("");
+        }
+
         function handleAddStaffSubmit(e) {
             e.preventDefault();
             const name = document.getElementById("add-staff-name").value.trim();
             const id = document.getElementById("add-staff-id").value.trim();
             const dept = document.getElementById("add-staff-dept").value;
 
-            SystemState.staffDatabase.push({ id, name, dept, role: "พยาบาลวิชาชีพ" });
+            SystemState.staffDatabase.push({ id, name, dept, role: "พยาบาลวิชาชีพ", nfcId: `NFC_${id}` });
             closeModal("modal-add-staff");
             renderRosterTimeline();
-            alert(`เพิ่มบุคลากรเรียบร้อยแล้ว`);
+            alert(`เพิ่มบุคลากร ${name} เรียบร้อยแล้ว`);
         }
 
         function handleSwapSubmit(e) {
             e.preventDefault();
+            const requester = document.getElementById("swap-requester-select").value;
+            const target = document.getElementById("swap-target-select").value;
+
+            SystemState.swapRequests.unshift({
+                id: Date.now(),
+                requester,
+                target,
+                date: new Date().toISOString().split('T')[0],
+                status: "pending",
+                reason: "ภารกิจส่วนตัว"
+            });
+
             closeModal("modal-swap-request");
+            renderSwapRequests();
             alert("ยื่นคำขอแลกเวรเรียบร้อยแล้ว");
+        }
+
+        function approveSwap(id) {
+            const req = SystemState.swapRequests.find(r => r.id === id);
+            if (req) {
+                req.status = "approved";
+                renderSwapRequests();
+                alert("อนุมัติรายการแลกเวรแล้ว");
+            }
+        }
+
+        function rejectSwap(id) {
+            SystemState.swapRequests = SystemState.swapRequests.filter(r => r.id !== id);
+            renderSwapRequests();
+            alert("ปฏิเสธรายการแลกเวรแล้ว");
         }
 
         function handleAdminLogin(e) {
