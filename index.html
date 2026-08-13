@@ -3,288 +3,835 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShopNRT - ร้านค้าออนไลน์</title>
+    <title>ระบบจัดการบริหารเวรสำหรับโรงพยาบาล (Hospital Duty Roster System)</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #4f46e5;
-            --success: #10b981;
-            --bg: #f3f4f6;
-            --dark: #1f2937;
+            --primary-blue: #0284c7;
+            --primary-light: #f0f9ff;
+            --accent-blue: #0369a1;
+            --secondary-blue: #38bdf8;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger-red: #ef4444;
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
         }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
-        body { background-color: var(--bg); color: var(--dark); padding-bottom: 80px; }
-        
-        /* Header & Nav */
-        header { background: var(--primary); color: white; padding: 1rem; text-align: center; }
-        nav { display: flex; justify-content: center; gap: 10px; background: #3730a3; padding: 10px; }
-        nav button { background: none; border: 1px solid white; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; }
-        nav button:hover, nav button.active { background: white; color: var(--primary); font-weight: bold; }
-        
-        /* Container Section */
-        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
-        .page { display: none; }
-        .page.active { display: block; }
-        
-        /* Product Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
-        .card img { width: 100%; height: 150px; object-fit: cover; border-radius: 5px; }
-        .card h3 { margin: 10px 0 5px; }
-        .card p { color: var(--primary); font-weight: bold; margin-bottom: 10px; }
-        .btn { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; }
-        .btn:hover { opacity: 0.9; }
-        .btn-success { background: var(--success); }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Top Header Area */
+        header {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .internal-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .red-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--danger-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--danger-red);
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .clock-display {
+            font-size: 0.95rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .dept-select-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dept-select-group select {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--primary-light);
+            color: var(--primary-blue);
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            background: var(--primary-light);
+            color: var(--primary-blue);
+            border: 1px solid #bae6fd;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Main Content Layout */
+        .main-container {
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Security Panel */
+        .sec-method {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn-sec {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px dashed var(--primary-blue);
+            background: var(--primary-light);
+            color: var(--primary-blue);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-sec:hover {
+            background: #e0f2fe;
+        }
 
         /* Form Controls */
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        
-        /* Call Float Button */
-        .btn-call-float {
-            position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white;
-            padding: 12px 20px; border-radius: 50px; text-decoration: none; font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; display: flex; align-items: center; gap: 8px;
+        .form-group {
+            margin-bottom: 12px;
         }
 
-        /* Admin Table */
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: var(--primary); color: white; }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        /* Roster Table Design */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .roster-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        .roster-table th, .roster-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .roster-table th {
+            background-color: var(--primary-light);
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .staff-info {
+            text-align: left !important;
+            min-width: 180px;
+        }
+
+        .staff-name {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .staff-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Shift Badges & Emojis */
+        .badge-shift {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.78rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .badge-shift:hover {
+            transform: scale(1.05);
+        }
+
+        .shift-m { background-color: #fef3c7; color: #b45309; } /* เช้า ☀️ */
+        .shift-a { background-color: #ffedd5; color: #c2410c; } /* บ่าย 🌅 */
+        .shift-n { background-color: #e0e7ff; color: #4338ca; } /* ดึก 🌙 */
+        .shift-off { background-color: #f1f5f9; color: #64748b; } /* เวรหยุด 💤 */
+
+        .btn-swap {
+            margin-top: 4px;
+            font-size: 0.68rem;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: var(--primary-blue);
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-swap:hover {
+            background: var(--primary-light);
+        }
+
+        /* Floating Action Button (FAB) */
+        .fab-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 999;
+        }
+
+        .fab-main {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: none;
+        }
+
+        .fab-main:hover {
+            transform: scale(1.08);
+        }
+
+        .fab-text {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .fab-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+            width: 200px;
+        }
+
+        .fab-container.active .fab-menu {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .fab-item {
+            background: var(--card-bg);
+            padding: 10px 14px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fab-item:hover {
+            background: var(--primary-light);
+            color: var(--primary-blue);
+        }
+
+        .fab-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
 
+    <!-- Header Section -->
     <header>
-        <h1>🛍️ ShopNRT</h1>
-        <p>ร้านค้าออนไลน์ ครบจบในที่เดียว</p>
+        <div class="header-brand">
+            <i class="fa-solid fa-hospital fa-lg"></i>
+            <div>
+                <div class="header-title">ระบบจัดการบริหารเวรสำหรับโรงพยาบาล</div>
+            </div>
+            <div class="internal-badge">
+                <div class="red-dot"></div>
+                <span>เฉพาะภายใน</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="clock-display" id="realtime-clock">
+                <i class="fa-regular fa-clock"></i> 00:00:00 น.
+            </div>
+            <div id="user-profile-badge" style="display:none; font-size: 0.85rem;">
+                <i class="fa-solid fa-user-circle"></i> <span id="current-user-name">พยาบาลวิชาชีพ</span>
+            </div>
+        </div>
     </header>
 
+    <!-- Navigation Bar -->
     <nav>
-        <button class="tab-btn active" onclick="switchPage('shop')">หน้าแรก</button>
-        <button class="tab-btn" onclick="switchPage('cart')">🛒 ตะกร้า (<span id="cart-count">0</span>)</button>
-        <button class="tab-btn" onclick="switchPage('tracking')">📦 ติดตามออเดอร์</button>
-        <button class="tab-btn" onclick="switchPage('admin')">⚙️ หลังบ้าน (Admin)</button>
+        <div class="dept-select-group">
+            <label for="dept-select"><i class="fa-solid fa-building-user"></i> แผนก:</label>
+            <select id="dept-select" onchange="switchDepartment()">
+                <option value="ER">แผนกฉุกเฉิน (ER)</option>
+                <option value="ICU">แผนกผู้ป่วยหนัก (ICU)</option>
+                <option value="OPD">แผนกผู้ป่วยนอก (OPD)</option>
+                <option value="IPD-5">แผนกผู้ป่วยใน ชั้น 5 (IPD)</option>
+                <option value="OR">ห้องผ่าตัด (OR)</option>
+            </select>
+        </div>
+
+        <div class="nav-actions">
+            <button class="btn-action" onclick="openModal('modal-add-staff')">
+                <i class="fa-solid fa-user-plus"></i> เพิ่มบุคลากร
+            </button>
+            <button class="btn-action" onclick="openModal('modal-first-login')">
+                <i class="fa-solid fa-key"></i> เปลี่ยนรหัสผ่านแรกเข้า
+            </button>
+        </div>
     </nav>
 
-    <div class="container">
-        <!-- 1. หน้าร้านค้า -->
-        <section id="shop" class="page active">
-            <h2>สินค้าทั้งหมด</h2><br>
-            <div id="product-list" class="grid"></div>
-        </section>
-
-        <!-- 2. หน้าตะกร้าสินค้า & ชำระเงิน -->
-        <section id="cart" class="page">
-            <h2>🛒 ตะกร้าสินค้า</h2><br>
-            <div id="cart-items" style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px;"></div>
-            <h3>ราคารวมทั้งหมด: <span id="cart-total" style="color: var(--primary);">0</span> บาท</h3>
-            <br><hr><br>
-            <h3>💳 ชำระเงิน</h3><br>
-            <div style="text-align: center; margin-bottom: 15px;">
-                <p>สแกน QR Code เพื่อชำระเงิน (PromptPay)</p>
-                <img src="https://via.placeholder.com/150?text=PromptPay+QR" alt="QR Code" style="margin: 10px 0;">
-            </div>
-            <form id="checkout-form" onsubmit="handleCheckout(event)">
-                <div class="form-group">
-                    <label>ชื่อ-นามสกุล ผู้รับ:</label>
-                    <input type="text" id="cust-name" required>
-                </div>
-                <div class="form-group">
-                    <label>เบอร์โทรศัพท์:</label>
-                    <input type="tel" id="cust-phone" required>
-                </div>
-                <div class="form-group">
-                    <label>แนบหลักฐานการโอน (สลิป):</label>
-                    <input type="file" accept="image/*" required>
-                </div>
-                <button type="submit" class="btn btn-success">ยืนยันการสั่งซื้อ</button>
-            </form>
-        </section>
-
-        <!-- 3. หน้าติดตามออเดอร์ -->
-        <section id="tracking" class="page">
-            <h2>📦 ติดตามสถานะคำสั่งซื้อ</h2><br>
-            <div class="form-group">
-                <input type="text" id="search-order-id" placeholder="ใส่รหัสคำสั่งซื้อ เช่น NRT-1234">
-            </div>
-            <button class="btn" onclick="trackOrder()">ค้นหา</button>
-            <div id="tracking-result" style="margin-top: 20px;"></div>
-        </section>
-
-        <!-- 4. หน้าหลังบ้าน (Admin) -->
-        <section id="admin" class="page">
-            <h2>⚙️ ระบบหลังบ้าน ShopNRT</h2><br>
-            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <h3>➕ เพิ่มสินค้าใหม่</h3><br>
-                <form onsubmit="handleAddProduct(event)">
-                    <div class="form-group">
-                        <label>ชื่อสินค้า:</label>
-                        <input type="text" id="add-prod-name" required>
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="dashboard-grid">
+            
+            <!-- Left Sidebar: Authenticate & Security Panel -->
+            <div class="sidebar">
+                
+                <!-- NFC / Barcode Security Box -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title"><i class="fa-solid fa-shield-halved"></i> ระบบความปลอดภัย</span>
                     </div>
-                    <div class="form-group">
-                        <label>ราคา (บาท):</label>
-                        <input type="number" id="add-prod-price" required>
+                    <div class="sec-method">
+                        <button class="btn-sec" onclick="triggerNFCScan()">
+                            <i class="fa-solid fa-wifi fa-xl"></i>
+                            <span>แท็บบัตร NFC</span>
+                        </button>
+                        <button class="btn-sec" onclick="triggerBarcodeScan()">
+                            <i class="fa-solid fa-barcode fa-xl"></i>
+                            <span>สแกนบาร์โค้ด</span>
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label>URL รูปภาพ:</label>
-                        <input type="url" id="add-prod-img" value="https://via.placeholder.com/150" required>
+                    <div id="scan-status" style="font-size: 0.8rem; color: var(--text-muted); text-align: center;">
+                        รองรับเฉพาะอุปกรณ์ที่มี NFC/Scanner
                     </div>
-                    <button type="submit" class="btn">เพิ่มสินค้า</button>
-                </form>
+                </div>
+
+                <!-- Account Login Panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title"><i class="fa-solid fa-lock"></i> เข้าสู่ระบบเจ้าหน้าที่</span>
+                    </div>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label>Username (รหัสพนักงาน)</label>
+                            <input type="text" class="form-control" placeholder="เช่น RN1004" id="login-user" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" placeholder="••••••••" id="login-pass" required>
+                        </div>
+                        <button type="submit" class="btn-action" style="width: 100%; justify-content: center; background: var(--primary-blue); color: white; margin-top: 10px;">
+                            <i class="fa-solid fa-right-to-bracket"></i> ยืนยันเข้าสู่ระบบ
+                        </button>
+                    </form>
+                </div>
+
             </div>
 
-            <h3>📋 รายการสั่งซื้อทั้งหมด</h3>
-            <table id="admin-order-table">
-                <thead>
-                    <tr>
-                        <th>รหัส</th>
-                        <th>ชื่อผู้สั่ง</th>
-                        <th>เบอร์โทร</th>
-                        <th>ยอดรวม</th>
-                        <th>สถานะ</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
+            <!-- Right Content: Roster Management Table -->
+            <div class="content-area">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">
+                            <i class="fa-solid fa-calendar-days"></i> ตารางเวรประจำสัปดาห์ (<span id="current-dept-label">แผนกฉุกเฉิน ER</span>)
+                        </span>
+                        <div>
+                            <span class="badge-shift shift-m">☀️ เช้า (08.00-16.00)</span>
+                            <span class="badge-shift shift-a">🌅 บ่าย (16.00-24.00)</span>
+                            <span class="badge-shift shift-n">🌙 ดึก (24.00-08.00)</span>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="roster-table">
+                            <thead>
+                                <tr>
+                                    <th>เจ้าหน้าที่</th>
+                                    <th>จันทร์<br><small>17 ส.ค.</small></th>
+                                    <th>อังคาร<br><small>18 ส.ค.</small></th>
+                                    <th>พุธ<br><small>19 ส.ค.</small></th>
+                                    <th>พฤหัสบดี<br><small>20 ส.ค.</small></th>
+                                    <th>ศุกร์<br><small>21 ส.ค.</small></th>
+                                    <th>เสาร์<br><small>22 ส.ค.</small></th>
+                                    <th>อาทิตย์<br><small>23 ส.ค.</small></th>
+                                </tr>
+                            </thead>
+                            <tbody id="roster-tbody">
+                                <!-- Dynamic Rendered Staff Roster -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <!-- ปุ่มโทรด่วน -->
-    <a href="tel:0800000000" class="btn-call-float">
-        📞 โทรสั่งซื้อด่วน
-    </a>
+    <!-- Floating Action Button (FAB) -->
+    <div class="fab-container" id="fab-container">
+        <div class="fab-menu">
+            <a class="fab-item" onclick="openModal('modal-contact-admin')">
+                <i class="fa-solid fa-headset" style="color: var(--primary-blue);"></i> ติดต่อแอดมิน
+            </a>
+            <a class="fab-item" onclick="openModal('modal-urgent-roster')">
+                <i class="fa-solid fa-bolt" style="color: var(--warning-amber);"></i> จัดการตารางเวรด่วน
+            </a>
+            <a class="fab-item" href="https://line.me" target="_blank">
+                <i class="fa-brands fa-line" style="color: #06c755;"></i> เพิ่มเพื่อนไลน์
+            </a>
+            <a class="fab-item" onclick="openModal('modal-login-quick')">
+                <i class="fa-solid fa-user-check" style="color: var(--primary-blue);"></i> ลงชื่อเข้าใช้
+            </a>
+        </div>
+        <button class="fab-main" onclick="toggleFab()">
+            <i class="fa-solid fa-circle-question fa-xl"></i>
+            <span class="fab-text">HELP</span>
+        </button>
+    </div>
 
-    <script>
-        // ข้อมูลเริ่มต้น (Mock Data)
-        let products = JSON.parse(localStorage.getItem('shopnrt_products')) || [
-            { id: 1, name: 'สินค้าตัวอย่าง 1', price: 290, img: 'https://via.placeholder.com/150' },
-            { id: 2, name: 'สินค้าตัวอย่าง 2', price: 590, img: 'https://via.placeholder.com/150' }
-        ];
-        let cart = [];
-        let orders = JSON.parse(localStorage.getItem('shopnrt_orders')) || [];
-
-        // สลับหน้า (Tab Switching)
-        function switchPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            event.target.classList.add('active');
-            if(pageId === 'admin') renderAdminOrders();
-        }
-
-        // แสดงรายการสินค้า
-        function renderProducts() {
-            const list = document.getElementById('product-list');
-            list.innerHTML = products.map(p => `
-                <div class="card">
-                    <img src="${p.img}" alt="${p.name}">
-                    <h3>${p.name}</h3>
-                    <p>${p.price} บาท</p>
-                    <button class="btn" onclick="addToCart(${p.id})">เพิ่มลงตะกร้า</button>
+    <!-- MODAL: เพิ่มบุคลากร & รหัสผ่านเริ่มต้น -->
+    <div class="modal" id="modal-add-staff">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-plus"></i> เพิ่มบุคลากรใหม่</h3>
+                <button class="modal-close" onclick="closeModal('modal-add-staff')">&times;</button>
+            </div>
+            <form onsubmit="handleAddStaff(event)">
+                <div class="form-group">
+                    <label>ชื่อ-นามสกุล</label>
+                    <input type="text" class="form-control" id="new-staff-name" placeholder="พว. สมหญิง รักดี" required>
                 </div>
-            `).join('');
+                <div class="form-group">
+                    <label>รหัสพนักงาน / Username</label>
+                    <input type="text" class="form-control" id="new-staff-id" placeholder="RN2001" required>
+                </div>
+                <div class="form-group">
+                    <label>รหัสผ่านเริ่มต้น (Default Password)</label>
+                    <input type="text" class="form-control" value="NRT12345#" readonly style="background:#f1f5f9;">
+                </div>
+                <button type="submit" class="btn-action" style="width:100%; justify-content:center; background:var(--primary-blue); color:white; margin-top:10px;">
+                    บันทึกข้อมูลบุคลากร
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: เปลี่ยนรหัสผ่านแรกเข้า -->
+    <div class="modal" id="modal-first-login">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-key"></i> ตั้ง Username & Password ใหม่</h3>
+                <button class="modal-close" onclick="closeModal('modal-first-login')">&times;</button>
+            </div>
+            <form onsubmit="handleFirstLoginUpdate(event)">
+                <div class="form-group">
+                    <label>รหัสผ่านเริ่มต้นเดิม</label>
+                    <input type="password" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>ตั้ง Username ใหม่</label>
+                    <input type="text" class="form-control" placeholder="อย่างน้อย 6 ตัวอักษร" required>
+                </div>
+                <div class="form-group">
+                    <label>ตั้ง Password ใหม่</label>
+                    <input type="password" class="form-control" placeholder="รหัสผ่านใหม่" required>
+                </div>
+                <button type="submit" class="btn-action" style="width:100%; justify-content:center; background:var(--success-green); color:white; margin-top:10px;">
+                    ยืนยันการเปลี่ยนข้อมูล
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: แลกเวร -->
+    <div class="modal" id="modal-swap-shift">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-arrow-rotate-left"></i> ยื่นคำขอแลกเวร</h3>
+                <button class="modal-close" onclick="closeModal('modal-swap-shift')">&times;</button>
+            </div>
+            <form onsubmit="handleSwapShift(event)">
+                <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--text-muted);">
+                    ผู้ยื่นคำขอ: <strong id="swap-from-staff" style="color:var(--text-main);">...</strong>
+                </p>
+                <div class="form-group">
+                    <label>เลือกบุคลากรที่ต้องการแลกเวรด้วย</label>
+                    <select class="form-control" id="swap-target-staff" required>
+                        <!-- Dynamic rendered -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>เหตุผลการขอแลกเวร</label>
+                    <textarea class="form-control" rows="3" placeholder="ระบุเหตุผลในการขอเปลี่ยนกะ..." required></textarea>
+                </div>
+                <button type="submit" class="btn-action" style="width:100%; justify-content:center; background:var(--primary-blue); color:white;">
+                    ส่งคำขออนุมัติแลกเวร
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Core System -->
+    <script>
+        // Data Store (Mock for 300-1000 employees support structure)
+        const staffDatabase = [
+            { id: "RN1001", name: "พว. สุภาพร กลิ่นหอม", position: "พยาบาลวิชาชีพชำนาญการ", dept: "ER" },
+            { id: "RN1002", name: "พว. ณัฐวุฒิ ใจดี", position: "พยาบาลวิชาชีพ", dept: "ER" },
+            { id: "RN1003", name: "พว. ธนกร ชัยชนะ", position: "พยาบาลวิชาชีพ", dept: "ICU" }
+        ];
+
+        // 1. Real-time Clock
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('th-TH') + ' น.';
+            document.getElementById('realtime-clock').innerHTML = `<i class="fa-regular fa-clock"></i> ${timeString}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // 2. FAB Navigation Toggle
+        function toggleFab() {
+            document.getElementById('fab-container').classList.toggle('active');
         }
 
-        // ระบบตะกร้า
-        function addToCart(pId) {
-            const item = products.find(p => p.id === pId);
-            cart.push(item);
-            document.getElementById('cart-count').innerText = cart.length;
-            renderCart();
-            alert(`เพิ่ม ${item.name} ลงในตะกร้าแล้ว`);
+        // 3. Modal Controls
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
         }
 
-        function renderCart() {
-            const cartContainer = document.getElementById('cart-items');
-            if(cart.length === 0) {
-                cartContainer.innerHTML = '<p>ไม่มีสินค้าในตะกร้า</p>';
-                document.getElementById('cart-total').innerText = '0';
-                return;
-            }
-            let total = 0;
-            cartContainer.innerHTML = cart.map(item => {
-                total += item.price;
-                return `<div style="display:flex; justify-between; margin-bottom: 5px;"><span>${item.name}</span> <span><b>${item.price} บาท</b></span></div>`;
-            }).join('');
-            document.getElementById('cart-total').innerText = total;
+        // 4. Department Switcher
+        function switchDepartment() {
+            const deptSelect = document.getElementById('dept-select');
+            const deptLabel = document.getElementById('current-dept-label');
+            deptLabel.innerText = deptSelect.options[deptSelect.selectedIndex].text;
+            renderRoster();
         }
 
-        // ชำระเงิน & สร้างออเดอร์
-        function handleCheckout(e) {
-            e.preventDefault();
-            if(cart.length === 0) return alert('กรุณาเลือกสินค้าก่อนครับ');
-            
-            const orderId = 'NRT-' + Math.floor(1000 + Math.random() * 9000);
-            const newOrder = {
-                id: orderId,
-                name: document.getElementById('cust-name').value,
-                phone: document.getElementById('cust-phone').value,
-                total: cart.reduce((a,b) => a + b.price, 0),
-                status: 'รอตรวจสอบ'
-            };
+        // 5. Render Roster Table Dynamic
+        function renderRoster() {
+            const tbody = document.getElementById('roster-tbody');
+            const shifts = [
+                { type: 'shift-m', label: '☀️ เช้า' },
+                { type: 'shift-a', label: '🌅 บ่าย' },
+                { type: 'shift-n', label: '🌙 ดึก' },
+                { type: 'shift-off', label: '💤 เวรหยุด' }
+            ];
 
-            orders.push(newOrder);
-            localStorage.setItem('shopnrt_orders', JSON.stringify(orders));
-            
-            alert(`ชำระเงินสำเร็จ! รหัสการสั่งซื้อของคุณคือ: ${orderId}`);
-            cart = [];
-            document.getElementById('cart-count').innerText = 0;
-            renderCart();
-            document.getElementById('checkout-form').reset();
-            switchPage('tracking');
-        }
-
-        // เช็คสถานะ
-        function trackOrder() {
-            const id = document.getElementById('search-order-id').value;
-            const order = orders.find(o => o.id === id);
-            const res = document.getElementById('tracking-result');
-            if(order) {
-                res.innerHTML = `
-                    <div style="background:white; padding:15px; border-radius:5px;">
-                        <h3>รหัส: ${order.id}</h3>
-                        <p>ชื่อผู้สั่ง: ${order.name}</p>
-                        <p>ยอดรวม: ${order.total} บาท</p>
-                        <p>สถานะ: <b style="color:orange">${order.status}</b></p>
-                    </div>
+            tbody.innerHTML = staffDatabase.map(staff => {
+                let daysHtml = '';
+                for(let i=0; i<7; i++) {
+                    const randomShift = shifts[Math.floor(Math.random() * shifts.length)];
+                    daysHtml += `
+                        <td>
+                            <span class="badge-shift ${randomShift.type}">${randomShift.label}</span>
+                            <button class="btn-swap" onclick="openSwapModal('${staff.name}')"><i class="fa-solid fa-arrows-rotate"></i> แลกเวร</button>
+                        </td>
+                    `;
+                }
+                return `
+                    <tr>
+                        <td class="staff-info">
+                            <div class="staff-name">${staff.name}</div>
+                            <div class="staff-role">${staff.position} (${staff.id})</div>
+                        </td>
+                        ${daysHtml}
+                    </tr>
                 `;
+            }).join('');
+        }
+
+        // 6. Security Actions (NFC & Barcode)
+        async function triggerNFCScan() {
+            const status = document.getElementById('scan-status');
+            if ('NDEFReader' in window) {
+                try {
+                    const ndef = new NDEFReader();
+                    await ndef.scan();
+                    status.innerHTML = '<span style="color:var(--success-green);"><i class="fa-solid fa-spinner fa-spin"></i> กำลังแตะบัตร NFC...</span>';
+                } catch (error) {
+                    alert('ไม่สามารถเชื่อมต่อ NFC ได้: ' + error);
+                }
             } else {
-                res.innerHTML = '<p style="color:red">ไม่พบข้อมูลออเดอร์นี้</p>';
+                alert('ระบบ NFC รองรับเฉพาะสมาร์ทโฟน หรือเบราว์เซอร์ที่รองรับ Web NFC เท่านั้น');
             }
         }
 
-        // หลังบ้าน (Admin)
-        function handleAddProduct(e) {
+        function triggerBarcodeScan() {
+            alert('เปิดกล้องสแกนบาร์โค้ดบัตรพนักงาน (กำลังเชื่อมต่อไดรเวอร์กล้อง)');
+        }
+
+        // 7. Form Handlers
+        function handleLogin(e) {
             e.preventDefault();
-            const newP = {
-                id: Date.now(),
-                name: document.getElementById('add-prod-name').value,
-                price: Number(document.getElementById('add-prod-price').value),
-                img: document.getElementById('add-prod-img').value
-            };
-            products.push(newP);
-            localStorage.setItem('shopnrt_products', JSON.stringify(products));
-            renderProducts();
-            alert('เพิ่มสินค้าเรียบร้อย');
-            e.target.reset();
+            const user = document.getElementById('login-user').value;
+            document.getElementById('user-profile-badge').style.display = 'block';
+            document.getElementById('current-user-name').innerText = user;
+            alert('เข้าสู่ระบบสำเร็จ! ต้อนรับคุณ ' + user);
         }
 
-        function renderAdminOrders() {
-            const tbody = document.querySelector('#admin-order-table tbody');
-            tbody.innerHTML = orders.map(o => `
-                <tr>
-                    <td>${o.id}</td>
-                    <td>${o.name}</td>
-                    <td>${o.phone}</td>
-                    <td>${o.total}</td>
-                    <td>${o.status}</td>
-                </tr>
-            `).join('');
+        function handleAddStaff(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-staff-name').value;
+            const id = document.getElementById('new-staff-id').value;
+            staffDatabase.push({ id, name, position: 'พยาบาลวิชาชีพ', dept: 'ER' });
+            renderRoster();
+            closeModal('modal-add-staff');
+            alert('เพิ่มบุคลากรเรียบร้อยแล้ว รหัสผ่านเริ่มต้นคือ NRT12345#');
         }
 
-        // เริ่มทำงานเมื่อเปิดหน้าเว็บ
-        renderProducts();
+        function handleFirstLoginUpdate(e) {
+            e.preventDefault();
+            closeModal('modal-first-login');
+            alert('อัปเดต Username และ Password ใหม่เรียบร้อยแล้ว');
+        }
+
+        function openSwapModal(staffName) {
+            document.getElementById('swap-from-staff').innerText = staffName;
+            const select = document.getElementById('swap-target-staff');
+            select.innerHTML = staffDatabase
+                .filter(s => s.name !== staffName)
+                .map(s => `<option>${s.name} (${s.id})</option>`).join('');
+            openModal('modal-swap-shift');
+        }
+
+        function handleSwapShift(e) {
+            e.preventDefault();
+            closeModal('modal-swap-shift');
+            alert('ส่งคำขออนุมัติแลกเวรไปยังหัวหน้าหวอร์ดเรียบร้อยแล้ว');
+        }
+
+        // Init App
+        renderRoster();
     </script>
 </body>
 </html>
