@@ -3,546 +3,310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบแจ้งฉุกเฉิน เพื่อคนในครอบครัว - Practical Nurse</title>
+    <title>CareCare Health - ศูนย์บริการพยาบาลและผู้ดูแลเฝ้าไข้</title>
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================================================
-           1. CLEAN WHITE MEDICAL THEME RESETS
-           ========================================================================== */
-        :root {
-            --bg-clean: #f8fafc;
-            --white: #ffffff;
-            --primary-dark: #0f172a;
-            --accent-red: #ef4444;
-            --accent-green: #10b981;
-            --accent-blue: #2563eb;
-            --text-muted: #64748b;
-            --border-light: #e2e8f0;
-            --shadow-clean: 0 4px 20px rgba(0, 0, 0, 0.05);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        h1, h2, h3, h4, .brand-font {
-            font-family: 'Prompt', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-clean);
-            color: var(--primary-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-x: hidden;
-        }
-
-        /* ==========================================================================
-           2. HEADER BAR (MINIMAL CLEAN)
-           ========================================================================== */
-        header {
-            width: 100%;
-            background: var(--white);
-            border-bottom: 1px solid var(--border-light);
-            padding: 14px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-clean);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-title i {
-            color: var(--accent-red);
-            font-size: 1.4rem;
-        }
-
-        .header-title h1 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-        }
-
-        .realtime-clock {
-            background: #f1f5f9;
-            color: var(--text-muted);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* ==========================================================================
-           3. MAIN LAYOUT & 3D ROTATING TITLE
-           ========================================================================== */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px 20px;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .main-card {
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 40px 30px;
-            width: 100%;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            position: relative;
-        }
-
-        /* 3D ROTATING TITLE TO THE RIGHT */
-        .rotating-wrapper {
-            perspective: 1000px;
-            margin-bottom: 25px;
-        }
-
-        .rotating-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--accent-blue);
-            display: inline-block;
-            animation: rotateRightContinuous 6s infinite linear;
-            transform-style: preserve-3d;
-        }
-
-        @keyframes rotateRightContinuous {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
-
-        .status-pill {
-            display: inline-block;
-            background: #eff6ff;
-            color: var(--accent-blue);
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            border: 1px solid #bfdbfe;
-        }
-
-        /* GPS LOCATION DATA CONTAINER */
-        .gps-card {
-            background: #f8fafc;
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-around;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .gps-card strong {
-            color: var(--primary-dark);
-            font-family: monospace;
-        }
-
-        /* BIG CLEAN EMERGENCY CALL BUTTON */
-        .btn-emergency-trigger {
-            background: var(--accent-red);
-            color: var(--white);
-            border: none;
-            width: 100%;
-            padding: 18px 24px;
-            font-size: 1.25rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.35);
-            transition: var(--transition-smooth);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .btn-emergency-trigger:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(239, 68, 68, 0.45);
-        }
-
-        /* ==========================================================================
-           4. EMERGENCY MODAL & CLEAN EKG WITH PULSING HEART
-           ========================================================================== */
-        .modal-backdrop {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: var(--white);
-            width: 100%;
-            max-width: 420px;
-            border-radius: 24px;
-            padding: 35px 25px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .modal-title {
-            color: var(--accent-red);
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        /* EKG SVG LINE & SPASMING HEART (NO BOX BORDER) */
-        .ekg-live-container {
-            width: 100%;
-            height: 90px;
-            margin: 15px 0;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .ekg-svg-line {
-            width: 100%;
-            height: 100%;
-        }
-
-        .ekg-path-clean {
-            fill: none;
-            stroke: var(--accent-green);
-            stroke-width: 3.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            stroke-dasharray: 400;
-            stroke-dashoffset: 400;
-            animation: ekgRunClean 1.2s infinite linear;
-        }
-
-        @keyframes ekgRunClean {
-            0% { stroke-dashoffset: 400; }
-            100% { stroke-dashoffset: -400; }
-        }
-
-        .heart-spasm-icon {
-            position: absolute;
-            font-size: 2.8rem;
-            color: var(--accent-red);
-            animation: heartPulse 0.6s infinite alternate cubic-bezier(0.215, 0.61, 0.355, 1);
-        }
-
-        @keyframes heartPulse {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.3); opacity: 1; }
-        }
-
-        .countdown-number {
-            font-size: 3.5rem;
-            font-weight: 700;
-            color: var(--accent-red);
-            line-height: 1;
-            margin-bottom: 10px;
-            font-family: 'Prompt', sans-serif;
-        }
-
-        .btn-cancel {
-            background: #f1f5f9;
-            color: var(--text-muted);
-            border: 1px solid var(--border-light);
-            padding: 12px 28px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .btn-cancel:hover {
-            background: #e2e8f0;
-            color: var(--primary-dark);
-        }
-
-        /* ==========================================================================
-           5. FOOTER & ANIMATED RUNNING AMBULANCE STRIP
-           ========================================================================== */
-        footer {
-            width: 100%;
-            background: var(--white);
-            border-top: 1px solid var(--border-light);
-        }
-
-        .footer-credits {
-            text-align: center;
-            padding: 12px 15px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .footer-credits strong {
-            color: var(--accent-blue);
-        }
-
-        /* AMBULANCE TRACK */
-        .ambulance-track {
-            width: 100%;
-            height: 36px;
-            background: #f1f5f9;
-            position: relative;
-            overflow: hidden;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .ambulance-runner {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--accent-red);
-            font-size: 1.2rem;
-            animation: driveAmbulance 9s infinite linear;
-        }
-
-        .ambulance-runner span {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        @keyframes driveAmbulance {
-            0% { left: -250px; }
-            100% { left: 100%; }
-        }
+        body { font-family: 'Sarabun', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800">
 
-    <!-- Header Bar -->
-    <header>
-        <div class="header-title">
-            <i class="fa-solid fa-heart-pulse"></i>
-            <h1>ระบบแจ้งฉุกเฉิน เพื่อคนในครอบครัว</h1>
-        </div>
-        <div class="realtime-clock">
-            <i class="fa-regular fa-clock"></i>
-            <span id="realtimeClock">กำลังโหลดเวลา...</span>
+    <!-- 1. Header & Navigation -->
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-user-nurse text-2xl text-teal-600"></i>
+                <span class="text-xl font-bold text-slate-900">CareCare<span class="text-teal-600">Health</span></span>
+            </div>
+            <nav class="hidden md:flex gap-8 font-medium text-slate-600">
+                <a href="#levels" class="hover:text-teal-600 transition">ระดับบุคลากร</a>
+                <a href="#calculator" class="hover:text-teal-600 transition">คำนวณราคา & จองเวร</a>
+                <a href="#tracking" class="hover:text-teal-600 transition">ติดตามสถานะ</a>
+            </nav>
+            <a href="#calculator" class="bg-teal-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-teal-700 transition shadow-lg shadow-teal-600/20">
+                จองบริการทันที
+            </a>
         </div>
     </header>
 
-    <!-- Main Clean Display -->
-    <main>
-        <div class="main-card">
-            
-            <!-- 3D Rotating Title -->
-            <div class="rotating-wrapper">
-                <h1 class="rotating-title">Practical Nurse</h1>
+    <!-- 2. Hero Section -->
+    <section class="max-w-7xl mx-auto px-4 py-12 md:py-20 grid md:grid-cols-2 gap-12 items-center">
+        <div>
+            <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1.5 rounded-full">มาตรฐานระดับโรงพยาบาล</span>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mt-4 leading-tight">
+                บริการพยาบาล & ผู้ดูแลเฝ้าไข้ <br><span class="text-teal-600">ส่งตรงถึงบ้านและโรงพยาบาล</span>
+            </h1>
+            <p class="text-slate-600 mt-4 text-lg">
+                คัดกรองบุคลากรระดับ RN, PN, NA และ CG ผ่านการตรวจสอบประวัติอาชญากรรม พร้อมระบบติดตามการทำงาน real-time 24 ชั่วโมง
+            </p>
+            <div class="mt-8 flex flex-wrap gap-4">
+                <a href="#calculator" class="bg-teal-600 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-600/30">
+                    คำนวณราคา & จองเวร
+                </a>
+                <a href="#tracking" class="bg-white text-slate-700 border border-slate-300 px-6 py-3.5 rounded-xl font-bold hover:bg-slate-50 transition">
+                    เช็คสถานะการเข้าเวร
+                </a>
             </div>
-            
-            <div>
-                <span class="status-pill">เรากำลังพัฒนาแล้วเจอกัน PN74</span>
-            </div>
-
-            <!-- Realtime GPS -->
-            <div class="gps-card">
-                <div>ละติจูด: <strong id="gpsLat">กำลังดึง...</strong></div>
-                <div>ลองจิจูด: <strong id="gpsLong">กำลังดึง...</strong></div>
-            </div>
-
-            <!-- Big Emergency Button -->
-            <button class="btn-emergency-trigger" onclick="triggerEmergencyCall()">
-                <i class="fa-solid fa-phone-volume"></i>
-                <span>กดแจ้งเหตุฉุกเฉินทันที (1669)</span>
-            </button>
         </div>
-    </main>
-
-    <!-- Footer & Ambulance Track -->
-    <footer>
-        <div class="footer-credits">
-            Practical Nurse @2024 G74 | <strong>Si 2567</strong>
-        </div>
-
-        <div class="ambulance-track">
-            <div class="ambulance-runner">
-                <i class="fa-solid fa-truck-medical"></i>
-                <span>EMERGENCY MEDICAL SERVICES (1669) - PN74 ACTIVE</span>
-                <i class="fa-solid fa-truck-medical"></i>
+        <div class="bg-gradient-to-br from-teal-500 to-teal-700 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden">
+            <div class="relative z-10">
+                <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full">เปิดรับงานตลอด 24 ชม.</span>
+                <h3 class="text-2xl font-bold mt-4">อุ่นใจเหมือนมีพยาบาลดูแลข้างกาย</h3>
+                <p class="text-teal-100 text-sm mt-2">ประวัติโปร่งใส มีใบอนุญาตวิชาชีพ บันทึกสัญญาณชีพรายวัน</p>
+                <div class="mt-6 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 space-y-3 text-sm">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-teal-300"></i>
+                        <span>ตรวจสอบประวัติอาชญากรรมทุกคน</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-teal-300"></i>
+                        <span>มีประกันอุบัติเหตุและประกันคุ้มครองผู้ป่วย</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-teal-300"></i>
+                        <span>ระบบเช็คอินด้วย GPS ป้องกันการขาดเวร</span>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
+
+    <!-- 3. Levels Info Section -->
+    <section id="levels" class="bg-slate-100 py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900">ระดับบุคลากรผู้ดูแล</h2>
+                <p class="text-slate-500 mt-2">เลือกประเภทบุคลากรให้เหมาะสมกับระดับความดูแลของผู้ป่วย</p>
+            </div>
+            <div class="grid md:grid-cols-4 gap-6">
+                <!-- RN -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">RN</div>
+                    <h3 class="font-bold text-lg text-slate-900">พยาบาลวิชาชีพ</h3>
+                    <p class="text-xs text-slate-500 mt-1">มีใบอนุญาตประกอบวิชาชีพฯ</p>
+                    <p class="text-sm text-slate-600 mt-4">ผู้ป่วยวิกฤต, เจาะคอ, ดูดเสมหะ, ให้ยาทางสายยาง, ฉีดยา, ทำแผลซับซ้อน</p>
+                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿2,200 / กะ</p>
+                </div>
+                <!-- PN -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">PN</div>
+                    <h3 class="font-bold text-lg text-slate-900">ผู้ช่วยพยาบาล</h3>
+                    <p class="text-xs text-slate-500 mt-1">หลักสูตร PN 1 ปี</p>
+                    <p class="text-sm text-slate-600 mt-4">ผู้ป่วยพักฟื้น, ให้อาหารสายยาง, ดูดเสมหะ (ไม่วิกฤต), วัดสัญญาณชีพ</p>
+                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿1,500 / กะ</p>
+                </div>
+                <!-- NA -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">NA</div>
+                    <h3 class="font-bold text-lg text-slate-900">พยาบาลผู้ช่วย</h3>
+                    <p class="text-xs text-slate-500 mt-1">ผ่านการอบรม NA 840 ชม.</p>
+                    <p class="text-sm text-slate-600 mt-4">ผู้ป่วยติดเตียง, พยุงเดิน, ทำกายภาพพื้นฐาน, พลิกตัวป้องกันแผลกดทับ</p>
+                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿1,100 / กะ</p>
+                </div>
+                <!-- CG -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="w-12 h-12 bg-orange-100 text-orange-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">CG</div>
+                    <h3 class="font-bold text-lg text-slate-900">ผู้ดูแลผู้สูงอายุ</h3>
+                    <p class="text-xs text-slate-500 mt-1">ผ่านการอบรม CG 120-420 ชม.</p>
+                    <p class="text-sm text-slate-600 mt-4">ผู้สูงอายุช่วยเหลือตัวเองได้บ้าง, อยู่เป็นเพื่อน, จัดยาตามแพทย์สั่ง, เช็ดตัว</p>
+                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿800 / กะ</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Calculator & Booking System -->
+    <section id="calculator" class="py-16">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-900">ระบบคำนวณราคา & จองเวรออนไลน์</h2>
+                <p class="text-slate-500 mt-2">เลือกเงื่อนไขเพื่อประเมินราคาและส่งข้อมูลจองงาน</p>
+            </div>
+
+            <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-xl">
+                <form id="bookingForm" onsubmit="handleBooking(event)" class="space-y-6">
+                    <!-- เลือกประเภทบุคลากร -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-3">1. เลือกระดับบุคลากร</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="staff_type" value="RN" class="peer hidden" checked onchange="calculateTotal()">
+                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
+                                    <div class="font-bold text-teal-600 text-lg">RN</div>
+                                    <div class="text-xs text-slate-500">พยาบาลวิชาชีพ</div>
+                                    <div class="text-xs font-bold text-slate-700 mt-2">฿2,200/กะ</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="staff_type" value="PN" class="peer hidden" onchange="calculateTotal()">
+                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
+                                    <div class="font-bold text-teal-600 text-lg">PN</div>
+                                    <div class="text-xs text-slate-500">ผู้ช่วยพยาบาล</div>
+                                    <div class="text-xs font-bold text-slate-700 mt-2">฿1,500/กะ</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="staff_type" value="NA" class="peer hidden" onchange="calculateTotal()">
+                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
+                                    <div class="font-bold text-teal-600 text-lg">NA</div>
+                                    <div class="text-xs text-slate-500">พยาบาลผู้ช่วย</div>
+                                    <div class="text-xs font-bold text-slate-700 mt-2">฿1,100/กะ</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="staff_type" value="CG" class="peer hidden" onchange="calculateTotal()">
+                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
+                                    <div class="font-bold text-teal-600 text-lg">CG</div>
+                                    <div class="text-xs text-slate-500">ผู้ดูแลผู้สูงอายุ</div>
+                                    <div class="text-xs font-bold text-slate-700 mt-2">฿800/กะ</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- เลือกเวลาและจำนวนวัน -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">2. เลือกรอบกะเวลา (12 ชม./กะ)</label>
+                            <select id="shift_type" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-500" onchange="calculateTotal()">
+                                <option value="day">กะเช้า (08:00 - 20:00 น.)</option>
+                                <option value="night">กะดึก (20:00 - 08:00 น.)</option>
+                                <option value="full">เหมา 24 ชั่วโมง (2 กะ/วัน)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">3. จำนวนวันที่ต้องการจอง</label>
+                            <input type="number" id="days" value="1" min="1" max="30" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-500" onchange="calculateTotal()" onkeyup="calculateTotal()">
+                        </div>
+                    </div>
+
+                    <!-- ฟอร์มข้อมูลผู้ติดต่อ -->
+                    <div class="border-t border-slate-200 pt-6 space-y-4">
+                        <label class="block text-sm font-bold text-slate-700">4. ข้อมูลผู้ขอรับบริการ</label>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <input type="text" id="cust_name" required placeholder="ชื่อ-นามสกุล ผู้ติดต่อ" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-teal-500">
+                            <input type="tel" id="cust_phone" required placeholder="เบอร์โทรศัพท์ติดต่อกลับ" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+                        <textarea id="cust_note" rows="2" placeholder="รายละเอียดอาการผู้ป่วยเบื้องต้น หรือสถานที่ปฏิบัติงาน" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                    </div>
+
+                    <!-- สรุปราคา & ปุ่มส่งข้อมูล -->
+                    <div class="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <p class="text-slate-400 text-sm">ประเมินราคารวม</p>
+                            <h3 class="text-3xl font-extrabold text-teal-400" id="totalPrice">฿2,200</h3>
+                        </div>
+                        <button type="submit" class="w-full md:w-auto bg-teal-500 hover:bg-teal-400 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition shadow-lg">
+                            ยืนยันการจองเวร
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Tracking Section -->
+    <section id="tracking" class="bg-slate-100 py-16">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-900">ติดตามสถานะการเข้าเวร</h2>
+                <p class="text-slate-500 mt-2">กรอกรหัสการจองเพื่อดูสถานะการปฏิบัติงานของผู้ดูแล (ทดสอบพิมพ์: <span class="text-teal-600 font-bold">CC-8891</span>)</p>
+            </div>
+
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="bookingSearch" placeholder="กรอกรหัสการจอง เช่น CC-8891" class="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500">
+                <button onclick="searchStatus()" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition">
+                    ค้นหา
+                </button>
+            </div>
+
+            <!-- Tracking Card -->
+            <div id="trackingResult" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden">
+                <div class="flex justify-between items-center border-b pb-4 mb-6">
+                    <div>
+                        <span class="text-xs font-bold bg-teal-100 text-teal-800 px-3 py-1 rounded-full">กำลังปฏิบัติงาน</span>
+                        <h4 class="font-bold text-lg text-slate-900 mt-2">รหัสการจอง: CC-8891</h4>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-slate-500">เจ้าหน้าที่รับเวร</p>
+                        <p class="font-bold text-slate-800">พว. สุภาพร ใจดี (RN)</p>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                        <div>
+                            <p class="font-bold text-sm text-slate-900">เช็คอินเข้าพื้นที่งาน (GPS Verified)</p>
+                            <p class="text-xs text-slate-500 mt-0.5">08:00 น. - ยืนยันพิกัด ณ บ้านผู้ป่วย</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                        <div>
+                            <p class="font-bold text-sm text-slate-900">บันทึกสัญญาณชีพ (Vitals Sign)</p>
+                            <p class="text-xs text-slate-500 mt-0.5">09:30 น. - ความดัน 120/80 mmHg | ชีพจร 75 | สัญญาณชีพปกติ</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 items-start opacity-40">
+                        <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                        <div>
+                            <p class="font-bold text-sm text-slate-900">เช็คเอาท์ออกเวร</p>
+                            <p class="text-xs text-slate-500 mt-0.5">รอสิ้นสุดกะการทำงาน (20:00 น.)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+            <p>© 2026 CareCare Health Co., Ltd. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Emergency Modal Window -->
-    <div class="modal-backdrop" id="emergencyModal">
-        <div class="modal-content">
-            <h2 class="modal-title">
-                <i class="fa-solid fa-triangle-exclamation"></i> กำลังเตรียมโทรออกฉุกเฉิน
-            </h2>
-            <p style="font-size:0.85rem; color:var(--text-muted);">ระบบระบุตำแหน่งพิกัดของคุณเรียบร้อยแล้ว</p>
-
-            <!-- EKG Clean & Pulsing Heart -->
-            <div class="ekg-live-container">
-                <svg class="ekg-svg-line" viewBox="0 0 400 100">
-                    <path class="ekg-path-clean" d="M 0 50 L 120 50 L 135 20 L 150 80 L 165 0 L 180 100 L 195 50 L 220 50 L 400 50" />
-                </svg>
-                <i class="fa-solid fa-heart-pulse heart-spasm-icon"></i>
-            </div>
-
-            <div class="countdown-number" id="countdownNumber">10</div>
-            <p style="font-size:0.85rem; color:var(--accent-blue); font-weight:600; margin-bottom:15px;" id="gpsTransmitting">
-                เตรียมส่งพิกัดไปยังสายด่วน 1669
-            </p>
-
-            <button class="btn-cancel" onclick="cancelEmergencyCall()">
-                <i class="fa-solid fa-xmark"></i> ยกเลิกการโทร
-            </button>
-        </div>
-    </div>
-
-    <!-- JavaScript logic -->
+    <!-- Logic Script -->
     <script>
-        // 1. Realtime Clock Updater
-        function updateClock() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' });
-            const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('realtimeClock').innerText = `${dateStr} | ${timeStr}`;
+        const rates = { 'RN': 2200, 'PN': 1500, 'NA': 1100, 'CG': 800 };
+
+        function calculateTotal() {
+            const staffType = document.querySelector('input[name="staff_type"]:checked').value;
+            const shiftType = document.getElementById('shift_type').value;
+            const days = parseInt(document.getElementById('days').value) || 1;
+
+            let ratePerShift = rates[staffType];
+            let shiftsPerDay = (shiftType === 'full') ? 2 : 1;
+            let total = ratePerShift * shiftsPerDay * days;
+
+            document.getElementById('totalPrice').innerText = '฿' + total.toLocaleString();
         }
-        setInterval(updateClock, 1000);
-        updateClock();
 
-        // 2. Realtime Device GPS Fetcher
-        let userLat = "13.7563";
-        let userLong = "100.5018";
+        function handleBooking(e) {
+            e.preventDefault();
+            const name = document.getElementById('cust_name').value;
+            const randomCode = 'CC-' + Math.floor(1000 + Math.random() * 9000);
+            
+            alert(`ขอบคุณครับคุณ ${name}\nระบบบันทึกการจองเรียบร้อยแล้ว!\n\nรหัสติดตามสถานะของคุณคือ: ${randomCode}\nเจ้าหน้าที่จะติดต่อกลับภายใน 15 นาที`);
+            
+            // รีเซ็ตฟอร์ม
+            document.getElementById('bookingForm').reset();
+            calculateTotal();
+        }
 
-        function getRealtimeGPS() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        userLat = pos.coords.latitude.toFixed(6);
-                        userLong = pos.coords.longitude.toFixed(6);
-                        document.getElementById('gpsLat').innerText = userLat;
-                        document.getElementById('gpsLong').innerText = userLong;
-                    },
-                    (err) => {
-                        document.getElementById('gpsLat').innerText = "13.7563";
-                        document.getElementById('gpsLong').innerText = "100.5018";
-                    },
-                    { enableHighAccuracy: true, timeout: 5000 }
-                );
+        function searchStatus() {
+            const code = document.getElementById('bookingSearch').value.trim();
+            if(code !== '') {
+                document.getElementById('trackingResult').classList.remove('hidden');
+            } else {
+                alert('กรุณากรอกรหัสการจอง เช่น CC-8891');
             }
-        }
-        getRealtimeGPS();
-
-        // 3. Realistic Siren Sound Generator (Web Audio API)
-        let audioContext = null;
-        let oscillator = null;
-        let sirenInterval = null;
-
-        function startSirenSound() {
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-
-                oscillator.type = 'sine';
-                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                oscillator.start();
-
-                let highFreq = false;
-                sirenInterval = setInterval(() => {
-                    if (oscillator && audioContext) {
-                        oscillator.frequency.setValueAtTime(highFreq ? 950 : 650, audioContext.currentTime);
-                        highFreq = !highFreq;
-                    }
-                }, 300);
-            } catch (e) {
-                console.log("Audio permission blocked.");
-            }
-        }
-
-        function stopSirenSound() {
-            if (sirenInterval) clearInterval(sirenInterval);
-            if (oscillator) {
-                try { oscillator.stop(); oscillator.disconnect(); } catch (e) {}
-                oscillator = null;
-            }
-            if (audioContext) {
-                try { audioContext.close(); } catch (e) {}
-                audioContext = null;
-            }
-        }
-
-        // 4. Emergency Countdown & Phone Call Trigger
-        let countdownVal = 10;
-        let timerId = null;
-
-        function triggerEmergencyCall() {
-            document.getElementById('emergencyModal').style.display = 'flex';
-            countdownVal = 10;
-            document.getElementById('countdownNumber').innerText = countdownVal;
-            document.getElementById('gpsTransmitting').innerText = `ส่งพิกัด: ${userLat}, ${userLong}`;
-
-            startSirenSound();
-
-            timerId = setInterval(() => {
-                countdownVal--;
-                document.getElementById('countdownNumber').innerText = countdownVal;
-
-                if (countdownVal <= 0) {
-                    clearInterval(timerId);
-                    stopSirenSound();
-                    // เรียกหน้าต่างโทรออกจริงไปยัง 1669 ของโทรศัพท์มือถือทันที
-                    window.location.href = "tel:1669";
-                }
-            }, 1000);
-        }
-
-        function cancelEmergencyCall() {
-            clearInterval(timerId);
-            stopSirenSound();
-            document.getElementById('emergencyModal').style.display = 'none';
         }
     </script>
 </body>
