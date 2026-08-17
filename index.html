@@ -1,4 +1,341 @@
-     <h4 class="card-title">ระบบหลังบ้าน (Admin)</h4>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Nurse - คณะแพทยศาสตร์ศิริราชพยาบาล</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & COMPACT RESETS
+           ========================================================================== */
+        :root {
+            --primary-navy: #0f172a;
+            --deep-blue: #1e3a8a;
+            --vibrant-blue: #2563eb;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-gold: #f59e0b;
+            --soft-light: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --transition-smooth: all 0.25s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 14px; /* Scaled down base font */
+        }
+
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: var(--soft-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Compact Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: var(--vibrant-blue); border-radius: 3px; }
+
+        /* ==========================================================================
+           2. HEADER & NAVIGATION
+           ========================================================================== */
+        header {
+            background: var(--primary-navy);
+            color: #fff;
+            padding: 0 20px;
+            height: 55px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .menu-toggle-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo-title { display: flex; align-items: center; gap: 8px; }
+        .brand-logo-title i { font-size: 1.2rem; color: var(--accent-cyan); }
+        .brand-logo-title h1 { font-size: 1.05rem; font-weight: 600; color: #fff; }
+
+        .admin-lock-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            transition: var(--transition-smooth);
+        }
+
+        .admin-lock-btn:hover { background: var(--accent-gold); color: #000; }
+
+        /* SIDEBAR DRAWER */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); z-index: 9998; display: none;
+        }
+
+        .sidebar-drawer {
+            position: fixed; top: 0; left: -260px; width: 260px; height: 100vh;
+            background: var(--primary-navy); z-index: 9999; transition: var(--transition-smooth);
+            display: flex; flex-direction: column;
+        }
+
+        .sidebar-drawer.active { left: 0; }
+
+        .sidebar-header {
+            padding: 15px; background: rgba(0,0,0,0.2);
+            display: flex; justify-content: space-between; align-items: center;
+            color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-nav-list { list-style: none; padding: 10px 0; }
+        .sidebar-nav-item a {
+            display: flex; align-items: center; gap: 10px; padding: 10px 20px;
+            color: #cbd5e1; text-decoration: none; font-size: 0.88rem;
+        }
+
+        .sidebar-nav-item a:hover { background: rgba(255,255,255,0.08); color: var(--accent-cyan); }
+
+        /* ==========================================================================
+           3. MAIN LAYOUT & GRID ARCHITECTURE
+           ========================================================================== */
+        .main-container { max-width: 1100px; margin: 0 auto; padding: 20px 15px; flex: 1; width: 100%; }
+
+        .hero-banner {
+            background: linear-gradient(135deg, var(--primary-navy), var(--deep-blue));
+            border-radius: 12px; padding: 18px 22px; color: #fff; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .hero-content h2 { font-size: 1.3rem; color: var(--accent-cyan); margin-bottom: 4px; }
+        .hero-content p { color: #cbd5e1; font-size: 0.88rem; }
+
+        .interactive-diagram-grid {
+            display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px;
+        }
+
+        .diagram-card {
+            background: var(--card-bg); border-radius: 10px; padding: 16px;
+            border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        .card-col-4 { grid-column: span 4; }
+        .card-col-6 { grid-column: span 6; }
+        .card-col-12 { grid-column: span 12; }
+
+        .card-header-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: rgba(37, 99, 235, 0.1); color: var(--vibrant-blue);
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.1rem; margin-bottom: 10px;
+        }
+
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 6px; }
+        .card-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
+
+        .card-action-btn {
+            background: #f1f5f9; color: var(--vibrant-blue); border: 1px solid var(--border-color);
+            padding: 7px 12px; border-radius: 6px; font-weight: 600; font-size: 0.82rem;
+            cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            text-decoration: none; width: 100%; transition: var(--transition-smooth);
+        }
+
+        .card-action-btn:hover { background: var(--vibrant-blue); color: #fff; }
+
+        /* ==========================================================================
+           4. MODALS (COMPACT SCALE) & FORM
+           ========================================================================== */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+            display: none; justify-content: center; align-items: center; z-index: 9990; padding: 15px;
+        }
+
+        .modal-card {
+            background: #fff; width: 100%; max-width: 480px; border-radius: 12px;
+            padding: 20px; box-shadow: var(--shadow-md); position: relative;
+            max-height: 90vh; overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;
+        }
+
+        .modal-header h3 { font-size: 1.1rem; color: var(--primary-navy); }
+        .close-btn { background: none; border: none; font-size: 1.1rem; color: var(--text-muted); cursor: pointer; }
+
+        /* Compact Form Styling */
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; }
+        .form-control {
+            width: 100%; padding: 8px 10px; border: 1px solid var(--border-color);
+            border-radius: 6px; font-size: 0.85rem; outline: none;
+        }
+
+        .form-row { display: flex; gap: 10px; }
+        .form-row .form-group { flex: 1; }
+
+        /* Photo Preview Box */
+        .photo-preview-box {
+            width: 100px; height: 120px; border: 2px dashed var(--border-color);
+            border-radius: 6px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; color: var(--text-muted);
+            margin-top: 5px; overflow: hidden; position: relative;
+        }
+
+        .photo-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ==========================================================================
+           5. EKG STATUS TOAST NOTIFICATION
+           ========================================================================== */
+        #ekg-toast-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 99999;
+            display: none; flex-direction: column; gap: 10px;
+        }
+
+        .ekg-toast {
+            background: var(--primary-navy); color: #fff; padding: 12px 18px;
+            border-radius: 8px; box-shadow: var(--shadow-md); display: flex;
+            align-items: center; gap: 12px; border-left: 4px solid var(--accent-green);
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Animated SVG EKG Pulse */
+        .ekg-svg { width: 50px; height: 25px; }
+        .ekg-line {
+            fill: none; stroke: var(--accent-cyan); stroke-width: 2;
+            stroke-dasharray: 100; stroke-dashoffset: 100;
+            animation: ekgPulse 1.5s infinite linear;
+        }
+
+        @keyframes ekgPulse {
+            0% { stroke-dashoffset: 100; }
+            50% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -100; }
+        }
+
+        .status-check-icon {
+            width: 22px; height: 22px; background: var(--accent-green);
+            color: #fff; border-radius: 50%; display: flex;
+            justify-content: center; align-items: center; font-size: 0.75rem;
+        }
+
+        /* Admin Table */
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .admin-table th, .admin-table td {
+            padding: 8px 10px; border: 1px solid var(--border-color); text-align: left; font-size: 0.82rem;
+        }
+        .admin-table th { background: #f8fafc; font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .card-col-4, .card-col-6 { grid-column: span 12; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- App Header -->
+    <header>
+        <div class="header-left">
+            <button class="menu-toggle-btn" onclick="toggleSidebarMenu()"><i class="fa-solid fa-bars"></i></button>
+            <div class="brand-logo-title">
+                <i class="fa-solid fa-user-nurse"></i>
+                <h1>Practical Nurse (SIPN74)</h1>
+            </div>
+        </div>
+        <button class="admin-lock-btn" onclick="triggerAdminLogin()">
+            <i class="fa-solid fa-lock"></i> <span>ระบบหลังบ้าน</span>
+        </button>
+    </header>
+
+    <!-- Sidebar Drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebarMenu()"></div>
+    <div class="sidebar-drawer" id="sidebarDrawer">
+        <div class="sidebar-header">
+            <h4>ผังเมนูการใช้งาน</h4>
+            <i class="fa-solid fa-xmark close-btn" onclick="toggleSidebarMenu()" style="color:#fff;"></i>
+        </div>
+        <ul class="sidebar-nav-list">
+            <li class="sidebar-nav-item"><a href="javascript:void(0)" onclick="toggleSidebarMenu(); openRegisterModal();"><i class="fa-solid fa-user-plus"></i> สมัครสมาชิกนักศึกษา</a></li>
+            <li class="sidebar-nav-item"><a href="javascript:void(0)" onclick="toggleSidebarMenu(); triggerAdminLogin();"><i class="fa-solid fa-sliders"></i> จัดการข้อมูล (หลังบ้าน)</a></li>
+            <li class="sidebar-nav-item"><a href="https://www.si.mahidol.ac.th/th/education/pn/" target="_blank"><i class="fa-solid fa-globe"></i> เว็บไซต์หลัก ศิริราช</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        
+        <section class="hero-banner">
+            <div class="hero-content">
+                <h2>โรงเรียนผู้ช่วยพยาบาล คณะแพทยศาสตร์ศิริราชพยาบาล</h2>
+                <p>ระบบสารสนเทศทะเบียนนักศึกษาและการบริหารจัดการข้อมูลออนไลน์</p>
+            </div>
+        </section>
+
+        <!-- Diagram Grid -->
+        <section class="interactive-diagram-grid">
+            
+            <div class="diagram-card card-col-4">
+                <div>
+                    <div class="card-header-icon"><i class="fa-solid fa-user-plus"></i></div>
+                    <h4 class="card-title">ระบบนักศึกษา</h4>
+                    <p class="card-desc">กรอกข้อมูลลงทะเบียนนักศึกษาใหม่ พร้อมแนบรูปถ่ายเข้าสู่ฐานข้อมูลระบบ</p>
+                </div>
+                <button class="card-action-btn" onclick="openRegisterModal()">
+                    <i class="fa-solid fa-pen-to-square"></i> สมัครสมาชิกนักศึกษา
+                </button>
+            </div>
+
+            <div class="diagram-card card-col-4">
+                <div>
+                    <div class="card-header-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <h4 class="card-title">ระบบหลังบ้าน (Admin)</h4>
                     <p class="card-desc">เข้าสู่ระบบจัดการข้อมูลผู้สมัคร แก้ไข ตรวจสอบ และลบรายชื่อในฐานข้อมูล</p>
                 </div>
                 <button class="card-action-btn" onclick="triggerAdminLogin()">
