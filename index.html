@@ -3,362 +3,1313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practical Nurse - คณะแพทยศาสตร์ศิริราชพยาบาล</title>
+    <title>Practical Nurse - คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</title>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Libre Barcode 128 -->
     <link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+128&display=swap" rel="stylesheet">
     
     <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & REETS
+           ========================================================================== */
         :root {
-            --primary-navy: #002244;
-            --secondary-blue: #0056b3;
-            --accent-blue: #0088cc;
-            --bg-light: #f4f7f9;
-            --text-dark: #2c3e50;
+            --primary-navy: #001f3f;
+            --deep-blue: #003366;
+            --vibrant-blue: #0066cc;
+            --accent-cyan: #00a8ff;
+            --accent-gold: #ffc107;
+            --soft-light: #f4f7fc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #1a252c;
+            --text-muted: #596981;
             --text-white: #ffffff;
-            --mahidol-blue: #003366;
-            --mahidol-gold: #ffcc00;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 25px -5px rgba(0, 51, 102, 0.1);
+            --shadow-lg: 0 20px 30px -10px rgba(0, 31, 63, 0.2);
+            --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); overflow-x: hidden; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        /* --- 1. INTRO SCREEN --- */
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: var(--soft-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 102, 204, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 31, 63, 0.05) 0px, transparent 50%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e2e8f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--vibrant-blue);
+            border-radius: 4px;
+        }
+
+        /* ==========================================================================
+           2. INTRO / CINEMATIC PROJECTOR SCREEN
+           ========================================================================== */
         #landing-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle, #001a33 0%, #000814 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; text-align: center; padding: 20px; color: var(--text-white);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #002b55 0%, #000814 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-white);
             transition: opacity 0.8s ease, visibility 0.8s;
+            overflow: hidden;
         }
 
-        #landing-screen::before {
-            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; height: 100%;
-            background: radial-gradient(ellipse at top, rgba(0, 136, 204, 0.3) 0%, transparent 70%);
+        /* Film Grain Effect */
+        #landing-screen::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: opacity-grid;
+            opacity: 0.04;
             pointer-events: none;
+            animation: grain 8s steps(10) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -10%); }
+            30% { transform: translate(3%, -15%); }
+            50% { transform: translate(12%, 9%); }
+            70% { transform: translate(9%, 4%); }
+            90% { transform: translate(-1%, 7%); }
+        }
+
+        /* Projector Light Cone Animation */
+        .projector-beam {
+            position: absolute;
+            top: -100px;
+            width: 100%;
+            height: 120%;
+            background: radial-gradient(ellipse at top, rgba(0, 168, 255, 0.25) 0%, rgba(0, 31, 63, 0) 70%);
+            pointer-events: none;
+            animation: beamFlicker 3s infinite alternate;
+        }
+
+        @keyframes beamFlicker {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.95; }
+            75% { opacity: 0.85; }
         }
 
         .projector-title {
-            font-size: 3.5rem; font-weight: 700; letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(0, 136, 204, 0.8), 0 0 40px rgba(255, 255, 255, 0.5);
-            animation: projectorZoom 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-            margin-bottom: 25px; opacity: 0;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(0, 168, 255, 0.8), 0 0 50px rgba(0, 168, 255, 0.4);
+            animation: projectorFocus 2.8s cubic-bezier(0.1, 0.85, 0.25, 1) forwards;
+            opacity: 0;
+            margin-bottom: 20px;
+            position: relative;
         }
 
-        @keyframes projectorZoom {
-            0% { transform: scale(0.2); filter: blur(15px); opacity: 0; }
-            50% { opacity: 0.8; filter: blur(4px); }
-            100% { transform: scale(1); filter: blur(0px); opacity: 1; }
+        @keyframes projectorFocus {
+            0% {
+                transform: scale(0.1) translateY(-50px);
+                filter: blur(25px);
+                opacity: 0;
+            }
+            40% {
+                opacity: 0.5;
+                filter: blur(12px);
+            }
+            70% {
+                filter: blur(3px);
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                filter: blur(0px);
+                opacity: 1;
+            }
         }
 
-        .welcome-text { font-size: 1.1rem; font-weight: 300; line-height: 1.6; margin-bottom: 8px; color: #e0e6ed; animation: fadeIn 1.5s ease-in 2s forwards; opacity: 0; }
-        .sub-text { font-size: 1.1rem; color: #90caf9; margin-bottom: 35px; animation: fadeIn 1.5s ease-in 2.3s forwards; opacity: 0; }
-        @keyframes fadeIn { to { opacity: 1; } }
+        .welcome-text {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 300;
+            max-width: 650px;
+            line-height: 1.8;
+            color: #d1e5f7;
+            animation: fadeInUp 1.2s ease-out 2.2s forwards;
+            opacity: 0;
+            margin-bottom: 8px;
+        }
+
+        .sub-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            letter-spacing: 2px;
+            animation: fadeInUp 1.2s ease-out 2.5s forwards;
+            opacity: 0;
+            margin-bottom: 40px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         .btn-start {
-            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
-            color: white; border: none; padding: 12px 35px; font-size: 1.1rem; border-radius: 50px;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4); transition: all 0.3s;
-            animation: fadeIn 1.5s ease-in 2.6s forwards; opacity: 0;
+            background: linear-gradient(135deg, var(--vibrant-blue), var(--accent-cyan));
+            color: var(--text-white);
+            border: none;
+            padding: 14px 45px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(0, 168, 255, 0.5);
+            transition: var(--transition-smooth);
+            animation: fadeInUp 1.2s ease-out 2.8s forwards;
+            opacity: 0;
+            position: relative;
+            z-index: 10;
         }
-        .btn-start:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 136, 204, 0.7); }
 
-        /* --- 2. MAIN WEBSITE --- */
-        #main-website { display: none; opacity: 0; transition: opacity 0.8s ease; }
+        .btn-start:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 35px rgba(0, 168, 255, 0.8);
+        }
+
+        /* ==========================================================================
+           3. MAIN APP HEADER & SIDEBAR
+           ========================================================================== */
+        #main-website {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
         header {
-            background-color: var(--primary-navy); color: white; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            background: rgba(0, 31, 63, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--text-white);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .menu-toggle { font-size: 1.4rem; cursor: pointer; color: white; }
-        .header-title { font-size: 1.4rem; font-weight: 700; }
-        .lock-btn { background: transparent; border: none; color: white; font-size: 1.3rem; cursor: pointer; }
-
-        /* SIDEBAR DRAWER */
-        .sidebar {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
-            background: var(--primary-navy); z-index: 1001; transition: 0.3s ease;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.3); padding-top: 60px;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
-        .sidebar.active { left: 0; }
-        .sidebar-close { position: absolute; top: 15px; right: 20px; color: white; font-size: 1.5rem; cursor: pointer; }
-        .sidebar-menu { list-style: none; }
-        .sidebar-menu li a {
-            display: flex; align-items: center; gap: 15px; padding: 15px 25px;
-            color: white; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s;
+
+        .menu-toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-white);
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: var(--transition-smooth);
         }
-        .sidebar-menu li a:hover { background: var(--secondary-blue); }
 
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-        .card { background: white; border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--secondary-blue); }
-        .card h2 { color: var(--primary-navy); margin-bottom: 15px; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
-        .card p { line-height: 1.6; color: #555; margin-bottom: 15px; }
-
-        .external-btn {
-            display: inline-flex; align-items: center; gap: 8px; background-color: var(--secondary-blue);
-            color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-size: 0.95rem; transition: background 0.3s;
+        .menu-toggle-btn:hover {
+            background: var(--vibrant-blue);
+            transform: scale(1.05);
         }
-        .external-btn:hover { background-color: var(--primary-navy); }
 
-        .grid-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
-        .nav-card-btn {
-            background: white; border: 1px solid #e0e0e0; padding: 20px; border-radius: 10px;
-            text-align: center; cursor: pointer; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px;
+        .brand-logo-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .nav-card-btn i { font-size: 1.8rem; color: var(--secondary-blue); }
-        .nav-card-btn span { font-weight: 600; color: var(--primary-navy); }
-        .nav-card-btn:hover { transform: translateY(-4px); border-color: var(--accent-blue); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
 
-        .map-container { width: 100%; height: 280px; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
-
-        /* --- 3. LOADING OVERLAY --- */
-        #loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 34, 68, 0.92); backdrop-filter: blur(5px); display: none;
-            flex-direction: column; justify-content: center; align-items: center; z-index: 10000; color: white;
+        .brand-logo-title i {
+            font-size: 1.8rem;
+            color: var(--accent-cyan);
         }
-        .rotating-title {
-            font-size: 2.2rem; font-weight: 700;
-            background: linear-gradient(90deg, #ffffff, var(--accent-blue), #ffffff); background-size: 200% auto;
-            color: transparent; -webkit-background-clip: text; background-clip: text;
-            animation: rotateY 1.8s infinite linear, shine 2s infinite linear; margin-bottom: 15px;
+
+        .brand-logo-title h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #ffffff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        @keyframes rotateY { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
-        @keyframes shine { to { background-position: 200% center; } }
-        .loading-subtext { font-size: 1rem; color: #d0e1fd; }
 
-        /* --- 4. POPUPS & MODALS --- */
-        .modal-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.6); display: none; justify-content: center; align-items: center; z-index: 10001; padding: 20px; }
-        
-        /* Mobile Alert Popup */
-        .popup-card { background: white; width: 100%; max-width: 320px; border-radius: 18px; padding: 25px 20px; text-align: center; animation: popupScale 0.3s ease; }
-        @keyframes popupScale { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .popup-card i { font-size: 2.5rem; color: #f39c12; margin-bottom: 15px; }
-        .popup-card h3 { color: var(--primary-navy); margin-bottom: 10px; }
-        .popup-card p { color: #666; font-size: 0.95rem; margin-bottom: 20px; }
-        .btn-close { background-color: var(--secondary-blue); color: white; border: none; width: 100%; padding: 10px 0; border-radius: 10px; font-weight: 600; cursor: pointer; }
-
-        /* Alumni Mahidol Card */
-        .id-card {
-            background: linear-gradient(135deg, #ffffff, #f0f4f8); width: 100%; max-width: 360px;
-            border-radius: 15px; border: 2px solid var(--mahidol-blue); padding: 20px; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: popupScale 0.3s ease;
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .id-card-header { display: flex; align-items: center; gap: 10px; border-bottom: 2px solid var(--mahidol-gold); padding-bottom: 10px; margin-bottom: 15px; }
-        .id-card-header i { font-size: 2rem; color: var(--mahidol-blue); }
-        .id-card-header div { text-align: left; }
-        .id-card-header h4 { font-size: 0.9rem; color: var(--mahidol-blue); font-weight: 700; }
-        .id-card-header p { font-size: 0.7rem; color: #555; }
-        
-        .search-box { display: flex; gap: 8px; margin-bottom: 15px; }
-        .search-box input { flex: 1; padding: 8px 12px; border: 1px solid #ccc; border-radius: 6px; outline: none; }
-        .search-box button { background: var(--mahidol-blue); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; }
 
-        .id-card-body { display: none; text-align: center; }
-        .photo-frame { width: 100px; height: 120px; border: 2px dashed #bbb; margin: 0 auto 10px; display: flex; justify-content: center; align-items: center; color: #888; font-size: 0.8rem; background: #e9ecef; }
-        .student-name { font-weight: 700; color: var(--primary-navy); font-size: 1.1rem; }
-        .student-course { font-size: 0.85rem; color: #555; margin-top: 3px; }
-        .barcode { font-family: 'Libre Barcode 128', cursive; font-size: 2.8rem; margin-top: 10px; color: #000; }
-        .barcode-num { font-size: 0.8rem; letter-spacing: 2px; color: #333; margin-top: -10px; }
-        
-        .btn-close-card { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 1.2rem; color: #888; cursor: pointer; }
+        .admin-lock-btn {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-white);
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
 
-        @media (max-width: 600px) {
-            .projector-title { font-size: 2.2rem; }
+        .admin-lock-btn:hover {
+            background: var(--accent-gold);
+            color: var(--primary-navy);
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        /* SIDEBAR DRAWER NAVIGATION */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9998;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: var(--primary-navy);
+            z-index: 9999;
+            transition: var(--transition-smooth);
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-drawer.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h3 {
+            color: var(--text-white);
+            font-size: 1.1rem;
+        }
+
+        .sidebar-close-btn {
+            background: none;
+            border: none;
+            color: #a0aec0;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .sidebar-close-btn:hover {
+            color: var(--text-white);
+        }
+
+        .sidebar-nav-list {
+            list-style: none;
+            padding: 20px 0;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .sidebar-nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 25px;
+            color: #cbd5e0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar-nav-item a:hover {
+            background: rgba(0, 102, 204, 0.2);
+            color: var(--accent-cyan);
+            border-left-color: var(--accent-cyan);
+        }
+
+        .sidebar-nav-item a i {
+            font-size: 1.1rem;
+            width: 25px;
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #718096;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ==========================================================================
+           4. MAIN CONTENT & INTERACTIVE DIAGRAM DASHBOARD
+           ========================================================================== */
+        .main-container {
+            max-width: 1350px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Banner Section */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--primary-navy), var(--deep-blue));
+            border-radius: 20px;
+            padding: 35px 40px;
+            color: var(--text-white);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hero-banner::after {
+            content: "\f0f8";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: -20px;
+            bottom: -30px;
+            font-size: 14rem;
+            color: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+        }
+
+        .hero-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--accent-cyan);
+        }
+
+        .hero-content p {
+            color: #e2e8f0;
+            font-size: 1rem;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        .badge-sipn {
+            background: var(--accent-gold);
+            color: var(--primary-navy);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-top: 12px;
+        }
+
+        /* Map / Architecture Diagram Grid */
+        .diagram-section-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .diagram-section-title h3 {
+            font-size: 1.6rem;
+            color: var(--primary-navy);
+            margin-bottom: 8px;
+        }
+
+        .diagram-section-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .interactive-diagram-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* Diagram Cards Styling */
+        .diagram-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 28px 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .diagram-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--vibrant-blue);
+        }
+
+        .card-col-12 { grid-column: span 12; }
+        .card-col-8  { grid-column: span 8; }
+        .card-col-6  { grid-column: span 6; }
+        .card-col-4  { grid-column: span 4; }
+        .card-col-3  { grid-column: span 3; }
+
+        .card-header-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            background: rgba(0, 102, 204, 0.08);
+            color: var(--vibrant-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            transition: var(--transition-smooth);
+        }
+
+        .diagram-card:hover .card-header-icon {
+            background: var(--vibrant-blue);
+            color: var(--text-white);
+            transform: scale(1.1);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-navy);
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .card-action-btn {
+            background: var(--soft-light);
+            color: var(--vibrant-blue);
+            border: 1px solid rgba(0, 102, 204, 0.2);
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .card-action-btn:hover {
+            background: var(--vibrant-blue);
+            color: var(--text-white);
+            border-color: var(--vibrant-blue);
+        }
+
+        /* Specific Embed Section Map */
+        .map-wrapper {
+            width: 100%;
+            height: 240px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ==========================================================================
+           5. SYSTEM ROTATING LOADING OVERLAY
+           ========================================================================== */
+        #system-loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 31, 63, 0.92);
+            backdrop-filter: blur(8px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            color: var(--text-white);
+        }
+
+        .loader-content {
+            text-align: center;
+            perspective: 1000px;
+        }
+
+        .rotating-brand-text {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 2px;
+            animation: rotateTitle 2s infinite ease-in-out;
+            text-shadow: 0 0 25px rgba(0, 168, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        @keyframes rotateTitle {
+            0% { transform: rotateY(0deg); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+            50% { transform: rotateY(180deg); filter: drop-shadow(0 0 20px var(--accent-cyan)); }
+            100% { transform: rotateY(360deg); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-wait-text {
+            font-size: 1rem;
+            letter-spacing: 1px;
+            color: #a0aec0;
+        }
+
+        /* ==========================================================================
+           6. POPUP MODALS & STUDENT ALUMNI ID CARD SYSTEM
+           ========================================================================== */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99990;
+            padding: 20px;
+        }
+
+        /* Development Mobile Alert Modal */
+        .dev-alert-card {
+            background: var(--text-white);
+            width: 100%;
+            max-width: 360px;
+            border-radius: 20px;
+            padding: 30px 25px;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            animation: modalScaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        @keyframes modalScaleUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .dev-alert-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 193, 7, 0.15);
+            color: #d97706;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+
+        .dev-alert-card h3 {
+            font-size: 1.25rem;
+            color: var(--primary-navy);
+            margin-bottom: 10px;
+        }
+
+        .dev-alert-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-btn-close {
+            background: var(--vibrant-blue);
+            color: var(--text-white);
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .modal-btn-close:hover {
+            background: var(--primary-navy);
+        }
+
+        /* Alumni Student ID Card Component */
+        .mahidol-id-modal-card {
+            background: linear-gradient(145deg, #ffffff, #f0f4f8);
+            width: 100%;
+            max-width: 420px;
+            border-radius: 18px;
+            border: 2px solid var(--deep-blue);
+            box-shadow: var(--shadow-lg);
+            padding: 25px;
+            position: relative;
+            animation: modalScaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .id-card-top-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 3px solid var(--accent-gold);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .id-card-top-bar i {
+            font-size: 2.2rem;
+            color: var(--deep-blue);
+        }
+
+        .id-card-top-bar div h4 {
+            font-size: 1rem;
+            color: var(--deep-blue);
+            line-height: 1.2;
+        }
+
+        .id-card-top-bar div p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .sap-search-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sap-search-form input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .sap-search-form input:focus {
+            border-color: var(--vibrant-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+        }
+
+        .sap-search-form button {
+            background: var(--deep-blue);
+            color: var(--text-white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+        }
+
+        .sap-search-form button:hover {
+            background: var(--vibrant-blue);
+        }
+
+        .id-card-data-container {
+            display: none;
+            background: var(--text-white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .future-photo-placeholder {
+            width: 110px;
+            height: 135px;
+            background: #edf2f7;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            margin: 0 auto 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #a0aec0;
+            font-size: 0.8rem;
+            gap: 8px;
+        }
+
+        .future-photo-placeholder i {
+            font-size: 2rem;
+        }
+
+        .student-full-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+            margin-bottom: 4px;
+        }
+
+        .student-program {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .barcode-visual {
+            font-family: 'Libre Barcode 128', cursive;
+            font-size: 3.2rem;
+            color: #000;
+            line-height: 1;
+            margin-top: 5px;
+        }
+
+        .barcode-number-text {
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .close-modal-icon-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .close-modal-icon-btn:hover {
+            color: var(--primary-navy);
+        }
+
+        /* ==========================================================================
+           7. FOOTER
+           ========================================================================== */
+        footer {
+            background: var(--primary-navy);
+            color: #a0aec0;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 0.88rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: auto;
+        }
+
+        footer p {
+            margin-bottom: 8px;
+        }
+
+        footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        /* ==========================================================================
+           8. RESPONSIVE BREAKPOINTS
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .card-col-8, .card-col-6, .card-col-4, .card-col-3 {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 640px) {
+            header {
+                padding: 0 15px;
+            }
+            .brand-logo-title h1 {
+                font-size: 1.1rem;
+            }
+            .card-col-8, .card-col-6, .card-col-4, .card-col-3 {
+                grid-column: span 12;
+            }
+            .hero-banner {
+                padding: 25px 20px;
+            }
+            .hero-banner::after {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. INTRO SCREEN -->
+    <!-- ==========================================================================
+       1. INTRO CINEMATIC LANDING SCREEN
+       ========================================================================== -->
     <div id="landing-screen">
+        <div class="projector-beam"></div>
         <h1 class="projector-title">Practical Nurse</h1>
         <p class="welcome-text">ยินดีต้อนรับ โรงเรียนผู้ช่วยพยาบาลคณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</p>
         <p class="sub-text">(SIPN74)</p>
-        <button class="btn-start" onclick="enterMainSite()">เริ่มต้นใช้งาน</button>
+        <button class="btn-start" onclick="enterMainDashboard()">เริ่มต้นใช้งาน</button>
     </div>
 
-    <!-- 2. MAIN WEBSITE -->
+    <!-- ==========================================================================
+       2. MAIN APPLICATION WEBSITE
+       ========================================================================== -->
     <div id="main-website">
+        
+        <!-- App Header -->
         <header>
             <div class="header-left">
-                <i class="fa-solid fa-bars menu-toggle" onclick="toggleSidebar()"></i>
-                <div class="header-title">Practical Nurse</div>
+                <button class="menu-toggle-btn" onclick="toggleSidebarMenu()" title="เปิดเมนูหลัก">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="brand-logo-title">
+                    <i class="fa-solid fa-user-nurse"></i>
+                    <h1>Practical Nurse</h1>
+                </div>
             </div>
-            <button class="lock-btn" onclick="openAdminLogin()" title="เข้าสู่ระบบผู้ดูแล"><i class="fa-solid fa-lock"></i></button>
+            <div class="header-right">
+                <button class="admin-lock-btn" onclick="triggerAdminLogin()">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>เข้าสู่ระบบ</span>
+                </button>
+            </div>
         </header>
 
-        <!-- SIDEBAR DRAWER -->
-        <div class="sidebar" id="sidebar">
-            <i class="fa-solid fa-xmark sidebar-close" onclick="toggleSidebar()"></i>
-            <ul class="sidebar-menu">
-                <li><a href="javascript:void(0)" onclick="toggleSidebar(); handleMenuClick('นักศึกษา');"><i class="fa-solid fa-user-graduate"></i> นักศึกษา</a></li>
-                <li><a href="https://www.si.mahidol.ac.th/th/education/pn/" target="_blank"><i class="fa-solid fa-sitemap"></i> โครงสร้างบุคลากร</a></li>
-                <li><a href="javascript:void(0)" onclick="toggleSidebar(); handleMenuClick('ติดต่อ');"><i class="fa-solid fa-address-book"></i> ติดต่อ</a></li>
-                <li><a href="tel:024192620"><i class="fa-solid fa-phone"></i> โทร (02-419-2620)</a></li>
-                <li><a href="https://www.si.mahidol.ac.th/" target="_blank"><i class="fa-solid fa-globe"></i> เว็บไซต์หลัก ศิริราช</a></li>
-                <li><a href="javascript:void(0)" onclick="toggleSidebar(); openAlumniModal();"><i class="fa-solid fa-id-card"></i> ค้นหารายชื่อศิษย์เก่า</a></li>
+        <!-- Sidebar Drawer Navigation -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebarMenu()"></div>
+        <div class="sidebar-drawer" id="sidebarDrawer">
+            <div class="sidebar-header">
+                <h3>ผังเมนูการใช้งาน</h3>
+                <button class="sidebar-close-btn" onclick="toggleSidebarMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <ul class="sidebar-nav-list">
+                <li class="sidebar-nav-item">
+                    <a href="javascript:void(0)" onclick="toggleSidebarMenu(); handleMenuAction('นักศึกษา');">
+                        <i class="fa-solid fa-graduation-cap"></i> นักศึกษา (ระบบ SAP)
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="https://www.si.mahidol.ac.th/th/education/pn/" target="_blank">
+                        <i class="fa-solid fa-sitemap"></i> โครงสร้างบุคลากร
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="javascript:void(0)" onclick="toggleSidebarMenu(); handleMenuAction('ติดต่อ');">
+                        <i class="fa-solid fa-address-book"></i> ติดต่อสอบถาม
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="tel:024192620">
+                        <i class="fa-solid fa-phone-volume"></i> โทรด่วน (02-419-2620)
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="https://www.si.mahidol.ac.th/" target="_blank">
+                        <i class="fa-solid fa-globe"></i> เว็บไซต์หลัก คณะแพทยศาสตร์ ศิริราช
+                    </a>
+                </li>
+                <li class="sidebar-nav-item">
+                    <a href="javascript:void(0)" onclick="toggleSidebarMenu(); openAlumniCardModal();">
+                        <i class="fa-solid fa-id-card"></i> ค้นหารายชื่อศิษย์เก่า (SAP ID)
+                    </a>
+                </li>
             </ul>
+            <div class="sidebar-footer">
+                โรงเรียนผู้ช่วยพยาบาล ศิริราช (SIPN74)<br>© Mahidol University
+            </div>
         </div>
 
-        <div class="container">
-            <!-- ประวัติโรงเรียน -->
-            <div class="card">
-                <h2><i class="fa-solid fa-hospital-user"></i> ประวัติโรงเรียนผู้ช่วยพยาบาล</h2>
-                <p>โรงเรียนผู้ช่วยพยาบาล คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล ผลิตบุคลากรทางการแพทย์ที่มีคุณภาพอย่างต่อเนื่องเพื่อให้บริการทางด้านการพยาบาลอย่างมีมาตรฐาน</p>
-                <a href="https://www.si.mahidol.ac.th/th/education/pn/" target="_blank" class="external-btn">
-                    อ่านประวัติเพิ่มเติมที่เว็บทางการ <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
+        <!-- Main Dashboard Container -->
+        <main class="main-container">
+            
+            <!-- Hero Announcement Banner -->
+            <section class="hero-banner">
+                <div class="hero-content">
+                    <h2>โรงเรียนผู้ช่วยพยาบาล ศิริราชพยาบาล</h2>
+                    <p>คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล มุ่งมั่นผลิตผู้ช่วยพยาบาลที่มีทักษะการบริบาลชั้นเลิศ มีคุณธรรม และเปี่ยมด้วยหัวใจความเป็นมนุษย์</p>
+                    <span class="badge-sipn">รุ่น SIPN74</span>
+                </div>
+            </section>
+
+            <!-- Interactive Architecture Map Grid -->
+            <div class="diagram-section-title">
+                <h3>แผนผังโครงสร้างระบบสารสนเทศ</h3>
+                <p>เลือกหัวข้อเมนูที่ต้องการผ่านแผนผังเครือข่ายอัจฉริยะด้านล่าง</p>
             </div>
 
-            <!-- เมนูหลัก -->
-            <div class="card">
-                <h2><i class="fa-solid fa-list-check"></i> เมนูการใช้งาน</h2>
-                <div class="grid-buttons">
-                    <div class="nav-card-btn" onclick="handleMenuClick('นักศึกษา')">
-                        <i class="fa-solid fa-user-graduate"></i>
-                        <span>นักศึกษา (กรอก SAP)</span>
+            <section class="interactive-diagram-grid">
+                
+                <!-- Card 1: Student System -->
+                <div class="diagram-card card-col-4">
+                    <div>
+                        <div class="card-header-icon">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <h4 class="card-title">ระบบนักศึกษา</h4>
+                        <p class="card-desc">เข้าสู่ระบบการศึกษา ตรวจสอบผลการเรียน ลงทะเบียน และจัดการข้อมูลนักศึกษาด้วย รหัส SAP ID</p>
                     </div>
-                    <div class="nav-card-btn" onclick="redirectToOfficial('https://www.si.mahidol.ac.th/th/education/pn/')">
-                        <i class="fa-solid fa-sitemap"></i>
-                        <span>โครงสร้างบุคลากร</span>
-                    </div>
-                    <div class="nav-card-btn" onclick="handleMenuClick('ติดต่อ')">
-                        <i class="fa-solid fa-address-book"></i>
-                        <span>ติดต่อ</span>
-                    </div>
-                    <div class="nav-card-btn" onclick="window.location.href='tel:024192620'">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>โทรเบอร์ตรง</span>
-                    </div>
-                    <div class="nav-card-btn" onclick="redirectToOfficial('https://www.si.mahidol.ac.th/')">
-                        <i class="fa-solid fa-globe"></i>
-                        <span>เว็บไซต์หลัก ศิริราช</span>
-                    </div>
-                    <div class="nav-card-btn" onclick="openAlumniModal()">
-                        <i class="fa-solid fa-users-viewfinder"></i>
-                        <span>ศิษย์เก่าค้นหารายชื่อ</span>
-                    </div>
+                    <button class="card-action-btn" onclick="handleMenuAction('เข้าสู่ระบบนักศึกษา กรอกเลข SAP')">
+                        <span>เข้าสู่ระบบ SAP</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
-            </div>
 
-            <!-- แผนที่ -->
-            <div class="card">
-                <h2><i class="fa-solid fa-map-location-dot"></i> แผนที่ตั้ง</h2>
-                <p>โรงพยาบาลศิริราช เลขที่ 2 ถนนวังหลัง แขวงศิริราช เขตกอกน้อย กรุงเทพฯ 10700 (โทร: 02-419-2620)</p>
-                <div class="map-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.292837330588!2d100.48281317588722!3d13.761214086631853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e299af24f3319f%3A0x868128472f7d30f2!2z4LmC4Lij4LiH4LmA4Lij4Li mOC4qOC4tOC4o-C4suC4p-C4o-C4tA!5e0!3m2!1sth!2sth!4v1700000000000!5m2!1sth!2sth" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <!-- Card 2: Staff Structure -->
+                <div class="diagram-card card-col-4">
+                    <div>
+                        <div class="card-header-icon">
+                            <i class="fa-solid fa-sitemap"></i>
+                        </div>
+                        <h4 class="card-title">โครงสร้างบุคลากร</h4>
+                        <p class="card-desc">ทำความรู้จักคณะผู้บริหาร อาจารย์ผู้สอน และบุคลากรทางการพยาบาลจากเว็บทางการ</p>
+                    </div>
+                    <a href="https://www.si.mahidol.ac.th/th/education/pn/" target="_blank" class="card-action-btn" onclick="showRotatingLoader(event)">
+                        <span>ดูโครงสร้างบุคลากร</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
                 </div>
-            </div>
+
+                <!-- Card 3: Alumni Search Card -->
+                <div class="diagram-card card-col-4">
+                    <div>
+                        <div class="card-header-icon">
+                            <i class="fa-solid fa-address-card"></i>
+                        </div>
+                        <h4 class="card-title">ค้นหารายชื่อศิษย์เก่า</h4>
+                        <p class="card-desc">ตรวจสอบข้อมูลบัตรประจำตัวนักศึกษามหาวิทยาลัยมหิดล และบาร์โค้ดประจำตัวด้วย SAP ID</p>
+                    </div>
+                    <button class="card-action-btn" onclick="openAlumniCardModal()">
+                        <span>เปิดระบบค้นหา</span>
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </div>
+
+                <!-- Card 4: History & Overview -->
+                <div class="diagram-card card-col-6">
+                    <div>
+                        <div class="card-header-icon">
+                            <i class="fa-solid fa-hospital-user"></i>
+                        </div>
+                        <h4 class="card-title">ประวัติโรงเรียนผู้ช่วยพยาบาล</h4>
+                        <p class="card-desc">โรงเรียนผู้ช่วยพยาบาล คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล มีประวัติความเป็นมาอันยาวนานในการผลิตผู้ช่วยพยาบาลที่มีคุณภาพสูงเพื่อระบบสาธารณสุขไทย</p>
+                    </div>
+                    <a href="https://www.si.mahidol.ac.th/th/education/pn/" target="_blank" class="card-action-btn" onclick="showRotatingLoader(event)">
+                        <span>อ่านประวัติทั้งหมด</span>
+                        <i class="fa-solid fa-book-open"></i>
+                    </a>
+                </div>
+
+                <!-- Card 5: Official Links & Hotline -->
+                <div class="diagram-card card-col-6">
+                    <div>
+                        <div class="card-header-icon">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <h4 class="card-title">ช่องทางการติดต่อ & เว็บหลัก</h4>
+                        <p class="card-desc">ติดต่อสอบถามข้อมูลเพิ่มเติมเกี่ยวกับหลักสูตรการเรียนการสอน หรือเข้าสู่เว็บไซต์ทางการของคณะแพทยศาสตร์ศิริราชพยาบาล</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="tel:024192620" class="card-action-btn" style="flex: 1;">
+                            <i class="fa-solid fa-phone"></i> โทร 02-419-2620
+                        </a>
+                        <a href="https://www.si.mahidol.ac.th/" target="_blank" class="card-action-btn" style="flex: 1;" onclick="showRotatingLoader(event)">
+                            <i class="fa-solid fa-globe"></i> เว็บไซต์หลัก
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 6: Interactive Map Container -->
+                <div class="diagram-card card-col-12">
+                    <div>
+                        <div class="card-header-icon">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <h4 class="card-title">แผนที่และการเดินทาง</h4>
+                        <p class="card-desc">โรงพยาบาลศิริราช เลขที่ 2 ถนนวังหลัง แขวงศิริราช เขตกอกน้อย กรุงเทพมหานคร 10700</p>
+                        <div class="map-wrapper">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.292837330588!2d100.48281317588722!3d13.761214086631853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e299af24f3319f%3A0x868128472f7d30f2!2z4LmC4Lij4LiH4LmA4Lij4Li mOC4qOC4tOC4o-C4suC4p-C4o-C4tA!5e0!3m2!1sth!2sth!4v1700000000000!5m2!1sth!2sth" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p><strong>โรงเรียนผู้ช่วยพยาบาล คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</strong></p>
+            <p>SIPN74 Practical Nurse System | Designed for High Efficiency</p>
+        </footer>
+
+    </div>
+
+    <!-- ==========================================================================
+       3. SYSTEM ROTATING LOADING OVERLAY
+       ========================================================================== -->
+    <div id="system-loader-overlay">
+        <div class="loader-content">
+            <div class="rotating-brand-text">Practical Nurse</div>
+            <div class="loader-spinner"></div>
+            <div class="loader-wait-text">กรุณารอสักครู่...</div>
         </div>
     </div>
 
-    <!-- 3. LOADING OVERLAY -->
-    <div id="loading-overlay">
-        <div class="rotating-title">Practical Nurse</div>
-        <div class="loading-subtext">กรุณารอสักครู่...</div>
-    </div>
-
-    <!-- 4. POPUP - MOBILE ALERT -->
-    <div class="modal-bg" id="mobile-popup">
-        <div class="popup-card">
-            <i class="fa-solid fa-screwdriver-wrench"></i>
-            <h3>แจ้งเตือน</h3>
+    <!-- ==========================================================================
+       4. MOBILE POPUP ALERT (UNDER DEVELOPMENT)
+       ========================================================================== -->
+    <div class="modal-backdrop" id="devAlertModal">
+        <div class="dev-alert-card">
+            <div class="dev-alert-icon">
+                <i class="fa-solid fa-person-digging"></i>
+            </div>
+            <h3>แจ้งเตือนระบบ</h3>
             <p>ขณะนี้อยู่ระหว่างพัฒนา แล้วเจอกันน๊า</p>
-            <button class="btn-close" onclick="closeModal('mobile-popup')">ปิด</button>
+            <button class="modal-btn-close" onclick="closeModal('devAlertModal')">ปิดหน้าต่าง</button>
         </div>
     </div>
 
-    <!-- 5. POPUP - ALUMNI CARD -->
-    <div class="modal-bg" id="alumni-modal">
-        <div class="id-card">
-            <button class="btn-close-card" onclick="closeModal('alumni-modal')"><i class="fa-solid fa-xmark"></i></button>
-            <div class="id-card-header">
+    <!-- ==========================================================================
+       5. ALUMNI STUDENT CARD MODAL (MAHIDOL UNIVERSITY STYLE)
+       ========================================================================== -->
+    <div class="modal-backdrop" id="alumniCardModal">
+        <div class="mahidol-id-modal-card">
+            <button class="close-modal-icon-btn" onclick="closeModal('alumniCardModal')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="id-card-top-bar">
                 <i class="fa-solid fa-university"></i>
                 <div>
                     <h4>มหาวิทยาลัยมหิดล</h4>
-                    <p>MAHIDOL UNIVERSITY / SIRIRAJ</p>
+                    <p>MAHIDOL UNIVERSITY - SIRIRAJ</p>
                 </div>
             </div>
-            
-            <div class="search-box">
-                <input type="text" id="sapInput" placeholder="กรอก SAP ID (เช่น 6770649)">
-                <button onclick="searchAlumni()">ค้นหา</button>
+
+            <div class="sap-search-form">
+                <input type="text" id="sapSearchInput" placeholder="กรอกเลข SAP (เช่น 6770649)">
+                <button onclick="executeSapSearch()">ค้นหา</button>
             </div>
 
-            <div class="id-card-body" id="alumniResult">
-                <div class="photo-frame">รูปถ่ายในอนาคต</div>
-                <div class="student-name">นายเนติราช นิ่มเจริญวัฒนกุล</div>
-                <div class="student-course">หลักสูตรประกาศนียบัตรผู้ช่วยพยาบาล (1 ปี)</div>
-                <div class="barcode" id="barcodeDisplay">*6770649*</div>
-                <div class="barcode-num" id="barcodeNum">6770649</div>
+            <div class="id-card-data-container" id="sapSearchResult">
+                <div class="future-photo-placeholder">
+                    <i class="fa-solid fa-user"></i>
+                    <span>พื้นที่สำหรับรูปถ่าย</span>
+                </div>
+                <div class="student-full-name">นายเนติราช นิ่มเจริญวัฒนกุล</div>
+                <div class="student-program">หลักสูตรประกาศนียบัตรผู้ช่วยพยาบาล (1 ปี)</div>
+                <div class="barcode-visual" id="dynamicBarcodeVisual">*6770649*</div>
+                <div class="barcode-number-text" id="dynamicBarcodeText">6770649</div>
             </div>
         </div>
     </div>
 
+    <!-- ==========================================================================
+       6. APPLICATION JAVASCRIPT CONTROLLER
+       ========================================================================== -->
     <script>
-        function enterMainSite() {
+        // Enter Main Dashboard from Intro Screen
+        function enterMainDashboard() {
             const landing = document.getElementById('landing-screen');
-            const main = document.getElementById('main-website');
+            const mainApp = document.getElementById('main-website');
+
             landing.style.opacity = '0';
             setTimeout(() => {
                 landing.style.display = 'none';
-                main.style.display = 'block';
-                setTimeout(() => { main.style.opacity = '1'; }, 50);
+                mainApp.style.display = 'flex';
+                setTimeout(() => {
+                    mainApp.style.opacity = '1';
+                }, 50);
             }, 800);
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
+        // Sidebar Drawer Navigation Controller
+        function toggleSidebarMenu() {
+            const drawer = document.getElementById('sidebarDrawer');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            drawer.classList.toggle('active');
+            overlay.classList.toggle('active');
         }
 
-        function handleMenuClick(menuName) {
-            showLoading(() => { showModal('mobile-popup'); });
+        // Generic Button Handler with Loader
+        function handleMenuAction(actionName) {
+            triggerRotatingLoader(() => {
+                showModal('devAlertModal');
+            });
         }
 
-        function redirectToOfficial(url) {
-            showLoading(() => { window.open(url, '_blank'); });
+        // Open External Link with Rotating Loader
+        function showRotatingLoader(event) {
+            event.preventDefault();
+            const targetUrl = event.currentTarget.href;
+            
+            triggerRotatingLoader(() => {
+                window.open(targetUrl, '_blank');
+            });
         }
 
-        function openAlumniModal() {
-            showLoading(() => { showModal('alumni-modal'); });
+        // Open Alumni Search Modal
+        function openAlumniCardModal() {
+            triggerRotatingLoader(() => {
+                showModal('alumniCardModal');
+            });
         }
 
-        function showLoading(callback) {
-            const overlay = document.getElementById('loading-overlay');
-            overlay.style.display = 'flex';
+        // System Rotating Loader Visual Effect
+        function triggerRotatingLoader(callback) {
+            const loader = document.getElementById('system-loader-overlay');
+            loader.style.display = 'flex';
+
             setTimeout(() => {
-                overlay.style.display = 'none';
+                loader.style.display = 'none';
                 if (callback) callback();
             }, 1800);
         }
 
-        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        // Modal Controls
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
 
-        function searchAlumni() {
-            const sap = document.getElementById('sapInput').value.trim();
-            const resultBox = document.getElementById('alumniResult');
-            if (sap === "6770649") {
-                document.getElementById('barcodeDisplay').innerText = "*" + sap + "*";
-                document.getElementById('barcodeNum').innerText = sap;
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Execute Alumni SAP Search
+        function executeSapSearch() {
+            const inputVal = document.getElementById('sapSearchInput').value.trim();
+            const resultBox = document.getElementById('sapSearchResult');
+
+            if (inputVal === "6770649") {
+                document.getElementById('dynamicBarcodeVisual').innerText = "*" + inputVal + "*";
+                document.getElementById('dynamicBarcodeText').innerText = inputVal;
                 resultBox.style.display = 'block';
-            } else if(sap !== "") {
-                alert("ค้นหาไม่พบข้อมูลตัวอย่าง ให้ลองกรอกเลข: 6770649");
+            } else if (inputVal !== "") {
+                alert("ไม่พบข้อมูลรหัส SAP นี้ในระบบทดสอบ (ทดลองใช้รหัส: 6770649)");
                 resultBox.style.display = 'none';
+            } else {
+                alert("กรุณากรอกรหัส SAP ID ก่อนทำการค้นหา");
             }
         }
 
-        function openAdminLogin() {
-            const password = prompt("กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin):");
-            if (password === "6770649") {
-                alert("ยินดีต้อนรับผู้ดูแลระบบ! เข้าสู่ระบบสำเร็จ");
-            } else if (password !== null) {
-                alert("รหัสผ่านไม่ถูกต้อง!");
+        // Admin Security Authentication (Passcode: 6770649)
+        function triggerAdminLogin() {
+            const inputPassword = prompt("กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin Password):");
+            if (inputPassword === "6770649") {
+                alert("AUTHENTICATION SUCCESS: ยินดีต้อนรับผู้ดูแลระบบ เข้าสู่ระบบสำเร็จ");
+            } else if (inputPassword !== null) {
+                alert("AUTHENTICATION FAILED: รหัสผ่านไม่ถูกต้อง!");
             }
         }
     </script>
