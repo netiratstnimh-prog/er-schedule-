@@ -3,30 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practical Nurse - Emergency System</title>
+    <title>ระบบแจ้งฉุกเฉิน เพื่อคนในครอบครัว - Practical Nurse</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Prompt:wght@500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         /* ==========================================================================
-           1. COMPACT COLOR SYSTEM & RESETS (BLUE & WHITE THEME)
+           1. CORE DARK ER MONITOR THEME RESETS
            ========================================================================== */
         :root {
-            --primary-navy: #0d1b2a;
-            --deep-blue: #1b263b;
-            --vibrant-blue: #2563eb;
-            --soft-blue: #e0e1dd;
-            --bg-light: #f4f7fb;
-            --white: #ffffff;
-            --danger-red: #ef4444;
-            --accent-green: #10b981;
-            --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --shadow-md: 0 4px 12px rgba(13, 27, 42, 0.08);
-            --shadow-lg: 0 10px 25px rgba(13, 27, 42, 0.15);
-            --transition-smooth: all 0.25s ease;
+            --bg-dark: #050b14;
+            --panel-bg: rgba(13, 27, 42, 0.75);
+            --neon-red: #ff2a2a;
+            --neon-green: #00ff66;
+            --neon-cyan: #00f0ff;
+            --neon-gold: #ffcc00;
+            --text-white: #ffffff;
+            --text-muted: #94a3b8;
+            --border-glow: 0 0 15px rgba(255, 42, 42, 0.4);
+            --transition-fast: all 0.2s ease;
         }
 
         * {
@@ -34,7 +31,6 @@
             margin: 0;
             padding: 0;
             font-family: 'Sarabun', sans-serif;
-            font-size: 13px;
         }
 
         h1, h2, h3, h4, .brand-font {
@@ -42,74 +38,83 @@
         }
 
         body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
+            background-color: var(--bg-dark);
+            color: var(--text-white);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Scanline Overlay Effect for ER Monitor Feel */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 99;
+            pointer-events: none;
+            opacity: 0.6;
         }
 
         /* ==========================================================================
-           2. REALTIME DATE & TIME HEADER + EMERGENCY BUTTON
+           2. HEADER BAR & REALTIME CLOCK
            ========================================================================== */
         header {
             width: 100%;
-            background: var(--primary-navy);
-            color: var(--white);
-            padding: 8px 16px;
+            background: rgba(10, 15, 26, 0.95);
+            border-bottom: 2px solid var(--neon-red);
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow-md);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            box-shadow: 0 4px 20px rgba(255, 42, 42, 0.2);
+            z-index: 10;
         }
 
-        .header-datetime {
+        .header-title-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title-box i {
+            color: var(--neon-red);
+            font-size: 1.6rem;
+            animation: blinkIcon 1s infinite alternate;
+        }
+
+        @keyframes blinkIcon {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        .header-title-box h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-white);
+            letter-spacing: 0.5px;
+        }
+
+        .realtime-clock-badge {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-weight: 500;
-            color: #e2e8f0;
-        }
-
-        .header-datetime i {
-            color: #60a5fa;
-            font-size: 0.95rem;
-        }
-
-        .emergency-trigger-btn {
-            background: var(--danger-red);
-            color: var(--white);
-            border: none;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-            animation: pulseBg 1.8s infinite;
-            transition: var(--transition-smooth);
-        }
-
-        .emergency-trigger-btn:hover {
-            transform: scale(1.05);
-            background: #dc2626;
-        }
-
-        @keyframes pulseBg {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
-            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
         }
 
         /* ==========================================================================
-           3. ROTATING CARD CONTENT & BRANDING
+           3. MAIN LAYOUT & BIGGER ER DISPLAY CARD
            ========================================================================== */
         main {
             flex: 1;
@@ -117,332 +122,498 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            width: 100%;
-            max-width: 480px;
-            text-align: center;
-        }
-
-        .card-container {
-            background: var(--white);
-            border-radius: 16px;
             padding: 30px 20px;
             width: 100%;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid #e2e8f0;
-            margin-bottom: 25px;
-            perspective: 1000px;
+            max-width: 900px;
+            margin: 0 auto;
+            z-index: 10;
         }
 
-        /* 3D Rotating Animation to the Right */
-        .rotating-title-wrapper {
-            display: inline-block;
+        .er-display-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-red);
+            border-radius: 20px;
+            padding: 35px 30px;
+            width: 100%;
+            box-shadow: 0 0 35px rgba(255, 42, 42, 0.25), inset 0 0 15px rgba(255, 42, 42, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+        }
+
+        /* 3D ROTATING TITLE */
+        .rotating-title-container {
             perspective: 1000px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .rotating-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--vibrant-blue);
-            letter-spacing: 1px;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 20px var(--neon-cyan);
             display: inline-block;
-            animation: rotateRight 4s infinite linear;
+            animation: rotateRightContinuous 5s infinite linear;
             transform-style: preserve-3d;
         }
 
-        @keyframes rotateRight {
+        @keyframes rotateRightContinuous {
             0% { transform: rotateY(0deg); }
             100% { transform: rotateY(360deg); }
         }
 
-        .dev-status-text {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--primary-navy);
-            background: #eff6ff;
-            padding: 8px 16px;
-            border-radius: 20px;
+        .sub-dev-badge {
             display: inline-block;
-            border: 1px solid #bfdbfe;
+            background: linear-gradient(90deg, #ff0055, var(--neon-red));
+            color: #fff;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+            margin-bottom: 25px;
         }
 
-        /* ==========================================================================
-           4. FOOTER CREDITS
-           ========================================================================== */
-        footer {
+        /* REALTIME GPS LOCATION PANEL */
+        .gps-info-panel {
+            background: rgba(5, 11, 20, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .gps-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .gps-item i {
+            color: var(--neon-gold);
+            font-size: 1.2rem;
+        }
+
+        .gps-value {
+            color: var(--neon-cyan);
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 1.05rem;
+        }
+
+        /* BIG EMERGENCY BUTTON TRIGGER */
+        .btn-big-emergency {
+            background: linear-gradient(135deg, #ff0000, #990000);
+            color: #fff;
+            border: 3px solid #ff6666;
             width: 100%;
-            background: var(--white);
-            border-top: 1px solid #e2e8f0;
-            padding: 12px 20px;
-            text-align: center;
-            color: var(--text-muted);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.02);
+            max-width: 450px;
+            padding: 18px 30px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            transition: var(--transition-fast);
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            animation: pulseGlow 1.2s infinite alternate;
         }
 
-        footer p {
-            font-size: 0.85rem;
-            line-height: 1.5;
-            font-weight: 500;
+        .btn-big-emergency:hover {
+            transform: scale(1.04);
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            box-shadow: 0 0 45px rgba(255, 0, 0, 1);
         }
 
-        footer span {
-            color: var(--vibrant-blue);
-            font-weight: 600;
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
+            100% { box-shadow: 0 0 40px rgba(255, 0, 0, 1), 0 0 10px #ffffff; }
         }
 
         /* ==========================================================================
-           5. EMERGENCY MODAL & ANIMATED EKG SCREEN
+           4. EMERGENCY MODAL & UNBOUNDED EKG LINE + PULSING HEART
            ========================================================================== */
         .modal-backdrop {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(13, 27, 42, 0.85);
-            backdrop-filter: blur(4px);
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(3, 7, 13, 0.92);
+            backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            padding: 15px;
+            padding: 20px;
         }
 
-        .emergency-modal {
-            background: var(--white);
+        .emergency-modal-content {
+            background: rgba(13, 27, 42, 0.95);
+            border: 2px solid var(--neon-red);
             width: 100%;
-            max-width: 360px;
-            border-radius: 16px;
-            padding: 24px 20px;
+            max-width: 650px;
+            border-radius: 20px;
+            padding: 35px 25px;
             text-align: center;
-            box-shadow: var(--shadow-lg);
-            border: 2px solid var(--danger-red);
-            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(255, 42, 42, 0.5);
+            position: relative;
         }
 
-        @keyframes modalPop {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .emergency-modal-title {
-            color: var(--danger-red);
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 5px;
+        /* UNBOUNDED EKG CONTAINER WITH PULSING HEART */
+        .ekg-live-wrapper {
+            width: 100%;
+            height: 120px;
+            margin: 20px 0;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
         }
 
-        /* Animated EKG SVG Box */
-        .ekg-box {
-            background: #0f172a;
-            border-radius: 10px;
-            padding: 10px;
-            margin: 15px 0;
-            border: 1px solid #1e293b;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ekg-svg {
+        /* Full Width Pure EKG Wave Line (No Border Container) */
+        .pure-ekg-svg {
             width: 100%;
-            height: 60px;
+            height: 100%;
+            overflow: visible;
         }
 
-        .ekg-line {
+        .ekg-path {
             fill: none;
-            stroke: var(--accent-green);
-            stroke-width: 3;
+            stroke: var(--neon-green);
+            stroke-width: 4;
             stroke-linecap: round;
             stroke-linejoin: round;
-            stroke-dasharray: 200;
-            stroke-dashoffset: 200;
-            animation: ekgRun 1.2s infinite linear;
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: ekgSweep 1.2s infinite linear;
+            filter: drop-shadow(0 0 8px var(--neon-green));
         }
 
-        @keyframes ekgRun {
-            0% { stroke-dashoffset: 200; }
-            100% { stroke-dashoffset: -200; }
+        @keyframes ekgSweep {
+            0% { stroke-dashoffset: 600; }
+            100% { stroke-dashoffset: -600; }
         }
 
-        .countdown-timer {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--danger-red);
+        /* Pulsing & Spasming Heart Overlay */
+        .pulsing-heart-icon {
+            position: absolute;
+            font-size: 3.2rem;
+            color: var(--neon-red);
+            filter: drop-shadow(0 0 15px var(--neon-red));
+            animation: heartSpasm 0.6s infinite alternate cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        @keyframes heartSpasm {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+            50% { transform: scale(1.35) rotate(-8deg); opacity: 1; filter: drop-shadow(0 0 25px #ff0000); }
+            100% { transform: scale(1.1) rotate(5deg); opacity: 0.9; }
+        }
+
+        .countdown-display {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--neon-red);
+            text-shadow: 0 0 25px var(--neon-red);
             line-height: 1;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             font-family: 'Prompt', sans-serif;
         }
 
-        .emergency-status-text {
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            margin-bottom: 20px;
-        }
-
-        .btn-cancel-emergency {
-            background: #f1f5f9;
-            color: var(--text-dark);
-            border: 1px solid #cbd5e1;
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
+        .cancel-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: var(--transition-fast);
+            margin-top: 15px;
         }
 
-        .btn-cancel-emergency:hover {
-            background: #e2e8f0;
-            color: var(--danger-red);
+        .cancel-btn:hover {
+            background: var(--neon-red);
+            border-color: var(--neon-red);
+            box-shadow: 0 0 20px rgba(255, 42, 42, 0.8);
+        }
+
+        /* ==========================================================================
+           5. FOOTER & ANIMATED RUNNING AMBULANCE STRIP
+           ========================================================================== */
+        footer {
+            width: 100%;
+            background: rgba(10, 15, 26, 0.95);
+            border-top: 1px solid rgba(0, 240, 255, 0.2);
+            z-index: 10;
+        }
+
+        .footer-credits-text {
+            text-align: center;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+        }
+
+        .footer-credits-text span {
+            color: var(--neon-cyan);
+            font-weight: 700;
+        }
+
+        /* RUNNING AMBULANCE TRACK */
+        .ambulance-track {
+            width: 100%;
+            height: 40px;
+            background: #020617;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid rgba(255, 42, 42, 0.4);
+        }
+
+        .ambulance-runner {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--neon-red);
+            font-size: 1.4rem;
+            animation: driveAmbulance 8s infinite linear;
+        }
+
+        .ambulance-runner span {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        @keyframes driveAmbulance {
+            0% { left: -300px; }
+            100% { left: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Realtime DateTime & Emergency Header -->
+    <!-- Header Bar: System Announcement & Realtime Clock -->
     <header>
-        <div class="header-datetime">
-            <i class="fa-regular fa-clock"></i>
-            <span id="realtimeClock">กำลังโหลดเวลา...</span>
+        <div class="header-title-box">
+            <i class="fa-solid fa-heart-circle-bolt"></i>
+            <h1>ระบบแจ้งฉุกเฉิน เพื่อคนในครอบครัว</h1>
         </div>
-        <button class="emergency-trigger-btn" onclick="startEmergencyProcess()">
-            <i class="fa-solid fa-truck-medical"></i>
-            <span>EMERGENCY</span>
-        </button>
+        <div class="realtime-clock-badge">
+            <i class="fa-regular fa-clock"></i>
+            <span id="realtimeClock">กำลังดึงเวลา...</span>
+        </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main ER Monitor Display Area -->
     <main>
-        <div class="card-container">
-            <!-- Practical Nurse 3D Rotating to the Right -->
-            <div class="rotating-title-wrapper">
+        <div class="er-display-card">
+            
+            <!-- 3D Rotating Title -->
+            <div class="rotating-title-container">
                 <h1 class="rotating-title">Practical Nurse</h1>
             </div>
             
+            <!-- Dev Status Badge -->
             <div>
-                <p class="dev-status-text">เรากำลังพัฒนาแล้วเจอกัน PN74</p>
+                <span class="sub-dev-badge">เรากำลังพัฒนาแล้วเจอกัน PN74</span>
             </div>
+
+            <!-- GPS Realtime Location Panel -->
+            <div class="gps-info-panel">
+                <div class="gps-item">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    <span>ละติจูด (LAT):</span>
+                    <span class="gps-value" id="gpsLat">กำลังค้นหา...</span>
+                </div>
+                <div class="gps-item">
+                    <i class="fa-solid fa-map-pin"></i>
+                    <span>ลองจิจูด (LONG):</span>
+                    <span class="gps-value" id="gpsLong">กำลังค้นหา...</span>
+                </div>
+                <div class="gps-item">
+                    <i class="fa-solid fa-satellite-dish"></i>
+                    <span>สถานะ GPS:</span>
+                    <span class="gps-value" id="gpsStatus" style="color:var(--neon-green);">เชื่อมต่อแล้ว</span>
+                </div>
+            </div>
+
+            <!-- Main Emergency Call Button -->
+            <button class="btn-big-emergency" onclick="triggerEmergencyMode()">
+                <i class="fa-solid fa-truck-medical"></i>
+                <span>กดแจ้งเหตุฉุกเฉินทันที (1669)</span>
+            </button>
         </div>
     </main>
 
-    <!-- Footer Credits -->
+    <!-- Footer Area & Animated Ambulance Track -->
     <footer>
-        <p>Practical Nurse @2024 G74</p>
-        <p><span>Si 2567</span></p>
+        <div class="footer-credits-text">
+            Practical Nurse @2024 G74 | <span>Si 2567</span>
+        </div>
+
+        <!-- Ambulance Running Track -->
+        <div class="ambulance-track">
+            <div class="ambulance-runner">
+                <i class="fa-solid fa-truck-medical"></i>
+                <i class="fa-solid fa-lightbulb" style="color:var(--neon-gold); font-size:0.8rem;"></i>
+                <span>EMERGENCY MEDICAL SERVICES (EMS 1669) - UNIT PN74 SIRIRAJ</span>
+                <i class="fa-solid fa-truck-medical"></i>
+            </div>
+        </div>
     </footer>
 
-    <!-- Emergency Countdown Modal Window -->
+    <!-- Emergency Modal Window with Full EKG & Pulsing Heart -->
     <div class="modal-backdrop" id="emergencyModal">
-        <div class="emergency-modal">
-            <div class="emergency-modal-title">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <span>ระบบแจ้งเหตุฉุกเฉิน</span>
-            </div>
+        <div class="emergency-modal-content">
+            <h2 style="color:var(--neon-red); font-size:1.6rem; margin-bottom:10px;">
+                <i class="fa-solid fa-circle-radiation"></i> ระบบกำลังส่งสัญญาณฉุกเฉิน!
+            </h2>
+            <p style="color:var(--text-muted); font-size:0.95rem;">ระบบดึงพิกัดของคุณ และกำลังเตรียมต่อสายฉุกเฉินทางการแพทย์</p>
 
-            <!-- Animated EKG Line Screen -->
-            <div class="ekg-box">
-                <svg class="ekg-svg" viewBox="0 0 150 50">
-                    <path class="ekg-line" d="M 0 25 L 35 25 L 42 10 L 48 40 L 56 0 L 64 48 L 72 25 L 80 25 L 150 25" />
+            <!-- Unbounded Pure EKG Line + Spasming Pulsing Heart Overlay -->
+            <div class="ekg-live-wrapper">
+                <svg class="pure-ekg-svg" viewBox="0 0 500 100">
+                    <path class="ekg-path" d="M 0 50 L 100 50 L 115 20 L 130 80 L 145 0 L 165 100 L 180 50 L 210 50 L 500 50" />
                 </svg>
+                <i class="fa-solid fa-heart-pulse pulsing-heart-icon"></i>
             </div>
 
-            <div class="countdown-timer" id="countdownNumber">10</div>
-            <p class="emergency-status-text">ระบบกำลังเตรียมโทรออกฉุกเฉินไปยัง <strong>1669</strong></p>
+            <div class="countdown-display" id="countdownNumber">10</div>
+            <p style="color:var(--neon-gold); font-weight:600; margin-bottom:15px;" id="gpsLocationTransmitText">
+                กำลังเตรียมส่งพิกัดตำแหน่งอุปกรณ์...
+            </p>
 
-            <button class="btn-cancel-emergency" onclick="cancelEmergencyProcess()">
-                <i class="fa-solid fa-xmark"></i> กดยกเลิกสายฉุกเฉิน
+            <button class="cancel-btn" onclick="cancelEmergencyMode()">
+                <i class="fa-solid fa-xmark"></i> กดยกเลิกการโทรฉุกเฉิน
             </button>
         </div>
     </div>
 
-    <!-- Web Audio API Siren Sound Generator (ไม่ต้องงึ่งไฟล์ภายนอก) -->
+    <!-- JavaScript Controller logic -->
     <script>
-        // Realtime Date and Clock Controller
-        function updateDateTime() {
+        // 1. Realtime Clock Updater
+        function updateClock() {
             const now = new Date();
-            const dateOptions = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' };
-            const dateStr = now.toLocaleDateString('th-TH', dateOptions);
+            const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', weekday: 'short' });
             const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
             document.getElementById('realtimeClock').innerText = `${dateStr} | ${timeStr}`;
         }
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
+        setInterval(updateClock, 1000);
+        updateClock();
 
-        // Web Audio Synthesizer for Siren Alert Sound
+        // 2. Realtime Device GPS Fetcher
+        let currentLat = "13.7563";
+        let currentLong = "100.5018";
+
+        function fetchRealtimeGPS() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        currentLat = position.coords.latitude.toFixed(6);
+                        currentLong = position.coords.longitude.toFixed(6);
+                        document.getElementById('gpsLat').innerText = currentLat;
+                        document.getElementById('gpsLong').innerText = currentLong;
+                        document.getElementById('gpsStatus').innerText = "พิกัดตรงสด";
+                    },
+                    (error) => {
+                        document.getElementById('gpsLat').innerText = "13.7563 (จำลอง)";
+                        document.getElementById('gpsLong').innerText = "100.5018 (จำลอง)";
+                        document.getElementById('gpsStatus').innerText = "โหมดพิกัดสำรอง";
+                    },
+                    { enableHighAccuracy: true, timeout: 5000 }
+                );
+            } else {
+                document.getElementById('gpsStatus').innerText = "ไม่รองรับ GPS";
+            }
+        }
+        fetchRealtimeGPS();
+
+        // 3. Web Audio API High-Intensity Siren Synthesizer
         let audioCtx = null;
         let sirenOsc = null;
-        let sirenTimer = null;
+        let sirenInterval = null;
 
-        function startSirenSound() {
+        function startAggressiveSiren() {
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 sirenOsc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
 
-                sirenOsc.type = 'sine';
+                sirenOsc.type = 'sawtooth'; // Aggressive Siren Tone
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+
                 sirenOsc.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
-
                 sirenOsc.start();
 
-                let isHigh = false;
-                sirenTimer = setInterval(() => {
-                    if (sirenOsc) {
-                        sirenOsc.frequency.setValueAtTime(isHigh ? 900 : 600, audioCtx.currentTime);
-                        isHigh = !isHigh;
+                let isHighFreq = false;
+                sirenInterval = setInterval(() => {
+                    if (sirenOsc && audioCtx) {
+                        // Rapid alternating siren frequencies (800Hz - 1300Hz)
+                        sirenOsc.frequency.setValueAtTime(isHighFreq ? 1300 : 800, audioCtx.currentTime);
+                        isHighFreq = !isHighFreq;
                     }
-                }, 300);
-            } catch(e) {
-                console.log("Audio play blocked by browser policy.");
+                }, 250);
+            } catch (e) {
+                console.log("Audio Context requires user click interaction first.");
             }
         }
 
-        function stopSirenSound() {
-            if (sirenTimer) clearInterval(sirenTimer);
+        function stopAggressiveSiren() {
+            if (sirenInterval) clearInterval(sirenInterval);
             if (sirenOsc) {
-                try { sirenOsc.stop(); sirenOsc.disconnect(); } catch(e){}
+                try { sirenOsc.stop(); sirenOsc.disconnect(); } catch (e) {}
                 sirenOsc = null;
             }
             if (audioCtx) {
-                try { audioCtx.close(); } catch(e){}
+                try { audioCtx.close(); } catch (e) {}
                 audioCtx = null;
             }
         }
 
-        // Emergency Countdown & Telephony Trigger
-        let countdownValue = 10;
-        let countdownInterval = null;
+        // 4. Emergency Trigger Logic & 10-Second Countdown
+        let countdownVal = 10;
+        let timerId = null;
 
-        function startEmergencyProcess() {
+        function triggerEmergencyMode() {
             document.getElementById('emergencyModal').style.display = 'flex';
-            countdownValue = 10;
-            document.getElementById('countdownNumber').innerText = countdownValue;
+            countdownVal = 10;
+            document.getElementById('countdownNumber').innerText = countdownVal;
+            document.getElementById('gpsLocationTransmitText').innerText = `พิกัดปัจจุบัน: ${currentLat}, ${currentLong}`;
 
-            startSirenSound();
+            startAggressiveSiren();
 
-            countdownInterval = setInterval(() => {
-                countdownValue--;
-                document.getElementById('countdownNumber').innerText = countdownValue;
+            timerId = setInterval(() => {
+                countdownVal--;
+                document.getElementById('countdownNumber').innerText = countdownVal;
 
-                if (countdownValue <= 0) {
-                    clearInterval(countdownInterval);
-                    stopSirenSound();
-                    // Redirect to Device Phone Dialer 1669
+                if (countdownVal <= 0) {
+                    clearInterval(timerId);
+                    stopAggressiveSiren();
+                    // Auto Call Emergency 1669
                     window.location.href = "tel:1669";
                 }
             }, 1000);
         }
 
-        function cancelEmergencyProcess() {
-            clearInterval(countdownInterval);
-            stopSirenSound();
+        function cancelEmergencyMode() {
+            clearInterval(timerId);
+            stopAggressiveSiren();
             document.getElementById('emergencyModal').style.display = 'none';
         }
     </script>
