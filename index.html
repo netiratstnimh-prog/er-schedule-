@@ -3,663 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสารสนเทศองค์กร</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <title>Practical Nurse - คณะแพทยศาสตร์ศิริราชพยาบาล</title>
+    <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Prompt) -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        * { font-family: 'Prompt', sans-serif; }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        :root {
+            --primary-navy: #002244;
+            --secondary-blue: #0056b3;
+            --accent-blue: #0088cc;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --text-white: #ffffff;
         }
-        .fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
         }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* --- 1. INTRO / LANDING SCREEN --- */
+        #landing-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, #001a33 0%, #000814 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-white);
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        /* Projector Beam Effect */
+        #landing-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at top, rgba(0, 136, 204, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Projector Zoom & Blur Animation */
+        .projector-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px rgba(0, 136, 204, 0.8), 0 0 40px rgba(255, 255, 255, 0.5);
+            animation: projectorZoom 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            margin-bottom: 25px;
+            opacity: 0;
+        }
+
+        @keyframes projectorZoom {
+            0% {
+                transform: scale(0.2);
+                filter: blur(15px);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+                filter: blur(4px);
+            }
+            100% {
+                transform: scale(1);
+                filter: blur(0px);
+                opacity: 1;
+            }
+        }
+
+        .welcome-text {
+            font-size: 1.15rem;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            color: #e0e6ed;
+            animation: fadeIn 1.5s ease-in 2s forwards;
+            opacity: 0;
+        }
+
+        .sub-text {
+            font-size: 1.1rem;
+            color: #90caf9;
+            margin-bottom: 35px;
+            animation: fadeIn 1.5s ease-in 2.3s forwards;
+            opacity: 0;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            to { opacity: 1; }
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-blue));
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+            transition: all 0.3s ease;
+            animation: fadeIn 1.5s ease-in 2.6s forwards;
+            opacity: 0;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.7);
+        }
+
+        /* --- 2. MAIN WEBSITE --- */
+        #main-website {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        header {
+            background-color: var(--primary-navy);
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .lock-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lock-btn:hover {
+            color: var(--accent-blue);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--secondary-blue);
+        }
+
+        .card h2 {
+            color: var(--primary-navy);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .external-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--secondary-blue);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: background 0.3s;
+        }
+
+        .external-btn:hover {
+            background-color: var(--primary-navy);
+        }
+
+        /* Nav Grid Buttons */
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-card-btn {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-card-btn i {
+            font-size: 1.8rem;
+            color: var(--secondary-blue);
+        }
+
+        .nav-card-btn span {
+            font-weight: 600;
+            color: var(--primary-navy);
+        }
+
+        .nav-card-btn:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        .map-container {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        /* --- 3. LOADING OVERLAY (ROTATE & LIGHT EFFECT) --- */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 34, 68, 0.92);
+            backdrop-filter: blur(5px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            color: white;
+        }
+
+        .rotating-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ffffff, var(--accent-blue), #ffffff);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: rotateY 1.8s infinite linear, shine 2s infinite linear;
+            margin-bottom: 15px;
+        }
+
+        @keyframes rotateY {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .loading-subtext {
+            font-size: 1rem;
+            letter-spacing: 1px;
+            color: #d0e1fd;
+        }
+
+        /* --- 4. MOBILE-STYLE POPUP / MODAL --- */
+        #mobile-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            padding: 20px;
+        }
+
+        .popup-card {
+            background: white;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 18px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popupScale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popupScale {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .popup-card i {
+            font-size: 2.5rem;
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+
+        .popup-card h3 {
+            color: var(--primary-navy);
+            margin-bottom: 10px;
+            font-size: 1.15rem;
+        }
+
+        .popup-card p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .popup-btn-close {
+            background-color: var(--secondary-blue);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 10px 0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .popup-btn-close:hover {
+            background-color: var(--primary-navy);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .projector-title { font-size: 2.2rem; }
+            .welcome-text { font-size: 1rem; }
+            .sub-text { font-size: 0.95rem; }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen relative overflow-x-hidden">
+<body>
 
-    <!-- ================= 1. SPLASH SCREEN / EFFECT ================= -->
-    <div id="splashScreen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white transition-opacity duration-700">
-        <div class="text-center space-y-4 fade-in">
-            <div class="w-20 h-20 bg-indigo-600/30 rounded-2xl border border-indigo-400/30 flex items-center justify-center mx-auto mb-6 shadow-2xl backdrop-blur-md">
-                <i class="fa-solid fa-layer-group text-4xl text-indigo-400"></i>
-            </div>
-            <h1 class="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-indigo-200">
-                ยินดีต้อนรับผู้ใช้งาน
-            </h1>
-            <p class="text-indigo-300/80 font-light text-lg">ระบบสารสนเทศองค์กร (MIS)</p>
-            <div class="pt-6">
-                <div class="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            </div>
-        </div>
+    <!-- 1. INTRO SCREEN -->
+    <div id="landing-screen">
+        <h1 class="projector-title">Practical Nurse</h1>
+        <p class="welcome-text">ยินดีต้อนรับ โรงเรียนผู้ช่วยพยาบาลคณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</p>
+        <p class="sub-text">(SIPN74)</p>
+        <button class="btn-start" onclick="enterMainSite()">เริ่มต้นใช้งาน</button>
     </div>
 
-    <!-- ================= 2. AUTH MODAL (LOGIN / RESET / FIRST TIME) ================= -->
-    <div id="authModal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-full max-w-md border border-slate-100 overflow-hidden fade-in">
-            <div class="bg-indigo-900 text-white p-6 relative">
-                <h2 id="authTitle" class="text-xl font-bold">เข้าสู่ระบบสารสนเทศ</h2>
-                <p id="authSubTitle" class="text-xs text-indigo-200 mt-1">กรุณากรอกข้อมูลเพื่อเข้าใช้งานระบบ</p>
-            </div>
-            
-            <div class="p-6">
-                <!-- Form Login -->
-                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">ชื่อผู้ใช้งาน</label>
-                        <input type="text" id="usernameInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm" placeholder="กรอกชื่อผู้ใช้">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">รหัสผ่าน</label>
-                        <input type="password" id="passwordInput" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm" placeholder="กรอกรหัสผ่าน">
-                    </div>
-                    <div id="firstTimeNotice" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
-                        <i class="fa-solid fa-info-circle mr-1"></i> เข้าใช้งานครั้งแรก: รหัสที่คุณกรอกนี้จะถูกบันทึกเป็นรหัสผ่านสำหรับใช้งานครั้งต่อไป
-                    </div>
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-400" id="loginTypeHint"></span>
-                        <button type="button" onclick="showResetForm()" class="text-indigo-600 hover:underline">ลืมรหัสผ่าน?</button>
-                    </div>
-                    <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium shadow-lg shadow-indigo-200 transition text-sm">
-                        เข้าสู่ระบบ
-                    </button>
-                </form>
-
-                <!-- Form Forgot Password / OTP -->
-                <form id="resetForm" onsubmit="handleResetOTP(event)" class="space-y-4 hidden">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">อีเมลที่ลงทะเบียน</label>
-                        <input type="email" id="resetEmail" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-sm" placeholder="example@domain.com">
-                    </div>
-                    <div id="otpSection" class="hidden space-y-2">
-                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">รหัส OTP (จำลอง: 1234)</label>
-                        <input type="text" id="otpInput" maxlength="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition text-center tracking-widest text-lg" placeholder="1234">
-                    </div>
-                    <button type="submit" id="resetBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition text-sm">
-                        ส่งรหัส OTP
-                    </button>
-                    <button type="button" onclick="showLoginForm()" class="w-full py-2 text-slate-500 text-xs hover:text-slate-700">กลับสู่หน้าล็อกอิน</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= 3. MAIN DASHBOARD LAYOUT ================= -->
-    <div id="mainDashboard" class="hidden flex flex-col min-h-screen">
-        
-        <!-- Header / Topbar -->
-        <header class="glass-effect sticky top-0 z-20 border-b border-slate-200/80 px-4 lg:px-8 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="p-2 hover:bg-slate-100 rounded-lg text-slate-600 transition">
-                    <i class="fa-solid fa-bars text-lg"></i>
-                </button>
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">MIS</div>
-                    <span class="font-semibold text-slate-800 text-sm hidden sm:inline">ระบบสารสนเทศ</span>
-                </div>
-            </div>
-
-            <!-- User Status & Realtime Clock -->
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden md:block">
-                    <div id="clockDisplay" class="text-xs font-semibold text-slate-700">--:--:--</div>
-                    <div id="dateDisplay" class="text-[10px] text-slate-400">--/--/----</div>
-                </div>
-
-                <div class="h-6 w-px bg-slate-200 hidden md:block"></div>
-
-                <div class="flex items-center gap-2">
-                    <button onclick="openProfileModal()" class="flex items-center gap-2 p-1.5 hover:bg-slate-100 rounded-xl transition border border-slate-200/60" title="ตั้งค่าโปรไฟล์">
-                        <img id="headerAvatar" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" class="w-7 h-7 rounded-lg object-cover">
-                        <span id="headerUserName" class="text-xs font-medium text-slate-700 max-w-[100px] truncate">ผู้ใช้งาน</span>
-                        <i class="fa-solid fa-key text-xs text-amber-500 ml-1"></i>
-                    </button>
-                </div>
-            </div>
+    <!-- 2. MAIN WEBSITE -->
+    <div id="main-website">
+        <header>
+            <div class="header-title">Practical Nurse</div>
+            <button class="lock-btn" onclick="openAdminLogin()" title="เข้าสู่ระบบผู้ดูแล"><i class="fa-solid fa-lock"></i></button>
         </header>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
-            
-            <!-- Notice Banner -->
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl font-bold">ยินดีต้อนรับสู่ระบบบริหารสารสนเทศ</h2>
-                    <p class="text-xs text-indigo-100 mt-1">จัดการข้อมูล ตารางเวรปฏิบัติงาน และติดต่อ AI ผู้ช่วยได้จากที่นี่</p>
-                </div>
-                <div class="hidden sm:block text-4xl opacity-20"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="container">
+            <!-- ประวัติโรงเรียน -->
+            <div class="card">
+                <h2><i class="fa-solid fa-hospital-user"></i> ประวัติโรงเรียนผู้ช่วยพยาบาล</h2>
+                <p>โรงเรียนผู้ช่วยพยาบาล คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล มีประวัติศาสตร์การดำเนินงานมาอย่างยาวนาน โดยมุ่งเน้นการผลิตผู้ช่วยพยาบาลที่มีความรู้ ความสามารถ และคุณธรรม เพื่อสนับสนุนการดูแลผู้ป่วยอย่างมีคุณภาพ</p>
+                <a href="https://www.si.mahidol.ac.th/th/education/pn/" target="_blank" class="external-btn">
+                    อ่านประวัติเพิ่มเติมที่เว็บทางการ <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
             </div>
 
-            <!-- Section 1: ตารางเวร -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm">
-                        <i class="fa-solid fa-calendar-days text-indigo-600"></i> ตารางเวรปฏิบัติงานประจำสัปดาห์
-                    </h3>
-                    <span class="text-xs text-slate-400">อัปเดตล่าสุด: วันนี้</span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="border-b border-slate-100 text-slate-400 font-medium">
-                                <th class="p-3">เจ้าหน้าที่</th>
-                                <th class="p-3">ตำแหน่ง</th>
-                                <th class="p-3">กะการทำงาน</th>
-                                <th class="p-3">สถานะ</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-50">
-                            <tr>
-                                <td class="p-3 font-medium text-slate-700 flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs">👨‍💼</div>
-                                    นายสมชาย ใจดี
-                                </td>
-                                <td class="p-3 text-slate-500">เจ้าหน้าที่สารสนเทศ</td>
-                                <td class="p-3 text-slate-500">เช้า (08:30 - 16:30)</td>
-                                <td class="p-3"><span class="px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 font-medium text-[10px]">ปฏิบัติงาน</span></td>
-                            </tr>
-                            <tr>
-                                <td class="p-3 font-medium text-slate-700 flex items-center gap-2">
-                                    <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs">👩‍💼</div>
-                                    นางสาววิภา รักดี
-                                </td>
-                                <td class="p-3 text-slate-500">ผู้ดูแลระบบ (Admin)</td>
-                                <td class="p-3 text-slate-500">บ่าย (16:30 - 00:30)</td>
-                                <td class="p-3"><span class="px-2 py-1 rounded-full bg-amber-50 text-amber-600 font-medium text-[10px]">เตรียมพร้อม</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Section 2: ข้อมูลทั่วไป -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-                    <div class="text-slate-400 text-xs mb-1">ประกาศสำคัญ</div>
-                    <div class="font-bold text-slate-700 text-sm mb-2">ปิดปรับปรุงระบบเซิร์ฟเวอร์ประจำปี</div>
-                    <p class="text-slate-500 text-xs">ระบบจะปิดปรับปรุงชั่วคราวในวันศุกร์นี้ เวลา 22:00 น. - 02:00 น.</p>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-                    <div class="text-slate-400 text-xs mb-1">สถิติระบบ</div>
-                    <div class="font-bold text-slate-700 text-sm mb-2">จำนวนผู้เข้าใช้งานวันนี้</div>
-                    <div class="text-2xl font-bold text-indigo-600">128 <span class="text-xs text-slate-400 font-normal">ครั้ง</span></div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
-                    <div class="text-slate-400 text-xs mb-1">สถานะระบบ</div>
-                    <div class="font-bold text-slate-700 text-sm mb-2">การเชื่อมต่อเครือข่าย</div>
-                    <div class="flex items-center gap-2 text-xs text-emerald-600 font-medium">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> ทำงานปกติ (Online)
+            <!-- เมนูหลัก (ปุ่มต่างๆ) -->
+            <div class="card">
+                <h2><i class="fa-solid fa-list-check"></i> เมนูการใช้งาน</h2>
+                <div class="grid-buttons">
+                    <div class="nav-card-btn" onclick="handleMenuClick('นักศึกษา')">
+                        <i class="fa-solid fa-user-graduate"></i>
+                        <span>นักศึกษา</span>
+                    </div>
+                    <div class="nav-card-btn" onclick="handleMenuClick('โครงสร้างบุคลากร')">
+                        <i class="fa-solid fa-sitemap"></i>
+                        <span>โครงสร้างบุคลากร</span>
+                    </div>
+                    <div class="nav-card-btn" onclick="handleMenuClick('ติดต่อ')">
+                        <i class="fa-solid fa-address-book"></i>
+                        <span>ติดต่อ</span>
+                    </div>
+                    <div class="nav-card-btn" onclick="handleMenuClick('โทร')">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>โทร</span>
+                    </div>
+                    <div class="nav-card-btn" onclick="redirectToOfficial('https://www.si.mahidol.ac.th/th/education/pn/')">
+                        <i class="fa-solid fa-globe"></i>
+                        <span>เว็บไซต์หลัก</span>
+                    </div>
+                    <div class="nav-card-btn" onclick="handleMenuClick('ศิษย์เก่าค้นหารายชื่อติดต่อ')">
+                        <i class="fa-solid fa-users-viewfinder"></i>
+                        <span>ศิษย์เก่าค้นหารายชื่อติดต่อ</span>
                     </div>
                 </div>
             </div>
 
-        </main>
-    </div>
-
-    <!-- ================= 4. SIDEBAR POPUP (OFF-CANVAS) ================= -->
-    <div id="sidebarBackdrop" onclick="toggleSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-30 backdrop-blur-xs transition-opacity"></div>
-    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-72 bg-white z-40 shadow-2xl transform -translate-x-full transition-transform duration-300 flex flex-col justify-between">
-        <div class="p-5">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="font-bold text-slate-800 text-sm">เมนูระบบสารสนเทศ</h3>
-                <button onclick="toggleSidebar()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-
-            <!-- List 7 Items (กำลังพัฒนา) -->
-            <div class="space-y-1">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2">รายการระบบ</div>
-                <template id="menuTemplate">
-                    <!-- JS Insert Loop -->
-                </template>
-                <div id="menuItemsList" class="space-y-1"></div>
-            </div>
-
-            <hr class="my-4 border-slate-100">
-
-            <!-- Call Buttons -->
-            <div class="space-y-2">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-1">เบอร์โทรศัพท์ติดต่อ</div>
-                <button onclick="callPhone('เบอร์หลัก: 02-123-4567')" class="w-full text-left px-3 py-2 rounded-xl border border-slate-200/80 hover:bg-slate-50 transition flex justify-between items-center text-xs">
-                    <span class="text-slate-700"><i class="fa-solid fa-phone text-indigo-500 mr-2"></i> โทรเบอร์หลัก</span>
-                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">กำลังพัฒนา</span>
-                </button>
-                <button onclick="callPhone('เบอร์กลาง: 02-999-9999')" class="w-full text-left px-3 py-2 rounded-xl border border-slate-200/80 hover:bg-slate-50 transition flex justify-between items-center text-xs">
-                    <span class="text-slate-700"><i class="fa-solid fa-headset text-indigo-500 mr-2"></i> โทรเบอร์กลาง</span>
-                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">กำลังพัฒนา</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Admin & Logout Footer -->
-        <div class="p-4 border-t border-slate-100 bg-slate-50/50 space-y-2">
-            <button onclick="openAdminModal()" class="w-full py-2.5 px-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-medium flex items-center justify-center gap-2 shadow-sm transition">
-                <i class="fa-solid fa-key"></i> เข้าสู่ระบบแอดมิน (Admin)
-            </button>
-            <button onclick="handleLogout()" class="w-full py-2.5 px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-medium flex items-center justify-center gap-2 transition">
-                <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
-            </button>
-        </div>
-    </aside>
-
-    <!-- ================= 5. PROFILE EDIT MODAL ================= -->
-    <div id="profileModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm border border-slate-100 overflow-hidden p-6 space-y-4">
-            <h3 class="font-bold text-slate-800 text-base">แก้ไขโปรไฟล์ & เปลี่ยนรหัสผ่าน</h3>
-            <div class="flex flex-col items-center gap-3">
-                <img id="profilePreview" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" class="w-20 h-20 rounded-2xl object-cover border-2 border-indigo-500 shadow-sm">
-                <input type="file" id="avatarInput" accept="image/*" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">เปลี่ยนชื่อผู้ใช้</label>
-                <input type="text" id="editUsername" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">ตั้งรหัสผ่านใหม่</label>
-                <input type="password" id="editPassword" placeholder="กรอกรหัสใหม่เพื่อเปลี่ยน" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500">
-            </div>
-            <p class="text-[10px] text-rose-500">* เมื่อเปลี่ยนรหัสผ่านสำเร็จ ระบบจะทำการล็อกเอาท์ให้อัตโนมัติเพื่อความปลอดภัย</p>
-            <div class="flex gap-2">
-                <button onclick="saveProfile()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-medium">บันทึกข้อมูล</button>
-                <button onclick="closeProfileModal()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs">ยกเลิก</button>
+            <!-- แผนที่ -->
+            <div class="card">
+                <h2><i class="fa-solid fa-map-location-dot"></i> แผนที่ตั้ง</h2>
+                <p>โรงพยาบาลศิริราช เลขที่ 2 ถนนวังหลัง แขวงศิริราช เขตกอกน้อย กรุงเทพฯ 10700</p>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.292837330588!2d100.48281317588722!3d13.761214086631853!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e299af24f3319f%3A0x868128472f7d30f2!2z4LmC4Lij4LiH4LmA4Lij4Li meOC4qOC4tOC4o-C4suC4p-C4o-C4tA!5e0!3m2!1sth!2sth!4v1700000000000!5m2!1sth!2sth" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <br>
+                <a href="https://maps.app.goo.gl/vJbJgQ4qW7H24yS17" target="_blank" class="external-btn">
+                    เปิดใน Google Maps <i class="fa-solid fa-map-pin"></i>
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- ================= 6. ADMIN LOGIN / PANEL MODAL ================= -->
-    <div id="adminModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md border border-slate-100 overflow-hidden p-6 space-y-4">
-            <div id="adminAuthView">
-                <h3 class="font-bold text-slate-800 text-base mb-1">เข้าสู่ระบบผู้ดูแลระบบ (Admin)</h3>
-                <p id="adminPassHint" class="text-xs text-slate-500 mb-4">การเข้าใช้งานครั้งแรก ระบบจะบันทึกรหัสที่คุณตั้งไว้นี้</p>
-                <form onsubmit="handleAdminAuth(event)" class="space-y-3">
-                    <input type="password" id="adminPassInput" required placeholder="กรอกรหัสผ่าน Admin" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-amber-500">
-                    <button type="submit" class="w-full py-2.5 bg-amber-500 text-white font-medium rounded-xl text-xs shadow-md shadow-amber-100">ยืนยัน</button>
-                    <button type="button" onclick="closeAdminModal()" class="w-full py-2 text-slate-400 text-xs">ยกเลิก</button>
-                </form>
-            </div>
+    <!-- 3. LOADING OVERLAY -->
+    <div id="loading-overlay">
+        <div class="rotating-title">Practical Nurse</div>
+        <div class="loading-subtext">กรุณารอสักครู่...</div>
+    </div>
 
-            <div id="adminPanelView" class="hidden space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-slate-800 text-sm">แผงควบคุม Admin: เพิ่มผู้ใช้งาน</h3>
-                    <button onclick="closeAdminModal()" class="text-slate-400 text-xs"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-xl space-y-2 border border-slate-100">
-                    <input type="text" id="newAdminUser" placeholder="ชื่อผู้ใช้งานใหม่" class="w-full px-3 py-2 border rounded-lg text-xs">
-                    <input type="password" id="newAdminPass" placeholder="กำหนดรหัสผ่าน" class="w-full px-3 py-2 border rounded-lg text-xs">
-                    <button onclick="addUserByAdmin()" class="w-full py-2 bg-indigo-600 text-white rounded-lg text-xs font-medium">เพิ่มผู้ใช้ในระบบ</button>
-                </div>
-                <div>
-                    <div class="text-xs font-bold text-slate-600 mb-2">รายชื่อผู้ใช้ในระบบ</div>
-                    <ul id="userListDisplay" class="text-xs divide-y divide-slate-100 max-h-36 overflow-y-auto"></ul>
-                </div>
-            </div>
+    <!-- 4. POPUP NOTIFICATION -->
+    <div id="mobile-popup">
+        <div class="popup-card">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+            <h3>แจ้งเตือน</h3>
+            <p>ขณะนี้อยู่ระหว่างพัฒนา แล้วเจอกันน๊า</p>
+            <button class="popup-btn-close" onclick="closePopup()">ปิด</button>
         </div>
     </div>
 
-    <!-- ================= 7. FLOATING AI CHAT WIDGET ================= -->
-    <div class="fixed bottom-6 right-6 z-30">
-        <!-- Chat Window -->
-        <div id="aiChatWindow" class="hidden mb-3 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col h-96 fade-in">
-            <div class="bg-indigo-600 text-white p-3 flex justify-between items-center text-xs">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-robot"></i>
-                    <span class="font-semibold">ผู้ช่วย AI ประจำระบบ</span>
-                </div>
-                <button onclick="toggleAIChat()" class="text-indigo-200 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <!-- Message List -->
-            <div id="aiMessages" class="flex-1 p-3 overflow-y-auto space-y-3 text-xs bg-slate-50/50">
-                <div class="bg-white p-2.5 rounded-xl border border-slate-100 max-w-[85%] shadow-xs">
-                    สวัสดีครับ! ผมเป็น AI ผู้ช่วยประจำระบบสารสนเทศ มีอะไรให้ผมช่วยเหลือวันนี้ไหมครับ?
-                </div>
-            </div>
-            <!-- Input Area -->
-            <form onsubmit="sendAIMessage(event)" class="p-2 border-t border-slate-100 flex gap-1 bg-white">
-                <input type="text" id="aiInput" required placeholder="พิมพ์ข้อความคุยกับ AI..." class="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500">
-                <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs"><i class="fa-solid fa-paper-plane"></i></button>
-            </form>
-        </div>
-
-        <!-- Floating Button -->
-        <button onclick="toggleAIChat()" class="w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-xl flex items-center justify-center text-xl transition transform hover:scale-105 active:scale-95 ml-auto">
-            <i class="fa-solid fa-comments"></i>
-        </button>
-    </div>
-
-    <!-- ================= 8. JAVASCRIPT LOGIC ================= -->
     <script>
-        // Data State Keys
-        const USER_PASS_KEY = "app_user_password";
-        const USER_NAME_KEY = "app_user_name";
-        const ADMIN_PASS_KEY = "app_admin_password";
-        const AVATAR_KEY = "app_user_avatar";
-
-        let currentUserName = localStorage.getItem(USER_NAME_KEY) || "";
-        let isFirstTimeLogin = !localStorage.getItem(USER_PASS_KEY);
-
-        // --- Init App ---
-        window.addEventListener('DOMContentLoaded', () => {
-            // Splash Screen timing
-            setTimeout(() => {
-                document.getElementById('splashScreen').classList.add('opacity-0');
-                setTimeout(() => {
-                    document.getElementById('splashScreen').classList.add('hidden');
-                    checkAuthStatus();
-                }, 700);
-            }, 2000);
-
-            // Menu Items List Render
-            renderMenuItems();
+        // เข้าสู่หน้าหลักเว็บไซต์
+        function enterMainSite() {
+            const landing = document.getElementById('landing-screen');
+            const main = document.getElementById('main-website');
             
-            // Start Realtime Clock
-            startClock();
-        });
-
-        // --- Realtime Clock ---
-        function startClock() {
-            const update = () => {
-                const now = new Date();
-                document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('th-TH');
-                document.getElementById('dateDisplay').innerText = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric'});
-            };
-            update();
-            setInterval(update, 1000);
-        }
-
-        // --- Auth Check ---
-        function checkAuthStatus() {
-            document.getElementById('authModal').classList.remove('hidden');
-            const storedPass = localStorage.getItem(USER_PASS_KEY);
-            if (!storedPass) {
-                document.getElementById('firstTimeNotice').classList.remove('hidden');
-                document.getElementById('loginTypeHint').innerText = "โหมด: ตั้งรหัสผ่านครั้งแรก";
-            } else {
-                document.getElementById('firstTimeNotice').classList.add('hidden');
-                document.getElementById('loginTypeHint').innerText = "โหมด: เข้าสู่ระบบปกติ";
-            }
-        }
-
-        // --- Handle Login ---
-        function handleLogin(e) {
-            e.preventDefault();
-            const username = document.getElementById('usernameInput').value.trim();
-            const password = document.getElementById('passwordInput').value.trim();
-
-            const storedPass = localStorage.getItem(USER_PASS_KEY);
-
-            if (!storedPass) {
-                // First time setting password
-                localStorage.setItem(USER_NAME_KEY, username);
-                localStorage.setItem(USER_PASS_KEY, password);
-                alert("ตั้งชื่อผู้ใช้และรหัสผ่านครั้งแรกสำเร็จ!");
-                loginSuccess(username);
-            } else {
-                // Subsequent logins
-                if (password === storedPass) {
-                    loginSuccess(username);
-                } else {
-                    alert("รหัสผ่านไม่ถูกต้อง! กรุณาใช้รหัสที่คุณตั้งไว้ในครั้งแรก");
-                }
-            }
-        }
-
-        function loginSuccess(name) {
-            currentUserName = name;
-            localStorage.setItem(USER_NAME_KEY, name);
-            document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('mainDashboard').classList.remove('hidden');
-            updateUserUI();
-        }
-
-        function updateUserUI() {
-            const savedAvatar = localStorage.getItem(AVATAR_KEY);
-            document.getElementById('headerUserName').innerText = currentUserName || "ผู้ใช้งาน";
-            if (savedAvatar) {
-                document.getElementById('headerAvatar').src = savedAvatar;
-                document.getElementById('profilePreview').src = savedAvatar;
-            }
-        }
-
-        function handleLogout() {
-            document.getElementById('mainDashboard').classList.add('hidden');
-            toggleSidebar(false);
-            checkAuthStatus();
-        }
-
-        // --- Reset Password / OTP Fake ---
-        function showResetForm() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('resetForm').classList.remove('hidden');
-            document.getElementById('authTitle').innerText = "รีเซ็ทรหัสผ่าน";
-        }
-
-        function showLoginForm() {
-            document.getElementById('resetForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('authTitle').innerText = "เข้าสู่ระบบสารสนเทศ";
-        }
-
-        function handleResetOTP(e) {
-            e.preventDefault();
-            const otpSec = document.getElementById('otpSection');
-            const btn = document.getElementById('resetBtn');
-
-            if (otpSec.classList.contains('hidden')) {
-                otpSec.classList.remove('hidden');
-                btn.innerText = "ยืนยัน OTP เพื่อรีเซ็ทรหัส";
-                alert("ระบบจำลองส่ง OTP ไปยังอีเมลแล้ว (ใช้รหัส: 1234)");
-            } else {
-                const otp = document.getElementById('otpInput').value;
-                if (otp === "1234") {
-                    localStorage.removeItem(USER_PASS_KEY);
-                    alert("รีเซ็ทรหัสผ่านสำเร็จ! กรุณาตั้งรหัสผ่านใหม่ในการเข้าสู่ระบบ");
-                    location.reload();
-                } else {
-                    alert("รหัส OTP ไม่ถูกต้อง");
-                }
-            }
-        }
-
-        // --- Sidebar Menu ---
-        function toggleSidebar(force) {
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('sidebarBackdrop');
-            const isOpened = !sidebar.classList.contains('-translate-x-full');
-
-            if (force === false || isOpened) {
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
-            } else {
-                sidebar.classList.remove('-translate-x-full');
-                backdrop.classList.remove('hidden');
-            }
-        }
-
-        function renderMenuItems() {
-            const container = document.getElementById('menuItemsList');
-            const menuNames = [
-                "ระบบจัดการเอกสารสารสนเทศ",
-                "ระบบบันทึกเวลาเข้า-ออกงาน",
-                "ระบบอนุมัติเอกสารออนไลน์",
-                "ระบบคลังอุปกรณ์ IT",
-                "ระบบรายงานสรุปผลประจำเดือน",
-                "ระบบติดตามสถานะงานโครงการ",
-                "ระบบฐานข้อมูลสมาชิกองค์กร"
-            ];
-
-            container.innerHTML = menuNames.map(name => `
-                <div class="px-3 py-2.5 rounded-xl border border-slate-100 bg-slate-50/50 flex justify-between items-center text-xs">
-                    <span class="text-slate-600 truncate">${name}</span>
-                    <span class="text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">กำลังพัฒนา</span>
-                </div>
-            `).join('');
-        }
-
-        function callPhone(title) {
-            alert(`[ระบบติดต่อ] ${title} - (ฟังก์ชันนี้อยู่ระหว่างการพัฒนา)`);
-        }
-
-        // --- Profile Management ---
-        function openProfileModal() {
-            document.getElementById('editUsername').value = currentUserName;
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
-
-        // Handle Avatar File Upload Preview
-        document.getElementById('avatarInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    document.getElementById('profilePreview').src = evt.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function saveProfile() {
-            const newName = document.getElementById('editUsername').value.trim();
-            const newPass = document.getElementById('editPassword').value.trim();
-            const avatarSrc = document.getElementById('profilePreview').src;
-
-            if (newName) {
-                localStorage.setItem(USER_NAME_KEY, newName);
-                currentUserName = newName;
-            }
-
-            if (avatarSrc) {
-                localStorage.setItem(AVATAR_KEY, avatarSrc);
-            }
-
-            if (newPass) {
-                localStorage.setItem(USER_PASS_KEY, newPass);
-                alert("เปลี่ยนรหัสผ่านสำเร็จ! ระบบจะทำการล็อกเอาท์อัตโนมัติเพื่อความปลอดภัย");
-                closeProfileModal();
-                handleLogout();
-                return;
-            }
-
-            updateUserUI();
-            closeProfileModal();
-            alert("บันทึกข้อมูลโปรไฟล์เรียบร้อยแล้ว");
-        }
-
-        // --- Admin Modal ---
-        function openAdminModal() {
-            toggleSidebar(false);
-            document.getElementById('adminModal').classList.remove('hidden');
-            const adminPass = localStorage.getItem(ADMIN_PASS_KEY);
-            if (!adminPass) {
-                document.getElementById('adminPassHint').innerText = "การเข้าใช้งานครั้งแรก ระบบจะบันทึกรหัสที่คุณตั้งไว้นี้";
-            } else {
-                document.getElementById('adminPassHint').innerText = "กรอกรหัสผ่าน Admin ที่คุณได้ตั้งไว้";
-            }
-        }
-
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.add('hidden');
-            document.getElementById('adminAuthView').classList.remove('hidden');
-            document.getElementById('adminPanelView').classList.add('hidden');
-        }
-
-        function handleAdminAuth(e) {
-            e.preventDefault();
-            const pass = document.getElementById('adminPassInput').value.trim();
-            const storedAdminPass = localStorage.getItem(ADMIN_PASS_KEY);
-
-            if (!storedAdminPass) {
-                localStorage.setItem(ADMIN_PASS_KEY, pass);
-                alert("ตั้งรหัสผ่าน Admin ครั้งแรกสำเร็จ!");
-                showAdminPanel();
-            } else {
-                if (pass === storedAdminPass) {
-                    showAdminPanel();
-                } else {
-                    alert("รหัสผ่าน Admin ไม่ถูกต้อง!");
-                }
-            }
-        }
-
-        function showAdminPanel() {
-            document.getElementById('adminAuthView').classList.add('hidden');
-            document.getElementById('adminPanelView').classList.remove('hidden');
-            renderUserList();
-        }
-
-        function renderUserList() {
-            const list = document.getElementById('userListDisplay');
-            const currentUser = localStorage.getItem(USER_NAME_KEY) || "ไม่มีข้อมูล";
-            list.innerHTML = `
-                <li class="py-2 flex justify-between items-center text-slate-700">
-                    <span><i class="fa-solid fa-user text-indigo-500 mr-2"></i> ${currentUser} (ผู้ใช้ปัจจุบัน)</span>
-                    <span class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded">Active</span>
-                </li>
-            `;
-        }
-
-        function addUserByAdmin() {
-            const u = document.getElementById('newAdminUser').value.trim();
-            const p = document.getElementById('newAdminPass').value.trim();
-            if (u && p) {
-                alert(`เพิ่มผู้ใช้งาน ${u} เข้าสู่ระบบเรียบร้อยแล้ว`);
-                document.getElementById('newAdminUser').value = '';
-                document.getElementById('newAdminPass').value = '';
-            } else {
-                alert("กรุณากรอกข้อมูลให้ครบถ้วน");
-            }
-        }
-
-        // --- AI Chat Logic ---
-        function toggleAIChat() {
-            const win = document.getElementById('aiChatWindow');
-            win.classList.toggle('hidden');
-        }
-
-        function sendAIMessage(e) {
-            e.preventDefault();
-            const input = document.getElementById('aiInput');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            const box = document.getElementById('aiMessages');
-
-            // User Message
-            box.innerHTML += `
-                <div class="bg-indigo-600 text-white p-2.5 rounded-xl max-w-[85%] ml-auto text-xs shadow-xs">
-                    ${msg}
-                </div>
-            `;
-
-            input.value = '';
-            box.scrollTop = box.scrollHeight;
-
-            // Simulated AI Response
+            landing.style.opacity = '0';
             setTimeout(() => {
-                let reply = "รับทราบครับ มีอะไรให้ผู้ช่วย AI ช่วยเหลือเพิ่มเติมเกี่ยวกับระบบสารสนเทศแจ้งได้เลยครับ";
-                if (msg.includes("สวัสดี")) reply = "สวัสดีครับยินดีที่ได้รู้จัก! มีอะไรให้ผมช่วยดูแลระบบวันนี้ไหมครับ?";
-                if (msg.includes("รหัสผ่าน") || msg.includes("รหัส")) reply = "คุณสามารถเปลี่ยนรหัสผ่านได้ที่มุมขวาบนตรงไอคอนรูปกุญแจครับ";
+                landing.style.display = 'none';
+                main.style.display = 'block';
+                setTimeout(() => {
+                    main.style.opacity = '1';
+                }, 50);
+            }, 800);
+        }
 
-                box.innerHTML += `
-                    <div class="bg-white p-2.5 rounded-xl border border-slate-100 max-w-[85%] text-xs shadow-xs">
-                        ${reply}
-                    </div>
-                `;
-                box.scrollTop = box.scrollHeight;
-            }, 600);
+        // จัดการการกดเมนูต่างๆ
+        function handleMenuClick(menuName) {
+            showLoading(() => {
+                showPopup();
+            });
+        }
+
+        // ลิ้งก์ไปยังเว็บทางการพร้อม Effect
+        function redirectToOfficial(url) {
+            showLoading(() => {
+                window.open(url, '_blank');
+            });
+        }
+
+        // แสดง Effect หมุน
+        function showLoading(callback) {
+            const overlay = document.getElementById('loading-overlay');
+            overlay.style.display = 'flex';
+            
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                if (callback) callback();
+            }, 1800); // แสดง Effect 1.8 วินาที
+        }
+
+        // แสดง Pop-up
+        function showPopup() {
+            document.getElementById('mobile-popup').style.display = 'flex';
+        }
+
+        // ปิด Pop-up
+        function closePopup() {
+            document.getElementById('mobile-popup').style.display = 'none';
+        }
+
+        // เข้าสู่ระบบ Admin (รหัส: 6770649)
+        function openAdminLogin() {
+            const password = prompt("กรุณากรอกรหัสผ่านผู้ดูแลระบบ (Admin):");
+            if (password === "6770649") {
+                alert("ยินดีต้อนรับผู้ดูแลระบบ! เข้าสู่ระบบสำเร็จ");
+            } else if (password !== null) {
+                alert("รหัสผ่านไม่ถูกต้อง!");
+            }
         }
     </script>
 </body>
