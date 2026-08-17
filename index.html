@@ -3,310 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareCare Health - ศูนย์บริการพยาบาลและผู้ดูแลเฝ้าไข้</title>
-    <!-- Tailwind CSS (CDN) -->
+    <title>CareCare Staff - ระบบปฏิบัติงานเจ้าหน้าที่</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Sarabun', sans-serif; }
-    </style>
+    <style> body { font-family: 'Sarabun', sans-serif; } </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
 
-    <!-- 1. Header & Navigation -->
-    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-user-nurse text-2xl text-teal-600"></i>
-                <span class="text-xl font-bold text-slate-900">CareCare<span class="text-teal-600">Health</span></span>
+    <!-- Staff Header -->
+    <header class="bg-slate-900 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center font-bold text-slate-900">
+                    RN
+                </div>
+                <div>
+                    <h1 class="font-bold text-sm">พว. สุภาพร ใจดี</h1>
+                    <p class="text-xs text-slate-400">รหัสพนักงาน: RN-1024</p>
+                </div>
             </div>
-            <nav class="hidden md:flex gap-8 font-medium text-slate-600">
-                <a href="#levels" class="hover:text-teal-600 transition">ระดับบุคลากร</a>
-                <a href="#calculator" class="hover:text-teal-600 transition">คำนวณราคา & จองเวร</a>
-                <a href="#tracking" class="hover:text-teal-600 transition">ติดตามสถานะ</a>
-            </nav>
-            <a href="#calculator" class="bg-teal-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-teal-700 transition shadow-lg shadow-teal-600/20">
-                จองบริการทันที
-            </a>
+            <span class="bg-teal-500/20 text-teal-300 text-xs px-2.5 py-1 rounded-full border border-teal-500/30">พร้อมปฏิบัติงาน</span>
         </div>
     </header>
 
-    <!-- 2. Hero Section -->
-    <section class="max-w-7xl mx-auto px-4 py-12 md:py-20 grid md:grid-cols-2 gap-12 items-center">
-        <div>
-            <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1.5 rounded-full">มาตรฐานระดับโรงพยาบาล</span>
-            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mt-4 leading-tight">
-                บริการพยาบาล & ผู้ดูแลเฝ้าไข้ <br><span class="text-teal-600">ส่งตรงถึงบ้านและโรงพยาบาล</span>
-            </h1>
-            <p class="text-slate-600 mt-4 text-lg">
-                คัดกรองบุคลากรระดับ RN, PN, NA และ CG ผ่านการตรวจสอบประวัติอาชญากรรม พร้อมระบบติดตามการทำงาน real-time 24 ชั่วโมง
-            </p>
-            <div class="mt-8 flex flex-wrap gap-4">
-                <a href="#calculator" class="bg-teal-600 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-teal-700 transition shadow-lg shadow-teal-600/30">
-                    คำนวณราคา & จองเวร
-                </a>
-                <a href="#tracking" class="bg-white text-slate-700 border border-slate-300 px-6 py-3.5 rounded-xl font-bold hover:bg-slate-50 transition">
-                    เช็คสถานะการเข้าเวร
-                </a>
-            </div>
-        </div>
-        <div class="bg-gradient-to-br from-teal-500 to-teal-700 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden">
-            <div class="relative z-10">
-                <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full">เปิดรับงานตลอด 24 ชม.</span>
-                <h3 class="text-2xl font-bold mt-4">อุ่นใจเหมือนมีพยาบาลดูแลข้างกาย</h3>
-                <p class="text-teal-100 text-sm mt-2">ประวัติโปร่งใส มีใบอนุญาตวิชาชีพ บันทึกสัญญาณชีพรายวัน</p>
-                <div class="mt-6 bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 space-y-3 text-sm">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-circle-check text-teal-300"></i>
-                        <span>ตรวจสอบประวัติอาชญากรรมทุกคน</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-circle-check text-teal-300"></i>
-                        <span>มีประกันอุบัติเหตุและประกันคุ้มครองผู้ป่วย</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-circle-check text-teal-300"></i>
-                        <span>ระบบเช็คอินด้วย GPS ป้องกันการขาดเวร</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <main class="max-w-md mx-auto p-4 space-y-4">
 
-    <!-- 3. Levels Info Section -->
-    <section id="levels" class="bg-slate-100 py-16">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-slate-900">ระดับบุคลากรผู้ดูแล</h2>
-                <p class="text-slate-500 mt-2">เลือกประเภทบุคลากรให้เหมาะสมกับระดับความดูแลของผู้ป่วย</p>
-            </div>
-            <div class="grid md:grid-cols-4 gap-6">
-                <!-- RN -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">RN</div>
-                    <h3 class="font-bold text-lg text-slate-900">พยาบาลวิชาชีพ</h3>
-                    <p class="text-xs text-slate-500 mt-1">มีใบอนุญาตประกอบวิชาชีพฯ</p>
-                    <p class="text-sm text-slate-600 mt-4">ผู้ป่วยวิกฤต, เจาะคอ, ดูดเสมหะ, ให้ยาทางสายยาง, ฉีดยา, ทำแผลซับซ้อน</p>
-                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿2,200 / กะ</p>
+        <!-- Active Patient Card (เคสปัจจุบัน) -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+            <div class="flex justify-between items-start border-b pb-3 mb-3">
+                <div>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full">เวรปัจจุบัน (กะเช้า)</span>
+                    <h2 class="text-lg font-bold text-slate-900 mt-1">คุณสมชาย วงศ์สวัสดิ์ (อายุ 74 ปี)</h2>
                 </div>
-                <!-- PN -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">PN</div>
-                    <h3 class="font-bold text-lg text-slate-900">ผู้ช่วยพยาบาล</h3>
-                    <p class="text-xs text-slate-500 mt-1">หลักสูตร PN 1 ปี</p>
-                    <p class="text-sm text-slate-600 mt-4">ผู้ป่วยพักฟื้น, ให้อาหารสายยาง, ดูดเสมหะ (ไม่วิกฤต), วัดสัญญาณชีพ</p>
-                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿1,500 / กะ</p>
-                </div>
-                <!-- NA -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="w-12 h-12 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">NA</div>
-                    <h3 class="font-bold text-lg text-slate-900">พยาบาลผู้ช่วย</h3>
-                    <p class="text-xs text-slate-500 mt-1">ผ่านการอบรม NA 840 ชม.</p>
-                    <p class="text-sm text-slate-600 mt-4">ผู้ป่วยติดเตียง, พยุงเดิน, ทำกายภาพพื้นฐาน, พลิกตัวป้องกันแผลกดทับ</p>
-                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿1,100 / กะ</p>
-                </div>
-                <!-- CG -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="w-12 h-12 bg-orange-100 text-orange-700 rounded-xl flex items-center justify-center font-bold text-xl mb-4">CG</div>
-                    <h3 class="font-bold text-lg text-slate-900">ผู้ดูแลผู้สูงอายุ</h3>
-                    <p class="text-xs text-slate-500 mt-1">ผ่านการอบรม CG 120-420 ชม.</p>
-                    <p class="text-sm text-slate-600 mt-4">ผู้สูงอายุช่วยเหลือตัวเองได้บ้าง, อยู่เป็นเพื่อน, จัดยาตามแพทย์สั่ง, เช็ดตัว</p>
-                    <p class="text-teal-600 font-bold mt-4">เริ่มต้น ฿800 / กะ</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. Calculator & Booking System -->
-    <section id="calculator" class="py-16">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-slate-900">ระบบคำนวณราคา & จองเวรออนไลน์</h2>
-                <p class="text-slate-500 mt-2">เลือกเงื่อนไขเพื่อประเมินราคาและส่งข้อมูลจองงาน</p>
+                <span class="text-xs text-slate-500 font-bold">CC-8891</span>
             </div>
 
-            <div class="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-xl">
-                <form id="bookingForm" onsubmit="handleBooking(event)" class="space-y-6">
-                    <!-- เลือกประเภทบุคลากร -->
+            <!-- Location & Schedule Info -->
+            <div class="space-y-2 text-sm text-slate-600 mb-4">
+                <p class="flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-teal-600 w-4"></i>
+                    <span><strong>เขตพื้นที่:</strong> จตุจักร กรุงเทพฯ</span>
+                </p>
+                <p class="flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-teal-600 w-4"></i>
+                    <span><strong>วัน-เวลา:</strong> 17 ส.ค. 2026 (08:00 - 20:00 น.)</span>
+                </p>
+                <p class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-medical text-teal-600 w-4"></i>
+                    <span><strong>แผนการดูแล:</strong> พักฟื้นหลังผ่าตัดสะโพก, วัดสัญญาณชีพทุก 4 ชม., พลิกตัว</span>
+                </p>
+            </div>
+
+            <!-- GPS Check-In / Out Buttons -->
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                <p class="text-xs font-bold text-slate-500 text-center">ระบบลงเวลาปฏิบัติงาน (GPS System)</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="btnCheckIn" onclick="doCheckIn()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-location-crosshairs"></i> สแกนเข้างาน
+                    </button>
+                    <button id="btnCheckOut" onclick="doCheckOut()" disabled class="bg-slate-300 text-slate-500 font-bold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2 cursor-not-allowed">
+                        <i class="fa-solid fa-right-from-bracket"></i> ออกเวร
+                    </button>
+                </div>
+                <p id="timeLog" class="text-xs text-center text-teal-700 font-semibold hidden"></p>
+            </div>
+        </div>
+
+        <!-- Vitals & Daily Log Form (บันทึกอาการผู้ป่วย) -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 space-y-4">
+            <h3 class="font-bold text-slate-900 text-md flex items-center gap-2">
+                <i class="fa-solid fa-heart-pulse text-rose-500"></i> บันทึกสัญญาณชีพประจำวัน
+            </h3>
+            
+            <form onsubmit="saveVitals(event)" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-3">1. เลือกระดับบุคลากร</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="staff_type" value="RN" class="peer hidden" checked onchange="calculateTotal()">
-                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
-                                    <div class="font-bold text-teal-600 text-lg">RN</div>
-                                    <div class="text-xs text-slate-500">พยาบาลวิชาชีพ</div>
-                                    <div class="text-xs font-bold text-slate-700 mt-2">฿2,200/กะ</div>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="staff_type" value="PN" class="peer hidden" onchange="calculateTotal()">
-                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
-                                    <div class="font-bold text-teal-600 text-lg">PN</div>
-                                    <div class="text-xs text-slate-500">ผู้ช่วยพยาบาล</div>
-                                    <div class="text-xs font-bold text-slate-700 mt-2">฿1,500/กะ</div>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="staff_type" value="NA" class="peer hidden" onchange="calculateTotal()">
-                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
-                                    <div class="font-bold text-teal-600 text-lg">NA</div>
-                                    <div class="text-xs text-slate-500">พยาบาลผู้ช่วย</div>
-                                    <div class="text-xs font-bold text-slate-700 mt-2">฿1,100/กะ</div>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="staff_type" value="CG" class="peer hidden" onchange="calculateTotal()">
-                                <div class="p-4 bg-slate-50 border-2 border-slate-200 rounded-2xl peer-checked:border-teal-600 peer-checked:bg-teal-50/50 text-center transition">
-                                    <div class="font-bold text-teal-600 text-lg">CG</div>
-                                    <div class="text-xs text-slate-500">ผู้ดูแลผู้สูงอายุ</div>
-                                    <div class="text-xs font-bold text-slate-700 mt-2">฿800/กะ</div>
-                                </div>
-                            </label>
-                        </div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">ความดัน (mmHg)</label>
+                        <input type="text" id="bp" placeholder="120/80" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-500">
                     </div>
-
-                    <!-- เลือกเวลาและจำนวนวัน -->
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">2. เลือกรอบกะเวลา (12 ชม./กะ)</label>
-                            <select id="shift_type" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-500" onchange="calculateTotal()">
-                                <option value="day">กะเช้า (08:00 - 20:00 น.)</option>
-                                <option value="night">กะดึก (20:00 - 08:00 น.)</option>
-                                <option value="full">เหมา 24 ชั่วโมง (2 กะ/วัน)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-2">3. จำนวนวันที่ต้องการจอง</label>
-                            <input type="number" id="days" value="1" min="1" max="30" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-700 outline-none focus:ring-2 focus:ring-teal-500" onchange="calculateTotal()" onkeyup="calculateTotal()">
-                        </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">ชีพจร (bpm)</label>
+                        <input type="number" id="pulse" placeholder="75" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-500">
                     </div>
-
-                    <!-- ฟอร์มข้อมูลผู้ติดต่อ -->
-                    <div class="border-t border-slate-200 pt-6 space-y-4">
-                        <label class="block text-sm font-bold text-slate-700">4. ข้อมูลผู้ขอรับบริการ</label>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <input type="text" id="cust_name" required placeholder="ชื่อ-นามสกุล ผู้ติดต่อ" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-teal-500">
-                            <input type="tel" id="cust_phone" required placeholder="เบอร์โทรศัพท์ติดต่อกลับ" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-teal-500">
-                        </div>
-                        <textarea id="cust_note" rows="2" placeholder="รายละเอียดอาการผู้ป่วยเบื้องต้น หรือสถานที่ปฏิบัติงาน" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 outline-none focus:ring-2 focus:ring-teal-500"></textarea>
-                    </div>
-
-                    <!-- สรุปราคา & ปุ่มส่งข้อมูล -->
-                    <div class="bg-slate-900 text-white p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <p class="text-slate-400 text-sm">ประเมินราคารวม</p>
-                            <h3 class="text-3xl font-extrabold text-teal-400" id="totalPrice">฿2,200</h3>
-                        </div>
-                        <button type="submit" class="w-full md:w-auto bg-teal-500 hover:bg-teal-400 text-slate-900 font-bold px-8 py-3.5 rounded-xl transition shadow-lg">
-                            ยืนยันการจองเวร
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. Tracking Section -->
-    <section id="tracking" class="bg-slate-100 py-16">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-slate-900">ติดตามสถานะการเข้าเวร</h2>
-                <p class="text-slate-500 mt-2">กรอกรหัสการจองเพื่อดูสถานะการปฏิบัติงานของผู้ดูแล (ทดสอบพิมพ์: <span class="text-teal-600 font-bold">CC-8891</span>)</p>
-            </div>
-
-            <div class="flex gap-2 mb-6">
-                <input type="text" id="bookingSearch" placeholder="กรอกรหัสการจอง เช่น CC-8891" class="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-teal-500">
-                <button onclick="searchStatus()" class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition">
-                    ค้นหา
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">บันทึกอาการเพิ่มเติม / อาหาร / ยา</label>
+                    <textarea id="notes" rows="2" placeholder="ผู้ป่วยทานอาหารได้ดี รับประทานยาครบตามเวลา..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-sm transition">
+                    บันทึกข้อมูลเข้าสู่ระบบ
                 </button>
-            </div>
+            </form>
+        </div>
 
-            <!-- Tracking Card -->
-            <div id="trackingResult" class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hidden">
-                <div class="flex justify-between items-center border-b pb-4 mb-6">
+        <!-- Shift History List (รายการเวรถัดไป) -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+            <h3 class="font-bold text-slate-900 text-md mb-3">ตารางเวรที่ได้รับมอบหมายถัดไป</h3>
+            <div class="space-y-3">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
                     <div>
-                        <span class="text-xs font-bold bg-teal-100 text-teal-800 px-3 py-1 rounded-full">กำลังปฏิบัติงาน</span>
-                        <h4 class="font-bold text-lg text-slate-900 mt-2">รหัสการจอง: CC-8891</h4>
+                        <p class="font-bold text-slate-800">คุณพิมลพรรณ (เขตบางซื่อ)</p>
+                        <p class="text-slate-500">18 ส.ค. 2026 | กะดึก (20:00 - 08:00)</p>
                     </div>
-                    <div class="text-right">
-                        <p class="text-xs text-slate-500">เจ้าหน้าที่รับเวร</p>
-                        <p class="font-bold text-slate-800">พว. สุภาพร ใจดี (RN)</p>
-                    </div>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
-                        <div>
-                            <p class="font-bold text-sm text-slate-900">เช็คอินเข้าพื้นที่งาน (GPS Verified)</p>
-                            <p class="text-xs text-slate-500 mt-0.5">08:00 น. - ยืนยันพิกัด ณ บ้านผู้ป่วย</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
-                        <div>
-                            <p class="font-bold text-sm text-slate-900">บันทึกสัญญาณชีพ (Vitals Sign)</p>
-                            <p class="text-xs text-slate-500 mt-0.5">09:30 น. - ความดัน 120/80 mmHg | ชีพจร 75 | สัญญาณชีพปกติ</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start opacity-40">
-                        <div class="w-8 h-8 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
-                        <div>
-                            <p class="font-bold text-sm text-slate-900">เช็คเอาท์ออกเวร</p>
-                            <p class="text-xs text-slate-500 mt-0.5">รอสิ้นสุดกะการทำงาน (20:00 น.)</p>
-                        </div>
-                    </div>
+                    <span class="bg-amber-100 text-amber-800 px-2 py-1 rounded font-bold">รอเข้างาน</span>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm">
-            <p>© 2026 CareCare Health Co., Ltd. All rights reserved.</p>
-        </div>
-    </footer>
+    </main>
 
-    <!-- Logic Script -->
     <script>
-        const rates = { 'RN': 2200, 'PN': 1500, 'NA': 1100, 'CG': 800 };
+        function doCheckIn() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude.toFixed(4);
+                    const lng = position.coords.longitude.toFixed(4);
+                    const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 
-        function calculateTotal() {
-            const staffType = document.querySelector('input[name="staff_type"]:checked').value;
-            const shiftType = document.getElementById('shift_type').value;
-            const days = parseInt(document.getElementById('days').value) || 1;
+                    document.getElementById('timeLog').innerText = `✓ เข้างานแล้วเวลา ${now} น. (พิกัด GPS: ${lat}, ${lng})`;
+                    document.getElementById('timeLog').classList.remove('hidden');
 
-            let ratePerShift = rates[staffType];
-            let shiftsPerDay = (shiftType === 'full') ? 2 : 1;
-            let total = ratePerShift * shiftsPerDay * days;
-
-            document.getElementById('totalPrice').innerText = '฿' + total.toLocaleString();
-        }
-
-        function handleBooking(e) {
-            e.preventDefault();
-            const name = document.getElementById('cust_name').value;
-            const randomCode = 'CC-' + Math.floor(1000 + Math.random() * 9000);
-            
-            alert(`ขอบคุณครับคุณ ${name}\nระบบบันทึกการจองเรียบร้อยแล้ว!\n\nรหัสติดตามสถานะของคุณคือ: ${randomCode}\nเจ้าหน้าที่จะติดต่อกลับภายใน 15 นาที`);
-            
-            // รีเซ็ตฟอร์ม
-            document.getElementById('bookingForm').reset();
-            calculateTotal();
-        }
-
-        function searchStatus() {
-            const code = document.getElementById('bookingSearch').value.trim();
-            if(code !== '') {
-                document.getElementById('trackingResult').classList.remove('hidden');
+                    // ปรับปุ่ม
+                    document.getElementById('btnCheckIn').disabled = true;
+                    document.getElementById('btnCheckIn').classList.add('bg-slate-300', 'cursor-not-allowed');
+                    document.getElementById('btnCheckOut').disabled = false;
+                    document.getElementById('btnCheckOut').classList.remove('bg-slate-300', 'cursor-not-allowed');
+                    document.getElementById('btnCheckOut').classList.add('bg-rose-600', 'hover:bg-rose-700', 'text-white');
+                    
+                    alert(`สแกนเข้างานสำเร็จ!\nเวลา: ${now} น.\nระบบบันทึกพิกัด GPS เรียบร้อยแล้ว`);
+                }, function(error) {
+                    alert('กรุณาเปิด GPS/Location บนมือถือเพื่อยืนยันการเข้างาน');
+                });
             } else {
-                alert('กรุณากรอกรหัสการจอง เช่น CC-8891');
+                alert('อุปกรณ์ของคุณไม่รองรับการระบุตำแหน่ง GPS');
             }
+        }
+
+        function doCheckOut() {
+            const now = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            alert(`สแกนออกเวรสำเร็จเวลา ${now} น.`);
+            location.reload();
+        }
+
+        function saveVitals(e) {
+            e.preventDefault();
+            const bp = document.getElementById('bp').value;
+            const pulse = document.getElementById('pulse').value;
+            alert(`บันทึกสัญญาณชีพเรียบร้อย!\nความดัน: ${bp} mmHg\nชีพจร: ${pulse} bpm\nข้อมูลถูกส่งไปยังระบบติดตามของลูกค้าแล้ว`);
         }
     </script>
 </body>
