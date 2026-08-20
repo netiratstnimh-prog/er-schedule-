@@ -1,675 +1,228 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Practical Nurse System</title>
-    <!-- Tailwind CSS for Clean Medical UI -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- html2pdf.js for PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-        
-        body {
-            font-family: 'Sarabun', sans-serif;
-            background-color: #f8fafc;
-        }
-
-        /* Cinema Projector Intro Animations */
-        @keyframes projectorBeam {
-            0% { opacity: 0; transform: scale(0.2) rotate(0deg); filter: blur(12px) brightness(2); }
-            50% { opacity: 0.8; filter: blur(4px) brightness(1.5); }
-            100% { opacity: 1; transform: scale(1) rotate(360deg); filter: blur(0) brightness(1); }
-        }
-
-        @keyframes shimmerEffect {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        .projector-intro {
-            animation: projectorBeam 3.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        .shimmer-text {
-            background: linear-gradient(90deg, #0284c7 0%, #38bdf8 25%, #ffffff 50%, #38bdf8 75%, #0284c7 100%);
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            animation: shimmerEffect 2.5s infinite linear;
-        }
-
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(200px);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .fade-in-up.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Printable Single Page Style Rules */
-        @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            body { background: white; padding: 0; margin: 0; }
-        }
-        
-        #pdf-template {
-            width: 210mm;
-            height: 297mm; /* Standard A4 Height */
-            padding: 15mm;
-            box-sizing: border-box;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NXRT Digital Bank</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
+    body { font-family: 'Kanit', sans-serif; }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
 </head>
-<body class="text-slate-800 bg-slate-50 min-h-screen">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
 
-    <!-- TOP HEADER / NAVBAR -->
-    <header id="app-header" class="hidden fixed top-0 left-0 right-0 bg-white border-b border-cyan-100 shadow-sm z-30 px-6 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <button onclick="toggleAdminModal()" class="p-2 rounded-full hover:bg-cyan-50 text-cyan-700 transition" title="ระบบผู้ดูแล (Admin)">
-                <i data-lucide="user-cog" class="w-6 h-6"></i>
-            </button>
-            <div class="flex items-center gap-2">
-                <i data-lucide="activity" class="w-6 h-6 text-cyan-600"></i>
-                <span class="font-bold text-lg text-slate-700 tracking-wide">PRACTICAL NURSE SYSTEM</span>
-            </div>
-        </div>
-        <div class="text-right text-sm font-medium text-slate-600">
-            <div id="clock-date" class="text-xs text-slate-400">---</div>
-            <div id="clock-time" class="text-lg font-semibold text-cyan-700">00:00:00</div>
-        </div>
-    </header>
-
-    <!-- INTRO / LOADING SCREEN -->
-    <div id="intro-screen" class="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-50 overflow-hidden">
-        <div id="logo-container" class="text-center">
-            <div id="logo-box" class="projector-intro mb-4 flex flex-col items-center">
-                <div class="p-4 bg-cyan-950/40 rounded-full border border-cyan-500/30 shadow-[0_0_50px_rgba(6,182,212,0.3)]">
-                    <i data-lucide="stethoscope" class="w-20 h-20 text-cyan-400"></i>
-                </div>
-                <h1 class="text-4xl md:text-5xl font-black mt-6 tracking-wider shimmer-text uppercase">Practical Nurse</h1>
-            </div>
-            
-            <p id="loading-text" class="opacity-0 transition-opacity duration-1000 text-slate-300 font-light text-sm md:text-base mt-4 tracking-wide">
-                กรุณารอสักครู่ เรากำลังเตรียมทรัพยากรให้กับคุณ
-            </p>
-
-            <!-- Progress Bar -->
-            <div id="progress-wrapper" class="opacity-0 transition-opacity duration-1000 w-64 md:w-80 mx-auto mt-6">
-                <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden p-0.5 border border-slate-700">
-                    <div id="progress-bar" class="bg-gradient-to-r from-cyan-500 to-teal-400 h-full rounded-full w-0 transition-all duration-100"></div>
-                </div>
-                <div id="progress-percent" class="text-xs text-cyan-400 mt-2 font-mono">0%</div>
-            </div>
-        </div>
+  <!-- Mobile App Frame Container -->
+  <div class="w-full max-w-md bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden relative min-h-[750px] flex flex-col justify-between">
+    
+    <!-- Top Header Bar -->
+    <div class="p-6 pb-2 flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-cyan-500/30">N</div>
+        <span class="font-semibold text-lg tracking-wider text-white">NXRT<span class="text-cyan-400">BANK</span></span>
+      </div>
+      <i data-lucide="bell" class="w-5 h-5 text-slate-400 hover:text-white cursor-pointer transition"></i>
     </div>
 
-    <!-- PIN AUTH MODAL -->
-    <div id="pin-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl border border-cyan-100 w-full max-w-sm text-center">
-            <div class="w-12 h-12 bg-cyan-100 text-cyan-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i data-lucide="lock" class="w-6 h-6"></i>
-            </div>
-            <h3 class="text-xl font-bold text-slate-800">ยืนยันตัวตนผู้ใช้งาน</h3>
-            <p class="text-xs text-slate-500 mt-1 mb-6">กรอกรหัสผ่าน 6 หลักเพื่อเข้าใช้งานระบบ</p>
-            
-            <input type="password" id="pin-input" maxlength="6" autofocus placeholder="••••••" 
-                   class="w-full text-center text-3xl tracking-[0.5em] font-mono py-3 border-2 border-slate-200 rounded-xl focus:border-cyan-500 focus:outline-none mb-4 bg-slate-50">
-
-            <div id="pin-status" class="text-xs font-medium h-6"></div>
+    <!-- Main Content Area -->
+    <div id="main-content" class="p-6 space-y-6 flex-1">
+      
+      <!-- Balance Card -->
+      <div class="glass rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-slate-800/80 to-slate-900/80 shadow-xl">
+        <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+        <p class="text-xs text-slate-400 font-light uppercase tracking-wider">ยอดเงินที่ใช้ได้</p>
+        <div class="flex items-baseline gap-2 mt-2">
+          <span class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-cyan-400" id="balance-display">
+            1,000,000,000,000.00
+          </span>
+          <span class="text-sm text-cyan-400 font-medium">THB</span>
         </div>
-    </div>
+        <p class="text-[10px] text-slate-500 mt-4">เลขที่บัญชี: 888-0-99999-0</p>
+      </div>
 
-    <!-- MAIN MENU CONTAINER -->
-    <main id="main-content" class="hidden pt-24 pb-12 px-4 max-w-5xl mx-auto">
-        <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <i data-lucide="layout-dashboard" class="text-cyan-600"></i> เมนูการทำงานหลัก
-        </h2>
+      <!-- Quick Action Buttons -->
+      <div class="grid grid-cols-4 gap-3">
+        <button onclick="openModal()" class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300 shadow-lg shadow-cyan-500/5">
+            <i data-lucide="send" class="w-5 h-5"></i>
+          </div>
+          <span class="text-xs text-slate-300">โอนเงิน</span>
+        </button>
+        <button class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300 group-hover:border-slate-500 transition-all">
+            <i data-lucide="qr-code" class="w-5 h-5"></i>
+          </div>
+          <span class="text-xs text-slate-400">สแกน</span>
+        </button>
+        <button class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300 group-hover:border-slate-500 transition-all">
+            <i data-lucide="wallet" class="w-5 h-5"></i>
+          </div>
+          <span class="text-xs text-slate-400">เติมเงิน</span>
+        </button>
+        <button class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300 group-hover:border-slate-500 transition-all">
+            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
+          </div>
+          <span class="text-xs text-slate-400">เพิ่มเติม</span>
+        </button>
+      </div>
 
-        <div class="space-y-4" id="menu-list">
-            <!-- 1. Nurse Report -->
-            <div class="menu-item fade-in-up bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                <div class="flex justify-between items-center cursor-pointer" onclick="toggleSection('sec-1')">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-cyan-50 text-cyan-600 rounded-lg"><i data-lucide="file-text"></i></div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">1. บันทึกรายงานการพยาบาล</h3>
-                            <p class="text-xs text-slate-500">บันทึกข้อมูลผู้ป่วย กิจกรรมพยาบาล การรักษา และพิมพ์ PDF</p>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-down" class="text-slate-400"></i>
-                </div>
-                <div id="sec-1" class="hidden mt-6 pt-6 border-t border-slate-100 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">ชื่อผู้ป่วย</label>
-                            <input type="text" id="p-name" class="w-full border rounded-lg p-2 text-sm mt-1 focus:ring-1 focus:ring-cyan-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">HN / AN</label>
-                            <input type="text" id="p-hn" class="w-full border rounded-lg p-2 text-sm mt-1 focus:ring-1 focus:ring-cyan-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">โรค (Dx)</label>
-                            <input type="text" id="p-dx" class="w-full border rounded-lg p-2 text-sm mt-1 focus:ring-1 focus:ring-cyan-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">ห้องพักฟื้น (ขึ้นต้นด้วย H)</label>
-                            <input type="text" id="p-room" placeholder="H101" onchange="validateRoom(this)" class="w-full border rounded-lg p-2 text-sm mt-1 focus:ring-1 focus:ring-cyan-500 outline-none">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-slate-600">ตึก-ที่อยู่</label>
-                        <select id="p-building" class="w-full border rounded-lg p-2 text-sm mt-1 focus:ring-1 focus:ring-cyan-500 outline-none bg-white">
-                            <option value="ตึกหัวใจ">ตึกหัวใจ</option>
-                            <option value="ตึกอินเตอร์">ตึกอินเตอร์</option>
-                            <option value="ตึก R">ตึก R</option>
-                        </select>
-                    </div>
-
-                    <!-- Activities & Therapies -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                            <span class="text-sm font-bold text-slate-700 block mb-2">กิจกรรมการดูแล</span>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="act-1">
-                                    <label for="act-1" class="flex-1">อาบน้ำ</label>
-                                    <input type="time" id="act-1-time" class="border rounded p-1 text-xs">
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="act-2">
-                                    <label for="act-2" class="flex-1">แปรงฟัน</label>
-                                    <input type="time" id="act-2-time" class="border rounded p-1 text-xs">
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="act-3">
-                                    <label for="act-3" class="flex-1">บ้วนปาก+ทำความสะอาด จมูก+ตา</label>
-                                    <input type="time" id="act-3-time" class="border rounded p-1 text-xs">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
-                            <span class="text-sm font-bold text-slate-700 block mb-2">ด้านการรักษา</span>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="rx-1">
-                                    <label for="rx-1" class="flex-1">Occupational Therapy</label>
-                                    <input type="time" id="rx-1-time" class="border rounded p-1 text-xs">
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="rx-2">
-                                    <label for="rx-2" class="flex-1">Physical Therapist</label>
-                                    <input type="time" id="rx-2-time" class="border rounded p-1 text-xs">
-                                </div>
-                                <div class="flex items-center gap-2 mt-2">
-                                    <input type="text" id="rx-custom" placeholder="อื่นๆ ระบุ..." class="border rounded p-1 text-xs flex-1">
-                                    <input type="time" id="rx-custom-time" class="border rounded p-1 text-xs">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end gap-2 pt-2">
-                        <button onclick="exportToPDF()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition">
-                            <i data-lucide="printer" class="w-4 h-4"></i> บันทึกและส่งออก PDF (1 หน้าเต็ม)
-                        </button>
-                    </div>
-                </div>
+      <!-- Transaction History Placeholder -->
+      <div class="space-y-3 pt-2">
+        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">รายการล่าสุด</h3>
+        <div class="glass rounded-xl p-3 flex justify-between items-center text-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+              <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
             </div>
-
-            <!-- 2. Intake / Output -->
-            <div class="menu-item fade-in-up bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                <div class="flex justify-between items-center cursor-pointer" onclick="toggleSection('sec-2')">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-teal-50 text-teal-600 rounded-lg"><i data-lucide="droplet"></i></div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">2. คำนวณ ปริมาณ สารน้ำเข้าออก (Intake/Output)</h3>
-                            <p class="text-xs text-slate-500">บันทึกการดื่มน้ำ การปัสสาวะ พร้อมซิงค์ข้อมูลเรียลไทม์เข้า PDF</p>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-down" class="text-slate-400"></i>
-                </div>
-                <div id="sec-2" class="hidden mt-6 pt-6 border-t border-slate-100 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                            <h4 class="font-bold text-sm text-blue-800 mb-2">สารน้ำเข้า (Intake - การดื่มน้ำ)</h4>
-                            <div class="flex gap-2 mb-2">
-                                <input type="number" id="intake-amount" placeholder="ปริมาณ (ml)" class="border rounded p-2 text-sm flex-1">
-                                <input type="time" id="intake-time" class="border rounded p-2 text-sm">
-                            </div>
-                            <button onclick="addIO('intake')" class="w-full bg-blue-600 text-white py-1.5 rounded text-xs font-medium">+ เพิ่มรายการน้ำเข้า</button>
-                        </div>
-
-                        <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100">
-                            <h4 class="font-bold text-sm text-amber-800 mb-2">สารน้ำออก (Output - ปัสสาวะ)</h4>
-                            <div class="flex gap-2 mb-2">
-                                <input type="number" id="output-amount" placeholder="ปริมาณ (ml)" class="border rounded p-2 text-sm flex-1">
-                                <input type="time" id="output-time" class="border rounded p-2 text-sm">
-                            </div>
-                            <button onclick="addIO('output')" class="w-full bg-amber-600 text-white py-1.5 rounded text-xs font-medium">+ เพิ่มรายการปัสสาวะ</button>
-                        </div>
-                    </div>
-
-                    <!-- IO Summary Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-xs text-left border">
-                            <thead class="bg-slate-100">
-                                <tr>
-                                    <th class="p-2 border">เวลา</th>
-                                    <th class="p-2 border">ประเภท</th>
-                                    <th class="p-2 border">ปริมาณ (ml)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="io-table-body">
-                                <tr><td colspan="3" class="p-2 text-center text-slate-400">ยังไม่มีข้อมูล</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Medical Milk Calc -->
-            <div class="menu-item fade-in-up bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                <div class="flex justify-between items-center cursor-pointer" onclick="toggleSection('sec-3')">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="calculator"></i></div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">3. คำนวณ อัตราการชงนมอาหารทางการแพทย์</h3>
-                            <p class="text-xs text-slate-500">ระบบคำนวณอัตราส่วนผสม Ensure และสูตรทางการแพทย์อัตโนมัติ</p>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-down" class="text-slate-400"></i>
-                </div>
-                <div id="sec-3" class="hidden mt-6 pt-6 border-t border-slate-100 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">เลือกสูตรอาหาร</label>
-                            <select id="formula-select" onchange="calculateFormula()" class="w-full border rounded p-2 text-sm mt-1 bg-white">
-                                <option value="ensure">Ensure (1 kcal/ml)</option>
-                                <option value="nepro">Nepro (High Protein)</option>
-                                <option value="glucerna">Glucerna (Diabetes)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">ปริมาณน้ำที่ต้องการ (ml)</label>
-                            <input type="number" id="water-ml" value="200" oninput="calculateFormula()" class="w-full border rounded p-2 text-sm mt-1">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">ความเข้มข้น</label>
-                            <select id="ratio-select" onchange="calculateFormula()" class="w-full border rounded p-2 text-sm mt-1 bg-white">
-                                <option value="1">ปกติ (Standard 1:1)</option>
-                                <option value="1.2">เข้มข้น 1.2 kcal/ml</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
-                        <span class="text-xs text-emerald-700 block font-medium">ผลการคำนวณสัดส่วนที่ต้องใช้</span>
-                        <div id="calc-result" class="text-2xl font-bold text-emerald-800 mt-1">ผงนม 6 ช้อน (53.8g) + น้ำ 195 ml</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4. Inventory Check -->
-            <div class="menu-item fade-in-up bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                <div class="flex justify-between items-center cursor-pointer" onclick="toggleSection('sec-4')">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="check-square"></i></div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">4. ระบบตรวจเช็ค OK ของใช้ในรถหัตถการ</h3>
-                            <p class="text-xs text-slate-500">ตรวจสอบอุปกรณ์ทางการแพทย์ เข็ม กรรไกร (>100 รายการ TH/EN)</p>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-down" class="text-slate-400"></i>
-                </div>
-                <div id="sec-4" class="hidden mt-6 pt-6 border-t border-slate-100 space-y-4">
-                    <div class="relative">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
-                        <input type="text" id="inventory-search" onkeyup="filterInventory()" placeholder="ค้นหาอุปกรณ์ (ไทย/English)..." class="w-full pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:border-cyan-500">
-                    </div>
-                    <div class="max-h-60 overflow-y-auto border rounded-lg divide-y" id="inventory-list">
-                        <!-- Dynamic 100+ Items rendered via JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- 5. Procedure Log -->
-            <div class="menu-item fade-in-up bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition">
-                <div class="flex justify-between items-center cursor-pointer" onclick="toggleSection('sec-5')">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="clipboard-list"></i></div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">5. ระบบบันทึกการทำหัตถการ แต่ละเตียง</h3>
-                            <p class="text-xs text-slate-500">เลือกหัตถการมาตรฐาน 30 รายการ และบันทึกแยกตามหมายเลขเตียง</p>
-                        </div>
-                    </div>
-                    <i data-lucide="chevron-down" class="text-slate-400"></i>
-                </div>
-                <div id="sec-5" class="hidden mt-6 pt-6 border-t border-slate-100 space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">หมายเลขเตียง</label>
-                            <input type="text" id="proc-bed" placeholder="Bed 01" class="w-full border rounded p-2 text-sm mt-1">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">ชื่อคนไข้</label>
-                            <input type="text" id="proc-name" class="w-full border rounded p-2 text-sm mt-1">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600">เลือกหัตถการ (30 รายการ)</label>
-                            <select id="proc-select" class="w-full border rounded p-2 text-sm mt-1 bg-white">
-                                <!-- Populated via JS -->
-                            </select>
-                        </div>
-                    </div>
-                    <button onclick="saveProcedure()" class="bg-purple-600 text-white px-4 py-2 rounded text-xs font-medium">บันทึกหัตถการ</button>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- ADMIN MODAL -->
-    <div id="admin-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-2xl max-w-md w-full shadow-xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="user-plus" class="text-cyan-600"></i> เพิ่มรายชื่อผู้ใช้งาน</h3>
-                <button onclick="toggleAdminModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x"></i></button>
-            </div>
-            <div class="space-y-3">
-                <div>
-                    <label class="text-xs text-slate-600">Username</label>
-                    <input type="text" id="admin-user" class="w-full border rounded p-2 text-sm mt-1">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-600">Password</label>
-                    <input type="password" id="admin-pass" class="w-full border rounded p-2 text-sm mt-1">
-                </div>
-                <button onclick="addUser()" class="w-full bg-cyan-600 text-white py-2 rounded text-sm font-medium mt-2">เพิ่มผู้ใช้</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- HIDDEN PDF TEMPLATE (STRICT 1-PAGE A4) -->
-    <div class="absolute top-[-9999px] left-[-9999px]">
-        <div id="pdf-template" class="bg-white text-slate-800 text-xs flex flex-col justify-between border">
             <div>
-                <div class="border-b-2 border-cyan-700 pb-3 mb-4 flex justify-between items-end">
-                    <div>
-                        <h1 class="text-xl font-bold text-cyan-800">รายงานการดูแลและการพยาบาล (NURSE REPORT)</h1>
-                        <p class="text-[10px] text-slate-500">Practical Nursing Documentation System</p>
-                    </div>
-                    <div class="text-right text-[10px]">
-                        <p id="pdf-date">วันที่: -</p>
-                        <p id="pdf-time">เวลา: -</p>
-                    </div>
-                </div>
-
-                <!-- Patient Info Section -->
-                <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded border border-slate-200 mb-4">
-                    <p><strong>ชื่อผู้ป่วย:</strong> <span id="pdf-p-name">-</span></p>
-                    <p><strong>HN/AN:</strong> <span id="pdf-p-hn">-</span></p>
-                    <p><strong>โรค (Dx):</strong> <span id="pdf-p-dx">-</span></p>
-                    <p><strong>ห้องพักฟื้น:</strong> <span id="pdf-p-room">-</span></p>
-                    <p class="col-span-2"><strong>ตึก/สถานที่:</strong> <span id="pdf-p-building">-</span></p>
-                </div>
-
-                <!-- Care & Therapies -->
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="border p-2 rounded">
-                        <h4 class="font-bold border-b pb-1 mb-1 text-cyan-700">กิจกรรมการพยาบาล</h4>
-                        <ul id="pdf-activities" class="list-disc pl-4 space-y-1"></ul>
-                    </div>
-                    <div class="border p-2 rounded">
-                        <h4 class="font-bold border-b pb-1 mb-1 text-cyan-700">การรักษา / กายภาพ</h4>
-                        <ul id="pdf-therapies" class="list-disc pl-4 space-y-1"></ul>
-                    </div>
-                </div>
-
-                <!-- Realtime IO -->
-                <div class="border p-2 rounded mb-4">
-                    <h4 class="font-bold border-b pb-1 mb-1 text-cyan-700">สรุปปริมาณสารน้ำเข้า-ออก (I/O)</h4>
-                    <div id="pdf-io-summary" class="text-[11px] grid grid-cols-2 gap-2"></div>
-                </div>
+              <p class="font-medium text-slate-200">รับโอนจาก System</p>
+              <p class="text-[10px] text-slate-500">วันนี้ 10:00 น.</p>
             </div>
-
-            <div class="border-t pt-4 flex justify-between items-end">
-                <div class="text-center w-40">
-                    <div class="border-b border-slate-400 mb-1 h-8"></div>
-                    <p class="text-[10px]">พยาบาลผู้บันทึก</p>
-                </div>
-                <div class="text-[9px] text-slate-400">หน้า 1 จาก 1 (เอกสารสมบูรณ์)</div>
-            </div>
+          </div>
+          <span class="text-emerald-400 font-semibold">+1,000,000,000,000</span>
         </div>
+      </div>
+
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        lucide.createIcons();
+    <!-- Transfer Modal -->
+    <div id="transfer-modal" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md z-20 p-6 flex-col justify-center space-y-4">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg font-bold text-white">โอนเงิน (NXRT Transfer)</h2>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+      </div>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">เลขบัญชีผู้รับ</label>
+          <input type="text" id="acc-input" placeholder="ระบุเลขบัญชี 10 หลัก" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-500 text-white">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">จำนวนเงิน (บาท)</label>
+          <input type="number" id="amount-input" placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-500 text-white">
+        </div>
+      </div>
 
-        let ioLogs = [];
+      <button onclick="processTransfer()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold py-3 rounded-xl hover:opacity-90 transition mt-4 shadow-lg shadow-cyan-500/20">
+        ยืนยันการโอนเงิน
+      </button>
+    </div>
 
-        // 1. Cinema Intro Sequence
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.getElementById('loading-text').classList.remove('opacity-0');
-                document.getElementById('progress-wrapper').classList.remove('opacity-0');
-                
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 2;
-                    document.getElementById('progress-bar').style.width = `${progress}%`;
-                    document.getElementById('progress-percent').innerText = `${progress}%`;
-                    
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        setTimeout(() => {
-                            document.getElementById('intro-screen').classList.add('hidden');
-                            document.getElementById('pin-modal').classList.remove('hidden');
-                        }, 500);
-                    }
-                }, 100); // 5 seconds load time
-            }, 3000); // Intro delay 3s
+    <!-- Receipt Modal (E-Slip) -->
+    <div id="slip-modal" class="hidden absolute inset-0 bg-slate-950 z-30 p-6 flex flex-col items-center justify-center">
+      <div class="w-full max-w-xs bg-slate-100 text-slate-800 rounded-2xl p-6 shadow-2xl relative space-y-4">
+        <!-- Slip Header -->
+        <div class="text-center border-b border-slate-200 pb-3">
+          <div class="w-10 h-10 bg-cyan-600 rounded-full flex items-center justify-center mx-auto mb-2 text-white font-bold">N</div>
+          <h4 class="font-bold text-cyan-700">ทำรายการสำเร็จ</h4>
+          <p class="text-[10px] text-slate-400" id="slip-date"></p>
+        </div>
 
-            startClock();
-            initInventory();
-            initProcedures();
-        });
+        <!-- Slip Body -->
+        <div class="space-y-3 text-xs">
+          <div>
+            <p class="text-slate-400 text-[10px]">ผู้โอน</p>
+            <p class="font-semibold text-slate-700">นาย NXRT User (888-0-99999-0)</p>
+          </div>
+          <div>
+            <p class="text-slate-400 text-[10px]">ผู้รับโอน</p>
+            <p class="font-semibold text-slate-700" id="slip-receiver"></p>
+          </div>
+          <div class="border-t border-dashed border-slate-300 pt-3 flex justify-between items-baseline">
+            <span class="text-slate-500">จำนวนเงิน</span>
+            <span class="text-base font-bold text-cyan-700" id="slip-amount"></span>
+          </div>
+          <div class="flex justify-between items-center text-[10px] text-slate-400">
+            <span>รหัสอ้างอิง</span>
+            <span id="slip-ref"></span>
+          </div>
+        </div>
 
-        // Realtime Clock
-        function startClock() {
-            setInterval(() => {
-                const now = new Date();
-                document.getElementById('clock-date').innerText = now.toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                document.getElementById('clock-time').innerText = now.toLocaleTimeString('th-TH');
-            }, 1000);
-        }
+        <!-- Button -->
+        <button onclick="closeSlip()" class="w-full bg-slate-800 text-white font-medium py-2 rounded-xl text-xs mt-4">
+          เสร็จสิ้น
+        </button>
+      </div>
+    </div>
 
-        // PIN Verification
-        document.getElementById('pin-input').addEventListener('input', function(e) {
-            const val = e.target.value;
-            const status = document.getElementById('pin-status');
-            
-            if (val.length === 6) {
-                if (val === '002521') {
-                    status.className = "text-xs font-medium text-emerald-600";
-                    status.innerText = "ยืนยันสถานะผู้ใช้สำเร็จ กำลังยืนยันตัวตน...";
-                    setTimeout(() => {
-                        document.getElementById('pin-modal').classList.add('hidden');
-                        document.getElementById('app-header').classList.remove('hidden');
-                        document.getElementById('main-content').classList.remove('hidden');
-                        revealMenu();
-                    }, 1200);
-                } else {
-                    status.className = "text-xs font-medium text-rose-500";
-                    status.innerText = "รหัสผ่านไม่ถูกต้อง";
-                    this.value = '';
-                }
-            }
-        });
+    <!-- Bottom Navigation -->
+    <div class="p-4 border-t border-slate-800/80 bg-slate-900/50 flex justify-around items-center text-slate-500">
+      <i data-lucide="home" class="w-5 h-5 text-cyan-400"></i>
+      <i data-lucide="pie-chart" class="w-5 h-5 hover:text-slate-300 cursor-pointer"></i>
+      <i data-lucide="credit-card" class="w-5 h-5 hover:text-slate-300 cursor-pointer"></i>
+      <i data-lucide="user" class="w-5 h-5 hover:text-slate-300 cursor-pointer"></i>
+    </div>
 
-        // Cascading Menu Reveal
-        function revealMenu() {
-            const items = document.querySelectorAll('.menu-item');
-            items.forEach((item, index) => {
-                setTimeout(() => {
-                    item.classList.add('show');
-                }, index * 500);
-            });
-        }
+  </div>
 
-        function toggleSection(id) {
-            const el = document.getElementById(id);
-            el.classList.toggle('hidden');
-        }
+  <script>
+    // Initialize Icons
+    lucide.createIcons();
 
-        function validateRoom(input) {
-            if (!input.value.toUpperCase().startsWith('H')) {
-                alert('หมายเลขห้องพักฟื้นต้องขึ้นต้นด้วย H เท่านั้น');
-                input.value = '';
-            }
-        }
+    // Initial Balance (1,000,000,000,000 THB = 1 ล้านล้านบาท)
+    let currentBalance = 1000000000000;
 
-        // Intake / Output Realtime System
-        function addIO(type) {
-            const amount = document.getElementById(`${type}-amount`).value;
-            const time = document.getElementById(`${type}-time`).value;
-            if (!amount || !time) return alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+    function formatNumber(num) {
+      return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
 
-            ioLogs.push({ type, amount: parseInt(amount), time });
-            renderIOTable();
-        }
+    function openModal() {
+      document.getElementById('transfer-modal').classList.remove('hidden');
+      document.getElementById('transfer-modal').classList.add('flex');
+    }
 
-        function renderIOTable() {
-            const tbody = document.getElementById('io-table-body');
-            tbody.innerHTML = ioLogs.map(item => `
-                <tr class="border-b">
-                    <td class="p-2">${item.time} น.</td>
-                    <td class="p-2 font-medium ${item.type === 'intake' ? 'text-blue-600' : 'text-amber-600'}">${item.type === 'intake' ? 'รับเข้า (Drinking)' : 'ขับออก (Urine)'}</td>
-                    <td class="p-2">${item.amount} ml</td>
-                </tr>
-            `).join('');
-        }
+    function closeModal() {
+      document.getElementById('transfer-modal').classList.add('hidden');
+      document.getElementById('transfer-modal').classList.remove('flex');
+    }
 
-        // Medical Milk Calculation
-        function calculateFormula() {
-            const formula = document.getElementById('formula-select').value;
-            const water = parseFloat(document.getElementById('water-ml').value) || 0;
-            const ratio = parseFloat(document.getElementById('ratio-select').value);
-            
-            let scoops = Math.round((water / 30) * ratio);
-            let resultText = `ผงนม ${scoops} ช้อน + น้ำ ${water} ml (ให้พลังงาน ~${Math.round(water * ratio)} kcal)`;
-            document.getElementById('calc-result').innerText = resultText;
-        }
+    function closeSlip() {
+      document.getElementById('slip-modal').classList.add('hidden');
+    }
 
-        // Populate 100+ Inventory List
-        function initInventory() {
-            const items = [
-                ["เข็มฉีดยา เบอร์ 18", "Syringe Needle 18G"], ["เข็มฉีดยา เบอร์ 21", "Syringe Needle 21G"],
-                ["กรรไกรตัดไหม", "Suture Scissors"], ["กรรไกรผ่าตัด", "Surgical Scissors"],
-                ["ปากคีบมีเขี้ยว", "Tissue Forceps"], ["ปากคีบไม่มีเขี้ยว", "Dressing Forceps"],
-                ["สายยางดูดเสมหะ", "Suction Catheter"], ["สายให้อาหาร", "NG Tube"]
-            ];
-            
-            // Loop duplicate mock to fill 100+ items cleanly
-            let fullList = [];
-            for (let i = 1; i <= 13; i++) {
-                items.forEach(([th, en]) => fullList.push({ th: `${th} #${i}`, en: `${en} #${i}` }));
-            }
+    function processTransfer() {
+      const acc = document.getElementById('acc-input').value;
+      const amount = parseFloat(document.getElementById('amount-input').value);
 
-            const container = document.getElementById('inventory-list');
-            container.innerHTML = fullList.map(item => `
-                <div class="p-2.5 flex justify-between items-center hover:bg-slate-50 text-xs inv-item">
-                    <div>
-                        <span class="font-semibold text-slate-700">${item.th}</span>
-                        <span class="text-slate-400 block text-[10px]">${item.en}</span>
-                    </div>
-                    <input type="checkbox" class="w-4 h-4 accent-cyan-600">
-                </div>
-            `).join('');
-        }
+      if (!acc || isNaN(amount) || amount <= 0) {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
+        return;
+      }
 
-        function filterInventory() {
-            const val = document.getElementById('inventory-search').value.toLowerCase();
-            document.querySelectorAll('.inv-item').forEach(el => {
-                el.style.display = el.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
-            });
-        }
+      if (amount > currentBalance) {
+        alert('ยอดเงินในบัญชีไม่พอ');
+        return;
+      }
 
-        // Procedures List Init (30 Items)
-        function initProcedures() {
-            const procs = Array.from({length: 30}, (_, i) => `หัตถการทางการแพทย์รายการที่ ${i+1} (Procedure Spec ${i+1})`);
-            document.getElementById('proc-select').innerHTML = procs.map(p => `<option>${p}</option>`).join('');
-        }
+      // Deduct Balance
+      currentBalance -= amount;
+      document.getElementById('balance-display').innerText = formatNumber(currentBalance);
 
-        function saveProcedure() {
-            alert('บันทึกข้อมูลหัตถการเรียบร้อย');
-        }
+      // Generate Slip Data
+      const now = new Date();
+      document.getElementById('slip-date').innerText = now.toLocaleString('th-TH');
+      document.getElementById('slip-receiver').innerText = `บัญชี X-${acc.slice(-4) || '1234'}`;
+      document.getElementById('slip-amount').innerText = `${formatNumber(amount)} บาท`;
+      document.getElementById('slip-ref').innerText = 'NX' + Math.floor(Math.random() * 1000000000);
 
-        function toggleAdminModal() {
-            document.getElementById('admin-modal').classList.toggle('hidden');
-        }
+      // Reset Inputs & Close Modal
+      document.getElementById('acc-input').value = '';
+      document.getElementById('amount-input').value = '';
+      closeModal();
 
-        function addUser() {
-            alert('เพิ่มผู้ใช้สำเร็จ');
-            toggleAdminModal();
-        }
-
-        // Export PDF Fit Exactly 1 Page
-        function exportToPDF() {
-            // Populate PDF Template
-            document.getElementById('pdf-p-name').innerText = document.getElementById('p-name').value || '-';
-            document.getElementById('pdf-p-hn').innerText = document.getElementById('p-hn').value || '-';
-            document.getElementById('pdf-p-dx').innerText = document.getElementById('p-dx').value || '-';
-            document.getElementById('pdf-p-room').innerText = document.getElementById('p-room').value || '-';
-            document.getElementById('pdf-p-building').innerText = document.getElementById('p-building').value;
-            
-            const now = new Date();
-            document.getElementById('pdf-date').innerText = `วันที่: ${now.toLocaleDateString('th-TH')}`;
-            document.getElementById('pdf-time').innerText = `เวลา: ${now.toLocaleTimeString('th-TH')}`;
-
-            // Activities
-            let actList = [];
-            if(document.getElementById('act-1').checked) actList.push(`อาบน้ำ (${document.getElementById('act-1-time').value})`);
-            if(document.getElementById('act-2').checked) actList.push(`แปรงฟัน (${document.getElementById('act-2-time').value})`);
-            if(document.getElementById('act-3').checked) actList.push(`ทำความสะอาดร่างกาย (${document.getElementById('act-3-time').value})`);
-            document.getElementById('pdf-activities').innerHTML = actList.map(a => `<li>${a}</li>`).join('') || '<li>ไม่มี</li>';
-
-            // Therapies
-            let rxList = [];
-            if(document.getElementById('rx-1').checked) rxList.push(`Occupational Therapy (${document.getElementById('rx-1-time').value})`);
-            if(document.getElementById('rx-2').checked) rxList.push(`Physical Therapist (${document.getElementById('rx-2-time').value})`);
-            const custom = document.getElementById('rx-custom').value;
-            if(custom) rxList.push(`${custom} (${document.getElementById('rx-custom-time').value})`);
-            document.getElementById('pdf-therapies').innerHTML = rxList.map(r => `<li>${r}</li>`).join('') || '<li>ไม่มี</li>';
-
-            // IO Summary
-            const totalIn = ioLogs.filter(i => i.type === 'intake').reduce((a,b) => a + b.amount, 0);
-            const totalOut = ioLogs.filter(i => i.type === 'output').reduce((a,b) => a + b.amount, 0);
-            document.getElementById('pdf-io-summary').innerHTML = `
-                <p><strong>รวมสารน้ำเข้า:</strong> ${totalIn} ml</p>
-                <p><strong>รวมปริมาณปัสสาวะ:</strong> ${totalOut} ml</p>
-            `;
-
-            // Print Action via html2pdf
-            const element = document.getElementById('pdf-template');
-            const opt = {
-                margin: 0,
-                filename: 'nurse-report.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
-    </script>
+      // Show Slip Modal
+      document.getElementById('slip-modal').classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>
