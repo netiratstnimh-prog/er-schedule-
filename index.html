@@ -3,225 +3,624 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NXRT Digital Bank</title>
+  <title>NXR PAY - ระบบชำระเงินศูนย์อาหารวิทยาลัย</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- JsBarcode CDN for Reward Points -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <!-- Google Font: Kanit -->
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap');
-    body { font-family: 'Kanit', sans-serif; }
-    .glass {
-      background: rgba(255, 255, 255, 0.05);
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #0b0f19;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
       backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.03); }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="text-slate-100 min-h-screen flex items-center justify-center p-0 sm:p-4">
 
-  <!-- Mobile App Frame Container -->
-  <div class="w-full max-w-md bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden relative min-h-[750px] flex flex-col justify-between">
+  <!-- Mobile Simulator Container -->
+  <div class="w-full max-w-md bg-slate-950 min-h-screen sm:min-h-[812px] sm:max-h-[850px] sm:rounded-[40px] border border-slate-800/80 shadow-2xl overflow-hidden relative flex flex-col justify-between">
     
-    <!-- Top Header Bar -->
-    <div class="p-6 pb-2 flex justify-between items-center">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-cyan-500/30">N</div>
-        <span class="font-semibold text-lg tracking-wider text-white">NXRT<span class="text-cyan-400">BANK</span></span>
+    <!-- ==================== 1. SPLASH SCREEN ==================== -->
+    <div id="splash-screen" class="absolute inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+      <!-- App Logo -->
+      <div class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-cyan-500/30 mb-6 pulse-animation">
+        <span class="text-3xl font-extrabold text-white tracking-wider">NXR</span>
       </div>
-      <i data-lucide="bell" class="w-5 h-5 text-slate-400 hover:text-white cursor-pointer transition"></i>
+      <h1 class="text-3xl font-bold tracking-tight text-white mb-1">NXR <span class="gradient-text">PAY</span></h1>
+      <p class="text-slate-400 text-sm mb-8">ระบบชำระเงินศูนย์อาหารวิทยาลัย</p>
+
+      <!-- Status Indicator -->
+      <div class="flex items-center gap-3 bg-slate-900/90 border border-slate-800 px-5 py-2.5 rounded-full shadow-inner">
+        <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+        <span id="splash-status" class="text-xs text-cyan-300 font-medium">กำลังยืนยันตัวตนระบบ...</span>
+      </div>
     </div>
 
-    <!-- Main Content Area -->
-    <div id="main-content" class="p-6 space-y-6 flex-1">
-      
-      <!-- Balance Card -->
-      <div class="glass rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-slate-800/80 to-slate-900/80 shadow-xl">
-        <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
-        <p class="text-xs text-slate-400 font-light uppercase tracking-wider">ยอดเงินที่ใช้ได้</p>
-        <div class="flex items-baseline gap-2 mt-2">
-          <span class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-cyan-400" id="balance-display">
-            1,000,000,000,000.00
-          </span>
-          <span class="text-sm text-cyan-400 font-medium">THB</span>
+    <!-- ==================== 2. LOGIN SCREEN ==================== -->
+    <div id="login-screen" class="hidden absolute inset-0 z-40 bg-slate-950 p-6 flex flex-col justify-between overflow-y-auto">
+      <div class="pt-8">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg">N</div>
+          <span class="text-xl font-bold tracking-wider text-white">NXR <span class="gradient-text">PAY</span></span>
         </div>
-        <p class="text-[10px] text-slate-500 mt-4">เลขที่บัญชี: 888-0-99999-0</p>
-      </div>
+        
+        <h2 class="text-2xl font-bold text-white mb-2">เข้าสู่ระบบ</h2>
+        <p class="text-xs text-slate-400 mb-8">เข้าใช้งานสำหรับนักศึกษาและบุคลากรวิทยาลัย</p>
 
-      <!-- Quick Action Buttons -->
-      <div class="grid grid-cols-4 gap-3">
-        <button onclick="openModal()" class="flex flex-col items-center gap-2 group">
-          <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all duration-300 shadow-lg shadow-cyan-500/5">
-            <i data-lucide="send" class="w-5 h-5"></i>
-          </div>
-          <span class="text-xs text-slate-300">โอนเงิน</span>
-        </button>
-        <button class="flex flex-col items-center gap-2 group">
-          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300 group-hover:border-slate-500 transition-all">
-            <i data-lucide="qr-code" class="w-5 h-5"></i>
-          </div>
-          <span class="text-xs text-slate-400">สแกน</span>
-        </button>
-        <button class="flex flex-col items-center gap-2 group">
-          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300 group-hover:border-slate-500 transition-all">
-            <i data-lucide="wallet" class="w-5 h-5"></i>
-          </div>
-          <span class="text-xs text-slate-400">เติมเงิน</span>
-        </button>
-        <button class="flex flex-col items-center gap-2 group">
-          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-300 group-hover:border-slate-500 transition-all">
-            <i data-lucide="more-horizontal" class="w-5 h-5"></i>
-          </div>
-          <span class="text-xs text-slate-400">เพิ่มเติม</span>
-        </button>
-      </div>
-
-      <!-- Transaction History Placeholder -->
-      <div class="space-y-3 pt-2">
-        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">รายการล่าสุด</h3>
-        <div class="glass rounded-xl p-3 flex justify-between items-center text-sm">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400">
-              <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <p class="font-medium text-slate-200">รับโอนจาก System</p>
-              <p class="text-[10px] text-slate-500">วันนี้ 10:00 น.</p>
+        <!-- Login Form -->
+        <div class="space-y-4">
+          <div>
+            <label class="text-xs font-medium text-slate-300 mb-1.5 block">รหัสนักศึกษา / ผู้ใช้งาน</label>
+            <div class="relative">
+              <i data-lucide="user" class="w-5 h-5 text-slate-500 absolute left-3.5 top-3"></i>
+              <input type="text" id="std-id" placeholder="กรอกรหัสนักศึกษา (เช่น 6630001)" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
             </div>
           </div>
-          <span class="text-emerald-400 font-semibold">+1,000,000,000,000</span>
+
+          <div>
+            <label class="text-xs font-medium text-slate-300 mb-1.5 block">รหัสผ่าน (รหัสจำลอง: 12345)</label>
+            <div class="relative">
+              <i data-lucide="key-round" class="w-5 h-5 text-slate-500 absolute left-3.5 top-3"></i>
+              <input type="password" id="std-pass" placeholder="กรอกรหัสผ่าน" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
+            </div>
+          </div>
+
+          <button onclick="handleLoginPass()" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold py-3 rounded-xl shadow-lg shadow-cyan-500/20 transition duration-200 mt-2">
+            เข้าสู่ระบบด้วยรหัสผ่าน
+          </button>
+        </div>
+
+        <!-- NFC Divider -->
+        <div class="my-6 flex items-center gap-3">
+          <div class="h-px bg-slate-800 flex-1"></div>
+          <span class="text-[11px] text-slate-500 uppercase">หรือแตะเข้าใช้งาน</span>
+          <div class="h-px bg-slate-800 flex-1"></div>
+        </div>
+
+        <!-- NFC Option -->
+        <div class="space-y-3">
+          <button onclick="handleNFCScan()" class="w-full glass-card hover:bg-slate-800/80 border border-cyan-500/30 p-4 rounded-2xl flex items-center justify-between group transition">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-slate-950 transition">
+                <i data-lucide="contactless" class="w-5 h-5"></i>
+              </div>
+              <div class="text-left">
+                <p class="text-sm font-semibold text-white">แตะบัตรนักศึกษา NFC</p>
+                <p class="text-[10px] text-slate-400">เฉพาะมือถือรุ่นที่รองรับ NFC</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500 group-hover:text-white transition"></i>
+          </button>
         </div>
       </div>
 
+      <p class="text-center text-[11px] text-slate-600 pb-2">วิทยาลัยเทคโนโลยี NXR PAY &copy; 2026</p>
     </div>
 
-    <!-- Transfer Modal -->
-    <div id="transfer-modal" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md z-20 p-6 flex-col justify-center space-y-4">
-      <div class="flex justify-between items-center mb-2">
-        <h2 class="text-lg font-bold text-white">โอนเงิน (NXRT Transfer)</h2>
-        <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
-      </div>
+    <!-- ==================== 3. MAIN DASHBOARD ==================== -->
+    <div id="main-dashboard" class="hidden flex-1 flex flex-col justify-between overflow-y-auto">
       
-      <div class="space-y-3">
-        <div>
-          <label class="text-xs text-slate-400 mb-1 block">เลขบัญชีผู้รับ</label>
-          <input type="text" id="acc-input" placeholder="ระบุเลขบัญชี 10 หลัก" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-500 text-white">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 mb-1 block">จำนวนเงิน (บาท)</label>
-          <input type="number" id="amount-input" placeholder="0.00" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-500 text-white">
-        </div>
-      </div>
-
-      <button onclick="processTransfer()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-bold py-3 rounded-xl hover:opacity-90 transition mt-4 shadow-lg shadow-cyan-500/20">
-        ยืนยันการโอนเงิน
-      </button>
-    </div>
-
-    <!-- Receipt Modal (E-Slip) -->
-    <div id="slip-modal" class="hidden absolute inset-0 bg-slate-950 z-30 p-6 flex flex-col items-center justify-center">
-      <div class="w-full max-w-xs bg-slate-100 text-slate-800 rounded-2xl p-6 shadow-2xl relative space-y-4">
-        <!-- Slip Header -->
-        <div class="text-center border-b border-slate-200 pb-3">
-          <div class="w-10 h-10 bg-cyan-600 rounded-full flex items-center justify-center mx-auto mb-2 text-white font-bold">N</div>
-          <h4 class="font-bold text-cyan-700">ทำรายการสำเร็จ</h4>
-          <p class="text-[10px] text-slate-400" id="slip-date"></p>
-        </div>
-
-        <!-- Slip Body -->
-        <div class="space-y-3 text-xs">
-          <div>
-            <p class="text-slate-400 text-[10px]">ผู้โอน</p>
-            <p class="font-semibold text-slate-700">นาย NXRT User (888-0-99999-0)</p>
+      <!-- Header Bar -->
+      <div class="p-5 pb-3 flex justify-between items-center border-b border-slate-900 bg-slate-950/80 sticky top-0 z-20 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 p-0.5">
+            <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center font-bold text-xs text-cyan-400">
+              NXR
+            </div>
           </div>
           <div>
-            <p class="text-slate-400 text-[10px]">ผู้รับโอน</p>
-            <p class="font-semibold text-slate-700" id="slip-receiver"></p>
-          </div>
-          <div class="border-t border-dashed border-slate-300 pt-3 flex justify-between items-baseline">
-            <span class="text-slate-500">จำนวนเงิน</span>
-            <span class="text-base font-bold text-cyan-700" id="slip-amount"></span>
-          </div>
-          <div class="flex justify-between items-center text-[10px] text-slate-400">
-            <span>รหัสอ้างอิง</span>
-            <span id="slip-ref"></span>
+            <p class="text-[11px] text-slate-400 leading-tight">ยินดีต้อนรับระบบชำระเงินศูนย์อาหาร</p>
+            <p class="text-sm font-bold text-white leading-tight">นาย สมชาย ใจดี <span class="text-[10px] font-normal text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/50">นักศึกษา</span></p>
           </div>
         </div>
-
-        <!-- Button -->
-        <button onclick="closeSlip()" class="w-full bg-slate-800 text-white font-medium py-2 rounded-xl text-xs mt-4">
-          เสร็จสิ้น
+        <button onclick="logout()" class="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-900 transition">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
         </button>
       </div>
-    </div>
 
-    <!-- Bottom Navigation -->
-    <div class="p-4 border-t border-slate-800/80 bg-slate-900/50 flex justify-around items-center text-slate-500">
-      <i data-lucide="home" class="w-5 h-5 text-cyan-400"></i>
-      <i data-lucide="pie-chart" class="w-5 h-5 hover:text-slate-300 cursor-pointer"></i>
-      <i data-lucide="credit-card" class="w-5 h-5 hover:text-slate-300 cursor-pointer"></i>
-      <i data-lucide="user" class="w-5 h-5 hover:text-slate-300 cursor-pointer"></i>
+      <!-- Content Area -->
+      <div class="p-5 space-y-5 flex-1">
+        
+        <!-- Balance Card -->
+        <div class="glass-card rounded-3xl p-6 relative overflow-hidden bg-gradient-to-br from-slate-900/90 via-slate-900 to-slate-950 border border-slate-800 shadow-xl">
+          <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-cyan-500/10 rounded-full blur-3xl"></div>
+          
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs text-slate-400 font-medium tracking-wide">ยอดเงินคงเหลือในบัตร</span>
+            <span class="text-[11px] text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-full border border-slate-700">ID: 6630001</span>
+          </div>
+
+          <div class="flex items-baseline gap-2">
+            <span id="user-balance" class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-cyan-300">
+              500.00
+            </span>
+            <span class="text-sm text-cyan-400 font-semibold">บาท</span>
+          </div>
+
+          <!-- Points Display Banner -->
+          <div class="mt-4 pt-3 border-t border-slate-800/80 flex justify-between items-center text-xs">
+            <div class="flex items-center gap-1.5 text-amber-400">
+              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+              <span class="font-medium text-slate-300">แต้มสะสมวิทยาลัย:</span>
+            </div>
+            <span id="user-points" class="font-bold text-amber-400">120 แต้ม</span>
+          </div>
+        </div>
+
+        <!-- Action Grid Buttons -->
+        <div>
+          <h3 class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">เมนูทำรายการ</h3>
+          <div class="grid grid-cols-4 gap-3">
+            
+            <!-- เติมเงิน -->
+            <button onclick="openModal('topup-modal')" class="flex flex-col items-center gap-2 group">
+              <div class="w-13 h-13 w-full aspect-square rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-slate-950 group-hover:border-cyan-400 transition-all duration-300 shadow-lg">
+                <i data-lucide="plus-circle" class="w-6 h-6"></i>
+              </div>
+              <span class="text-xs text-slate-300 font-medium">เติมเงิน</span>
+            </button>
+
+            <!-- สแกนจ่าย -->
+            <button onclick="openModal('scan-modal')" class="flex flex-col items-center gap-2 group">
+              <div class="w-full aspect-square rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-all duration-300">
+                <i data-lucide="qr-code" class="w-6 h-6"></i>
+              </div>
+              <span class="text-xs text-cyan-400 font-semibold">สแกนจ่าย</span>
+            </button>
+
+            <!-- โอนเงินออก -->
+            <button onclick="openModal('transfer-modal')" class="flex flex-col items-center gap-2 group">
+              <div class="w-full aspect-square rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-indigo-400 transition-all duration-300 shadow-lg">
+                <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
+              </div>
+              <span class="text-xs text-slate-300 font-medium">โอนเงินออก</span>
+            </button>
+
+            <!-- สะสมแต้ม -->
+            <button onclick="openRewardModal()" class="flex flex-col items-center gap-2 group">
+              <div class="w-full aspect-square rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-amber-400 group-hover:bg-amber-400 group-hover:text-slate-950 group-hover:border-amber-300 transition-all duration-300 shadow-lg">
+                <i data-lucide="barcode" class="w-6 h-6"></i>
+              </div>
+              <span class="text-xs text-slate-300 font-medium">สะสมแต้ม</span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div>
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">ประวัติการทำรายการล่าสุด</h3>
+            <span class="text-[11px] text-cyan-400 cursor-pointer">ดูทั้งหมด</span>
+          </div>
+          
+          <div id="tx-history" class="space-y-2.5">
+            <!-- Sample Transaction Item -->
+            <div class="glass-card rounded-2xl p-3 flex justify-between items-center text-xs">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <p class="font-semibold text-slate-200">เติมเงินผ่าน PromptPay</p>
+                  <p class="text-[10px] text-slate-500">วันนี้ 12:30 น.</p>
+                </div>
+              </div>
+              <span class="font-bold text-emerald-400">+100.00 ฿</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Nav Bar -->
+      <div class="p-4 border-t border-slate-900 bg-slate-950/90 flex justify-around items-center text-slate-500">
+        <button class="flex flex-col items-center gap-1 text-cyan-400">
+          <i data-lucide="home" class="w-5 h-5"></i>
+          <span class="text-[10px]">หน้าหลัก</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 hover:text-slate-300">
+          <i data-lucide="utensils" class="w-5 h-5"></i>
+          <span class="text-[10px]">ร้านอาหาร</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 hover:text-slate-300">
+          <i data-lucide="history" class="w-5 h-5"></i>
+          <span class="text-[10px]">ประวัติ</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 hover:text-slate-300">
+          <i data-lucide="user" class="w-5 h-5"></i>
+          <span class="text-[10px]">โปรไฟล์</span>
+        </button>
+      </div>
+
     </div>
 
   </div>
 
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. TOP-UP MODAL (เติมเงิน) -->
+  <div id="topup-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl relative">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-cyan-400"></i> เติมเงินเข้าบัตร NXR PAY
+        </h3>
+        <button onclick="closeModal('topup-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div id="topup-step-1" class="space-y-4">
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">ระบุจำนวนเงิน (ขั้นต่ำ 10 บาท)</label>
+          <input type="number" id="topup-amount" min="10" placeholder="10.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-lg font-bold text-cyan-400 focus:outline-none focus:border-cyan-500">
+        </div>
+
+        <!-- Fast Amount Chips -->
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="setTopupAmount(20)" class="bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-lg text-slate-300">20 ฿</button>
+          <button onclick="setTopupAmount(50)" class="bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-lg text-slate-300">50 ฿</button>
+          <button onclick="setTopupAmount(100)" class="bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-lg text-slate-300">100 ฿</button>
+        </div>
+
+        <button onclick="generateTopupQR()" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-bold py-3 rounded-xl hover:opacity-90 transition">
+          สร้างคิวอาร์โค้ดสแกนชำระ
+        </button>
+      </div>
+
+      <!-- QR Display Area -->
+      <div id="topup-step-2" class="hidden text-center space-y-4 py-2">
+        <p class="text-xs text-slate-300">สแกนด้วยแอปพลิเคชันธนาคารเพื่อเติมเงิน</p>
+        <div class="bg-white p-4 rounded-2xl inline-block shadow-lg border border-slate-200">
+          <img id="promptpay-qr" src="" alt="PromptPay QR Code" class="w-48 h-48 mx-auto">
+        </div>
+        <p class="text-sm font-bold text-cyan-400">ยอดเงินเติม: <span id="qr-amount-display">0.00</span> บาท</p>
+        
+        <button onclick="confirmTopup()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition">
+          จำลองการสแกนจ่ายสำเร็จ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. SCAN & PAY MODAL (สแกนจ่ายร้านค้าวิทยาลัย) -->
+  <div id="scan-modal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="qr-code" class="w-5 h-5 text-cyan-400"></i> สแกนจ่ายร้านค้าวิทยาลัย
+        </h3>
+        <button onclick="closeModal('scan-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <!-- Scanner Simulation Frame -->
+      <div class="relative w-full aspect-square bg-slate-950 border-2 border-dashed border-cyan-500/50 rounded-2xl flex flex-col items-center justify-center p-4 overflow-hidden">
+        <div class="absolute inset-x-0 h-0.5 bg-cyan-400 animate-bounce shadow-lg shadow-cyan-500"></div>
+        <i data-lucide="camera" class="w-12 h-12 text-slate-700 mb-2"></i>
+        <p class="text-xs text-slate-400 text-center">ส่องคิวอาร์โค้ดของร้านค้าในศูนย์อาหาร</p>
+      </div>
+
+      <p class="text-[11px] text-amber-400 bg-amber-950/40 border border-amber-800/40 p-2.5 rounded-xl">
+        * ระบบรองรับเฉพาะ QR Code ของร้านค้าศูนย์อาหารวิทยาลัย NXR PAY เท่านั้น
+      </p>
+
+      <!-- Simulated Vendor Selector -->
+      <div class="space-y-2">
+        <label class="text-xs text-slate-400 block">จำลองเลือกสแกนร้านค้า:</label>
+        <select id="vendor-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
+          <option value="ร้านข้าวแกงป้าป๋อง (วิทยาลัย)|45.00">ร้านข้าวแกงป้าป๋อง (45.00 บาท)</option>
+          <option value="ร้านน้ำดื่มเฟรชมี (วิทยาลัย)|25.00">ร้านน้ำดื่มเฟรชมี (25.00 บาท)</option>
+          <option value="ร้านก๋วยเตี๋ยวเรือแชมป์ (วิทยาลัย)|50.00">ร้านก๋วยเตี๋ยวเรือแชมป์ (50.00 บาท)</option>
+          <option value="ร้านข้าวมันไก่เฮียชัย (วิทยาลัย)|40.00">ร้านข้าวมันไก่เฮียชัย (40.00 บาท)</option>
+        </select>
+      </div>
+
+      <button onclick="processPay()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl transition">
+        ชำระเงิน
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. TRANSFER OUT MODAL (โอนเงินออก) -->
+  <div id="transfer-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="arrow-up-right" class="w-5 h-5 text-indigo-400"></i> โอนเงินออกจากบัตร
+        </h3>
+        <button onclick="closeModal('transfer-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">เลือกธนาคารปลายทาง</label>
+          <select id="bank-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
+            <option value="กสิกรไทย (KBANK)">ธนาคารกสิกรไทย (KBANK)</option>
+            <option value="ไทยพาณิชย์ (SCB)">ธนาคารไทยพาณิชย์ (SCB)</option>
+            <option value="กรุงไทย (KTB)">ธนาคารกรุงไทย (KTB)</option>
+            <option value="กรุงเทพ (BBL)">ธนาคารกรุงเทพ (BBL)</option>
+            <option value="กรุงศรี (BAY)">ธนาคารกรุงศรีอยุธยา (BAY)</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">เลขที่บัญชี</label>
+          <input type="text" id="bank-acc" placeholder="กรอกเลขบัญชี 10 หลัก" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div>
+          <label class="text-xs text-slate-400 mb-1 block">จำนวนเงินที่ต้องการโอนออก</label>
+          <input type="number" id="transfer-amount" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm font-bold text-white focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <!-- Fee Info Box -->
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 text-xs">
+          <div class="flex justify-between text-slate-400">
+            <span>ค่าธรรมเนียมโอนออก:</span>
+            <span class="text-rose-400 font-semibold">3.00 บาท / รายการ</span>
+          </div>
+          <p class="text-[10px] text-slate-500">* ระบบจะหักค่าธรรมเนียม 3 บาท จากยอดเงินคงเหลือในบัตรเพิ่มเติม</p>
+        </div>
+      </div>
+
+      <button onclick="processTransferOut()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-600/20">
+        ยืนยันการโอนเงินออก
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. REWARD POINTS MODAL (สะสมแต้ม) -->
+  <div id="reward-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl text-center">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="barcode" class="w-5 h-5 text-amber-400"></i> บาร์โค้ดสะสมแต้มวิทยาลัย
+        </h3>
+        <button onclick="closeModal('reward-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <p class="text-xs text-slate-300">ยื่นบาร์โค้ดนี้ให้ร้านค้าสแกนเพื่อรับแต้มสะสมทุกครั้งที่ซื้ออาหาร</p>
+
+      <!-- Barcode Container -->
+      <div class="bg-white p-4 rounded-2xl inline-block border border-slate-200">
+        <svg id="barcode"></svg>
+      </div>
+
+      <div class="bg-amber-950/30 border border-amber-800/40 p-3 rounded-xl">
+        <p class="text-xs text-amber-300">ทุกการใช้จ่ายครบ 20 บาท รับทันที <span class="font-bold">1 แต้ม</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
   <script>
-    // Initialize Icons
+    // Initialize Lucide Icons
     lucide.createIcons();
 
-    // Initial Balance (1,000,000,000,000 THB = 1 ล้านล้านบาท)
-    let currentBalance = 1000000000000;
+    // App State
+    let currentBalance = 500.00;
+    let currentPoints = 120;
 
-    function formatNumber(num) {
-      return num.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    // 1. SPLASH SCREEN FLOW (3 Seconds Delay)
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById('splash-status').innerText = 'ยืนยันตัวตนสำเร็จกำลังเข้าสู่หน้าล็อกอิน...';
+      }, 1500);
+
+      setTimeout(() => {
+        document.getElementById('splash-screen').classList.add('hidden');
+        document.getElementById('login-screen').classList.remove('hidden');
+      }, 3000);
+    });
+
+    // 2. LOGIN LOGIC
+    function handleLoginPass() {
+      const id = document.getElementById('std-id').value.trim();
+      const pass = document.getElementById('std-pass').value.trim();
+
+      if (!id) {
+        alert('กรุณากรอกรหัสนักศึกษา');
+        return;
+      }
+
+      if (pass === '12345') {
+        goToDashboard();
+      } else {
+        alert('รหัสผ่านไม่ถูกต้อง (ใช้รหัสจำลอง: 12345)');
+      }
     }
 
-    function openModal() {
-      document.getElementById('transfer-modal').classList.remove('hidden');
-      document.getElementById('transfer-modal').classList.add('flex');
+    // NFC Scan Handle
+    async function handleNFCScan() {
+      if ('NDEFReader' in window) {
+        try {
+          alert('กรุณาแตะบัตรนักศึกษา NFC เข้ากับด้านหลังมือถือของคุณ');
+          const ndef = new NDEFReader();
+          await ndef.scan();
+          ndef.addEventListener("reading", () => {
+            goToDashboard();
+          });
+        } catch (error) {
+          alert('เกิดข้อผิดพลาด NFC หรือเบราว์เซอร์ไม่อนุญาต ให้ใช้ระบบแตะจำลองแทน');
+          goToDashboard();
+        }
+      } else {
+        alert('จำลองการแตะบัตรนักศึกษา NFC เข้าสู่ระบบเรียบร้อย');
+        goToDashboard();
+      }
     }
 
-    function closeModal() {
-      document.getElementById('transfer-modal').classList.add('hidden');
-      document.getElementById('transfer-modal').classList.remove('flex');
+    function goToDashboard() {
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('main-dashboard').classList.remove('hidden');
+      updateUI();
     }
 
-    function closeSlip() {
-      document.getElementById('slip-modal').classList.add('hidden');
+    function logout() {
+      document.getElementById('main-dashboard').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
     }
 
-    function processTransfer() {
-      const acc = document.getElementById('acc-input').value;
-      const amount = parseFloat(document.getElementById('amount-input').value);
+    // UI Helper Functions
+    function updateUI() {
+      document.getElementById('user-balance').innerText = currentBalance.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('user-points').innerText = `${currentPoints} แต้ม`;
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function addTransactionHistory(title, amount, isIncome) {
+      const historyContainer = document.getElementById('tx-history');
+      const timeStr = 'วันนี้ ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+      
+      const itemHTML = `
+        <div class="glass-card rounded-2xl p-3 flex justify-between items-center text-xs">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} flex items-center justify-center">
+              <i data-lucide="${isIncome ? 'arrow-down-left' : 'arrow-up-right'}" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <p class="font-semibold text-slate-200">${title}</p>
+              <p class="text-[10px] text-slate-500">${timeStr}</p>
+            </div>
+          </div>
+          <span class="font-bold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">
+            ${isIncome ? '+' : '-'}${amount.toFixed(2)} ฿
+          </span>
+        </div>
+      `;
+      historyContainer.insertAdjacentHTML('afterbegin', itemHTML);
+      lucide.createIcons();
+    }
+
+    // 3. TOP-UP LOGIC (เติมเงิน)
+    function setTopupAmount(val) {
+      document.getElementById('topup-amount').value = val;
+    }
+
+    function generateTopupQR() {
+      const amount = parseFloat(document.getElementById('topup-amount').value);
+      if (isNaN(amount) || amount < 10) {
+        alert('กรุณากรอกจำนวนเงินขั้นต่ำ 10 บาท');
+        return;
+      }
+
+      document.getElementById('qr-amount-display').innerText = amount.toFixed(2);
+      // Generate QR Code via Public API
+      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PROMPTPAY-NXR-PAY-${amount}`;
+      document.getElementById('promptpay-qr').src = qrApi;
+
+      document.getElementById('topup-step-1').classList.add('hidden');
+      document.getElementById('topup-step-2').classList.remove('hidden');
+    }
+
+    function confirmTopup() {
+      const amount = parseFloat(document.getElementById('topup-amount').value);
+      currentBalance += amount;
+      updateUI();
+      addTransactionHistory('เติมเงินผ่าน PromptPay', amount, true);
+      
+      alert('เติมเงินสำเร็จจำนวน ' + amount + ' บาท');
+      
+      // Reset Topup Modal
+      document.getElementById('topup-step-1').classList.remove('hidden');
+      document.getElementById('topup-step-2').classList.add('hidden');
+      document.getElementById('topup-amount').value = '';
+      closeModal('topup-modal');
+    }
+
+    // 4. SCAN & PAY LOGIC (จ่ายเงินวิทยาลัย)
+    function processPay() {
+      const vendorData = document.getElementById('vendor-select').value.split('|');
+      const vendorName = vendorData[0];
+      const price = parseFloat(vendorData[1]);
+
+      if (price > currentBalance) {
+        alert('ยอดเงินในบัตรไม่เพียงพอ กรุณาเติมเงินก่อนชำระ');
+        return;
+      }
+
+      currentBalance -= price;
+      // Add points (1 point per 20 THB)
+      const earnedPoints = Math.floor(price / 20);
+      currentPoints += earnedPoints;
+
+      updateUI();
+      addTransactionHistory(`ชำระเงิน - ${vendorName}`, price, false);
+
+      alert(`ชำระเงินให้ "${vendorName}" จำนวน ${price.toFixed(2)} บาท เรียบร้อยแล้ว!\n(ได้รับแต้มสะสม +${earnedPoints} แต้ม)`);
+      closeModal('scan-modal');
+    }
+
+    // 5. TRANSFER OUT LOGIC (โอนเงินออก)
+    function processTransferOut() {
+      const bank = document.getElementById('bank-select').value;
+      const acc = document.getElementById('bank-acc').value.trim();
+      const amount = parseFloat(document.getElementById('transfer-amount').value);
+      const fee = 3.00;
 
       if (!acc || isNaN(amount) || amount <= 0) {
-        alert('กรุณากรอกข้อมูลให้ครบถ้วนและถูกต้อง');
+        alert('กรุณากรอกข้อมูลเลขบัญชีและจำนวนเงินให้ถูกต้อง');
         return;
       }
 
-      if (amount > currentBalance) {
-        alert('ยอดเงินในบัญชีไม่พอ');
+      const totalDeduct = amount + fee;
+
+      if (totalDeduct > currentBalance) {
+        alert(`ยอดเงินในบัตรไม่เพียงพอ! (ต้องการ ${totalDeduct.toFixed(2)} บาท รวมค่าธรรมเนียม 3 บาท)`);
         return;
       }
 
-      // Deduct Balance
-      currentBalance -= amount;
-      document.getElementById('balance-display').innerText = formatNumber(currentBalance);
+      currentBalance -= totalDeduct;
+      updateUI();
+      addTransactionHistory(`โอนออกไป ${bank}`, amount, false);
+      addTransactionHistory(`ค่าธรรมเนียมโอนเงินออก`, fee, false);
 
-      // Generate Slip Data
-      const now = new Date();
-      document.getElementById('slip-date').innerText = now.toLocaleString('th-TH');
-      document.getElementById('slip-receiver').innerText = `บัญชี X-${acc.slice(-4) || '1234'}`;
-      document.getElementById('slip-amount').innerText = `${formatNumber(amount)} บาท`;
-      document.getElementById('slip-ref').innerText = 'NX' + Math.floor(Math.random() * 1000000000);
+      alert(`โอนเงินจำนวน ${amount.toFixed(2)} บาท ไปยังบัญชี ${acc} (${bank}) เรียบร้อยแล้ว\n(หักค่าธรรมเนียม 3.00 บาท)`);
+      
+      document.getElementById('bank-acc').value = '';
+      document.getElementById('transfer-amount').value = '';
+      closeModal('transfer-modal');
+    }
 
-      // Reset Inputs & Close Modal
-      document.getElementById('acc-input').value = '';
-      document.getElementById('amount-input').value = '';
-      closeModal();
-
-      // Show Slip Modal
-      document.getElementById('slip-modal').classList.remove('hidden');
+    // 6. REWARD POINTS LOGIC
+    function openRewardModal() {
+      openModal('reward-modal');
+      // Generate Barcode using student ID
+      JsBarcode("#barcode", "6630001", {
+        format: "CODE128",
+        lineColor: "#0f172a",
+        width: 2,
+        height: 60,
+        displayValue: true
+      });
     }
   </script>
 </body>
