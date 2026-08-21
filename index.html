@@ -1,627 +1,407 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NXR PAY - ระบบชำระเงินศูนย์อาหารวิทยาลัย</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- JsBarcode CDN for Reward Points -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <!-- Google Font: Kanit -->
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <style>
-    body {
-      font-family: 'Kanit', sans-serif;
-      background-color: #0b0f19;
-    }
-    .glass-card {
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .gradient-text {
-      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .pulse-animation {
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.03); }
-    }
-  </style>
-</head>
-<body class="text-slate-100 min-h-screen flex items-center justify-center p-0 sm:p-4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดตารางเวร Special Nurse / PT</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Fonts (Prompt) -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Mobile Simulator Container -->
-  <div class="w-full max-w-md bg-slate-950 min-h-screen sm:min-h-[812px] sm:max-h-[850px] sm:rounded-[40px] border border-slate-800/80 shadow-2xl overflow-hidden relative flex flex-col justify-between">
-    
-    <!-- ==================== 1. SPLASH SCREEN ==================== -->
-    <div id="splash-screen" class="absolute inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
-      <!-- App Logo -->
-      <div class="w-24 h-24 rounded-3xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-cyan-500/30 mb-6 pulse-animation">
-        <span class="text-3xl font-extrabold text-white tracking-wider">NXR</span>
-      </div>
-      <h1 class="text-3xl font-bold tracking-tight text-white mb-1">NXR <span class="gradient-text">PAY</span></h1>
-      <p class="text-slate-400 text-sm mb-8">ระบบชำระเงินศูนย์อาหารวิทยาลัย</p>
-
-      <!-- Status Indicator -->
-      <div class="flex items-center gap-3 bg-slate-900/90 border border-slate-800 px-5 py-2.5 rounded-full shadow-inner">
-        <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
-        <span id="splash-status" class="text-xs text-cyan-300 font-medium">กำลังยืนยันตัวตนระบบ...</span>
-      </div>
-    </div>
-
-    <!-- ==================== 2. LOGIN SCREEN ==================== -->
-    <div id="login-screen" class="hidden absolute inset-0 z-40 bg-slate-950 p-6 flex flex-col justify-between overflow-y-auto">
-      <div class="pt-8">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg">N</div>
-          <span class="text-xl font-bold tracking-wider text-white">NXR <span class="gradient-text">PAY</span></span>
-        </div>
-        
-        <h2 class="text-2xl font-bold text-white mb-2">เข้าสู่ระบบ</h2>
-        <p class="text-xs text-slate-400 mb-8">เข้าใช้งานสำหรับนักศึกษาและบุคลากรวิทยาลัย</p>
-
-        <!-- Login Form -->
-        <div class="space-y-4">
-          <div>
-            <label class="text-xs font-medium text-slate-300 mb-1.5 block">รหัสนักศึกษา / ผู้ใช้งาน</label>
-            <div class="relative">
-              <i data-lucide="user" class="w-5 h-5 text-slate-500 absolute left-3.5 top-3"></i>
-              <input type="text" id="std-id" placeholder="กรอกรหัสนักศึกษา (เช่น 6630001)" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
-            </div>
-          </div>
-
-          <div>
-            <label class="text-xs font-medium text-slate-300 mb-1.5 block">รหัสผ่าน (รหัสจำลอง: 12345)</label>
-            <div class="relative">
-              <i data-lucide="key-round" class="w-5 h-5 text-slate-500 absolute left-3.5 top-3"></i>
-              <input type="password" id="std-pass" placeholder="กรอกรหัสผ่าน" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-11 pr-4 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 transition">
-            </div>
-          </div>
-
-          <button onclick="handleLoginPass()" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-slate-950 font-bold py-3 rounded-xl shadow-lg shadow-cyan-500/20 transition duration-200 mt-2">
-            เข้าสู่ระบบด้วยรหัสผ่าน
-          </button>
-        </div>
-
-        <!-- NFC Divider -->
-        <div class="my-6 flex items-center gap-3">
-          <div class="h-px bg-slate-800 flex-1"></div>
-          <span class="text-[11px] text-slate-500 uppercase">หรือแตะเข้าใช้งาน</span>
-          <div class="h-px bg-slate-800 flex-1"></div>
-        </div>
-
-        <!-- NFC Option -->
-        <div class="space-y-3">
-          <button onclick="handleNFCScan()" class="w-full glass-card hover:bg-slate-800/80 border border-cyan-500/30 p-4 rounded-2xl flex items-center justify-between group transition">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-slate-950 transition">
-                <i data-lucide="contactless" class="w-5 h-5"></i>
-              </div>
-              <div class="text-left">
-                <p class="text-sm font-semibold text-white">แตะบัตรนักศึกษา NFC</p>
-                <p class="text-[10px] text-slate-400">เฉพาะมือถือรุ่นที่รองรับ NFC</p>
-              </div>
-            </div>
-            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-500 group-hover:text-white transition"></i>
-          </button>
-        </div>
-      </div>
-
-      <p class="text-center text-[11px] text-slate-600 pb-2">วิทยาลัยเทคโนโลยี NXR PAY &copy; 2026</p>
-    </div>
-
-    <!-- ==================== 3. MAIN DASHBOARD ==================== -->
-    <div id="main-dashboard" class="hidden flex-1 flex flex-col justify-between overflow-y-auto">
-      
-      <!-- Header Bar -->
-      <div class="p-5 pb-3 flex justify-between items-center border-b border-slate-900 bg-slate-950/80 sticky top-0 z-20 backdrop-blur-md">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 p-0.5">
-            <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center font-bold text-xs text-cyan-400">
-              NXR
-            </div>
-          </div>
-          <div>
-            <p class="text-[11px] text-slate-400 leading-tight">ยินดีต้อนรับระบบชำระเงินศูนย์อาหาร</p>
-            <p class="text-sm font-bold text-white leading-tight">นาย สมชาย ใจดี <span class="text-[10px] font-normal text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/50">นักศึกษา</span></p>
-          </div>
-        </div>
-        <button onclick="logout()" class="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-900 transition">
-          <i data-lucide="log-out" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <!-- Content Area -->
-      <div class="p-5 space-y-5 flex-1">
-        
-        <!-- Balance Card -->
-        <div class="glass-card rounded-3xl p-6 relative overflow-hidden bg-gradient-to-br from-slate-900/90 via-slate-900 to-slate-950 border border-slate-800 shadow-xl">
-          <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-cyan-500/10 rounded-full blur-3xl"></div>
-          
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-xs text-slate-400 font-medium tracking-wide">ยอดเงินคงเหลือในบัตร</span>
-            <span class="text-[11px] text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-full border border-slate-700">ID: 6630001</span>
-          </div>
-
-          <div class="flex items-baseline gap-2">
-            <span id="user-balance" class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-cyan-300">
-              500.00
-            </span>
-            <span class="text-sm text-cyan-400 font-semibold">บาท</span>
-          </div>
-
-          <!-- Points Display Banner -->
-          <div class="mt-4 pt-3 border-t border-slate-800/80 flex justify-between items-center text-xs">
-            <div class="flex items-center gap-1.5 text-amber-400">
-              <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
-              <span class="font-medium text-slate-300">แต้มสะสมวิทยาลัย:</span>
-            </div>
-            <span id="user-points" class="font-bold text-amber-400">120 แต้ม</span>
-          </div>
-        </div>
-
-        <!-- Action Grid Buttons -->
-        <div>
-          <h3 class="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">เมนูทำรายการ</h3>
-          <div class="grid grid-cols-4 gap-3">
-            
-            <!-- เติมเงิน -->
-            <button onclick="openModal('topup-modal')" class="flex flex-col items-center gap-2 group">
-              <div class="w-13 h-13 w-full aspect-square rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500 group-hover:text-slate-950 group-hover:border-cyan-400 transition-all duration-300 shadow-lg">
-                <i data-lucide="plus-circle" class="w-6 h-6"></i>
-              </div>
-              <span class="text-xs text-slate-300 font-medium">เติมเงิน</span>
-            </button>
-
-            <!-- สแกนจ่าย -->
-            <button onclick="openModal('scan-modal')" class="flex flex-col items-center gap-2 group">
-              <div class="w-full aspect-square rounded-2xl bg-gradient-to-br from-cyan-500 to-indigo-600 flex items-center justify-center text-slate-950 font-bold shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-all duration-300">
-                <i data-lucide="qr-code" class="w-6 h-6"></i>
-              </div>
-              <span class="text-xs text-cyan-400 font-semibold">สแกนจ่าย</span>
-            </button>
-
-            <!-- โอนเงินออก -->
-            <button onclick="openModal('transfer-modal')" class="flex flex-col items-center gap-2 group">
-              <div class="w-full aspect-square rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white group-hover:border-indigo-400 transition-all duration-300 shadow-lg">
-                <i data-lucide="arrow-up-right" class="w-6 h-6"></i>
-              </div>
-              <span class="text-xs text-slate-300 font-medium">โอนเงินออก</span>
-            </button>
-
-            <!-- สะสมแต้ม -->
-            <button onclick="openRewardModal()" class="flex flex-col items-center gap-2 group">
-              <div class="w-full aspect-square rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-amber-400 group-hover:bg-amber-400 group-hover:text-slate-950 group-hover:border-amber-300 transition-all duration-300 shadow-lg">
-                <i data-lucide="barcode" class="w-6 h-6"></i>
-              </div>
-              <span class="text-xs text-slate-300 font-medium">สะสมแต้ม</span>
-            </button>
-
-          </div>
-        </div>
-
-        <!-- Recent Transactions -->
-        <div>
-          <div class="flex justify-between items-center mb-3">
-            <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">ประวัติการทำรายการล่าสุด</h3>
-            <span class="text-[11px] text-cyan-400 cursor-pointer">ดูทั้งหมด</span>
-          </div>
-          
-          <div id="tx-history" class="space-y-2.5">
-            <!-- Sample Transaction Item -->
-            <div class="glass-card rounded-2xl p-3 flex justify-between items-center text-xs">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
-                  <i data-lucide="arrow-down-left" class="w-4 h-4"></i>
-                </div>
-                <div>
-                  <p class="font-semibold text-slate-200">เติมเงินผ่าน PromptPay</p>
-                  <p class="text-[10px] text-slate-500">วันนี้ 12:30 น.</p>
-                </div>
-              </div>
-              <span class="font-bold text-emerald-400">+100.00 ฿</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Bottom Nav Bar -->
-      <div class="p-4 border-t border-slate-900 bg-slate-950/90 flex justify-around items-center text-slate-500">
-        <button class="flex flex-col items-center gap-1 text-cyan-400">
-          <i data-lucide="home" class="w-5 h-5"></i>
-          <span class="text-[10px]">หน้าหลัก</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 hover:text-slate-300">
-          <i data-lucide="utensils" class="w-5 h-5"></i>
-          <span class="text-[10px]">ร้านอาหาร</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 hover:text-slate-300">
-          <i data-lucide="history" class="w-5 h-5"></i>
-          <span class="text-[10px]">ประวัติ</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 hover:text-slate-300">
-          <i data-lucide="user" class="w-5 h-5"></i>
-          <span class="text-[10px]">โปรไฟล์</span>
-        </button>
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- ==================== MODALS ==================== -->
-
-  <!-- 1. TOP-UP MODAL (เติมเงิน) -->
-  <div id="topup-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl relative">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="plus-circle" class="w-5 h-5 text-cyan-400"></i> เติมเงินเข้าบัตร NXR PAY
-        </h3>
-        <button onclick="closeModal('topup-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-
-      <div id="topup-step-1" class="space-y-4">
-        <div>
-          <label class="text-xs text-slate-400 mb-1 block">ระบุจำนวนเงิน (ขั้นต่ำ 10 บาท)</label>
-          <input type="number" id="topup-amount" min="10" placeholder="10.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-lg font-bold text-cyan-400 focus:outline-none focus:border-cyan-500">
-        </div>
-
-        <!-- Fast Amount Chips -->
-        <div class="grid grid-cols-3 gap-2">
-          <button onclick="setTopupAmount(20)" class="bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-lg text-slate-300">20 ฿</button>
-          <button onclick="setTopupAmount(50)" class="bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-lg text-slate-300">50 ฿</button>
-          <button onclick="setTopupAmount(100)" class="bg-slate-800 hover:bg-slate-700 text-xs py-2 rounded-lg text-slate-300">100 ฿</button>
-        </div>
-
-        <button onclick="generateTopupQR()" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 text-slate-950 font-bold py-3 rounded-xl hover:opacity-90 transition">
-          สร้างคิวอาร์โค้ดสแกนชำระ
-        </button>
-      </div>
-
-      <!-- QR Display Area -->
-      <div id="topup-step-2" class="hidden text-center space-y-4 py-2">
-        <p class="text-xs text-slate-300">สแกนด้วยแอปพลิเคชันธนาคารเพื่อเติมเงิน</p>
-        <div class="bg-white p-4 rounded-2xl inline-block shadow-lg border border-slate-200">
-          <img id="promptpay-qr" src="" alt="PromptPay QR Code" class="w-48 h-48 mx-auto">
-        </div>
-        <p class="text-sm font-bold text-cyan-400">ยอดเงินเติม: <span id="qr-amount-display">0.00</span> บาท</p>
-        
-        <button onclick="confirmTopup()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3 rounded-xl transition">
-          จำลองการสแกนจ่ายสำเร็จ
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. SCAN & PAY MODAL (สแกนจ่ายร้านค้าวิทยาลัย) -->
-  <div id="scan-modal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="qr-code" class="w-5 h-5 text-cyan-400"></i> สแกนจ่ายร้านค้าวิทยาลัย
-        </h3>
-        <button onclick="closeModal('scan-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-
-      <!-- Scanner Simulation Frame -->
-      <div class="relative w-full aspect-square bg-slate-950 border-2 border-dashed border-cyan-500/50 rounded-2xl flex flex-col items-center justify-center p-4 overflow-hidden">
-        <div class="absolute inset-x-0 h-0.5 bg-cyan-400 animate-bounce shadow-lg shadow-cyan-500"></div>
-        <i data-lucide="camera" class="w-12 h-12 text-slate-700 mb-2"></i>
-        <p class="text-xs text-slate-400 text-center">ส่องคิวอาร์โค้ดของร้านค้าในศูนย์อาหาร</p>
-      </div>
-
-      <p class="text-[11px] text-amber-400 bg-amber-950/40 border border-amber-800/40 p-2.5 rounded-xl">
-        * ระบบรองรับเฉพาะ QR Code ของร้านค้าศูนย์อาหารวิทยาลัย NXR PAY เท่านั้น
-      </p>
-
-      <!-- Simulated Vendor Selector -->
-      <div class="space-y-2">
-        <label class="text-xs text-slate-400 block">จำลองเลือกสแกนร้านค้า:</label>
-        <select id="vendor-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-          <option value="ร้านข้าวแกงป้าป๋อง (วิทยาลัย)|45.00">ร้านข้าวแกงป้าป๋อง (45.00 บาท)</option>
-          <option value="ร้านน้ำดื่มเฟรชมี (วิทยาลัย)|25.00">ร้านน้ำดื่มเฟรชมี (25.00 บาท)</option>
-          <option value="ร้านก๋วยเตี๋ยวเรือแชมป์ (วิทยาลัย)|50.00">ร้านก๋วยเตี๋ยวเรือแชมป์ (50.00 บาท)</option>
-          <option value="ร้านข้าวมันไก่เฮียชัย (วิทยาลัย)|40.00">ร้านข้าวมันไก่เฮียชัย (40.00 บาท)</option>
-        </select>
-      </div>
-
-      <button onclick="processPay()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold py-3 rounded-xl transition">
-        ชำระเงิน
-      </button>
-    </div>
-  </div>
-
-  <!-- 3. TRANSFER OUT MODAL (โอนเงินออก) -->
-  <div id="transfer-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="arrow-up-right" class="w-5 h-5 text-indigo-400"></i> โอนเงินออกจากบัตร
-        </h3>
-        <button onclick="closeModal('transfer-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-
-      <div class="space-y-3">
-        <div>
-          <label class="text-xs text-slate-400 mb-1 block">เลือกธนาคารปลายทาง</label>
-          <select id="bank-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white">
-            <option value="กสิกรไทย (KBANK)">ธนาคารกสิกรไทย (KBANK)</option>
-            <option value="ไทยพาณิชย์ (SCB)">ธนาคารไทยพาณิชย์ (SCB)</option>
-            <option value="กรุงไทย (KTB)">ธนาคารกรุงไทย (KTB)</option>
-            <option value="กรุงเทพ (BBL)">ธนาคารกรุงเทพ (BBL)</option>
-            <option value="กรุงศรี (BAY)">ธนาคารกรุงศรีอยุธยา (BAY)</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="text-xs text-slate-400 mb-1 block">เลขที่บัญชี</label>
-          <input type="text" id="bank-acc" placeholder="กรอกเลขบัญชี 10 หลัก" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500">
-        </div>
-
-        <div>
-          <label class="text-xs text-slate-400 mb-1 block">จำนวนเงินที่ต้องการโอนออก</label>
-          <input type="number" id="transfer-amount" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm font-bold text-white focus:outline-none focus:border-indigo-500">
-        </div>
-
-        <!-- Fee Info Box -->
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1 text-xs">
-          <div class="flex justify-between text-slate-400">
-            <span>ค่าธรรมเนียมโอนออก:</span>
-            <span class="text-rose-400 font-semibold">3.00 บาท / รายการ</span>
-          </div>
-          <p class="text-[10px] text-slate-500">* ระบบจะหักค่าธรรมเนียม 3 บาท จากยอดเงินคงเหลือในบัตรเพิ่มเติม</p>
-        </div>
-      </div>
-
-      <button onclick="processTransferOut()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-600/20">
-        ยืนยันการโอนเงินออก
-      </button>
-    </div>
-  </div>
-
-  <!-- 4. REWARD POINTS MODAL (สะสมแต้ม) -->
-  <div id="reward-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-sm p-6 space-y-4 shadow-2xl text-center">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i data-lucide="barcode" class="w-5 h-5 text-amber-400"></i> บาร์โค้ดสะสมแต้มวิทยาลัย
-        </h3>
-        <button onclick="closeModal('reward-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-
-      <p class="text-xs text-slate-300">ยื่นบาร์โค้ดนี้ให้ร้านค้าสแกนเพื่อรับแต้มสะสมทุกครั้งที่ซื้ออาหาร</p>
-
-      <!-- Barcode Container -->
-      <div class="bg-white p-4 rounded-2xl inline-block border border-slate-200">
-        <svg id="barcode"></svg>
-      </div>
-
-      <div class="bg-amber-950/30 border border-amber-800/40 p-3 rounded-xl">
-        <p class="text-xs text-amber-300">ทุกการใช้จ่ายครบ 20 บาท รับทันที <span class="font-bold">1 แต้ม</span></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
-  <script>
-    // Initialize Lucide Icons
-    lucide.createIcons();
-
-    // App State
-    let currentBalance = 500.00;
-    let currentPoints = 120;
-
-    // 1. SPLASH SCREEN FLOW (3 Seconds Delay)
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        document.getElementById('splash-status').innerText = 'ยืนยันตัวตนสำเร็จกำลังเข้าสู่หน้าล็อกอิน...';
-      }, 1500);
-
-      setTimeout(() => {
-        document.getElementById('splash-screen').classList.add('hidden');
-        document.getElementById('login-screen').classList.remove('hidden');
-      }, 3000);
-    });
-
-    // 2. LOGIN LOGIC
-    function handleLoginPass() {
-      const id = document.getElementById('std-id').value.trim();
-      const pass = document.getElementById('std-pass').value.trim();
-
-      if (!id) {
-        alert('กรุณากรอกรหัสนักศึกษา');
-        return;
-      }
-
-      if (pass === '12345') {
-        goToDashboard();
-      } else {
-        alert('รหัสผ่านไม่ถูกต้อง (ใช้รหัสจำลอง: 12345)');
-      }
-    }
-
-    // NFC Scan Handle
-    async function handleNFCScan() {
-      if ('NDEFReader' in window) {
-        try {
-          alert('กรุณาแตะบัตรนักศึกษา NFC เข้ากับด้านหลังมือถือของคุณ');
-          const ndef = new NDEFReader();
-          await ndef.scan();
-          ndef.addEventListener("reading", () => {
-            goToDashboard();
-          });
-        } catch (error) {
-          alert('เกิดข้อผิดพลาด NFC หรือเบราว์เซอร์ไม่อนุญาต ให้ใช้ระบบแตะจำลองแทน');
-          goToDashboard();
+    <style>
+        body { font-family: 'Prompt', sans-serif; background-color: #f0f4f8; }
+        .bg-medical { background-color: #0056b3; }
+        .text-medical { color: #0056b3; }
+        .border-medical { border-color: #0056b3; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
         }
-      } else {
-        alert('จำลองการแตะบัตรนักศึกษา NFC เข้าสู่ระบบเรียบร้อย');
-        goToDashboard();
-      }
-    }
+    </style>
+</head>
+<body class="text-gray-800">
 
-    function goToDashboard() {
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('main-dashboard').classList.remove('hidden');
-      updateUI();
-    }
-
-    function logout() {
-      document.getElementById('main-dashboard').classList.add('hidden');
-      document.getElementById('login-screen').classList.remove('hidden');
-    }
-
-    // UI Helper Functions
-    function updateUI() {
-      document.getElementById('user-balance').innerText = currentBalance.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      document.getElementById('user-points').innerText = `${currentPoints} แต้ม`;
-    }
-
-    function openModal(id) {
-      document.getElementById(id).classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
-
-    function addTransactionHistory(title, amount, isIncome) {
-      const historyContainer = document.getElementById('tx-history');
-      const timeStr = 'วันนี้ ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
-      
-      const itemHTML = `
-        <div class="glass-card rounded-2xl p-3 flex justify-between items-center text-xs">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} flex items-center justify-center">
-              <i data-lucide="${isIncome ? 'arrow-down-left' : 'arrow-up-right'}" class="w-4 h-4"></i>
+    <!-- 1. LOGIN SECTION -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-blue-600">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fa-solid fa-user-nurse text-3xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">ระบบตารางเวรพยาบาล</h1>
+                <p class="text-sm text-gray-500">Special Nurse & Part-Time (PT)</p>
             </div>
-            <div>
-              <p class="font-semibold text-slate-200">${title}</p>
-              <p class="text-[10px] text-slate-500">${timeStr}</p>
-            </div>
-          </div>
-          <span class="font-bold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">
-            ${isIncome ? '+' : '-'}${amount.toFixed(2)} ฿
-          </span>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสเข้าใช้งาน</label>
+                    <input type="password" id="passcode" required placeholder="•••••••" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                </div>
+                <p id="loginError" class="text-red-500 text-xs hidden">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</p>
+                <button type="submit" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition shadow-md hover:shadow-lg">
+                    เข้าสู่ระบบ
+                </button>
+            </form>
         </div>
-      `;
-      historyContainer.insertAdjacentHTML('afterbegin', itemHTML);
-      lucide.createIcons();
-    }
+    </div>
 
-    // 3. TOP-UP LOGIC (เติมเงิน)
-    function setTopupAmount(val) {
-      document.getElementById('topup-amount').value = val;
-    }
+    <!-- MAIN APP CONTENT (Hidden by default) -->
+    <div id="appSection" class="hidden min-h-screen flex flex-col">
+        <!-- HEADER -->
+        <header class="bg-blue-700 text-white shadow-md no-print">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fa-solid fa-hospital text-2xl"></i>
+                    <span class="font-semibold text-lg">Special Nurse & PT Roster System</span>
+                </div>
+                <button onclick="logout()" class="text-sm bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded-lg transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> ออกจากระบบ
+                </button>
+            </div>
+        </header>
 
-    function generateTopupQR() {
-      const amount = parseFloat(document.getElementById('topup-amount').value);
-      if (isNaN(amount) || amount < 10) {
-        alert('กรุณากรอกจำนวนเงินขั้นต่ำ 10 บาท');
-        return;
-      }
+        <div class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
-      document.getElementById('qr-amount-display').innerText = amount.toFixed(2);
-      // Generate QR Code via Public API
-      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=PROMPTPAY-NXR-PAY-${amount}`;
-      document.getElementById('promptpay-qr').src = qrApi;
+            <!-- 2. HOSPITAL & DEPARTMENT SELECTION -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 no-print">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fa-solid fa-clinic-medical text-blue-600 mr-2"></i> เลือกโรงพยาบาลและแผนก
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">โรงพยาบาล</label>
+                        <select id="hospitalSelect" onchange="updateDepartments()" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="">-- กรุณาเลือกโรงพยาบาล --</option>
+                            <option value="โรงพยาบาลพญาไท">โรงพยาบาลพญาไท</option>
+                            <option value="โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล">โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล</option>
+                            <option value="โรงพยาบาลกรุงเทพคริสเตียน">โรงพยาบาลกรุงเทพคริสเตียน</option>
+                            <option value="โรงพยาบาลกรุงเทพศูนย์การแพทย์">โรงพยาบาลกรุงเทพศูนย์การแพทย์</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">แผนก / หน่วยงาน</label>
+                        <select id="departmentSelect" onchange="onDepartmentChange()" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" disabled>
+                            <option value="">-- เลือกแผนก --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-      document.getElementById('topup-step-1').classList.add('hidden');
-      document.getElementById('topup-step-2').classList.remove('hidden');
-    }
+            <!-- 3. ROSTER CONTROL PANEL (Hidden until department selected) -->
+            <div id="rosterControls" class="hidden space-y-6">
+                <!-- ADD SHIFT FORM -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 no-print">
+                    <h3 class="text-md font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-calendar-plus text-blue-600 mr-2"></i> เพิ่ม/บันทึก การเข้าเวร
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">เดือน / ปี</label>
+                            <input type="month" id="monthPicker" onchange="renderCalendar()" class="w-full p-2 border rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">วันที่</label>
+                            <input type="number" id="shiftDay" min="1" max="31" placeholder="เช่น 15" class="w-full p-2 border rounded-lg text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">ช่วงเวลา (เวร)</label>
+                            <select id="shiftType" class="w-full p-2 border rounded-lg text-sm">
+                                <option value="เช้า (07:00-15:00)">เช้า (07:00-15:00)</option>
+                                <option value="บ่าย (15:00-23:00)">บ่าย (15:00-23:00)</option>
+                                <option value="ดึก (23:00-07:00)">ดึก (23:00-07:00)</option>
+                                <option value="OT (Special)">OT (Special)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อ-สกุล ผู้เข้าเวร</label>
+                            <input type="text" id="nurseName" placeholder="พว. สมศรี มีสุข" class="w-full p-2 border rounded-lg text-sm">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="addShift()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg text-sm font-medium transition shadow">
+                                <i class="fa-solid fa-plus mr-1"></i> เพิ่มลงตาราง
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-    function confirmTopup() {
-      const amount = parseFloat(document.getElementById('topup-amount').value);
-      currentBalance += amount;
-      updateUI();
-      addTransactionHistory('เติมเงินผ่าน PromptPay', amount, true);
-      
-      alert('เติมเงินสำเร็จจำนวน ' + amount + ' บาท');
-      
-      // Reset Topup Modal
-      document.getElementById('topup-step-1').classList.remove('hidden');
-      document.getElementById('topup-step-2').classList.add('hidden');
-      document.getElementById('topup-amount').value = '';
-      closeModal('topup-modal');
-    }
+                <!-- 4. CALENDAR VIEW CONTAINER (Export Target) -->
+                <div id="exportArea" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <!-- CALENDAR HEADER FOR PRINT -->
+                    <div class="border-b pb-4 mb-4 flex justify-between items-start">
+                        <div>
+                            <h2 id="pdfHospitalName" class="text-xl font-bold text-blue-900">โรงพยาบาล...</h2>
+                            <p id="pdfDepartmentName" class="text-md text-gray-600 font-medium">แผนก: ...</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold mb-1">Special Nurse & PT</span>
+                            <h3 id="calendarMonthTitle" class="text-lg font-semibold text-gray-700">ประจำเดือน: -</h3>
+                        </div>
+                    </div>
 
-    // 4. SCAN & PAY LOGIC (จ่ายเงินวิทยาลัย)
-    function processPay() {
-      const vendorData = document.getElementById('vendor-select').value.split('|');
-      const vendorName = vendorData[0];
-      const price = parseFloat(vendorData[1]);
+                    <!-- CALENDAR GRID -->
+                    <div class="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden text-sm">
+                        <!-- Days of Week Header -->
+                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">อา.</div>
+                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">จ.</div>
+                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">อ.</div>
+                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">พ.</div>
+                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">พฤ.</div>
+                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">ศ.</div>
+                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">ส.</div>
 
-      if (price > currentBalance) {
-        alert('ยอดเงินในบัตรไม่เพียงพอ กรุณาเติมเงินก่อนชำระ');
-        return;
-      }
+                        <!-- Days cells generated dynamically -->
+                        <div id="calendarDays" class="contents"></div>
+                    </div>
+                </div>
 
-      currentBalance -= price;
-      // Add points (1 point per 20 THB)
-      const earnedPoints = Math.floor(price / 20);
-      currentPoints += earnedPoints;
+                <!-- ACTION BUTTONS -->
+                <div class="flex justify-end space-x-3 no-print">
+                    <button onclick="clearCurrentSchedule()" class="px-4 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg text-sm font-medium transition">
+                        <i class="fa-solid fa-trash-can mr-1"></i> ล้างข้อมูลตารางนี้
+                    </button>
+                    <button onclick="exportToPDF()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-md">
+                        <i class="fa-solid fa-file-pdf mr-1"></i> ส่งออกเป็น PDF
+                    </button>
+                </div>
+            </div>
 
-      updateUI();
-      addTransactionHistory(`ชำระเงิน - ${vendorName}`, price, false);
+        </div>
+    </div>
 
-      alert(`ชำระเงินให้ "${vendorName}" จำนวน ${price.toFixed(2)} บาท เรียบร้อยแล้ว!\n(ได้รับแต้มสะสม +${earnedPoints} แต้ม)`);
-      closeModal('scan-modal');
-    }
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // CONFIG & DATA STRUCTURES
+        const AUTH_CODE = "6770649";
+        
+        const hospitalData = {
+            "โรงพยาบาลพญาไท": ["เช็คอัพ B8 ตรวจตา"],
+            "โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล": ["Special Nurse PT"],
+            "โรงพยาบาลกรุงเทพคริสเตียน": ["แผนกฉุกเฉิน ER", "แผนกวิกฤตหัวใจ CCU"],
+            "โรงพยาบาลกรุงเทพศูนย์การแพทย์": ["แผนกหัวใจ"]
+        };
 
-    // 5. TRANSFER OUT LOGIC (โอนเงินออก)
-    function processTransferOut() {
-      const bank = document.getElementById('bank-select').value;
-      const acc = document.getElementById('bank-acc').value.trim();
-      const amount = parseFloat(document.getElementById('transfer-amount').value);
-      const fee = 3.00;
+        // Key-value store for schedule data: key = "Hospital-Department-YYYY-MM"
+        let schedules = {};
 
-      if (!acc || isNaN(amount) || amount <= 0) {
-        alert('กรุณากรอกข้อมูลเลขบัญชีและจำนวนเงินให้ถูกต้อง');
-        return;
-      }
+        // INITIALIZATION
+        window.onload = function() {
+            // Set default month to current YYYY-MM
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            document.getElementById('monthPicker').value = `${year}-${month}`;
+        };
 
-      const totalDeduct = amount + fee;
+        // LOGIN SYSTEM
+        function handleLogin(e) {
+            e.preventDefault();
+            const inputCode = document.getElementById('passcode').value;
+            const errorMsg = document.getElementById('loginError');
 
-      if (totalDeduct > currentBalance) {
-        alert(`ยอดเงินในบัตรไม่เพียงพอ! (ต้องการ ${totalDeduct.toFixed(2)} บาท รวมค่าธรรมเนียม 3 บาท)`);
-        return;
-      }
+            if (inputCode === AUTH_CODE) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('appSection').classList.remove('hidden');
+                document.getElementById('passcode').value = '';
+                errorMsg.classList.add('hidden');
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
 
-      currentBalance -= totalDeduct;
-      updateUI();
-      addTransactionHistory(`โอนออกไป ${bank}`, amount, false);
-      addTransactionHistory(`ค่าธรรมเนียมโอนเงินออก`, fee, false);
+        function logout() {
+            document.getElementById('appSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('rosterControls').classList.add('hidden');
+            document.getElementById('hospitalSelect').value = '';
+            document.getElementById('departmentSelect').value = '';
+            document.getElementById('departmentSelect').disabled = true;
+        }
 
-      alert(`โอนเงินจำนวน ${amount.toFixed(2)} บาท ไปยังบัญชี ${acc} (${bank}) เรียบร้อยแล้ว\n(หักค่าธรรมเนียม 3.00 บาท)`);
-      
-      document.getElementById('bank-acc').value = '';
-      document.getElementById('transfer-amount').value = '';
-      closeModal('transfer-modal');
-    }
+        // DEPARTMENT DROPDOWN LOGIC
+        function updateDepartments() {
+            const hospSelect = document.getElementById('hospitalSelect');
+            const deptSelect = document.getElementById('departmentSelect');
+            const selectedHosp = hospSelect.value;
 
-    // 6. REWARD POINTS LOGIC
-    function openRewardModal() {
-      openModal('reward-modal');
-      // Generate Barcode using student ID
-      JsBarcode("#barcode", "6630001", {
-        format: "CODE128",
-        lineColor: "#0f172a",
-        width: 2,
-        height: 60,
-        displayValue: true
-      });
-    }
-  </script>
+            deptSelect.innerHTML = '<option value="">-- เลือกแผนก --</option>';
+
+            if (selectedHosp && hospitalData[selectedHosp]) {
+                hospitalData[selectedHosp].forEach(dept => {
+                    const opt = document.createElement('option');
+                    opt.value = dept;
+                    opt.textContent = dept;
+                    deptSelect.appendChild(opt);
+                });
+                deptSelect.disabled = false;
+            } else {
+                deptSelect.disabled = true;
+            }
+
+            document.getElementById('rosterControls').classList.add('hidden');
+        }
+
+        function onDepartmentChange() {
+            const dept = document.getElementById('departmentSelect').value;
+            const controls = document.getElementById('rosterControls');
+            
+            if (dept) {
+                controls.classList.remove('hidden');
+                renderCalendar();
+            } else {
+                controls.classList.add('hidden');
+            }
+        }
+
+        // GET SCHEDULE KEY
+        function getScheduleKey() {
+            const hosp = document.getElementById('hospitalSelect').value;
+            const dept = document.getElementById('departmentSelect').value;
+            const month = document.getElementById('monthPicker').value;
+            return `${hosp}_${dept}_${month}`;
+        }
+
+        // CALENDAR GENERATION LOGIC
+        function renderCalendar() {
+            const hosp = document.getElementById('hospitalSelect').value;
+            const dept = document.getElementById('departmentSelect').value;
+            const monthVal = document.getElementById('monthPicker').value;
+
+            if (!hosp || !dept || !monthVal) return;
+
+            // Update Titles
+            document.getElementById('pdfHospitalName').textContent = hosp;
+            document.getElementById('pdfDepartmentName').textContent = `แผนก: ${dept}`;
+            
+            const [year, month] = monthVal.split('-').map(Number);
+            const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            document.getElementById('calendarMonthTitle').textContent = `ประจำเดือน: ${monthNames[month - 1]} ${year + 543}`;
+
+            // Calculate days
+            const firstDayIndex = new Date(year, month - 1, 1).getDay();
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            const calendarContainer = document.getElementById('calendarDays');
+            calendarContainer.innerHTML = '';
+
+            const key = getScheduleKey();
+            const monthData = schedules[key] || {};
+
+            // Empty cells before start of month
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = "bg-gray-50 min-h-[90px] p-1 border-b border-r border-gray-200";
+                calendarContainer.appendChild(emptyCell);
+            }
+
+            // Fill actual month days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = "bg-white min-h-[90px] p-1.5 border-b border-r border-gray-200 flex flex-col justify-start";
+                
+                let dayHeader = `<div class="font-bold text-gray-700 text-xs mb-1">${day}</div>`;
+                let shiftsHtml = '';
+
+                if (monthData[day]) {
+                    monthData[day].forEach((item, index) => {
+                        let colorClass = "bg-blue-50 text-blue-700 border-blue-200";
+                        if(item.type.includes("เช้า")) colorClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                        if(item.type.includes("บ่าย")) colorClass = "bg-amber-50 text-amber-700 border-amber-200";
+                        if(item.type.includes("ดึก")) colorClass = "bg-purple-50 text-purple-700 border-purple-200";
+
+                        shiftsHtml += `
+                            <div class="text-[10px] p-1 mb-1 rounded border ${colorClass} leading-tight flex justify-between items-center group">
+                                <div>
+                                    <span class="font-semibold block">${item.type}</span>
+                                    <span>${item.name}</span>
+                                </div>
+                                <button onclick="deleteShift(${day}, ${index})" class="no-print text-red-400 hover:text-red-600 ml-1">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+
+                dayCell.innerHTML = dayHeader + shiftsHtml;
+                calendarContainer.appendChild(dayCell);
+            }
+        }
+
+        // ADD SHIFT TO DATA
+        function addShift() {
+            const day = parseInt(document.getElementById('shiftDay').value);
+            const type = document.getElementById('shiftType').value;
+            const name = document.getElementById('nurseName').value.trim();
+            const monthVal = document.getElementById('monthPicker').value;
+            
+            if (!day || !name) {
+                alert("กรุณากรอกวันที่และชื่อผู้เข้าเวรให้ครบถ้วน");
+                return;
+            }
+
+            const [year, month] = monthVal.split('-').map(Number);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            if (day < 1 || day > daysInMonth) {
+                alert(`วันที่ไม่ถูกต้อง (เดือนนี้มี ${daysInMonth} วัน)`);
+                return;
+            }
+
+            const key = getScheduleKey();
+            if (!schedules[key]) schedules[key] = {};
+            if (!schedules[key][day]) schedules[key][day] = [];
+
+            schedules[key][day].push({ type, name });
+
+            // Reset Input
+            document.getElementById('shiftDay').value = '';
+            document.getElementById('nurseName').value = '';
+
+            renderCalendar();
+        }
+
+        // DELETE SINGLE SHIFT
+        function deleteShift(day, index) {
+            const key = getScheduleKey();
+            if (schedules[key] && schedules[key][day]) {
+                schedules[key][day].splice(index, 1);
+                renderCalendar();
+            }
+        }
+
+        // CLEAR ALL SCHEDULE
+        function clearCurrentSchedule() {
+            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการล้างตารางเวรทั้งหมดของเดือนนี้?")) {
+                const key = getScheduleKey();
+                delete schedules[key];
+                renderCalendar();
+            }
+        }
+
+        // EXPORT TO PDF
+        function exportToPDF() {
+            const element = document.getElementById('exportArea');
+            const hosp = document.getElementById('hospitalSelect').value;
+            const dept = document.getElementById('departmentSelect').value;
+            const month = document.getElementById('monthPicker').value;
+
+            const opt = {
+                margin:       [0.3, 0.3, 0.3, 0.3],
+                filename:     `ตารางเวร_${hosp}_${dept}_${month}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
 </body>
 </html>
