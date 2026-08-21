@@ -18,9 +18,8 @@
         body { font-family: 'Prompt', sans-serif; background-color: #f1f5f9; }
         .font-sarabun { font-family: 'Sarabun', sans-serif; }
         
-        /* Mobile App Viewport Adjustments */
         .app-container {
-            max-width: 480px;
+            max-width: 500px;
             margin: 0 auto;
             min-height: 100vh;
             background: #ffffff;
@@ -30,20 +29,25 @@
             .app-container { max-width: 100%; background: #f1f5f9; box-shadow: none; }
         }
 
-        /* Glassmorphism Effect */
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
-        /* PDF Export A4 Strict Style */
         #pdfExportContainer {
             width: 1050px !important;
             padding: 25px !important;
             background: #ffffff !important;
             color: #0f172a !important;
             font-family: 'Sarabun', sans-serif !important;
+        }
+
+        .day-btn.selected {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            border-color: #1d4ed8 !important;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -52,31 +56,29 @@
     <!-- ================= 1. HOSPITAL LOGIN SECTION ================= -->
     <div id="loginSection" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
         <div class="w-full max-w-md">
-            <!-- Medical Seal Header -->
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-600/20 border-2 border-blue-400/30 mb-4 shadow-2xl backdrop-blur-md relative">
-                    <i class="fa-solid fa-hospital-user text-4xl text-blue-400"></i>
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-600/20 border-2 border-blue-400/30 mb-3 shadow-2xl backdrop-blur-md relative">
+                    <i class="fa-solid fa-hospital-user text-3xl text-blue-400"></i>
                     <span class="absolute -top-1 -right-1 flex h-4 w-4">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
                     </span>
                 </div>
-                <h1 class="text-2xl font-bold text-white tracking-wide">HEALTHCARE SYSTEM</h1>
-                <p class="text-xs text-blue-300/80 uppercase tracking-widest font-semibold mt-1">Special Nurse & PT Roster Management</p>
+                <h1 class="text-xl font-bold text-white tracking-wide">HEALTHCARE SYSTEM</h1>
+                <p class="text-[11px] text-blue-300/80 uppercase tracking-widest font-semibold mt-0.5">Special Nurse & PT Roster Management</p>
             </div>
 
-            <!-- Login Card -->
-            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <h2 class="text-lg font-bold text-slate-800 flex items-center">
+            <div class="glass-card rounded-3xl p-6 shadow-2xl space-y-5">
+                <div class="border-b border-slate-100 pb-3">
+                    <h2 class="text-base font-bold text-slate-800 flex items-center">
                         <i class="fa-solid fa-shield-halved text-blue-600 mr-2"></i> ระบบยืนยันตัวตนทางการแพทย์
                     </h2>
-                    <p class="text-xs text-slate-500 mt-0.5">กรอกรหัสผ่านเพื่อเข้าสู่ระบบปฏิบัติงาน</p>
+                    <p class="text-xs text-slate-500">กรอกรหัสผ่านเพื่อเข้าสู่ระบบปฏิบัติงาน</p>
                 </div>
 
-                <form onsubmit="handleLogin(event)" class="space-y-5">
+                <form onsubmit="handleLogin(event)" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
                             รหัสผ่านเข้าใช้งาน (Passcode)
                         </label>
                         <div class="relative">
@@ -84,23 +86,23 @@
                                 <i class="fa-solid fa-key"></i>
                             </div>
                             <input type="password" id="passcode" required placeholder="••••••••" 
-                                class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none transition text-slate-800 font-mono text-lg">
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none transition text-slate-800 font-mono text-base">
                         </div>
                     </div>
 
-                    <div id="loginError" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs flex items-center">
-                        <i class="fa-solid fa-circle-exclamation mr-2 text-base"></i>
+                    <div id="loginError" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs flex items-center">
+                        <i class="fa-solid fa-circle-exclamation mr-2 text-sm"></i>
                         <span>รหัสผ่านไม่ถูกต้อง สิทธิ์การเข้าถึงปฏิเสธ</span>
                     </div>
 
                     <button type="submit" 
-                        class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition shadow-lg shadow-blue-600/30 active:scale-[0.98]">
-                        <i class="fa-solid fa-lock-open mr-2"></i> เข้าสู่ระบบจัดตารางเวร
+                        class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition shadow-lg shadow-blue-600/30 active:scale-[0.98]">
+                        <i class="fa-solid fa-lock-open mr-1.5"></i> เข้าสู่ระบบจัดตารางเวร
                     </button>
                 </form>
 
-                <div class="text-center pt-2">
-                    <span class="text-[10px] text-slate-400 uppercase tracking-wider">Restricted Access • Medical Staff Only</span>
+                <div class="text-center pt-1">
+                    <span class="text-[9px] text-slate-400 uppercase tracking-wider">Restricted Access • Medical Staff Only</span>
                 </div>
             </div>
         </div>
@@ -113,35 +115,35 @@
             
             <!-- TOP APP BAR -->
             <header class="sticky top-0 z-30 bg-blue-900 text-white shadow-md">
-                <div class="px-4 py-3.5 flex justify-between items-center">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
-                            <i class="fa-solid fa-user-nurse text-blue-300"></i>
+                <div class="px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center border border-white/20">
+                            <i class="fa-solid fa-user-nurse text-blue-300 text-sm"></i>
                         </div>
                         <div>
-                            <h1 class="font-bold text-sm leading-tight">ระบบตารางเวรพยาบาล</h1>
-                            <p class="text-[10px] text-blue-200 font-light">Special Nurse / PT System</p>
+                            <h1 class="font-bold text-xs leading-tight">ระบบตารางเวรพยาบาล</h1>
+                            <p class="text-[9px] text-blue-200 font-light">Special Nurse / PT System</p>
                         </div>
                     </div>
-                    <button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-200 px-3 py-1.5 rounded-lg border border-red-400/30 transition">
+                    <button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-200 px-2.5 py-1 rounded-lg border border-red-400/30 transition">
                         <i class="fa-solid fa-power-off"></i>
                     </button>
                 </div>
             </header>
 
             <!-- MAIN CONTENT AREA -->
-            <main class="flex-1 p-4 space-y-4 max-w-5xl mx-auto w-full">
+            <main class="flex-1 p-3.5 space-y-3.5 max-w-5xl mx-auto w-full">
                 
                 <!-- STEP 1: SELECT HOSPITAL & DEPT -->
-                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80">
-                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center">
+                <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200/80">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center">
                         <i class="fa-solid fa-hospital text-blue-600 mr-1.5"></i> เลือกหน่วยงานปฏิบัติงาน
                     </div>
                     
-                    <div class="space-y-3">
+                    <div class="space-y-2.5">
                         <div>
                             <select id="hospitalSelect" onchange="updateDepartments()" 
-                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none">
+                                class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none">
                                 <option value="">-- เลือกโรงพยาบาล --</option>
                                 <option value="โรงพยาบาลพญาไท">🏥 โรงพยาบาลพญาไท</option>
                                 <option value="โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล">🏥 โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล</option>
@@ -152,7 +154,7 @@
 
                         <div>
                             <select id="departmentSelect" onchange="onDepartmentChange()" disabled
-                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none disabled:opacity-50">
+                                class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none disabled:opacity-50">
                                 <option value="">-- เลือกแผนก / หน่วยงาน --</option>
                             </select>
                         </div>
@@ -160,58 +162,70 @@
                 </div>
 
                 <!-- STEP 2: ROSTER CONTROLS -->
-                <div id="rosterControls" class="hidden space-y-4">
+                <div id="rosterControls" class="hidden space-y-3.5">
                     
-                    <!-- ADD SHIFT PANEL -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
-                            <span><i class="fa-solid fa-calendar-plus text-blue-600 mr-1.5"></i> ลงข้อมูลการเข้าเวร</span>
-                            <span id="badgeDept" class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-semibold"></span>
+                    <!-- ADD SHIFT PANEL WITH BULK DAY SELECTOR -->
+                    <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200/80 space-y-3">
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                            <span><i class="fa-solid fa-calendar-plus text-blue-600 mr-1.5"></i> ลงข้อมูลการเข้าเวร (เลือกหลายวันได้)</span>
+                            <span id="badgeDept" class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[9px] font-semibold"></span>
                         </div>
 
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                            <div class="col-span-2 sm:col-span-1">
-                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">เดือน / ปี</label>
-                                <input type="month" id="monthPicker" onchange="renderCalendar()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                        <!-- Basic Shift Info -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[10px] font-semibold text-slate-500 mb-1 block">เดือน / ปี</label>
+                                <input type="month" id="monthPicker" onchange="onMonthChange()" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
                             </div>
                             <div>
-                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">วันที่ (1-31)</label>
-                                <input type="number" id="shiftDay" min="1" max="31" placeholder="เช่น 15" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                            </div>
-                            <div class="col-span-2 sm:col-span-1">
-                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">ผลัดเวร</label>
-                                <select id="shiftType" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
-                                    <option value="เวรเช้า (07.00-15.00)">☀️ เช้า (07.00-15.00)</option>
-                                    <option value="เวรบ่าย (15.00-23.00)">บ่าย (15.00-23.00)</option>
-                                    <option value="เวรดึก (23.00-07.00)">🌙 ดึก (23.00-07.00)</option>
+                                <label class="text-[10px] font-semibold text-slate-500 mb-1 block">ผลัดเวร</label>
+                                <select id="shiftType" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                                    <option value="เวรเช้า (07:00-19:00)">☀️ เช้า (07:00-19:00)</option>
+                                    <option value="เวรดึก (23:00-08:00)">🌙 ดึก (23:00-08:00)</option>
                                     <option value="OT Special">🔥 OT Special</option>
                                 </select>
                             </div>
-                            <div class="col-span-2">
-                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">ชื่อ-สกุล พยาบาล / PT</label>
-                                <input type="text" id="nurseName" placeholder="พว. สมศรี มีสุข" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                            <div>
+                                <label class="text-[10px] font-semibold text-slate-500 mb-1 block">ชื่อ-สกุล พยาบาล / PT</label>
+                                <input type="text" id="nurseName" placeholder="พว. สมศรี มีสุข" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
                             </div>
                         </div>
 
-                        <button onclick="addShift()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl transition shadow-md shadow-emerald-600/20 active:scale-[0.98] flex items-center justify-center">
-                            <i class="fa-solid fa-plus-circle mr-1.5 text-sm"></i> บันทึกข้อมูลลงตาราง
+                        <!-- DAY SELECTOR SECTION -->
+                        <div class="border-t border-slate-100 pt-2.5">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="text-[10px] font-semibold text-slate-600">กดเลือกวันที่ต้องการเพิ่มเวร:</label>
+                                <div class="space-x-1">
+                                    <button type="button" onclick="selectAllDays()" class="text-[9px] bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded font-medium hover:bg-blue-100">เลือกทั้งหมด (1-31)</button>
+                                    <button type="button" onclick="selectEvenDays()" class="text-[9px] bg-slate-50 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded font-medium hover:bg-slate-100">วันคู่</button>
+                                    <button type="button" onclick="selectOddDays()" class="text-[9px] bg-slate-50 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded font-medium hover:bg-slate-100">วันคี่</button>
+                                    <button type="button" onclick="clearDaySelection()" class="text-[9px] bg-rose-50 text-rose-600 border border-rose-200 px-1.5 py-0.5 rounded font-medium hover:bg-rose-100">ล้างเลือก</button>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Day Buttons Grid -->
+                            <div id="dayButtonsGrid" class="grid grid-cols-7 gap-1 text-center"></div>
+                        </div>
+
+                        <button onclick="addShiftBulk()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl transition shadow-md shadow-emerald-600/20 active:scale-[0.98] flex items-center justify-center">
+                            <i class="fa-solid fa-plus-circle mr-1.5 text-sm"></i> บันทึกข้อมูลเข้าตาราง (ตามวันที่เลือก)
                         </button>
                     </div>
 
                     <!-- MOBILE LIVE PREVIEW / SCREEN CALENDAR -->
-                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80">
-                        <div class="flex justify-between items-center mb-3">
-                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200/80">
+                        <div class="flex justify-between items-center mb-2.5">
+                            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                                 <i class="fa-solid fa-calendar-days text-blue-600 mr-1.5"></i> ตารางเวรเดือนนี้
                             </div>
-                            <button onclick="exportToPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md transition flex items-center">
+                            <button onclick="exportToPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold shadow-md transition flex items-center">
                                 <i class="fa-solid fa-file-pdf mr-1 text-sm"></i> ออกรายงาน PDF (A4)
                             </button>
                         </div>
 
                         <!-- Calendar Grid for Screen Display -->
                         <div class="border border-slate-200 rounded-xl overflow-hidden">
-                            <div class="grid grid-cols-7 bg-slate-800 text-white text-[11px] font-semibold text-center py-2">
+                            <div class="grid grid-cols-7 bg-slate-800 text-white text-[10px] font-semibold text-center py-1.5">
                                 <div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div>
                             </div>
                             <div id="screenCalendarDays" class="grid grid-cols-7 bg-slate-200 gap-px text-xs"></div>
@@ -230,9 +244,7 @@
             <!-- Official Header -->
             <div class="border-b-2 border-slate-800 pb-3 mb-4 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div id="pdfLogoIcon" class="text-3xl text-blue-800">
-                        <!-- Icon injected by JS -->
-                    </div>
+                    <div id="pdfLogoIcon" class="text-3xl text-blue-800"></div>
                     <div>
                         <h1 id="pdfHospTitle" class="text-xl font-bold text-slate-900 leading-none">โรงพยาบาล...</h1>
                         <p id="pdfDeptTitle" class="text-sm font-semibold text-slate-600 mt-1">แผนก: ...</p>
@@ -298,6 +310,7 @@
         };
 
         let schedules = {};
+        let selectedDaysSet = new Set();
 
         window.onload = function() {
             const now = new Date();
@@ -350,10 +363,92 @@
             if (dept) {
                 document.getElementById('rosterControls').classList.remove('hidden');
                 document.getElementById('badgeDept').textContent = dept;
+                renderDayPickerGrid();
                 renderCalendar();
             } else {
                 document.getElementById('rosterControls').classList.add('hidden');
             }
+        }
+
+        function onMonthChange() {
+            renderDayPickerGrid();
+            renderCalendar();
+        }
+
+        // Render Day Selection Buttons
+        function renderDayPickerGrid() {
+            const monthVal = document.getElementById('monthPicker').value;
+            if (!monthVal) return;
+
+            const [year, month] = monthVal.split('-').map(Number);
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const grid = document.getElementById('dayButtonsGrid');
+            grid.innerHTML = '';
+            selectedDaysSet.clear();
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `day-btn p-1 text-xs border border-slate-200 rounded-lg bg-slate-50 hover:bg-blue-50 text-slate-700 transition font-medium`;
+                btn.textContent = d;
+                btn.onclick = () => toggleDaySelection(d, btn);
+                btn.id = `day-btn-${d}`;
+                grid.appendChild(btn);
+            }
+        }
+
+        function toggleDaySelection(day, btn) {
+            if (selectedDaysSet.has(day)) {
+                selectedDaysSet.delete(day);
+                btn.classList.remove('selected');
+            } else {
+                selectedDaysSet.add(day);
+                btn.classList.add('selected');
+            }
+        }
+
+        function selectAllDays() {
+            const monthVal = document.getElementById('monthPicker').value;
+            const [year, month] = monthVal.split('-').map(Number);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            selectedDaysSet.clear();
+            for (let d = 1; d <= daysInMonth; d++) {
+                selectedDaysSet.add(d);
+                const btn = document.getElementById(`day-btn-${d}`);
+                if (btn) btn.classList.add('selected');
+            }
+        }
+
+        function selectEvenDays() {
+            clearDaySelection();
+            const monthVal = document.getElementById('monthPicker').value;
+            const [year, month] = monthVal.split('-').map(Number);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            for (let d = 2; d <= daysInMonth; d += 2) {
+                selectedDaysSet.add(d);
+                const btn = document.getElementById(`day-btn-${d}`);
+                if (btn) btn.classList.add('selected');
+            }
+        }
+
+        function selectOddDays() {
+            clearDaySelection();
+            const monthVal = document.getElementById('monthPicker').value;
+            const [year, month] = monthVal.split('-').map(Number);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            for (let d = 1; d <= daysInMonth; d += 2) {
+                selectedDaysSet.add(d);
+                const btn = document.getElementById(`day-btn-${d}`);
+                if (btn) btn.classList.add('selected');
+            }
+        }
+
+        function clearDaySelection() {
+            selectedDaysSet.clear();
+            document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('selected'));
         }
 
         function getScheduleKey() {
@@ -373,7 +468,6 @@
             const [year, month] = monthVal.split('-').map(Number);
             const monthNamesTH = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             
-            // Set Titles for PDF Template
             document.getElementById('pdfHospTitle').textContent = hosp;
             document.getElementById('pdfDeptTitle').textContent = `แผนก: ${dept}`;
             document.getElementById('pdfMonthTitle').textContent = `ประจำเดือน ${monthNamesTH[month-1]} พ.ศ. ${year + 543}`;
@@ -387,19 +481,16 @@
             const key = getScheduleKey();
             const currentData = schedules[key] || {};
 
-            // Render to Mobile/Screen Grid & PDF Grid
             const screenGrid = document.getElementById('screenCalendarDays');
             const pdfGrid = document.getElementById('pdfCalendarDays');
             screenGrid.innerHTML = '';
             pdfGrid.innerHTML = '';
 
-            // Empty Prefix Cells
             for (let i = 0; i < firstDay; i++) {
-                screenGrid.innerHTML += `<div class="bg-slate-50 min-h-[50px]"></div>`;
-                pdfGrid.innerHTML += `<div class="bg-white min-h-[65px] p-1 border-b border-r border-slate-200"></div>`;
+                screenGrid.innerHTML += `<div class="bg-slate-50 min-h-[45px]"></div>`;
+                pdfGrid.innerHTML += `<div class="bg-white min-h-[60px] p-1 border-b border-r border-slate-200"></div>`;
             }
 
-            // Day Cells
             for (let day = 1; day <= daysInMonth; day++) {
                 let shiftItemsScreen = '';
                 let shiftItemsPDF = '';
@@ -408,17 +499,14 @@
                     currentData[day].forEach((item, index) => {
                         let colorBadge = "bg-blue-100 text-blue-800";
                         if(item.type.includes("เช้า")) colorBadge = "bg-emerald-100 text-emerald-800";
-                        if(item.type.includes("บ่าย")) colorBadge = "bg-amber-100 text-amber-800";
                         if(item.type.includes("ดึก")) colorBadge = "bg-purple-100 text-purple-800";
 
-                        // Screen View Item
                         shiftItemsScreen += `
-                            <div class="text-[9px] p-1 mb-1 rounded ${colorBadge} font-medium flex justify-between items-center">
+                            <div class="text-[9px] p-0.5 px-1 mb-1 rounded ${colorBadge} font-medium flex justify-between items-center leading-tight">
                                 <span class="truncate">${item.name} (${item.type.split(' ')[0]})</span>
-                                <button onclick="deleteShift(${day}, ${index})" class="text-rose-500 ml-1 font-bold">×</button>
+                                <button onclick="deleteShift(${day}, ${index})" class="text-rose-500 ml-0.5 font-bold">×</button>
                             </div>`;
 
-                        // PDF View Item
                         shiftItemsPDF += `
                             <div class="text-[9px] leading-tight mb-1 p-0.5 bg-slate-100 border-l-2 border-slate-600 pl-1">
                                 <div class="font-bold text-slate-800">${item.type}</div>
@@ -427,49 +515,47 @@
                     });
                 }
 
-                // Render Screen Cell
                 screenGrid.innerHTML += `
-                    <div class="bg-white p-1 min-h-[60px] border-b border-r border-slate-100">
+                    <div class="bg-white p-1 min-h-[55px] border-b border-r border-slate-100">
                         <div class="font-bold text-[10px] text-slate-400 mb-0.5">${day}</div>
                         ${shiftItemsScreen}
                     </div>`;
 
-                // Render PDF Cell
                 pdfGrid.innerHTML += `
-                    <div class="bg-white p-1 min-h-[65px] border-b border-r border-slate-300">
+                    <div class="bg-white p-1 min-h-[60px] border-b border-r border-slate-300">
                         <div class="font-bold text-xs text-slate-900 mb-1">${day}</div>
                         ${shiftItemsPDF}
                     </div>`;
             }
         }
 
-        function addShift() {
-            const day = parseInt(document.getElementById('shiftDay').value);
+        // ADD SHIFT BULK LOGIC
+        function addShiftBulk() {
             const type = document.getElementById('shiftType').value;
             const name = document.getElementById('nurseName').value.trim();
-            const monthVal = document.getElementById('monthPicker').value;
 
-            if (!day || !name) {
-                alert("กรุณากรอกวันที่ และ ชื่อพยาบาล/PT ให้ครบถ้วน");
+            if (selectedDaysSet.size === 0) {
+                alert("กรุณาเลือกวันที่ต้องการเพิ่มเวรอย่างน้อย 1 วัน");
                 return;
             }
 
-            const [year, month] = monthVal.split('-').map(Number);
-            const daysInMonth = new Date(year, month, 0).getDate();
-
-            if (day < 1 || day > daysInMonth) {
-                alert(`วันที่ไม่ถูกต้อง เดือนนี้มี ${daysInMonth} วัน`);
+            if (!name) {
+                alert("กรุณากรอกชื่อพยาบาล/PT");
                 return;
             }
 
             const key = getScheduleKey();
             if (!schedules[key]) schedules[key] = {};
-            if (!schedules[key][day]) schedules[key][day] = [];
 
-            schedules[key][day].push({ type, name });
+            // Add shift to all selected days
+            selectedDaysSet.forEach(day => {
+                if (!schedules[key][day]) schedules[key][day] = [];
+                schedules[key][day].push({ type, name });
+            });
 
-            document.getElementById('shiftDay').value = '';
+            // Reset Input
             document.getElementById('nurseName').value = '';
+            clearDaySelection();
             renderCalendar();
         }
 
@@ -489,8 +575,6 @@
             document.getElementById('pdfPrintDate').textContent = new Date().toLocaleDateString('th-TH');
             
             const element = document.getElementById('pdfExportContainer');
-            
-            // Temporary show container for PDF rendering
             element.parentElement.classList.remove('hidden');
 
             const opt = {
