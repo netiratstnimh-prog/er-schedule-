@@ -2,264 +2,360 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดตารางเวร Special Nurse / PT</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Medical Roster - ระบบจัดตารางเวรทางการแพทย์</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome Pro Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf.js CDN -->
+    <!-- html2pdf & html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Google Fonts (Prompt) -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Sarabun & Prompt -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Prompt', sans-serif; background-color: #f0f4f8; }
-        .bg-medical { background-color: #0056b3; }
-        .text-medical { color: #0056b3; }
-        .border-medical { border-color: #0056b3; }
-        @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Prompt', sans-serif; background-color: #f1f5f9; }
+        .font-sarabun { font-family: 'Sarabun', sans-serif; }
+        
+        /* Mobile App Viewport Adjustments */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: #ffffff;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        @media (min-width: 768px) {
+            .app-container { max-width: 100%; background: #f1f5f9; box-shadow: none; }
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* PDF Export A4 Strict Style */
+        #pdfExportContainer {
+            width: 1050px !important;
+            padding: 25px !important;
+            background: #ffffff !important;
+            color: #0f172a !important;
+            font-family: 'Sarabun', sans-serif !important;
         }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="text-slate-800 antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- 1. LOGIN SECTION -->
-    <div id="loginSection" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-blue-600">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <i class="fa-solid fa-user-nurse text-3xl"></i>
+    <!-- ================= 1. HOSPITAL LOGIN SECTION ================= -->
+    <div id="loginSection" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+        <div class="w-full max-w-md">
+            <!-- Medical Seal Header -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-blue-600/20 border-2 border-blue-400/30 mb-4 shadow-2xl backdrop-blur-md relative">
+                    <i class="fa-solid fa-hospital-user text-4xl text-blue-400"></i>
+                    <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
+                    </span>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-800">ระบบตารางเวรพยาบาล</h1>
-                <p class="text-sm text-gray-500">Special Nurse & Part-Time (PT)</p>
+                <h1 class="text-2xl font-bold text-white tracking-wide">HEALTHCARE SYSTEM</h1>
+                <p class="text-xs text-blue-300/80 uppercase tracking-widest font-semibold mt-1">Special Nurse & PT Roster Management</p>
             </div>
-            
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">รหัสเข้าใช้งาน</label>
-                    <input type="password" id="passcode" required placeholder="•••••••" 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+
+            <!-- Login Card -->
+            <div class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center">
+                        <i class="fa-solid fa-shield-halved text-blue-600 mr-2"></i> ระบบยืนยันตัวตนทางการแพทย์
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5">กรอกรหัสผ่านเพื่อเข้าสู่ระบบปฏิบัติงาน</p>
                 </div>
-                <p id="loginError" class="text-red-500 text-xs hidden">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง</p>
-                <button type="submit" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition shadow-md hover:shadow-lg">
-                    เข้าสู่ระบบ
-                </button>
-            </form>
+
+                <form onsubmit="handleLogin(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+                            รหัสผ่านเข้าใช้งาน (Passcode)
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-key"></i>
+                            </div>
+                            <input type="password" id="passcode" required placeholder="••••••••" 
+                                class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none transition text-slate-800 font-mono text-lg">
+                        </div>
+                    </div>
+
+                    <div id="loginError" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs flex items-center">
+                        <i class="fa-solid fa-circle-exclamation mr-2 text-base"></i>
+                        <span>รหัสผ่านไม่ถูกต้อง สิทธิ์การเข้าถึงปฏิเสธ</span>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition shadow-lg shadow-blue-600/30 active:scale-[0.98]">
+                        <i class="fa-solid fa-lock-open mr-2"></i> เข้าสู่ระบบจัดตารางเวร
+                    </button>
+                </form>
+
+                <div class="text-center pt-2">
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider">Restricted Access • Medical Staff Only</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- MAIN APP CONTENT (Hidden by default) -->
-    <div id="appSection" class="hidden min-h-screen flex flex-col">
-        <!-- HEADER -->
-        <header class="bg-blue-700 text-white shadow-md no-print">
-            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <i class="fa-solid fa-hospital text-2xl"></i>
-                    <span class="font-semibold text-lg">Special Nurse & PT Roster System</span>
-                </div>
-                <button onclick="logout()" class="text-sm bg-blue-800 hover:bg-blue-900 px-3 py-1.5 rounded-lg transition">
-                    <i class="fa-solid fa-right-from-bracket mr-1"></i> ออกจากระบบ
-                </button>
-            </div>
-        </header>
 
-        <div class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
-
-            <!-- 2. HOSPITAL & DEPARTMENT SELECTION -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 no-print">
-                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                    <i class="fa-solid fa-clinic-medical text-blue-600 mr-2"></i> เลือกโรงพยาบาลและแผนก
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">โรงพยาบาล</label>
-                        <select id="hospitalSelect" onchange="updateDepartments()" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-                            <option value="">-- กรุณาเลือกโรงพยาบาล --</option>
-                            <option value="โรงพยาบาลพญาไท">โรงพยาบาลพญาไท</option>
-                            <option value="โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล">โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล</option>
-                            <option value="โรงพยาบาลกรุงเทพคริสเตียน">โรงพยาบาลกรุงเทพคริสเตียน</option>
-                            <option value="โรงพยาบาลกรุงเทพศูนย์การแพทย์">โรงพยาบาลกรุงเทพศูนย์การแพทย์</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">แผนก / หน่วยงาน</label>
-                        <select id="departmentSelect" onchange="onDepartmentChange()" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" disabled>
-                            <option value="">-- เลือกแผนก --</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. ROSTER CONTROL PANEL (Hidden until department selected) -->
-            <div id="rosterControls" class="hidden space-y-6">
-                <!-- ADD SHIFT FORM -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 no-print">
-                    <h3 class="text-md font-bold text-gray-800 mb-4 flex items-center">
-                        <i class="fa-solid fa-calendar-plus text-blue-600 mr-2"></i> เพิ่ม/บันทึก การเข้าเวร
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-                        <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">เดือน / ปี</label>
-                            <input type="month" id="monthPicker" onchange="renderCalendar()" class="w-full p-2 border rounded-lg text-sm">
+    <!-- ================= 2. MAIN APP SECTION ================= -->
+    <div id="appSection" class="hidden min-h-screen">
+        <div class="app-container flex flex-col min-h-screen">
+            
+            <!-- TOP APP BAR -->
+            <header class="sticky top-0 z-30 bg-blue-900 text-white shadow-md">
+                <div class="px-4 py-3.5 flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
+                            <i class="fa-solid fa-user-nurse text-blue-300"></i>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">วันที่</label>
-                            <input type="number" id="shiftDay" min="1" max="31" placeholder="เช่น 15" class="w-full p-2 border rounded-lg text-sm">
+                            <h1 class="font-bold text-sm leading-tight">ระบบตารางเวรพยาบาล</h1>
+                            <p class="text-[10px] text-blue-200 font-light">Special Nurse / PT System</p>
                         </div>
+                    </div>
+                    <button onclick="logout()" class="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-200 px-3 py-1.5 rounded-lg border border-red-400/30 transition">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- MAIN CONTENT AREA -->
+            <main class="flex-1 p-4 space-y-4 max-w-5xl mx-auto w-full">
+                
+                <!-- STEP 1: SELECT HOSPITAL & DEPT -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center">
+                        <i class="fa-solid fa-hospital text-blue-600 mr-1.5"></i> เลือกหน่วยงานปฏิบัติงาน
+                    </div>
+                    
+                    <div class="space-y-3">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">ช่วงเวลา (เวร)</label>
-                            <select id="shiftType" class="w-full p-2 border rounded-lg text-sm">
-                                <option value="เช้า (07:00-15:00)">เช้า (07:00-15:00)</option>
-                                <option value="บ่าย (15:00-23:00)">บ่าย (15:00-23:00)</option>
-                                <option value="ดึก (23:00-07:00)">ดึก (23:00-07:00)</option>
-                                <option value="OT (Special)">OT (Special)</option>
+                            <select id="hospitalSelect" onchange="updateDepartments()" 
+                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none">
+                                <option value="">-- เลือกโรงพยาบาล --</option>
+                                <option value="โรงพยาบาลพญาไท">🏥 โรงพยาบาลพญาไท</option>
+                                <option value="โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล">🏥 โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล</option>
+                                <option value="โรงพยาบาลกรุงเทพคริสเตียน">🏥 โรงพยาบาลกรุงเทพคริสเตียน</option>
+                                <option value="โรงพยาบาลกรุงเทพศูนย์การแพทย์">🏥 โรงพยาบาลกรุงเทพศูนย์การแพทย์</option>
                             </select>
                         </div>
+
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อ-สกุล ผู้เข้าเวร</label>
-                            <input type="text" id="nurseName" placeholder="พว. สมศรี มีสุข" class="w-full p-2 border rounded-lg text-sm">
+                            <select id="departmentSelect" onchange="onDepartmentChange()" disabled
+                                class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:bg-white outline-none disabled:opacity-50">
+                                <option value="">-- เลือกแผนก / หน่วยงาน --</option>
+                            </select>
                         </div>
-                        <div class="flex items-end">
-                            <button onclick="addShift()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg text-sm font-medium transition shadow">
-                                <i class="fa-solid fa-plus mr-1"></i> เพิ่มลงตาราง
+                    </div>
+                </div>
+
+                <!-- STEP 2: ROSTER CONTROLS -->
+                <div id="rosterControls" class="hidden space-y-4">
+                    
+                    <!-- ADD SHIFT PANEL -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 space-y-3">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                            <span><i class="fa-solid fa-calendar-plus text-blue-600 mr-1.5"></i> ลงข้อมูลการเข้าเวร</span>
+                            <span id="badgeDept" class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-[10px] font-semibold"></span>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">เดือน / ปี</label>
+                                <input type="month" id="monthPicker" onchange="renderCalendar()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">วันที่ (1-31)</label>
+                                <input type="number" id="shiftDay" min="1" max="31" placeholder="เช่น 15" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">ผลัดเวร</label>
+                                <select id="shiftType" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                                    <option value="เวรเช้า (07.00-15.00)">☀️ เช้า (07.00-15.00)</option>
+                                    <option value="เวรบ่าย (15.00-23.00)">บ่าย (15.00-23.00)</option>
+                                    <option value="เวรดึก (23.00-07.00)">🌙 ดึก (23.00-07.00)</option>
+                                    <option value="OT Special">🔥 OT Special</option>
+                                </select>
+                            </div>
+                            <div class="col-span-2">
+                                <label class="text-[11px] font-semibold text-slate-500 mb-1 block">ชื่อ-สกุล พยาบาล / PT</label>
+                                <input type="text" id="nurseName" placeholder="พว. สมศรี มีสุข" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium">
+                            </div>
+                        </div>
+
+                        <button onclick="addShift()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs rounded-xl transition shadow-md shadow-emerald-600/20 active:scale-[0.98] flex items-center justify-center">
+                            <i class="fa-solid fa-plus-circle mr-1.5 text-sm"></i> บันทึกข้อมูลลงตาราง
+                        </button>
+                    </div>
+
+                    <!-- MOBILE LIVE PREVIEW / SCREEN CALENDAR -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                <i class="fa-solid fa-calendar-days text-blue-600 mr-1.5"></i> ตารางเวรเดือนนี้
+                            </div>
+                            <button onclick="exportToPDF()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md transition flex items-center">
+                                <i class="fa-solid fa-file-pdf mr-1 text-sm"></i> ออกรายงาน PDF (A4)
                             </button>
                         </div>
-                    </div>
-                </div>
 
-                <!-- 4. CALENDAR VIEW CONTAINER (Export Target) -->
-                <div id="exportArea" class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                    <!-- CALENDAR HEADER FOR PRINT -->
-                    <div class="border-b pb-4 mb-4 flex justify-between items-start">
-                        <div>
-                            <h2 id="pdfHospitalName" class="text-xl font-bold text-blue-900">โรงพยาบาล...</h2>
-                            <p id="pdfDepartmentName" class="text-md text-gray-600 font-medium">แผนก: ...</p>
-                        </div>
-                        <div class="text-right">
-                            <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold mb-1">Special Nurse & PT</span>
-                            <h3 id="calendarMonthTitle" class="text-lg font-semibold text-gray-700">ประจำเดือน: -</h3>
+                        <!-- Calendar Grid for Screen Display -->
+                        <div class="border border-slate-200 rounded-xl overflow-hidden">
+                            <div class="grid grid-cols-7 bg-slate-800 text-white text-[11px] font-semibold text-center py-2">
+                                <div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div>
+                            </div>
+                            <div id="screenCalendarDays" class="grid grid-cols-7 bg-slate-200 gap-px text-xs"></div>
                         </div>
                     </div>
 
-                    <!-- CALENDAR GRID -->
-                    <div class="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden text-sm">
-                        <!-- Days of Week Header -->
-                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">อา.</div>
-                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">จ.</div>
-                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">อ.</div>
-                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">พ.</div>
-                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">พฤ.</div>
-                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">ศ.</div>
-                        <div class="bg-blue-600 text-white font-semibold p-2 text-center">ส.</div>
-
-                        <!-- Days cells generated dynamically -->
-                        <div id="calendarDays" class="contents"></div>
-                    </div>
                 </div>
-
-                <!-- ACTION BUTTONS -->
-                <div class="flex justify-end space-x-3 no-print">
-                    <button onclick="clearCurrentSchedule()" class="px-4 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg text-sm font-medium transition">
-                        <i class="fa-solid fa-trash-can mr-1"></i> ล้างข้อมูลตารางนี้
-                    </button>
-                    <button onclick="exportToPDF()" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition shadow-md">
-                        <i class="fa-solid fa-file-pdf mr-1"></i> ส่งออกเป็น PDF
-                    </button>
-                </div>
-            </div>
-
+            </main>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+
+    <!-- ================= 3. HIDDEN PDF EXPORT TEMPLATE (STRICT A4 LANDSCAPE) ================= -->
+    <div class="hidden">
+        <div id="pdfExportContainer" class="font-sarabun">
+            <!-- Official Header -->
+            <div class="border-b-2 border-slate-800 pb-3 mb-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div id="pdfLogoIcon" class="text-3xl text-blue-800">
+                        <!-- Icon injected by JS -->
+                    </div>
+                    <div>
+                        <h1 id="pdfHospTitle" class="text-xl font-bold text-slate-900 leading-none">โรงพยาบาล...</h1>
+                        <p id="pdfDeptTitle" class="text-sm font-semibold text-slate-600 mt-1">แผนก: ...</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="inline-block px-2.5 py-0.5 border border-slate-400 rounded text-xs font-bold text-slate-700 mb-1">
+                        OFFICIAL ROSTER REPORT
+                    </span>
+                    <h2 id="pdfMonthTitle" class="text-md font-bold text-blue-900">ประจำเดือน...</h2>
+                </div>
+            </div>
+
+            <!-- PDF Calendar Grid Structure -->
+            <div class="border border-slate-400 rounded-lg overflow-hidden">
+                <div class="grid grid-cols-7 bg-slate-200 text-slate-900 font-bold text-center text-xs border-b border-slate-400">
+                    <div class="py-1 border-r border-slate-300">อาทิตย์</div>
+                    <div class="py-1 border-r border-slate-300">จันทร์</div>
+                    <div class="py-1 border-r border-slate-300">อังคาร</div>
+                    <div class="py-1 border-r border-slate-300">พุธ</div>
+                    <div class="py-1 border-r border-slate-300">พฤหัสบดี</div>
+                    <div class="py-1 border-r border-slate-300">ศุกร์</div>
+                    <div class="py-1">เสาร์</div>
+                </div>
+                <div id="pdfCalendarDays" class="grid grid-cols-7 bg-slate-300 gap-px text-xs"></div>
+            </div>
+
+            <!-- PDF Footer -->
+            <div class="mt-4 pt-2 flex justify-between items-end text-[10px] text-slate-500 border-t border-slate-200">
+                <div>
+                    <span>ผู้ออกรายงาน: ระบบบริหารจัดการเวร Special Nurse / PT</span> | 
+                    <span>วันที่พิมพ์: <span id="pdfPrintDate"></span></span>
+                </div>
+                <div class="space-x-8">
+                    <span>ลงชื่อ..........................................................อนุมัติ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= 4. JAVASCRIPT LOGIC ================= -->
     <script>
-        // CONFIG & DATA STRUCTURES
         const AUTH_CODE = "6770649";
         
         const hospitalData = {
-            "โรงพยาบาลพญาไท": ["เช็คอัพ B8 ตรวจตา"],
-            "โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล": ["Special Nurse PT"],
-            "โรงพยาบาลกรุงเทพคริสเตียน": ["แผนกฉุกเฉิน ER", "แผนกวิกฤตหัวใจ CCU"],
-            "โรงพยาบาลกรุงเทพศูนย์การแพทย์": ["แผนกหัวใจ"]
+            "โรงพยาบาลพญาไท": {
+                icon: "fa-hospital",
+                depts: ["เช็คอัพ B8 ตรวจตา"]
+            },
+            "โรงพยาบาลบำรุงราษฎร์ อินเตอร์เนชั่นแนล": {
+                icon: "fa-heart-pulse",
+                depts: ["Special Nurse PT"]
+            },
+            "โรงพยาบาลกรุงเทพคริสเตียน": {
+                icon: "fa-house-medical",
+                depts: ["แผนกฉุกเฉิน ER", "แผนกวิกฤตหัวใจ CCU"]
+            },
+            "โรงพยาบาลกรุงเทพศูนย์การแพทย์": {
+                icon: "fa-notes-medical",
+                depts: ["แผนกหัวใจ"]
+            }
         };
 
-        // Key-value store for schedule data: key = "Hospital-Department-YYYY-MM"
         let schedules = {};
 
-        // INITIALIZATION
         window.onload = function() {
-            // Set default month to current YYYY-MM
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             document.getElementById('monthPicker').value = `${year}-${month}`;
         };
 
-        // LOGIN SYSTEM
         function handleLogin(e) {
             e.preventDefault();
-            const inputCode = document.getElementById('passcode').value;
-            const errorMsg = document.getElementById('loginError');
+            const pass = document.getElementById('passcode').value;
+            const err = document.getElementById('loginError');
 
-            if (inputCode === AUTH_CODE) {
+            if (pass === AUTH_CODE) {
                 document.getElementById('loginSection').classList.add('hidden');
                 document.getElementById('appSection').classList.remove('hidden');
-                document.getElementById('passcode').value = '';
-                errorMsg.classList.add('hidden');
+                err.classList.add('hidden');
             } else {
-                errorMsg.classList.remove('hidden');
+                err.classList.remove('hidden');
             }
         }
 
         function logout() {
             document.getElementById('appSection').classList.add('hidden');
             document.getElementById('loginSection').classList.remove('hidden');
-            document.getElementById('rosterControls').classList.add('hidden');
-            document.getElementById('hospitalSelect').value = '';
-            document.getElementById('departmentSelect').value = '';
-            document.getElementById('departmentSelect').disabled = true;
+            document.getElementById('passcode').value = '';
         }
 
-        // DEPARTMENT DROPDOWN LOGIC
         function updateDepartments() {
-            const hospSelect = document.getElementById('hospitalSelect');
+            const hosp = document.getElementById('hospitalSelect').value;
             const deptSelect = document.getElementById('departmentSelect');
-            const selectedHosp = hospSelect.value;
+            deptSelect.innerHTML = '<option value="">-- เลือกแผนก / หน่วยงาน --</option>';
 
-            deptSelect.innerHTML = '<option value="">-- เลือกแผนก --</option>';
-
-            if (selectedHosp && hospitalData[selectedHosp]) {
-                hospitalData[selectedHosp].forEach(dept => {
+            if (hosp && hospitalData[hosp]) {
+                hospitalData[hosp].depts.forEach(d => {
                     const opt = document.createElement('option');
-                    opt.value = dept;
-                    opt.textContent = dept;
+                    opt.value = d;
+                    opt.textContent = d;
                     deptSelect.appendChild(opt);
                 });
                 deptSelect.disabled = false;
             } else {
                 deptSelect.disabled = true;
             }
-
             document.getElementById('rosterControls').classList.add('hidden');
         }
 
         function onDepartmentChange() {
             const dept = document.getElementById('departmentSelect').value;
-            const controls = document.getElementById('rosterControls');
-            
             if (dept) {
-                controls.classList.remove('hidden');
+                document.getElementById('rosterControls').classList.remove('hidden');
+                document.getElementById('badgeDept').textContent = dept;
                 renderCalendar();
             } else {
-                controls.classList.add('hidden');
+                document.getElementById('rosterControls').classList.add('hidden');
             }
         }
 
-        // GET SCHEDULE KEY
         function getScheduleKey() {
             const hosp = document.getElementById('hospitalSelect').value;
             const dept = document.getElementById('departmentSelect').value;
@@ -267,7 +363,6 @@
             return `${hosp}_${dept}_${month}`;
         }
 
-        // CALENDAR GENERATION LOGIC
         function renderCalendar() {
             const hosp = document.getElementById('hospitalSelect').value;
             const dept = document.getElementById('departmentSelect').value;
@@ -275,74 +370,87 @@
 
             if (!hosp || !dept || !monthVal) return;
 
-            // Update Titles
-            document.getElementById('pdfHospitalName').textContent = hosp;
-            document.getElementById('pdfDepartmentName').textContent = `แผนก: ${dept}`;
-            
             const [year, month] = monthVal.split('-').map(Number);
-            const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            document.getElementById('calendarMonthTitle').textContent = `ประจำเดือน: ${monthNames[month - 1]} ${year + 543}`;
+            const monthNamesTH = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            
+            // Set Titles for PDF Template
+            document.getElementById('pdfHospTitle').textContent = hosp;
+            document.getElementById('pdfDeptTitle').textContent = `แผนก: ${dept}`;
+            document.getElementById('pdfMonthTitle').textContent = `ประจำเดือน ${monthNamesTH[month-1]} พ.ศ. ${year + 543}`;
+            
+            const iconClass = hospitalData[hosp]?.icon || "fa-hospital";
+            document.getElementById('pdfLogoIcon').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
 
-            // Calculate days
-            const firstDayIndex = new Date(year, month - 1, 1).getDay();
+            const firstDay = new Date(year, month - 1, 1).getDay();
             const daysInMonth = new Date(year, month, 0).getDate();
 
-            const calendarContainer = document.getElementById('calendarDays');
-            calendarContainer.innerHTML = '';
-
             const key = getScheduleKey();
-            const monthData = schedules[key] || {};
+            const currentData = schedules[key] || {};
 
-            // Empty cells before start of month
-            for (let i = 0; i < firstDayIndex; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = "bg-gray-50 min-h-[90px] p-1 border-b border-r border-gray-200";
-                calendarContainer.appendChild(emptyCell);
+            // Render to Mobile/Screen Grid & PDF Grid
+            const screenGrid = document.getElementById('screenCalendarDays');
+            const pdfGrid = document.getElementById('pdfCalendarDays');
+            screenGrid.innerHTML = '';
+            pdfGrid.innerHTML = '';
+
+            // Empty Prefix Cells
+            for (let i = 0; i < firstDay; i++) {
+                screenGrid.innerHTML += `<div class="bg-slate-50 min-h-[50px]"></div>`;
+                pdfGrid.innerHTML += `<div class="bg-white min-h-[65px] p-1 border-b border-r border-slate-200"></div>`;
             }
 
-            // Fill actual month days
+            // Day Cells
             for (let day = 1; day <= daysInMonth; day++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = "bg-white min-h-[90px] p-1.5 border-b border-r border-gray-200 flex flex-col justify-start";
-                
-                let dayHeader = `<div class="font-bold text-gray-700 text-xs mb-1">${day}</div>`;
-                let shiftsHtml = '';
+                let shiftItemsScreen = '';
+                let shiftItemsPDF = '';
 
-                if (monthData[day]) {
-                    monthData[day].forEach((item, index) => {
-                        let colorClass = "bg-blue-50 text-blue-700 border-blue-200";
-                        if(item.type.includes("เช้า")) colorClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                        if(item.type.includes("บ่าย")) colorClass = "bg-amber-50 text-amber-700 border-amber-200";
-                        if(item.type.includes("ดึก")) colorClass = "bg-purple-50 text-purple-700 border-purple-200";
+                if (currentData[day]) {
+                    currentData[day].forEach((item, index) => {
+                        let colorBadge = "bg-blue-100 text-blue-800";
+                        if(item.type.includes("เช้า")) colorBadge = "bg-emerald-100 text-emerald-800";
+                        if(item.type.includes("บ่าย")) colorBadge = "bg-amber-100 text-amber-800";
+                        if(item.type.includes("ดึก")) colorBadge = "bg-purple-100 text-purple-800";
 
-                        shiftsHtml += `
-                            <div class="text-[10px] p-1 mb-1 rounded border ${colorClass} leading-tight flex justify-between items-center group">
-                                <div>
-                                    <span class="font-semibold block">${item.type}</span>
-                                    <span>${item.name}</span>
-                                </div>
-                                <button onclick="deleteShift(${day}, ${index})" class="no-print text-red-400 hover:text-red-600 ml-1">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </div>
-                        `;
+                        // Screen View Item
+                        shiftItemsScreen += `
+                            <div class="text-[9px] p-1 mb-1 rounded ${colorBadge} font-medium flex justify-between items-center">
+                                <span class="truncate">${item.name} (${item.type.split(' ')[0]})</span>
+                                <button onclick="deleteShift(${day}, ${index})" class="text-rose-500 ml-1 font-bold">×</button>
+                            </div>`;
+
+                        // PDF View Item
+                        shiftItemsPDF += `
+                            <div class="text-[9px] leading-tight mb-1 p-0.5 bg-slate-100 border-l-2 border-slate-600 pl-1">
+                                <div class="font-bold text-slate-800">${item.type}</div>
+                                <div class="text-slate-600">${item.name}</div>
+                            </div>`;
                     });
                 }
 
-                dayCell.innerHTML = dayHeader + shiftsHtml;
-                calendarContainer.appendChild(dayCell);
+                // Render Screen Cell
+                screenGrid.innerHTML += `
+                    <div class="bg-white p-1 min-h-[60px] border-b border-r border-slate-100">
+                        <div class="font-bold text-[10px] text-slate-400 mb-0.5">${day}</div>
+                        ${shiftItemsScreen}
+                    </div>`;
+
+                // Render PDF Cell
+                pdfGrid.innerHTML += `
+                    <div class="bg-white p-1 min-h-[65px] border-b border-r border-slate-300">
+                        <div class="font-bold text-xs text-slate-900 mb-1">${day}</div>
+                        ${shiftItemsPDF}
+                    </div>`;
             }
         }
 
-        // ADD SHIFT TO DATA
         function addShift() {
             const day = parseInt(document.getElementById('shiftDay').value);
             const type = document.getElementById('shiftType').value;
             const name = document.getElementById('nurseName').value.trim();
             const monthVal = document.getElementById('monthPicker').value;
-            
+
             if (!day || !name) {
-                alert("กรุณากรอกวันที่และชื่อผู้เข้าเวรให้ครบถ้วน");
+                alert("กรุณากรอกวันที่ และ ชื่อพยาบาล/PT ให้ครบถ้วน");
                 return;
             }
 
@@ -350,7 +458,7 @@
             const daysInMonth = new Date(year, month, 0).getDate();
 
             if (day < 1 || day > daysInMonth) {
-                alert(`วันที่ไม่ถูกต้อง (เดือนนี้มี ${daysInMonth} วัน)`);
+                alert(`วันที่ไม่ถูกต้อง เดือนนี้มี ${daysInMonth} วัน`);
                 return;
             }
 
@@ -360,14 +468,11 @@
 
             schedules[key][day].push({ type, name });
 
-            // Reset Input
             document.getElementById('shiftDay').value = '';
             document.getElementById('nurseName').value = '';
-
             renderCalendar();
         }
 
-        // DELETE SINGLE SHIFT
         function deleteShift(day, index) {
             const key = getScheduleKey();
             if (schedules[key] && schedules[key][day]) {
@@ -376,31 +481,29 @@
             }
         }
 
-        // CLEAR ALL SCHEDULE
-        function clearCurrentSchedule() {
-            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการล้างตารางเวรทั้งหมดของเดือนนี้?")) {
-                const key = getScheduleKey();
-                delete schedules[key];
-                renderCalendar();
-            }
-        }
-
-        // EXPORT TO PDF
         function exportToPDF() {
-            const element = document.getElementById('exportArea');
             const hosp = document.getElementById('hospitalSelect').value;
             const dept = document.getElementById('departmentSelect').value;
             const month = document.getElementById('monthPicker').value;
 
+            document.getElementById('pdfPrintDate').textContent = new Date().toLocaleDateString('th-TH');
+            
+            const element = document.getElementById('pdfExportContainer');
+            
+            // Temporary show container for PDF rendering
+            element.parentElement.classList.remove('hidden');
+
             const opt = {
-                margin:       [0.3, 0.3, 0.3, 0.3],
+                margin:       [0.2, 0.2, 0.2, 0.2],
                 filename:     `ตารางเวร_${hosp}_${dept}_${month}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
             };
 
-            html2pdf().set(opt).from(element).save();
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.parentElement.classList.add('hidden');
+            });
         }
     </script>
 </body>
