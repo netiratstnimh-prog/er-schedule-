@@ -1,369 +1,393 @@
-import os
-from weasyprint import HTML, CSS
-
-# Define HTML Content for Hospital Checkup & Billing Form (A5 Landscape)
-html_content = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>ใบรายการตรวจสุขภาพและใบเสร็จรับเงิน</title>
-    <style>
-        @page {
-            size: A5 landscape;
-            margin: 8mm 10mm;
-            background-color: #ffffff;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบออกใบแจ้งรายการตรวจสุขภาพและใบเสร็จ (A5 Landscape)</title>
+  <!-- Tailwind CSS for UI Layout -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- JsBarcode for Barcode Generation -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <!-- html2pdf for A5 Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Alex+Brush&display=swap');
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
+    body { font-family: 'Sarabun', sans-serif; }
+    .font-signature { font-family: 'Alex Brush', cursive; }
 
-        body {
-            font-family: 'Sarabun', 'TH Sarabun PSK', sans-serif;
-            font-size: 8.5pt;
-            color: #2b2b2b;
-            margin: 0;
-            padding: 0;
-            line-height: 1.2;
-        }
+    /* A5 Landscape Print Container Style */
+    .a5-container {
+      width: 210mm;
+      height: 148mm;
+      padding: 8mm 10mm;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
 
-        /* Header Section */
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            border-bottom: 2px solid #1a5276;
-            padding-bottom: 4px;
-        }
-
-        .hospital-title {
-            font-size: 13pt;
-            font-weight: bold;
-            color: #1a5276;
-            margin: 0;
-        }
-
-        .hospital-sub {
-            font-size: 8.5pt;
-            color: #555555;
-            margin-top: 1px;
-        }
-
-        .doc-title {
-            font-size: 10.5pt;
-            font-weight: bold;
-            color: #154360;
-            text-align: right;
-        }
-
-        .doc-no {
-            font-size: 8.5pt;
-            color: #555555;
-            text-align: right;
-            margin-top: 2px;
-        }
-
-        /* Patient Info Grid Table */
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-            background-color: #f4f6f7;
-            border: 1px solid #d5dbdb;
-            border-radius: 4px;
-        }
-
-        .info-table td {
-            padding: 3px 6px;
-            font-size: 8.5pt;
-            vertical-align: middle;
-        }
-
-        .label {
-            font-weight: bold;
-            color: #2c3e50;
-            white-space: nowrap;
-        }
-
-        .value-box {
-            border-bottom: 1px solid #bdc3c7;
-            color: #111111;
-            padding-left: 2px;
-        }
-
-        /* Items Table */
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
-        }
-
-        .items-table th {
-            background-color: #2471a3;
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 8.5pt;
-            padding: 4px 6px;
-            border: 1px solid #1a5276;
-            text-align: center;
-        }
-
-        .items-table td {
-            padding: 3.5px 6px;
-            border: 1px solid #d5dbdb;
-            font-size: 8pt;
-        }
-
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-left { text-align: left; }
-
-        .item-en {
-            color: #566573;
-            font-style: italic;
-            font-size: 7.5pt;
-        }
-
-        .total-row td {
-            background-color: #eaeded;
-            font-weight: bold;
-            font-size: 9pt;
-            border-top: 1.5px solid #2471a3;
-        }
-
-        /* Footer Section */
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 4px;
-        }
-
-        .payment-box {
-            border: 1px solid #bdc3c7;
-            background-color: #fbfcfc;
-            padding: 5px 8px;
-            border-radius: 4px;
-            font-size: 8pt;
-        }
-
-        .checkbox-custom {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border: 1px solid #34495e;
-            margin-right: 3px;
-            vertical-align: middle;
-        }
-
-        .checked {
-            background-color: #2471a3;
-        }
-
-        .sig-box {
-            text-align: center;
-            vertical-align: bottom;
-            width: 160px;
-        }
-
-        .sig-line {
-            border-bottom: 1px solid #7f8c8d;
-            margin-bottom: 3px;
-            height: 25px;
-            position: relative;
-        }
-
-        .sig-stamp {
-            position: absolute;
-            bottom: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Georgia', serif;
-            font-style: italic;
-            font-size: 11pt;
-            color: #002b49;
-            font-weight: bold;
-        }
-
-        /* Barcode SVG Mock */
-        .barcode-wrap {
-            text-align: right;
-            vertical-align: middle;
-        }
-
-        .barcode-bars {
-            display: inline-block;
-            height: 22px;
-            letter-spacing: -1px;
-            font-family: monospace;
-            font-weight: bold;
-            font-size: 14pt;
-            line-height: 22px;
-        }
-
-        .barcode-text {
-            font-size: 7pt;
-            color: #555;
-            text-align: right;
-        }
-    </style>
+    @media print {
+      body * { visibility: hidden; }
+      #pdf-template, #pdf-template * { visibility: visible; }
+      #pdf-template {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-shadow: none;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
 </head>
-<body>
+<body class="bg-slate-100 min-h-screen text-slate-800">
 
-    <!-- Header Table -->
-    <table class="header-table">
-        <tr>
-            <td style="width: 60%;">
-                <div class="hospital-title">โรงพยาบาลเวชรักษ์ อินเตอร์เนชั่นแนล</div>
-                <div class="hospital-sub">Vecharak International Hospital | แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)</div>
-            </td>
-            <td style="width: 40%;" class="text-right">
-                <div class="doc-title">รายการตรวจสุขภาพเข้าปฏิบัติงาน / ใบแจ้งหนี้</div>
-                <div class="doc-no">เลขที่ใบเสร็จ (Receipt No): <b>REC-20260823-089</b></div>
-            </td>
-        </tr>
-    </table>
+  <!-- Control Header -->
+  <header class="bg-indigo-900 text-white p-4 shadow-md no-print flex justify-between items-center">
+    <h1 class="text-xl font-bold flex items-center gap-2">
+      🏥 ระบบจัดการและออกใบแจ้งค่าตรวจสุขภาพ (A5 Landscape)
+    </h1>
+    <div class="flex gap-2">
+      <button onclick="exportPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow transition text-sm">
+        📄 ส่งออกเป็น PDF (A5)
+      </button>
+      <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition text-sm">
+        🖨️ สั่งพิมพ์ (Print)
+      </button>
+    </div>
+  </header>
 
-    <!-- Patient Info Table -->
-    <table class="info-table">
-        <tr>
-            <td class="label" style="width: 10%;">ชื่อ-สกุล:</td>
-            <td class="value-box" style="width: 28%;">นาย สมชาย ใจดี (Mr. Somchai Jaidee)</td>
-            <td class="label" style="width: 6%;">อายุ:</td>
-            <td class="value-box" style="width: 10%;">28 ปี (Yrs)</td>
-            <td class="label" style="width: 11%;">วัน/เดือน/ปีเกิด:</td>
-            <td class="value-box" style="width: 15%;">15/05/1998</td>
-            <td class="label" style="width: 6%;">HN:</td>
-            <td class="value-box" style="width: 14%;">66-012345</td>
-        </tr>
-        <tr>
-            <td class="label">VN:</td>
-            <td class="value-box">V-98765</td>
-            <td class="label">AN:</td>
-            <td class="value-box">-</td>
-            <td class="label">วันที่ตรวจ:</td>
-            <td class="value-box">23/08/2026</td>
-            <td class="label">เวลาสร้าง:</td>
-            <td class="value-box">08:30 น.</td>
-        </tr>
-        <tr>
-            <td class="label">โรคประจำตัว:</td>
-            <td class="value-box">ปฏิเสธโรคประจำตัว (None)</td>
-            <td class="label">ประวัติแพ้ยา:</td>
-            <td class="value-box" colspan="3">ปฏิเสธประวัติแพ้ยา (No Drug Allergy / NKA)</td>
-            <td class="label">สิทธิการรักษา:</td>
-            <td class="value-box">ชำระเงินเอง (Self-Pay)</td>
-        </tr>
-    </table>
+  <div class="max-w-[1400px] mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- Items List Table -->
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th style="width: 6%;">ลำดับ</th>
-                <th style="width: 64%;">รายการตรวจสุขภาพ (Medical Examination Items)</th>
-                <th style="width: 12%;">สถานะ</th>
-                <th style="width: 18%;">จำนวนเงิน (บาท)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="text-center">1</td>
-                <td>ตรวจร่างกายทั่วไปโดยแพทย์ <span class="item-en">(Physical Examination - PE)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">200.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">2</td>
-                <td>เอกซเรย์ปอดและหัวใจ <span class="item-en">(Chest X-Ray - CXR)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">350.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">3</td>
-                <td>ตรวจความสมบูรณ์ของเม็ดเลือด <span class="item-en">(Complete Blood Count - CBC)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">180.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">4</td>
-                <td>ตรวจวิเคราะห์ปัสสาวะสมบูรณ์แบบ <span class="item-en">(Urine Analysis - UA)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">100.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">5</td>
-                <td>ตรวจหาสารเสพติดในปัสสาวะ (แอมเฟตามีน) <span class="item-en">(Amphetamine Urine Screen)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">150.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">6</td>
-                <td>ตรวจการมองเห็นและทดสอบตาบอดสี <span class="item-en">(Vision & Color Blindness Test)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">100.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">7</td>
-                <td>ตรวจคัดกรองการติดเชื้อ HIV <span class="item-en">(Anti-HIV Screening Test)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">300.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">8</td>
-                <td>ตรวจระดับภูมิคุ้มกันไวรัสตับอักเสบบี <span class="item-en">(HBsAb - Hepatitis B Antibody)</span></td>
-                <td class="text-center">ตรวจแล้ว</td>
-                <td class="text-right">250.00</td>
-            </tr>
-            <tr>
-                <td class="text-center">9</td>
-                <td>วัคซีนป้องกันไวรัสตับอักเสบบี <span class="item-en">(Hepatitis B Vaccine - 1st Dose)</span></td>
-                <td class="text-center">รับบริการแล้ว</td>
-                <td class="text-right">650.00</td>
-            </tr>
-            <tr class="total-row">
-                <td colspan="3" class="text-right">รวมเงินทั้งสิ้นสุทธิ (Grand Total Amount):</td>
-                <td class="text-right" style="color: #1a5276;">2,280.00</td>
-            </tr>
-        </tbody>
-    </table>
+    <!-- LEFT PANEL: CONTROL & INPUT FORM -->
+    <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow border border-slate-200 space-y-4 no-print h-fit">
+      
+      <!-- Hospital & Header Config -->
+      <div class="border-b pb-3">
+        <h2 class="font-bold text-indigo-900 text-base mb-2">🏢 ข้อมูลสถานพยาบาล / เอกสาร</h2>
+        <div class="grid grid-cols-2 gap-2 text-sm">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600">ชื่อโรงพยาบาล/คลินิก</label>
+            <input type="text" id="cfg-hospital" value="โรงพยาบาลเวชรักษ์ อินเตอร์เนชั่นแนล" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600">ชื่อแผนก/ศูนย์</label>
+            <input type="text" id="cfg-dept" value="แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600">หัวข้อเอกสาร</label>
+            <input type="text" id="cfg-title" value="รายการตรวจสุขภาพ สำหรับเข้าปฏิบัติงาน" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600">เลขที่ใบเสร็จ</label>
+            <input type="text" id="cfg-receiptno" value="REC-20260823-01" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+          </div>
+        </div>
+      </div>
 
-    <!-- Footer Payment & Signatures -->
-    <table class="footer-table">
-        <tr>
-            <td style="width: 45%; vertical-align: top;">
-                <div class="payment-box">
-                    <b style="color: #1a5276;">ช่องทางการชำระเงิน (Payment Method):</b><br style="margin-bottom: 3px;">
-                    <span style="margin-right: 10px;"><span class="checkbox-custom checked"></span>เงินสด (Cash)</span>
-                    <span style="margin-right: 10px;"><span class="checkbox-custom"></span>บัตรเครดิต (Credit Card)</span>
-                    <span><span class="checkbox-custom"></span>QR PromptPay</span>
-                </div>
-                <div style="font-size: 7.5pt; color: #7f8c8d; margin-top: 4px;">
-                    * เอกสารนี้ใช้เป็นใบแจ้งรายการและใบรับเงินชั่วคราว สำหรับการตรวจสุขภาพเข้าทำงาน
-                </div>
-            </td>
-            <td style="width: 25%; text-align: center; vertical-align: bottom;">
-                <div class="barcode-wrap">
-                    <div class="barcode-bars">||||| | |||||| ||| ||||||| | ||</div>
-                    <div class="barcode-text">HN: 66-012345 / VN: V-98765</div>
-                </div>
-            </td>
-            <td style="width: 30%;" class="sig-box">
-                <div class="sig-line">
-                    <span class="sig-stamp">Natirat N.</span>
-                </div>
-                <div style="font-size: 8pt; font-weight: bold; color: #2c3e50;">( นายเนติราช นามสมมุติ )</div>
-                <div style="font-size: 7.5pt; color: #555555;">เจ้าหน้าที่การเงิน / Cashier Officer</div>
-            </td>
-        </tr>
-    </table>
+      <!-- Patient Info Config -->
+      <div class="border-b pb-3">
+        <h2 class="font-bold text-indigo-900 text-base mb-2">👤 ข้อมูลผู้ป่วย / ผู้รับการตรวจ</h2>
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <div class="col-span-2">
+            <label class="font-semibold text-slate-600">ชื่อ-นามสกุล</label>
+            <input type="text" id="cfg-name" value="นาย สมชาย ใจดี" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">อายุ</label>
+            <input type="text" id="cfg-age" value="28 ปี" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">HN (รหัสผู้ป่วย)</label>
+            <input type="text" id="cfg-hn" value="66-012345" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">AN</label>
+            <input type="text" id="cfg-an" value="-" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">VN (เลขนำทาง)</label>
+            <input type="text" id="cfg-vn" value="V-98765" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">วัน/เดือน/ปีเกิด</label>
+            <input type="text" id="cfg-dob" value="15/05/1998" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">วันที่ตรวจ</label>
+            <input type="text" id="cfg-date" value="23/08/2026" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">สิทธิการรักษา</label>
+            <input type="text" id="cfg-rights" value="ชำระเงินเอง (Self-Pay)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div class="col-span-3">
+            <label class="font-semibold text-slate-600">โรคประจำตัว</label>
+            <input type="text" id="cfg-disease" value="ไม่มี (None)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div class="col-span-3">
+            <label class="font-semibold text-slate-600">ประวัติการแพ้ยา (ระบุภาษาอังกฤษแพทย์)</label>
+            <input type="text" id="cfg-allergy" value="ไม่มีประวัติแพ้ยา (No Drug Allergy - NKA)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+        </div>
+      </div>
 
+      <!-- Checklist Items Config -->
+      <div class="border-b pb-3">
+        <h2 class="font-bold text-indigo-900 text-base mb-2">📋 เลือกรายการตรวจสุขภาพ & ราคา</h2>
+        <div id="items-selector" class="space-y-1.5 max-h-48 overflow-y-auto p-1 border rounded text-xs bg-slate-50">
+          <!-- Dynamic Items Checklist -->
+        </div>
+      </div>
+
+      <!-- Payment & Signatures Config -->
+      <div>
+        <h2 class="font-bold text-indigo-900 text-base mb-2">💳 ชำระเงิน & เจ้าหน้าที่</h2>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <label class="font-semibold text-slate-600">วิธีชำระเงิน</label>
+            <select id="cfg-payment" class="w-full border p-1.5 rounded" onchange="updateDocument()">
+              <option value="cash">เงินสด (Cash)</option>
+              <option value="card">บัตรเครดิต (Credit Card)</option>
+              <option value="qr">QR PromptPay</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-slate-600">ชื่อเจ้าหน้าที่การเงิน</label>
+            <input type="text" id="cfg-staff" value="นายเนติราช นามสมมุติ" class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+          <div class="col-span-2">
+            <label class="font-semibold text-slate-600">ข้อความลายเซ็นดิจิทัล (Signature Text)</label>
+            <input type="text" id="cfg-sigtext" value="Natirat N." class="w-full border p-1.5 rounded" oninput="updateDocument()">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL: A5 LANDSCAPE LIVE PREVIEW -->
+    <div class="lg:col-span-7 flex flex-col items-center justify-start overflow-x-auto">
+      <div class="mb-2 text-sm text-slate-500 font-semibold no-print">🔍 ตัวอย่างหน้ากระดาษ A5 แนวนอน (Live Preview)</div>
+      
+      <!-- A5 Printable Container -->
+      <div id="pdf-template" class="a5-container border border-slate-300">
+        
+        <!-- Header -->
+        <div>
+          <div class="flex justify-between items-start border-b-2 border-indigo-900 pb-1 mb-2">
+            <div>
+              <div id="doc-hosp" class="text-base font-bold text-indigo-900 leading-tight">โรงพยาบาลเวชรักษ์ อินเตอร์เนชั่นแนล</div>
+              <div id="doc-dept" class="text-[10px] text-slate-600">แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)</div>
+            </div>
+            <div class="text-right">
+              <div id="doc-title" class="text-xs font-bold text-indigo-950">รายการตรวจสุขภาพ สำหรับเข้าปฏิบัติงาน</div>
+              <div class="text-[10px] text-slate-600">เลขที่ใบเสร็จ: <span id="doc-receiptno" class="font-bold text-slate-800">REC-20260823-01</span></div>
+            </div>
+          </div>
+
+          <!-- Patient Information Grid -->
+          <div class="bg-slate-50 border border-slate-300 rounded p-1.5 mb-2 text-[10px] grid grid-cols-4 gap-x-2 gap-y-1">
+            <div class="col-span-2"><span class="font-bold">ชื่อ-สกุล:</span> <span id="doc-name">นาย สมชาย ใจดี</span></div>
+            <div><span class="font-bold">อายุ:</span> <span id="doc-age">28 ปี</span></div>
+            <div><span class="font-bold">วันเกิด:</span> <span id="doc-dob">15/05/1998</span></div>
+
+            <div><span class="font-bold">HN:</span> <span id="doc-hn" class="font-mono">66-012345</span></div>
+            <div><span class="font-bold">AN:</span> <span id="doc-an">-</span></div>
+            <div><span class="font-bold">VN:</span> <span id="doc-vn">V-98765</span></div>
+            <div><span class="font-bold">วันที่:</span> <span id="doc-date">23/08/2026</span></div>
+
+            <div class="col-span-2"><span class="font-bold">โรคประจำตัว:</span> <span id="doc-disease">ไม่มี (None)</span></div>
+            <div class="col-span-2"><span class="font-bold">สิทธิการรักษา:</span> <span id="doc-rights">ชำระเงินเอง</span></div>
+
+            <div class="col-span-4 border-t border-slate-200 pt-0.5 mt-0.5"><span class="font-bold text-red-800">แพ้ยา:</span> <span id="doc-allergy" class="text-red-900">ไม่มีประวัติแพ้ยา (No Drug Allergy - NKA)</span></div>
+          </div>
+
+          <!-- Items Table -->
+          <table class="w-full text-[10px] border-collapse border border-slate-300">
+            <thead>
+              <tr class="bg-indigo-100 text-indigo-950">
+                <th class="border border-slate-300 p-1 text-center w-8">เลือก</th>
+                <th class="border border-slate-300 p-1 text-left">รายการตรวจ (Medical Examination Items)</th>
+                <th class="border border-slate-300 p-1 text-right w-24">ราคา (บาท)</th>
+              </tr>
+            </thead>
+            <tbody id="doc-items-body">
+              <!-- Dynamically rendered -->
+            </tbody>
+            <tfoot>
+              <tr class="bg-slate-100 font-bold text-slate-900">
+                <td colspan="2" class="border border-slate-300 p-1 text-right">รวมเงินทั้งสิ้น (Total Amount):</td>
+                <td id="doc-total" class="border border-slate-300 p-1 text-right text-indigo-900 font-extrabold text-xs">0.00</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="mt-2 pt-2 border-t border-slate-200">
+          <div class="flex justify-between items-end text-[10px]">
+            
+            <!-- Payment Method Checklist -->
+            <div class="border border-slate-300 p-1.5 rounded bg-slate-50 w-64">
+              <div class="font-bold text-slate-800 mb-1">ชำระเงินโดย (Payment Method):</div>
+              <div class="flex justify-between items-center text-[9px]">
+                <label class="flex items-center gap-1"><input type="radio" id="pay-cash" name="doc-pay" disabled> เงินสด</label>
+                <label class="flex items-center gap-1"><input type="radio" id="pay-card" name="doc-pay" disabled> บัตรเครดิต</label>
+                <label class="flex items-center gap-1"><input type="radio" id="pay-qr" name="doc-pay" disabled> QR Code</label>
+              </div>
+            </div>
+
+            <!-- Signature Area -->
+            <div class="text-center w-48">
+              <div id="doc-sig" class="font-signature text-xl text-indigo-950 leading-none h-6">Natirat N.</div>
+              <div class="border-t border-slate-400 pt-0.5 mt-0.5">
+                (<span id="doc-staff">นายเนติราช นามสมมุติ</span>)
+                <div class="text-[8px] text-slate-500">เจ้าหน้าที่การเงิน / Cashier</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Barcode Footer -->
+          <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-100 text-[8px] text-slate-400">
+            <div>* เอกสารนี้สร้างจากระบบอัตโนมัติ สมบูรณ์เมื่อมีการชำระเงินเรียบร้อยแล้ว</div>
+            <div>
+              <svg id="patient-barcode" class="h-6"></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Medical Master Checklist Items with current average hospital prices
+    const masterItems = [
+      { id: 'item1', name: 'ตรวจร่างกายทั่วไป (Physical Examination - PE)', price: 200, checked: true },
+      { id: 'item2', name: 'เอกซเรย์ปอดและหัวใจ (Chest X-Ray - CXR)', price: 350, checked: true },
+      { id: 'item3', name: 'ตรวจความสมบูรณ์ของเม็ดเลือด (CBC)', price: 180, checked: true },
+      { id: 'item4', name: 'ตรวจปัสสาวะสมบูรณ์แบบ (Urine Analysis - UA)', price: 100, checked: true },
+      { id: 'item5', name: 'ตรวจหาสารเสพติดในปัสสาวะ (Amphetamine Screen)', price: 150, checked: true },
+      { id: 'item6', name: 'ตรวจวัดสายตาและตาบอดสี (Vision & Color Test)', price: 100, checked: true },
+      { id: 'item7', name: 'ตรวจคัดกรองเชื้อเอดส์ (Anti-HIV Screening)', price: 300, checked: false },
+      { id: 'item8', name: 'ตรวจระดับภูมิคุ้มกันตับอักเสบบี (HBsAb)', price: 250, checked: false },
+      { id: 'item9', name: 'วัคซีนป้องกันไวรัสตับอักเสบบี (Hepatitis B Vaccine)', price: 650, checked: false }
+    ];
+
+    // Initialize UI Control Selectors
+    function initSelectors() {
+      const container = document.getElementById('items-selector');
+      container.innerHTML = '';
+      masterItems.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'flex items-center justify-between p-1 hover:bg-white rounded border border-transparent hover:border-slate-200';
+        div.innerHTML = `
+          <label class="flex items-center gap-1.5 cursor-pointer truncate mr-2">
+            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem(${idx})" class="rounded text-indigo-600">
+            <span class="truncate">${item.name}</span>
+          </label>
+          <input type="number" value="${item.price}" onchange="updatePrice(${idx}, this.value)" class="w-16 border rounded p-0.5 text-right font-mono">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function toggleItem(idx) {
+      masterItems[idx].checked = !masterItems[idx].checked;
+      updateDocument();
+    }
+
+    function updatePrice(idx, val) {
+      masterItems[idx].price = parseFloat(val) || 0;
+      updateDocument();
+    }
+
+    // Dynamic Document Update
+    function updateDocument() {
+      // Header Configs
+      document.getElementById('doc-hosp').innerText = document.getElementById('cfg-hospital').value;
+      document.getElementById('doc-dept').innerText = document.getElementById('cfg-dept').value;
+      document.getElementById('doc-title').innerText = document.getElementById('cfg-title').value;
+      document.getElementById('doc-receiptno').innerText = document.getElementById('cfg-receiptno').value;
+
+      // Patient Info Configs
+      document.getElementById('doc-name').innerText = document.getElementById('cfg-name').value;
+      document.getElementById('doc-age').innerText = document.getElementById('cfg-age').value;
+      document.getElementById('doc-hn').innerText = document.getElementById('cfg-hn').value;
+      document.getElementById('doc-an').innerText = document.getElementById('cfg-an').value;
+      document.getElementById('doc-vn').innerText = document.getElementById('cfg-vn').value;
+      document.getElementById('doc-dob').innerText = document.getElementById('cfg-dob').value;
+      document.getElementById('doc-date').innerText = document.getElementById('cfg-date').value;
+      document.getElementById('doc-rights').innerText = document.getElementById('cfg-rights').value;
+      document.getElementById('doc-disease').innerText = document.getElementById('cfg-disease').value;
+      document.getElementById('doc-allergy').innerText = document.getElementById('cfg-allergy').value;
+
+      // Staff & Signatures
+      document.getElementById('doc-staff').innerText = document.getElementById('cfg-staff').value;
+      document.getElementById('doc-sig').innerText = document.getElementById('cfg-sigtext').value;
+
+      // Payment Selection
+      const payType = document.getElementById('cfg-payment').value;
+      document.getElementById('pay-cash').checked = (payType === 'cash');
+      document.getElementById('pay-card').checked = (payType === 'card');
+      document.getElementById('pay-qr').checked = (payType === 'qr');
+
+      // Render Items Table & Grand Total Calculation
+      const tbody = document.getElementById('doc-items-body');
+      tbody.innerHTML = '';
+      let total = 0;
+
+      masterItems.forEach((item) => {
+        if (item.checked) {
+          total += item.price;
+        }
+        const tr = document.createElement('tr');
+        tr.className = item.checked ? '' : 'opacity-40 bg-slate-50';
+        tr.innerHTML = `
+          <td class="border border-slate-300 p-0.5 text-center">${item.checked ? '✓' : ''}</td>
+          <td class="border border-slate-300 p-0.5">${item.name}</td>
+          <td class="border border-slate-300 p-0.5 text-right font-mono">${item.price.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('doc-total').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+
+      // Render Barcode dynamically from HN value
+      const hnVal = document.getElementById('cfg-hn').value || '00-000000';
+      JsBarcode("#patient-barcode", hnVal, {
+        format: "CODE128",
+        lineColor: "#333",
+        width: 1.2,
+        height: 20,
+        displayValue: true,
+        fontSize: 9
+      });
+    }
+
+    // Export A5 Landscape PDF Function
+    function exportPDF() {
+      const element = document.getElementById('pdf-template');
+      const opt = {
+        margin: 0,
+        filename: 'Hospital_Receipt_A5.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: [210, 148], orientation: 'landscape' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+
+    // Initialize Page
+    window.onload = () => {
+      initSelectors();
+      updateDocument();
+    };
+  </script>
 </body>
 </html>
-"""
-
-# Output PDF File Path
-pdf_filename = "hospital_checkup_receipt_a5.pdf"
-
-# Generate PDF via WeasyPrint
-HTML(string=html_content).write_pdf(pdf_filename)
-print(f"PDF Generated successfully: {pdf_filename}")
