@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบออกใบแจ้งรายการตรวจสุขภาพและใบเสร็จ (A5 Landscape)</title>
-  <!-- Tailwind CSS for UI Layout -->
+  <title>ระบบออกใบเสร็จรับเงินและใบแจ้งค่าตรวจสุขภาพ (A5 Landscape)</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- JsBarcode for Barcode Generation -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
@@ -16,7 +16,7 @@
     body { font-family: 'Sarabun', sans-serif; }
     .font-signature { font-family: 'Alex Brush', cursive; }
 
-    /* A5 Landscape Print Container Style */
+    /* A5 Landscape Print Container */
     .a5-container {
       width: 210mm;
       height: 148mm;
@@ -28,6 +28,25 @@
       flex-direction: column;
       justify-content: space-between;
       box-sizing: border-box;
+      position: relative;
+    }
+
+    /* Paid Stamp Effect */
+    .paid-stamp {
+      position: absolute;
+      top: 42%;
+      right: 15%;
+      transform: rotate(-12deg);
+      border: 3px double #059669;
+      color: #059669;
+      font-weight: 800;
+      font-size: 22px;
+      padding: 2px 15px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.85;
+      pointer-events: none;
     }
 
     @media print {
@@ -46,9 +65,9 @@
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
   <!-- Control Header -->
-  <header class="bg-indigo-900 text-white p-4 shadow-md no-print flex justify-between items-center">
+  <header class="bg-indigo-900 text-white p-4 shadow-md no-print flex flex-wrap justify-between items-center gap-2">
     <h1 class="text-xl font-bold flex items-center gap-2">
-      🏥 ระบบจัดการและออกใบแจ้งค่าตรวจสุขภาพ (A5 Landscape)
+      🏥 ระบบออกใบเสร็จรับเงิน / ใบแจ้งรายการตรวจสุขภาพ (A5 Landscape)
     </h1>
     <div class="flex gap-2">
       <button onclick="exportPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow transition text-sm">
@@ -65,32 +84,45 @@
     <!-- LEFT PANEL: CONTROL & INPUT FORM -->
     <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow border border-slate-200 space-y-4 no-print h-fit">
       
+      <!-- Document Mode Switch -->
+      <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+        <label class="block text-xs font-bold text-indigo-900 mb-1">📄 เลือกโหมดเอกสาร</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btn-mode-receipt" onclick="switchDocMode('receipt')" class="py-1.5 px-3 rounded text-xs font-bold bg-indigo-600 text-white shadow">
+            🧾 ใบเสร็จรับเงิน (Receipt)
+          </button>
+          <button id="btn-mode-invoice" onclick="switchDocMode('invoice')" class="py-1.5 px-3 rounded text-xs font-bold bg-white text-slate-700 border hover:bg-slate-50">
+            📋 ใบแจ้งค่าบริการ (Invoice)
+          </button>
+        </div>
+      </div>
+
       <!-- Hospital & Header Config -->
       <div class="border-b pb-3">
-        <h2 class="font-bold text-indigo-900 text-base mb-2">🏢 ข้อมูลสถานพยาบาล / เอกสาร</h2>
-        <div class="grid grid-cols-2 gap-2 text-sm">
+        <h2 class="font-bold text-indigo-900 text-sm mb-2">🏢 ข้อมูลสถานพยาบาล / เลขที่เอกสาร</h2>
+        <div class="grid grid-cols-2 gap-2 text-xs">
           <div>
-            <label class="block text-xs font-semibold text-slate-600">ชื่อโรงพยาบาล/คลินิก</label>
-            <input type="text" id="cfg-hospital" value="โรงพยาบาลเวชรักษ์ อินเตอร์เนชั่นแนล" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+            <label class="block font-semibold text-slate-600">ชื่อโรงพยาบาล/คลินิก</label>
+            <input type="text" id="cfg-hospital" value="โรงพยาบาลเวชรักษ์ อินเตอร์เนชั่นแนล" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600">ชื่อแผนก/ศูนย์</label>
-            <input type="text" id="cfg-dept" value="แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+            <label class="block font-semibold text-slate-600">ชื่อแผนก/ศูนย์</label>
+            <input type="text" id="cfg-dept" value="แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600">หัวข้อเอกสาร</label>
-            <input type="text" id="cfg-title" value="รายการตรวจสุขภาพ สำหรับเข้าปฏิบัติงาน" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+            <label class="block font-semibold text-slate-600">หัวข้อเอกสาร</label>
+            <input type="text" id="cfg-title" value="ใบเสร็จรับเงิน (Receipt)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-600">เลขที่ใบเสร็จ</label>
-            <input type="text" id="cfg-receiptno" value="REC-20260823-01" class="w-full border p-1.5 rounded text-sm" oninput="updateDocument()">
+            <label class="block font-semibold text-slate-600">เลขที่ใบเสร็จรับเงิน</label>
+            <input type="text" id="cfg-receiptno" value="RCT-20260823-001" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
         </div>
       </div>
 
       <!-- Patient Info Config -->
       <div class="border-b pb-3">
-        <h2 class="font-bold text-indigo-900 text-base mb-2">👤 ข้อมูลผู้ป่วย / ผู้รับการตรวจ</h2>
+        <h2 class="font-bold text-indigo-900 text-sm mb-2">👤 ข้อมูลผู้ป่วย / ผู้รับการตรวจ</h2>
         <div class="grid grid-cols-3 gap-2 text-xs">
           <div class="col-span-2">
             <label class="font-semibold text-slate-600">ชื่อ-นามสกุล</label>
@@ -117,7 +149,7 @@
             <input type="text" id="cfg-dob" value="15/05/1998" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
           <div>
-            <label class="font-semibold text-slate-600">วันที่ตรวจ</label>
+            <label class="font-semibold text-slate-600">วันที่ออกใบเสร็จ</label>
             <input type="text" id="cfg-date" value="23/08/2026" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
           <div>
@@ -129,26 +161,26 @@
             <input type="text" id="cfg-disease" value="ไม่มี (None)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
           <div class="col-span-3">
-            <label class="font-semibold text-slate-600">ประวัติการแพ้ยา (ระบุภาษาอังกฤษแพทย์)</label>
+            <label class="font-semibold text-slate-600">ประวัติการแพ้ยา (ภาษาอังกฤษแพทย์)</label>
             <input type="text" id="cfg-allergy" value="ไม่มีประวัติแพ้ยา (No Drug Allergy - NKA)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
         </div>
       </div>
 
-      <!-- Checklist Items Config -->
+      <!-- Items Checklist Config -->
       <div class="border-b pb-3">
-        <h2 class="font-bold text-indigo-900 text-base mb-2">📋 เลือกรายการตรวจสุขภาพ & ราคา</h2>
-        <div id="items-selector" class="space-y-1.5 max-h-48 overflow-y-auto p-1 border rounded text-xs bg-slate-50">
+        <h2 class="font-bold text-indigo-900 text-sm mb-2">📋 รายการตรวจสุขภาพ & ราคา</h2>
+        <div id="items-selector" class="space-y-1.5 max-h-40 overflow-y-auto p-1 border rounded text-xs bg-slate-50">
           <!-- Dynamic Items Checklist -->
         </div>
       </div>
 
       <!-- Payment & Signatures Config -->
       <div>
-        <h2 class="font-bold text-indigo-900 text-base mb-2">💳 ชำระเงิน & เจ้าหน้าที่</h2>
+        <h2 class="font-bold text-indigo-900 text-sm mb-2">💳 การชำระเงิน & ลายเซ็นเจ้าหน้าที่</h2>
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div>
-            <label class="font-semibold text-slate-600">วิธีชำระเงิน</label>
+            <label class="font-semibold text-slate-600">ช่องทางการชำระเงิน</label>
             <select id="cfg-payment" class="w-full border p-1.5 rounded" onchange="updateDocument()">
               <option value="cash">เงินสด (Cash)</option>
               <option value="card">บัตรเครดิต (Credit Card)</option>
@@ -160,7 +192,7 @@
             <input type="text" id="cfg-staff" value="นายเนติราช นามสมมุติ" class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
           <div class="col-span-2">
-            <label class="font-semibold text-slate-600">ข้อความลายเซ็นดิจิทัล (Signature Text)</label>
+            <label class="font-semibold text-slate-600">ข้อความลายเซ็นดิจิทัล</label>
             <input type="text" id="cfg-sigtext" value="Natirat N." class="w-full border p-1.5 rounded" oninput="updateDocument()">
           </div>
         </div>
@@ -170,11 +202,14 @@
 
     <!-- RIGHT PANEL: A5 LANDSCAPE LIVE PREVIEW -->
     <div class="lg:col-span-7 flex flex-col items-center justify-start overflow-x-auto">
-      <div class="mb-2 text-sm text-slate-500 font-semibold no-print">🔍 ตัวอย่างหน้ากระดาษ A5 แนวนอน (Live Preview)</div>
+      <div class="mb-2 text-sm text-slate-500 font-semibold no-print">🔍 พรีวิวตัวอย่างใบเสร็จรับเงิน A5 แนวนอน</div>
       
       <!-- A5 Printable Container -->
       <div id="pdf-template" class="a5-container border border-slate-300">
         
+        <!-- Paid Stamp Watermark (Receipt Mode Only) -->
+        <div id="stamp-paid" class="paid-stamp">ชำระเงินแล้ว / PAID</div>
+
         <!-- Header -->
         <div>
           <div class="flex justify-between items-start border-b-2 border-indigo-900 pb-1 mb-2">
@@ -183,8 +218,8 @@
               <div id="doc-dept" class="text-[10px] text-slate-600">แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)</div>
             </div>
             <div class="text-right">
-              <div id="doc-title" class="text-xs font-bold text-indigo-950">รายการตรวจสุขภาพ สำหรับเข้าปฏิบัติงาน</div>
-              <div class="text-[10px] text-slate-600">เลขที่ใบเสร็จ: <span id="doc-receiptno" class="font-bold text-slate-800">REC-20260823-01</span></div>
+              <div id="doc-title" class="text-sm font-extrabold text-indigo-950 uppercase tracking-wide">ใบเสร็จรับเงิน (Receipt)</div>
+              <div class="text-[10px] text-slate-600">เลขที่: <span id="doc-receiptno" class="font-bold text-slate-800">RCT-20260823-001</span></div>
             </div>
           </div>
 
@@ -209,9 +244,9 @@
           <table class="w-full text-[10px] border-collapse border border-slate-300">
             <thead>
               <tr class="bg-indigo-100 text-indigo-950">
-                <th class="border border-slate-300 p-1 text-center w-8">เลือก</th>
-                <th class="border border-slate-300 p-1 text-left">รายการตรวจ (Medical Examination Items)</th>
-                <th class="border border-slate-300 p-1 text-right w-24">ราคา (บาท)</th>
+                <th class="border border-slate-300 p-1 text-center w-8">ลำดับ</th>
+                <th class="border border-slate-300 p-1 text-left">รายการตรวจสุขภาพ (Medical Examination Items)</th>
+                <th class="border border-slate-300 p-1 text-right w-24">จำนวนเงิน (บาท)</th>
               </tr>
             </thead>
             <tbody id="doc-items-body">
@@ -219,7 +254,7 @@
             </tbody>
             <tfoot>
               <tr class="bg-slate-100 font-bold text-slate-900">
-                <td colspan="2" class="border border-slate-300 p-1 text-right">รวมเงินทั้งสิ้น (Total Amount):</td>
+                <td colspan="2" class="border border-slate-300 p-1 text-right">จำนวนเงินรวมทั้งสิ้น (Grand Total):</td>
                 <td id="doc-total" class="border border-slate-300 p-1 text-right text-indigo-900 font-extrabold text-xs">0.00</td>
               </tr>
             </tfoot>
@@ -232,11 +267,11 @@
             
             <!-- Payment Method Checklist -->
             <div class="border border-slate-300 p-1.5 rounded bg-slate-50 w-64">
-              <div class="font-bold text-slate-800 mb-1">ชำระเงินโดย (Payment Method):</div>
+              <div class="font-bold text-slate-800 mb-1">วิธีชำระเงิน (Paid By):</div>
               <div class="flex justify-between items-center text-[9px]">
                 <label class="flex items-center gap-1"><input type="radio" id="pay-cash" name="doc-pay" disabled> เงินสด</label>
                 <label class="flex items-center gap-1"><input type="radio" id="pay-card" name="doc-pay" disabled> บัตรเครดิต</label>
-                <label class="flex items-center gap-1"><input type="radio" id="pay-qr" name="doc-pay" disabled> QR Code</label>
+                <label class="flex items-center gap-1"><input type="radio" id="pay-qr" name="doc-pay" disabled> QR PromptPay</label>
               </div>
             </div>
 
@@ -245,7 +280,7 @@
               <div id="doc-sig" class="font-signature text-xl text-indigo-950 leading-none h-6">Natirat N.</div>
               <div class="border-t border-slate-400 pt-0.5 mt-0.5">
                 (<span id="doc-staff">นายเนติราช นามสมมุติ</span>)
-                <div class="text-[8px] text-slate-500">เจ้าหน้าที่การเงิน / Cashier</div>
+                <div class="text-[8px] text-slate-500">ผู้รับเงิน / Cashier Collector</div>
               </div>
             </div>
 
@@ -253,7 +288,7 @@
 
           <!-- Barcode Footer -->
           <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-100 text-[8px] text-slate-400">
-            <div>* เอกสารนี้สร้างจากระบบอัตโนมัติ สมบูรณ์เมื่อมีการชำระเงินเรียบร้อยแล้ว</div>
+            <div>* ใบเสร็จรับเงินนี้จะสมบูรณ์ต่อเมื่อมีลายมือชื่อผู้รับเงินเรียบร้อยแล้ว</div>
             <div>
               <svg id="patient-barcode" class="h-6"></svg>
             </div>
@@ -266,7 +301,7 @@
   </div>
 
   <script>
-    // Medical Master Checklist Items with current average hospital prices
+    // Master Medical Services & Prices
     const masterItems = [
       { id: 'item1', name: 'ตรวจร่างกายทั่วไป (Physical Examination - PE)', price: 200, checked: true },
       { id: 'item2', name: 'เอกซเรย์ปอดและหัวใจ (Chest X-Ray - CXR)', price: 350, checked: true },
@@ -278,6 +313,32 @@
       { id: 'item8', name: 'ตรวจระดับภูมิคุ้มกันตับอักเสบบี (HBsAb)', price: 250, checked: false },
       { id: 'item9', name: 'วัคซีนป้องกันไวรัสตับอักเสบบี (Hepatitis B Vaccine)', price: 650, checked: false }
     ];
+
+    let currentMode = 'receipt'; // 'receipt' or 'invoice'
+
+    // Switch between Receipt and Invoice modes
+    function switchDocMode(mode) {
+      currentMode = mode;
+      const btnReceipt = document.getElementById('btn-mode-receipt');
+      const btnInvoice = document.getElementById('btn-mode-invoice');
+      const titleInput = document.getElementById('cfg-title');
+      const receiptNoInput = document.getElementById('cfg-receiptno');
+
+      if (mode === 'receipt') {
+        btnReceipt.className = 'py-1.5 px-3 rounded text-xs font-bold bg-indigo-600 text-white shadow';
+        btnInvoice.className = 'py-1.5 px-3 rounded text-xs font-bold bg-white text-slate-700 border hover:bg-slate-50';
+        titleInput.value = 'ใบเสร็จรับเงิน (Receipt)';
+        receiptNoInput.value = 'RCT-20260823-001';
+        document.getElementById('stamp-paid').style.display = 'block';
+      } else {
+        btnInvoice.className = 'py-1.5 px-3 rounded text-xs font-bold bg-indigo-600 text-white shadow';
+        btnReceipt.className = 'py-1.5 px-3 rounded text-xs font-bold bg-white text-slate-700 border hover:bg-slate-50';
+        titleInput.value = 'ใบแจ้งค่าบริการตรวจสุขภาพ (Invoice)';
+        receiptNoInput.value = 'INV-20260823-001';
+        document.getElementById('stamp-paid').style.display = 'none';
+      }
+      updateDocument();
+    }
 
     // Initialize UI Control Selectors
     function initSelectors() {
@@ -341,19 +402,19 @@
       const tbody = document.getElementById('doc-items-body');
       tbody.innerHTML = '';
       let total = 0;
+      let seq = 1;
 
       masterItems.forEach((item) => {
         if (item.checked) {
           total += item.price;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="border border-slate-300 p-0.5 text-center">${seq++}</td>
+            <td class="border border-slate-300 p-0.5">${item.name}</td>
+            <td class="border border-slate-300 p-0.5 text-right font-mono">${item.price.toFixed(2)}</td>
+          `;
+          tbody.appendChild(tr);
         }
-        const tr = document.createElement('tr');
-        tr.className = item.checked ? '' : 'opacity-40 bg-slate-50';
-        tr.innerHTML = `
-          <td class="border border-slate-300 p-0.5 text-center">${item.checked ? '✓' : ''}</td>
-          <td class="border border-slate-300 p-0.5">${item.name}</td>
-          <td class="border border-slate-300 p-0.5 text-right font-mono">${item.price.toFixed(2)}</td>
-        `;
-        tbody.appendChild(tr);
       });
 
       document.getElementById('doc-total').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 });
@@ -375,7 +436,7 @@
       const element = document.getElementById('pdf-template');
       const opt = {
         margin: 0,
-        filename: 'Hospital_Receipt_A5.pdf',
+        filename: currentMode === 'receipt' ? 'Hospital_Receipt_A5.pdf' : 'Hospital_Invoice_A5.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: [210, 148], orientation: 'landscape' }
