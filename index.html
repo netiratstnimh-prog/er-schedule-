@@ -1,454 +1,618 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบออกใบเสร็จรับเงินและใบแจ้งค่าตรวจสุขภาพ (A5 Landscape)</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- JsBarcode for Barcode Generation -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-  <!-- html2pdf for A5 Export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Alex+Brush&display=swap');
-
-    body { font-family: 'Sarabun', sans-serif; }
-    .font-signature { font-family: 'Alex Brush', cursive; }
-
-    /* A5 Landscape Print Container */
-    .a5-container {
-      width: 210mm;
-      height: 148mm;
-      padding: 8mm 10mm;
-      background: white;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-sizing: border-box;
-      position: relative;
-    }
-
-    /* Paid Stamp Effect */
-    .paid-stamp {
-      position: absolute;
-      top: 42%;
-      right: 15%;
-      transform: rotate(-12deg);
-      border: 3px double #059669;
-      color: #059669;
-      font-weight: 800;
-      font-size: 22px;
-      padding: 2px 15px;
-      border-radius: 6px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.85;
-      pointer-events: none;
-    }
-
-    @media print {
-      body * { visibility: hidden; }
-      #pdf-template, #pdf-template * { visibility: visible; }
-      #pdf-template {
-        position: absolute;
-        left: 0;
-        top: 0;
-        box-shadow: none;
-      }
-      .no-print { display: none !important; }
-    }
-  </style>
-</head>
-<body class="bg-slate-100 min-h-screen text-slate-800">
-
-  <!-- Control Header -->
-  <header class="bg-indigo-900 text-white p-4 shadow-md no-print flex flex-wrap justify-between items-center gap-2">
-    <h1 class="text-xl font-bold flex items-center gap-2">
-      🏥 ระบบออกใบเสร็จรับเงิน / ใบแจ้งรายการตรวจสุขภาพ (A5 Landscape)
-    </h1>
-    <div class="flex gap-2">
-      <button onclick="exportPDF()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded shadow transition text-sm">
-        📄 ส่งออกเป็น PDF (A5)
-      </button>
-      <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition text-sm">
-        🖨️ สั่งพิมพ์ (Print)
-      </button>
-    </div>
-  </header>
-
-  <div class="max-w-[1400px] mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-    <!-- LEFT PANEL: CONTROL & INPUT FORM -->
-    <div class="lg:col-span-5 bg-white p-5 rounded-xl shadow border border-slate-200 space-y-4 no-print h-fit">
-      
-      <!-- Document Mode Switch -->
-      <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-        <label class="block text-xs font-bold text-indigo-900 mb-1">📄 เลือกโหมดเอกสาร</label>
-        <div class="grid grid-cols-2 gap-2">
-          <button id="btn-mode-receipt" onclick="switchDocMode('receipt')" class="py-1.5 px-3 rounded text-xs font-bold bg-indigo-600 text-white shadow">
-            🧾 ใบเสร็จรับเงิน (Receipt)
-          </button>
-          <button id="btn-mode-invoice" onclick="switchDocMode('invoice')" class="py-1.5 px-3 rounded text-xs font-bold bg-white text-slate-700 border hover:bg-slate-50">
-            📋 ใบแจ้งค่าบริการ (Invoice)
-          </button>
-        </div>
-      </div>
-
-      <!-- Hospital & Header Config -->
-      <div class="border-b pb-3">
-        <h2 class="font-bold text-indigo-900 text-sm mb-2">🏢 ข้อมูลสถานพยาบาล / เลขที่เอกสาร</h2>
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <div>
-            <label class="block font-semibold text-slate-600">ชื่อโรงพยาบาล/คลินิก</label>
-            <input type="text" id="cfg-hospital" value="โรงพยาบาลเวชรักษ์ อินเตอร์เนชั่นแนล" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-600">ชื่อแผนก/ศูนย์</label>
-            <input type="text" id="cfg-dept" value="แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-600">หัวข้อเอกสาร</label>
-            <input type="text" id="cfg-title" value="ใบเสร็จรับเงิน (Receipt)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-600">เลขที่ใบเสร็จรับเงิน</label>
-            <input type="text" id="cfg-receiptno" value="RCT-20260823-001" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-        </div>
-      </div>
-
-      <!-- Patient Info Config -->
-      <div class="border-b pb-3">
-        <h2 class="font-bold text-indigo-900 text-sm mb-2">👤 ข้อมูลผู้ป่วย / ผู้รับการตรวจ</h2>
-        <div class="grid grid-cols-3 gap-2 text-xs">
-          <div class="col-span-2">
-            <label class="font-semibold text-slate-600">ชื่อ-นามสกุล</label>
-            <input type="text" id="cfg-name" value="นาย สมชาย ใจดี" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">อายุ</label>
-            <input type="text" id="cfg-age" value="28 ปี" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">HN (รหัสผู้ป่วย)</label>
-            <input type="text" id="cfg-hn" value="66-012345" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">AN</label>
-            <input type="text" id="cfg-an" value="-" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">VN (เลขนำทาง)</label>
-            <input type="text" id="cfg-vn" value="V-98765" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">วัน/เดือน/ปีเกิด</label>
-            <input type="text" id="cfg-dob" value="15/05/1998" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">วันที่ออกใบเสร็จ</label>
-            <input type="text" id="cfg-date" value="23/08/2026" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">สิทธิการรักษา</label>
-            <input type="text" id="cfg-rights" value="ชำระเงินเอง (Self-Pay)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div class="col-span-3">
-            <label class="font-semibold text-slate-600">โรคประจำตัว</label>
-            <input type="text" id="cfg-disease" value="ไม่มี (None)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div class="col-span-3">
-            <label class="font-semibold text-slate-600">ประวัติการแพ้ยา (ภาษาอังกฤษแพทย์)</label>
-            <input type="text" id="cfg-allergy" value="ไม่มีประวัติแพ้ยา (No Drug Allergy - NKA)" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-        </div>
-      </div>
-
-      <!-- Items Checklist Config -->
-      <div class="border-b pb-3">
-        <h2 class="font-bold text-indigo-900 text-sm mb-2">📋 รายการตรวจสุขภาพ & ราคา</h2>
-        <div id="items-selector" class="space-y-1.5 max-h-40 overflow-y-auto p-1 border rounded text-xs bg-slate-50">
-          <!-- Dynamic Items Checklist -->
-        </div>
-      </div>
-
-      <!-- Payment & Signatures Config -->
-      <div>
-        <h2 class="font-bold text-indigo-900 text-sm mb-2">💳 การชำระเงิน & ลายเซ็นเจ้าหน้าที่</h2>
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <div>
-            <label class="font-semibold text-slate-600">ช่องทางการชำระเงิน</label>
-            <select id="cfg-payment" class="w-full border p-1.5 rounded" onchange="updateDocument()">
-              <option value="cash">เงินสด (Cash)</option>
-              <option value="card">บัตรเครดิต (Credit Card)</option>
-              <option value="qr">QR PromptPay</option>
-            </select>
-          </div>
-          <div>
-            <label class="font-semibold text-slate-600">ชื่อเจ้าหน้าที่การเงิน</label>
-            <input type="text" id="cfg-staff" value="นายเนติราช นามสมมุติ" class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-          <div class="col-span-2">
-            <label class="font-semibold text-slate-600">ข้อความลายเซ็นดิจิทัล</label>
-            <input type="text" id="cfg-sigtext" value="Natirat N." class="w-full border p-1.5 rounded" oninput="updateDocument()">
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT PANEL: A5 LANDSCAPE LIVE PREVIEW -->
-    <div class="lg:col-span-7 flex flex-col items-center justify-start overflow-x-auto">
-      <div class="mb-2 text-sm text-slate-500 font-semibold no-print">🔍 พรีวิวตัวอย่างใบเสร็จรับเงิน A5 แนวนอน</div>
-      
-      <!-- A5 Printable Container -->
-      <div id="pdf-template" class="a5-container border border-slate-300">
-        
-        <!-- Paid Stamp Watermark (Receipt Mode Only) -->
-        <div id="stamp-paid" class="paid-stamp">ชำระเงินแล้ว / PAID</div>
-
-        <!-- Header -->
-        <div>
-          <div class="flex justify-between items-start border-b-2 border-indigo-900 pb-1 mb-2">
-            <div>
-              <div id="doc-hosp" class="text-base font-bold text-indigo-900 leading-tight">โรงพยาบาลเวชรักษ์ อินเตอร์เนชั่นแนล</div>
-              <div id="doc-dept" class="text-[10px] text-slate-600">แผนกศูนย์ตรวจสุขภาพ (Health Check-up Center)</div>
-            </div>
-            <div class="text-right">
-              <div id="doc-title" class="text-sm font-extrabold text-indigo-950 uppercase tracking-wide">ใบเสร็จรับเงิน (Receipt)</div>
-              <div class="text-[10px] text-slate-600">เลขที่: <span id="doc-receiptno" class="font-bold text-slate-800">RCT-20260823-001</span></div>
-            </div>
-          </div>
-
-          <!-- Patient Information Grid -->
-          <div class="bg-slate-50 border border-slate-300 rounded p-1.5 mb-2 text-[10px] grid grid-cols-4 gap-x-2 gap-y-1">
-            <div class="col-span-2"><span class="font-bold">ชื่อ-สกุล:</span> <span id="doc-name">นาย สมชาย ใจดี</span></div>
-            <div><span class="font-bold">อายุ:</span> <span id="doc-age">28 ปี</span></div>
-            <div><span class="font-bold">วันเกิด:</span> <span id="doc-dob">15/05/1998</span></div>
-
-            <div><span class="font-bold">HN:</span> <span id="doc-hn" class="font-mono">66-012345</span></div>
-            <div><span class="font-bold">AN:</span> <span id="doc-an">-</span></div>
-            <div><span class="font-bold">VN:</span> <span id="doc-vn">V-98765</span></div>
-            <div><span class="font-bold">วันที่:</span> <span id="doc-date">23/08/2026</span></div>
-
-            <div class="col-span-2"><span class="font-bold">โรคประจำตัว:</span> <span id="doc-disease">ไม่มี (None)</span></div>
-            <div class="col-span-2"><span class="font-bold">สิทธิการรักษา:</span> <span id="doc-rights">ชำระเงินเอง</span></div>
-
-            <div class="col-span-4 border-t border-slate-200 pt-0.5 mt-0.5"><span class="font-bold text-red-800">แพ้ยา:</span> <span id="doc-allergy" class="text-red-900">ไม่มีประวัติแพ้ยา (No Drug Allergy - NKA)</span></div>
-          </div>
-
-          <!-- Items Table -->
-          <table class="w-full text-[10px] border-collapse border border-slate-300">
-            <thead>
-              <tr class="bg-indigo-100 text-indigo-950">
-                <th class="border border-slate-300 p-1 text-center w-8">ลำดับ</th>
-                <th class="border border-slate-300 p-1 text-left">รายการตรวจสุขภาพ (Medical Examination Items)</th>
-                <th class="border border-slate-300 p-1 text-right w-24">จำนวนเงิน (บาท)</th>
-              </tr>
-            </thead>
-            <tbody id="doc-items-body">
-              <!-- Dynamically rendered -->
-            </tbody>
-            <tfoot>
-              <tr class="bg-slate-100 font-bold text-slate-900">
-                <td colspan="2" class="border border-slate-300 p-1 text-right">จำนวนเงินรวมทั้งสิ้น (Grand Total):</td>
-                <td id="doc-total" class="border border-slate-300 p-1 text-right text-indigo-900 font-extrabold text-xs">0.00</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <!-- Footer Section -->
-        <div class="mt-2 pt-2 border-t border-slate-200">
-          <div class="flex justify-between items-end text-[10px]">
-            
-            <!-- Payment Method Checklist -->
-            <div class="border border-slate-300 p-1.5 rounded bg-slate-50 w-64">
-              <div class="font-bold text-slate-800 mb-1">วิธีชำระเงิน (Paid By):</div>
-              <div class="flex justify-between items-center text-[9px]">
-                <label class="flex items-center gap-1"><input type="radio" id="pay-cash" name="doc-pay" disabled> เงินสด</label>
-                <label class="flex items-center gap-1"><input type="radio" id="pay-card" name="doc-pay" disabled> บัตรเครดิต</label>
-                <label class="flex items-center gap-1"><input type="radio" id="pay-qr" name="doc-pay" disabled> QR PromptPay</label>
-              </div>
-            </div>
-
-            <!-- Signature Area -->
-            <div class="text-center w-48">
-              <div id="doc-sig" class="font-signature text-xl text-indigo-950 leading-none h-6">Natirat N.</div>
-              <div class="border-t border-slate-400 pt-0.5 mt-0.5">
-                (<span id="doc-staff">นายเนติราช นามสมมุติ</span>)
-                <div class="text-[8px] text-slate-500">ผู้รับเงิน / Cashier Collector</div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Barcode Footer -->
-          <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-100 text-[8px] text-slate-400">
-            <div>* ใบเสร็จรับเงินนี้จะสมบูรณ์ต่อเมื่อมีลายมือชื่อผู้รับเงินเรียบร้อยแล้ว</div>
-            <div>
-              <svg id="patient-barcode" class="h-6"></svg>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    // Master Medical Services & Prices
-    const masterItems = [
-      { id: 'item1', name: 'ตรวจร่างกายทั่วไป (Physical Examination - PE)', price: 200, checked: true },
-      { id: 'item2', name: 'เอกซเรย์ปอดและหัวใจ (Chest X-Ray - CXR)', price: 350, checked: true },
-      { id: 'item3', name: 'ตรวจความสมบูรณ์ของเม็ดเลือด (CBC)', price: 180, checked: true },
-      { id: 'item4', name: 'ตรวจปัสสาวะสมบูรณ์แบบ (Urine Analysis - UA)', price: 100, checked: true },
-      { id: 'item5', name: 'ตรวจหาสารเสพติดในปัสสาวะ (Amphetamine Screen)', price: 150, checked: true },
-      { id: 'item6', name: 'ตรวจวัดสายตาและตาบอดสี (Vision & Color Test)', price: 100, checked: true },
-      { id: 'item7', name: 'ตรวจคัดกรองเชื้อเอดส์ (Anti-HIV Screening)', price: 300, checked: false },
-      { id: 'item8', name: 'ตรวจระดับภูมิคุ้มกันตับอักเสบบี (HBsAb)', price: 250, checked: false },
-      { id: 'item9', name: 'วัคซีนป้องกันไวรัสตับอักเสบบี (Hepatitis B Vaccine)', price: 650, checked: false }
-    ];
-
-    let currentMode = 'receipt'; // 'receipt' or 'invoice'
-
-    // Switch between Receipt and Invoice modes
-    function switchDocMode(mode) {
-      currentMode = mode;
-      const btnReceipt = document.getElementById('btn-mode-receipt');
-      const btnInvoice = document.getElementById('btn-mode-invoice');
-      const titleInput = document.getElementById('cfg-title');
-      const receiptNoInput = document.getElementById('cfg-receiptno');
-
-      if (mode === 'receipt') {
-        btnReceipt.className = 'py-1.5 px-3 rounded text-xs font-bold bg-indigo-600 text-white shadow';
-        btnInvoice.className = 'py-1.5 px-3 rounded text-xs font-bold bg-white text-slate-700 border hover:bg-slate-50';
-        titleInput.value = 'ใบเสร็จรับเงิน (Receipt)';
-        receiptNoInput.value = 'RCT-20260823-001';
-        document.getElementById('stamp-paid').style.display = 'block';
-      } else {
-        btnInvoice.className = 'py-1.5 px-3 rounded text-xs font-bold bg-indigo-600 text-white shadow';
-        btnReceipt.className = 'py-1.5 px-3 rounded text-xs font-bold bg-white text-slate-700 border hover:bg-slate-50';
-        titleInput.value = 'ใบแจ้งค่าบริการตรวจสุขภาพ (Invoice)';
-        receiptNoInput.value = 'INV-20260823-001';
-        document.getElementById('stamp-paid').style.display = 'none';
-      }
-      updateDocument();
-    }
-
-    // Initialize UI Control Selectors
-    function initSelectors() {
-      const container = document.getElementById('items-selector');
-      container.innerHTML = '';
-      masterItems.forEach((item, idx) => {
-        const div = document.createElement('div');
-        div.className = 'flex items-center justify-between p-1 hover:bg-white rounded border border-transparent hover:border-slate-200';
-        div.innerHTML = `
-          <label class="flex items-center gap-1.5 cursor-pointer truncate mr-2">
-            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleItem(${idx})" class="rounded text-indigo-600">
-            <span class="truncate">${item.name}</span>
-          </label>
-          <input type="number" value="${item.price}" onchange="updatePrice(${idx}, this.value)" class="w-16 border rounded p-0.5 text-right font-mono">
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    function toggleItem(idx) {
-      masterItems[idx].checked = !masterItems[idx].checked;
-      updateDocument();
-    }
-
-    function updatePrice(idx, val) {
-      masterItems[idx].price = parseFloat(val) || 0;
-      updateDocument();
-    }
-
-    // Dynamic Document Update
-    function updateDocument() {
-      // Header Configs
-      document.getElementById('doc-hosp').innerText = document.getElementById('cfg-hospital').value;
-      document.getElementById('doc-dept').innerText = document.getElementById('cfg-dept').value;
-      document.getElementById('doc-title').innerText = document.getElementById('cfg-title').value;
-      document.getElementById('doc-receiptno').innerText = document.getElementById('cfg-receiptno').value;
-
-      // Patient Info Configs
-      document.getElementById('doc-name').innerText = document.getElementById('cfg-name').value;
-      document.getElementById('doc-age').innerText = document.getElementById('cfg-age').value;
-      document.getElementById('doc-hn').innerText = document.getElementById('cfg-hn').value;
-      document.getElementById('doc-an').innerText = document.getElementById('cfg-an').value;
-      document.getElementById('doc-vn').innerText = document.getElementById('cfg-vn').value;
-      document.getElementById('doc-dob').innerText = document.getElementById('cfg-dob').value;
-      document.getElementById('doc-date').innerText = document.getElementById('cfg-date').value;
-      document.getElementById('doc-rights').innerText = document.getElementById('cfg-rights').value;
-      document.getElementById('doc-disease').innerText = document.getElementById('cfg-disease').value;
-      document.getElementById('doc-allergy').innerText = document.getElementById('cfg-allergy').value;
-
-      // Staff & Signatures
-      document.getElementById('doc-staff').innerText = document.getElementById('cfg-staff').value;
-      document.getElementById('doc-sig').innerText = document.getElementById('cfg-sigtext').value;
-
-      // Payment Selection
-      const payType = document.getElementById('cfg-payment').value;
-      document.getElementById('pay-cash').checked = (payType === 'cash');
-      document.getElementById('pay-card').checked = (payType === 'card');
-      document.getElementById('pay-qr').checked = (payType === 'qr');
-
-      // Render Items Table & Grand Total Calculation
-      const tbody = document.getElementById('doc-items-body');
-      tbody.innerHTML = '';
-      let total = 0;
-      let seq = 1;
-
-      masterItems.forEach((item) => {
-        if (item.checked) {
-          total += item.price;
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td class="border border-slate-300 p-0.5 text-center">${seq++}</td>
-            <td class="border border-slate-300 p-0.5">${item.name}</td>
-            <td class="border border-slate-300 p-0.5 text-right font-mono">${item.price.toFixed(2)}</td>
-          `;
-          tbody.appendChild(tr);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการสารสนเทศ Practical Nurse SI74</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --mahidol-blue: #002D62;
+            --mahidol-blue-dark: #001f44;
+            --mahidol-gold: #D4AF37;
+            --mahidol-gold-light: #f7e7a0;
+            --white: #ffffff;
+            --gray-bg: #f4f6f9;
+            --text-color: #333333;
         }
-      });
 
-      document.getElementById('doc-total').innerText = total.toLocaleString('th-TH', { minimumFractionDigits: 2 });
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
 
-      // Render Barcode dynamically from HN value
-      const hnVal = document.getElementById('cfg-hn').value || '00-000000';
-      JsBarcode("#patient-barcode", hnVal, {
-        format: "CODE128",
-        lineColor: "#333",
-        width: 1.2,
-        height: 20,
-        displayValue: true,
-        fontSize: 9
-      });
-    }
+        body {
+            background-color: var(--gray-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
 
-    // Export A5 Landscape PDF Function
-    function exportPDF() {
-      const element = document.getElementById('pdf-template');
-      const opt = {
-        margin: 0,
-        filename: currentMode === 'receipt' ? 'Hospital_Receipt_A5.pdf' : 'Hospital_Invoice_A5.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: [210, 148], orientation: 'landscape' }
-      };
-      html2pdf().set(opt).from(element).save();
-    }
+        /* Top Bar */
+        .top-bar {
+            background: var(--mahidol-blue-dark);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
 
-    // Initialize Page
-    window.onload = () => {
-      initSelectors();
-      updateDocument();
-    };
-  </script>
+        .top-bar-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .top-bar-links a {
+            color: var(--mahidol-gold-light);
+            text-decoration: none;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .top-bar-links a:hover {
+            color: var(--mahidol-gold);
+            text-decoration: underline;
+        }
+
+        .lang-switch {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--mahidol-gold);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Glow Light Effect Text */
+        .glow-text {
+            color: #ffffff;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8),
+                         0 0 20px rgba(212, 175, 55, 0.6),
+                         0 0 30px rgba(212, 175, 55, 0.4);
+            animation: shine 2.5s infinite alternate;
+        }
+
+        @keyframes shine {
+            0% {
+                text-shadow: 0 0 5px rgba(212, 175, 55, 0.5),
+                             0 0 10px rgba(212, 175, 55, 0.3);
+            }
+            100% {
+                text-shadow: 0 0 15px rgba(255, 223, 0, 1),
+                             0 0 25px rgba(255, 215, 0, 0.8),
+                             0 0 35px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        /* LOGIN SECTION */
+        .login-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--mahidol-blue) 0%, var(--mahidol-blue-dark) 100%);
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            border-top: 5px solid var(--mahidol-gold);
+            text-align: center;
+        }
+
+        .login-header {
+            background: var(--mahidol-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .login-header h2 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .login-header h3 {
+            font-size: 1rem;
+            color: var(--mahidol-gold);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--mahidol-blue);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--mahidol-blue);
+            box-shadow: 0 0 5px rgba(0, 45, 98, 0.3);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: var(--mahidol-gold);
+            color: var(--mahidol-blue-dark);
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .btn-login:hover {
+            background: #c29d2b;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .error-msg {
+            color: #d9534f;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* MAIN DASHBOARD SECTION */
+        .dashboard {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar Header */
+        .navbar {
+            background: var(--mahidol-blue);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-btn {
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--mahidol-gold);
+            cursor: pointer;
+        }
+
+        .nav-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Side Navigation Drawer */
+        .side-nav {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--mahidol-blue-dark);
+            color: white;
+            transition: 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-nav.active {
+            left: 0;
+        }
+
+        .side-nav-header {
+            padding: 20px;
+            background: var(--mahidol-blue);
+            border-bottom: 2px solid var(--mahidol-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .side-nav-menu {
+            list-style: none;
+            padding: 10px 0;
+        }
+
+        .side-nav-menu li a {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+
+        .side-nav-menu li a:hover {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--mahidol-gold);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Dashboard Content Area */
+        .main-content {
+            flex: 1;
+            padding: 25px 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border-left: 6px solid var(--mahidol-gold);
+        }
+
+        .welcome-card h1 {
+            color: var(--mahidol-blue);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .welcome-card p.subtitle {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .coming-soon-box {
+            background: #fff8e1;
+            border: 1px dashed var(--mahidol-gold);
+            padding: 15px;
+            border-radius: 8px;
+            color: #856404;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Menu Grid Buttons */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .grid-btn {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 20px 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .grid-btn i {
+            font-size: 2rem;
+            color: var(--mahidol-blue);
+        }
+
+        .grid-btn span {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .grid-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: var(--mahidol-gold);
+        }
+
+        .grid-btn:hover i {
+            color: var(--mahidol-gold);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--mahidol-blue-dark);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.85rem;
+            margin-top: auto;
+            border-top: 3px solid var(--mahidol-gold);
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 600px) {
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .top-bar-links {
+                justify-content: center;
+            }
+            .welcome-card h1 {
+                font-size: 1.25rem;
+            }
+            .login-card {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Links Bar -->
+    <div class="top-bar">
+        <div class="top-bar-links">
+            <a href="https://www.sieduit.org/pn.siriraj/" target="_blank">
+                <i class="fa-solid =>-globe"></i> เข้าสู่เว็บไซต์หลักของหลักสูตร
+            </a>
+            <span>|</span>
+            <a href="https://sivwork.ekoapp.com/login" target="_blank">
+                <i class="fa-solid fa-briefcase"></i> Si vWORK
+            </a>
+        </div>
+        <div>
+            <select class="lang-switch" id="langSwitch" onchange="changeLanguage()">
+                <option value="th">ไทย</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 1. LOGIN PAGE CONTAINER -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <div class="login-header">
+                <h2 class="glow-text" id="txt-title1">คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</h2>
+                <h3 class="glow-text" id="txt-title2">Practical Nurse</h3>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username" id="lbl-username">กรุณาใส่ชื่อผู้ใช้</label>
+                    <input type="text" id="username" class="form-control" placeholder="ชื่อผู้ใช้" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="password" id="lbl-password">รหัสผ่าน</label>
+                    <input type="password" id="password" class="form-control" placeholder="รหัสผ่าน" required>
+                </div>
+                <button type="submit" class="btn-login" id="btn-login-text">ล็อกอิน</button>
+                <div class="error-msg" id="errorMsg">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. MAIN DASHBOARD PAGE -->
+    <div class="dashboard" id="dashboardPage">
+        
+        <!-- Header / Navbar -->
+        <div class="navbar">
+            <div class="nav-left">
+                <button class="menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="nav-title">Practical Nurse SI74</div>
+            </div>
+            <div>
+                <button onclick="logout()" style="background:none; border:none; color:white; cursor:pointer;" title="ออกจากระบบ">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Side Navigation Drawer (7 Tabs) -->
+        <div class="side-nav" id="sideNav">
+            <div class="side-nav-header">
+                <span style="font-weight: bold; color: var(--mahidol-gold);">เมนูระบบ</span>
+                <button class="close-btn" onclick="toggleMenu()">&times;</button>
+            </div>
+            <ul class="side-nav-menu">
+                <li><a href="#"><i class="fa-solid fa-house"></i> หน้าหลัก</a></li>
+                <li><a href="#"><i class="fa-solid fa-user-group"></i> ข้อมูลศิษย์เก่า SIPN74</a></li>
+                <li><a href="#"><i class="fa-solid fa-bullhorn"></i> ประกาศ / ข่าวสารภายใน</a></li>
+                <li><a href="#"><i class="fa-solid fa-calendar-days"></i> ตารางกิจกรรมรุ่น</a></li>
+                <li><a href="#"><i class="fa-solid fa-folder-open"></i> คลังเอกสาร & สื่อ</a></li>
+                <li><a href="#"><i class="fa-solid fa-comments"></i> เว็บบอร์ดพูดคุย</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชีผู้ใช้</a></li>
+            </ul>
+        </div>
+        <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+        <!-- Main Content Body -->
+        <div class="main-content">
+            <div class="welcome-card">
+                <h1 id="txt-welcome">ยินดีต้อนรับ Practical Nurse ศิษย์เก่า SIPN74</h1>
+                <p class="subtitle" id="txt-subwelcome">เว็บไซต์นี้เป็นเว็บที่จัดทำขึ้นในรุ่น 74 เท่านั้น เพื่อใช้งานภายใน</p>
+                
+                <div class="coming-soon-box" id="txt-comingsoon">
+                    <i class="fa-solid fa-clock"></i> แล้วเจอกันเร็วๆนี้
+                </div>
+            </div>
+
+            <!-- Action Menu Grid -->
+            <div class="menu-grid">
+                <div class="grid-btn" onclick="alert('ระบบค้นหาเพื่อนจะเปิดใช้งานเร็วๆ นี้')">
+                    <i class="fa-solid fa-user-check"></i>
+                    <span id="btn-search">ค้นหาเพื่อนในรุ่น</span>
+                </div>
+                <div class="grid-btn" onclick="alert('ระบบลงทะเบียนเชื่อมต่อกำลังเตรียมการ')">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span id="btn-connect">ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น</span>
+                </div>
+                <div class="grid-btn" onclick="alert('หน้าระบบเปลี่ยนรหัสผ่าน')">
+                    <i class="fa-solid fa-key"></i>
+                    <span id="btn-changepass">เปลี่ยนรหัสผ่านผู้ใช้</span>
+                </div>
+                <div class="grid-btn" onclick="alert('ลงทะเบียนเข้าใช้งานระบบสำเร็จแล้ว')">
+                    <i class="fa-solid fa-address-card"></i>
+                    <span id="btn-register">ลงทะเบียนเข้าใช้งานระบบ</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            Practical Nurse @2567 สงวนลิขสิทธิ์ทุกประการ @NRT SIPN74
+        </footer>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Check Login Credentials
+        function handleLogin(event) {
+            event.preventDefault();
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            // Fixed User and Password as requested
+            if (user === '6770649' && pass === 'Si1323') {
+                errorMsg.style.display = 'none';
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboardPage').style.display = 'flex';
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // Toggle Side Navigation Bar
+        function toggleMenu() {
+            const sideNav = document.getElementById('sideNav');
+            const overlay = document.getElementById('overlay');
+            sideNav.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // Logout Function
+        function logout() {
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Language Switcher Logic (Simple Thai/EN Toggle)
+        function changeLanguage() {
+            const lang = document.getElementById('langSwitch').value;
+            
+            if (lang === 'en') {
+                document.getElementById('txt-title1').innerText = "Faculty of Medicine Siriraj Hospital, Mahidol University";
+                document.getElementById('txt-title2').innerText = "Practical Nurse";
+                document.getElementById('lbl-username').innerText = "Please Enter Username";
+                document.getElementById('username').placeholder = "Username";
+                document.getElementById('lbl-password').innerText = "Password";
+                document.getElementById('password').placeholder = "Password";
+                document.getElementById('btn-login-text').innerText = "Login";
+                document.getElementById('txt-welcome').innerText = "Welcome Practical Nurse Alumni SIPN74";
+                document.getElementById('txt-subwelcome').innerText = "This website is created exclusively for Batch 74 internal use only.";
+                document.getElementById('txt-comingsoon').innerHTML = '<i class="fa-solid fa-clock"></i> See you soon!';
+                document.getElementById('btn-search').innerText = "Search Classmates";
+                document.getElementById('btn-connect').innerText = "Register Internal Network";
+                document.getElementById('btn-changepass').innerText = "Change Password";
+                document.getElementById('btn-register').innerText = "Register Access";
+            } else {
+                document.getElementById('txt-title1').innerText = "คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล";
+                document.getElementById('txt-title2').innerText = "Practical Nurse";
+                document.getElementById('lbl-username').innerText = "กรุณาใส่ชื่อผู้ใช้";
+                document.getElementById('username').placeholder = "ชื่อผู้ใช้";
+                document.getElementById('lbl-password').innerText = "รหัสผ่าน";
+                document.getElementById('password').placeholder = "รหัสผ่าน";
+                document.getElementById('btn-login-text').innerText = "ล็อกอิน";
+                document.getElementById('txt-welcome').innerText = "ยินดีต้อนรับ Practical Nurse ศิษย์เก่า SIPN74";
+                document.getElementById('txt-subwelcome').innerText = "เว็บไซต์นี้เป็นเว็บที่จัดทำขึ้นในรุ่น74 เท่านั้น เพื่อใช้งานภายใน";
+                document.getElementById('txt-comingsoon').innerHTML = '<i class="fa-solid fa-clock"></i> แล้วเจอกันเร็วๆนี้';
+                document.getElementById('btn-search').innerText = "ค้นหาเพื่อนในรุ่น";
+                document.getElementById('btn-connect').innerText = "ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น";
+                document.getElementById('btn-changepass').innerText = "เปลี่ยนรหัสผ่านผู้ใช้";
+                document.getElementById('btn-register').innerText = "ลงทะเบียนเข้าใช้งานระบบ";
+            }
+        }
+    </script>
 </body>
 </html>
