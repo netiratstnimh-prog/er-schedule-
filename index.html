@@ -65,15 +65,15 @@
     <div id="simpleLoader" class="fixed inset-0 bg-pn-darkNavy/90 backdrop-blur-sm text-white z-[9999] flex flex-col items-center justify-center p-6 transition-all duration-300 opacity-0 pointer-events-none">
         <div class="max-w-sm w-full bg-white rounded-3xl p-8 text-center text-slate-800 shadow-2xl border border-slate-100 flex flex-col items-center">
             
-            <!-- Logo in loader -->
-            <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 shadow-md ring-4 ring-pn-gold/30 flex items-center justify-center">
-                <img src="image_2.png" alt="Mahidol Siriraj Logo" class="w-full h-full object-contain">
+            <!-- Logo Icon (SVG Vector) -->
+            <div class="w-20 h-20 mb-4 bg-pn-navy text-pn-gold rounded-full p-2 shadow-md ring-4 ring-pn-gold/30 flex items-center justify-center">
+                <i class="fa-solid fa-user-nurse text-3xl"></i>
             </div>
 
             <h3 class="text-lg font-bold font-prompt text-pn-navy" id="loaderTitle">กำลังเข้าสู่ระบบ SIPN74</h3>
-            <p class="text-xs text-slate-500 mt-1 mb-6" id="loaderSubtitle">หลักสูตรประกาศนียบัตรผู้ช่วยพยาบาล รุ่น 74</p>
+            <p class="text-xs text-slate-500 mt-0.5 mb-6" id="loaderSubtitle">หลักสูตรประกาศนียบัตรผู้ช่วยพยาบาล รุ่น 74</p>
 
-            <!-- Spinner / Progress Bar Container -->
+            <!-- Progress Bar Container -->
             <div class="w-full space-y-3">
                 <div class="w-full bg-slate-100 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-200">
                     <div id="loaderProgressBar" class="bg-gradient-to-r from-pn-navy to-pn-gold h-full rounded-full transition-all duration-150 w-0"></div>
@@ -84,10 +84,6 @@
                     <span id="loaderPercent" class="font-bold text-pn-navy font-mono text-sm">0%</span>
                 </div>
             </div>
-
-            <button onclick="skipLoader()" class="mt-6 text-[11px] text-slate-400 hover:text-pn-navy underline transition font-prompt">
-                ข้ามการรอ (Skip)
-            </button>
         </div>
     </div>
 
@@ -98,8 +94,8 @@
             
             <!-- Logo Header -->
             <div class="flex flex-col items-center text-center mb-6">
-                <div class="w-28 h-28 mb-3 bg-white rounded-full p-2 shadow-lg ring-4 ring-pn-gold/40 flex items-center justify-center">
-                    <img src="image_2.png" alt="มหาวิทยาลัยมหิดล คณะแพทยศาสตร์ศิริราชพยาบาล" class="w-full h-full object-contain">
+                <div class="w-24 h-24 mb-3 bg-gradient-to-tr from-pn-navy to-pn-blue text-pn-gold rounded-full shadow-lg ring-4 ring-pn-gold/40 flex items-center justify-center border border-pn-gold/30">
+                    <i class="fa-solid fa-user-nurse text-4xl"></i>
                 </div>
                 
                 <span class="text-[11px] font-semibold text-pn-gold bg-pn-navy/90 px-3 py-1 rounded-full font-prompt border border-pn-gold/30 mb-2">
@@ -116,7 +112,7 @@
                     <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">
                         <i class="fa-solid fa-user text-pn-navy mr-1"></i> ชื่อผู้ใช้ / เลข SAP / รหัสนักศึกษา
                     </label>
-                    <input type="text" id="loginUsername" required placeholder="เช่น 6770649" value="6770649"
+                    <input type="text" id="loginUsername" required placeholder="กรอกชื่อผู้ใช้ หรือ เลข SAP" value=""
                            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pn-navy outline-none transition text-sm bg-slate-50/50">
                 </div>
 
@@ -124,7 +120,7 @@
                     <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">
                         <i class="fa-solid fa-lock text-pn-navy mr-1"></i> รหัสผ่าน
                     </label>
-                    <input type="password" id="loginPassword" required placeholder="••••••••" value="Si1323"
+                    <input type="password" id="loginPassword" required placeholder="กรอกรหัสผ่าน" value=""
                            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-pn-navy outline-none transition text-sm bg-slate-50/50">
                 </div>
 
@@ -138,7 +134,7 @@
 
                 <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-pn-navy to-pn-blue hover:from-pn-darkNavy hover:to-pn-navy text-white rounded-xl font-prompt font-semibold shadow-lg shadow-pn-navy/30 hover:shadow-xl transition-all flex items-center justify-center gap-2 mt-2">
                     <i class="fa-solid fa-right-to-bracket"></i>
-                    เข้าสู่ระบบ (โหลดธรรมดา 15 วินาที)
+                    เข้าสู่ระบบ
                 </button>
             </form>
 
@@ -172,8 +168,8 @@
                     </button>
 
                     <div class="flex items-center gap-2.5 cursor-pointer" onclick="navigateTo('viewDashboard')">
-                        <div class="w-9 h-9 bg-white rounded-full p-1 shadow flex items-center justify-center shrink-0">
-                            <img src="image_2.png" alt="Logo" class="w-full h-full object-contain">
+                        <div class="w-9 h-9 bg-pn-gold text-pn-darkNavy rounded-full flex items-center justify-center font-bold text-base shadow shrink-0">
+                            <i class="fa-solid fa-user-nurse"></i>
                         </div>
                         <div class="hidden sm:block">
                             <h1 class="text-sm font-bold font-prompt leading-tight text-white">Practical Nurse SI74</h1>
@@ -189,7 +185,7 @@
                     </a>
 
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-pn-gold/20 text-pn-lightGold border border-pn-gold/40 font-prompt">
-                        <i class="fa-solid fa-user-nurse mr-1"></i> SIPN74
+                        <i class="fa-solid fa-graduation-cap mr-1"></i> SIPN74
                     </span>
 
                     <div class="flex items-center gap-2 pl-2 border-l border-white/20">
@@ -197,8 +193,8 @@
                             PN
                         </div>
                         <div class="hidden lg:block text-left">
-                            <div class="text-xs font-semibold font-prompt text-white">พ.พ. Practical Nurse</div>
-                            <div class="text-[10px] text-slate-300">ID: 6770649</div>
+                            <div class="text-xs font-semibold font-prompt text-white">ผู้ช่วยพยาบาล รุ่น 74</div>
+                            <div class="text-[10px] text-slate-300">ระบบสารสนเทศภายใน</div>
                         </div>
                     </div>
                 </div>
@@ -213,11 +209,11 @@
             <!-- Drawer Header -->
             <div class="p-5 border-b border-slate-700/80 bg-pn-navy flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white rounded-full p-1 shadow">
-                        <img src="image_2.png" alt="Logo" class="w-full h-full object-contain">
+                    <div class="w-10 h-10 bg-pn-gold text-pn-darkNavy rounded-full flex items-center justify-center font-bold text-lg shadow shrink-0">
+                        <i class="fa-solid fa-user-nurse"></i>
                     </div>
                     <div>
-                        <h2 class="font-bold font-prompt text-sm text-white"> Practical Nurse SI74</h2>
+                        <h2 class="font-bold font-prompt text-sm text-white">Practical Nurse SI74</h2>
                         <p class="text-[11px] text-pn-lightGold">คณะแพทยศาสตร์ศิริราชพยาบาล</p>
                     </div>
                 </div>
@@ -233,8 +229,8 @@
                 </div>
                 <div class="overflow-hidden">
                     <div class="font-semibold font-prompt text-sm text-white truncate">ศิษย์เก่า Practical Nurse</div>
-                    <div class="text-xs text-amber-400 font-mono">รหัสผู้ใช้: 6770649</div>
-                    <div class="text-[11px] text-slate-400 mt-0.5">ผู้ช่วยพยาบาล รุ่น 74</div>
+                    <div class="text-xs text-amber-400 font-mono">ผู้ช่วยพยาบาล รุ่น 74</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">ศิริราชพยาบาล</div>
                 </div>
             </div>
 
@@ -317,8 +313,8 @@
                         </div>
                     </div>
 
-                    <!-- Watermark Logo -->
-                    <img src="image_2.png" alt="Siriraj Logo" class="absolute -right-10 -bottom-10 w-72 h-72 opacity-15 pointer-events-none rounded-full bg-white p-2">
+                    <!-- Watermark Icon -->
+                    <i class="fa-solid fa-user-nurse absolute -right-6 -bottom-6 text-9xl text-white/10 pointer-events-none"></i>
                 </div>
 
                 <!-- 4 Action Grid Buttons -->
@@ -615,7 +611,9 @@
         <footer class="bg-pn-darkNavy text-slate-400 text-xs py-6 border-t border-slate-800 mt-auto">
             <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
                 <div class="flex items-center gap-3">
-                    <img src="image_2.png" alt="Logo" class="w-8 h-8 object-contain bg-white rounded-full p-0.5">
+                    <div class="w-8 h-8 rounded-full bg-pn-gold text-pn-darkNavy flex items-center justify-center font-bold text-xs shrink-0">
+                        <i class="fa-solid fa-user-nurse"></i>
+                    </div>
                     <div>
                         <div class="font-bold text-slate-200 font-prompt">Practical Nurse @2567 สงวนลิขสิทธิ์ทุกประการ @NRT SIPN74</div>
                         <div class="text-[11px] text-slate-400">คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</div>
@@ -683,7 +681,7 @@
             const u = document.getElementById('loginUsername').value.trim();
             const p = document.getElementById('loginPassword').value.trim();
 
-            if (u === '6770649' && p === 'Si1323') {
+            if (u !== '' && p !== '') {
                 startSimpleLoader(15, "กำลังยืนยันสิทธิ์เข้าใช้งาน SIPN74...", () => {
                     document.getElementById('viewLogin').classList.add('hidden');
                     document.getElementById('mainApp').classList.remove('hidden');
@@ -691,7 +689,7 @@
                     showView('viewDashboard');
                 });
             } else {
-                showAlert("เข้าสู่ระบบไม่สำเร็จ", "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง (ตัวอย่าง: 6770649 / Si1323)");
+                showAlert("กรุณากรอกข้อมูล", "กรุณากรอกชื่อผู้ใช้และรหัสผ่านก่อนเข้าสู่ระบบ");
             }
         }
 
@@ -750,7 +748,7 @@
             sText.innerText = statusMsg;
 
             let currentProgress = 0;
-            const updateInterval = 100; // Update every 100ms
+            const updateInterval = 100;
             const totalSteps = (seconds * 1000) / updateInterval;
             const stepIncrement = 100 / totalSteps;
 
@@ -772,17 +770,6 @@
                     pText.innerText = `${Math.round(currentProgress)}%`;
                 }
             }, updateInterval);
-
-            window.currentLoaderCallback = callback;
-        }
-
-        function skipLoader() {
-            if (loaderInterval) clearInterval(loaderInterval);
-            const loader = document.getElementById('simpleLoader');
-            loader.classList.add('opacity-0', 'pointer-events-none');
-            if (window.currentLoaderCallback) {
-                window.currentLoaderCallback();
-            }
         }
 
         // Render Classmates Grid
