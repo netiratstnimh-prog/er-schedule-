@@ -3,615 +3,1058 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการสารสนเทศ Practical Nurse SI74</title>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <title>ระบบศิริราชเชื่อมต่อเครือข่ายศิษย์เก่า - Siriraj Alumni Connect</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        siriraj: {
+                            navy: '#003865',
+                            darkNavy: '#002240',
+                            gold: '#C59B27',
+                            lightGold: '#F4E7B3',
+                            blue: '#0B5394',
+                            lightBg: '#F4F7FA',
+                            accent: '#0284C7'
+                        }
+                    },
+                    fontFamily: {
+                        prompt: ['Prompt', 'sans-serif'],
+                        sarabun: ['Sarabun', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --mahidol-blue: #002D62;
-            --mahidol-blue-dark: #001f44;
-            --mahidol-gold: #D4AF37;
-            --mahidol-gold-light: #f7e7a0;
-            --white: #ffffff;
-            --gray-bg: #f4f6f9;
-            --text-color: #333333;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Sarabun', sans-serif;
-        }
-
         body {
-            background-color: var(--gray-bg);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
+            font-family: 'Sarabun', sans-serif;
+            background-color: #F4F7FA;
         }
 
-        /* Top Bar */
-        .top-bar {
-            background: var(--mahidol-blue-dark);
-            color: white;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 100;
-            flex-wrap: wrap;
-            gap: 10px;
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Prompt', sans-serif;
         }
 
-        .top-bar-links {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
+        /* EKG Canvas & Wave Animation */
+        .ekg-line {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 2s linear infinite;
         }
 
-        .top-bar-links a {
-            color: var(--mahidol-gold-light);
-            text-decoration: none;
-            transition: color 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 0;
+            }
         }
 
-        .top-bar-links a:hover {
-            color: var(--mahidol-gold);
-            text-decoration: underline;
+        .pulse-glow {
+            box-shadow: 0 0 15px rgba(2, 132, 199, 0.4);
         }
 
-        .lang-switch {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--mahidol-gold);
-            color: white;
-            padding: 3px 8px;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
             border-radius: 4px;
-            cursor: pointer;
-            outline: none;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
 
-        /* Glow Light Effect Text */
-        .glow-text {
-            color: #ffffff;
-            text-align: center;
-            font-weight: 700;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8),
-                         0 0 20px rgba(212, 175, 55, 0.6),
-                         0 0 30px rgba(212, 175, 55, 0.4);
-            animation: shine 2.5s infinite alternate;
-        }
-
-        @keyframes shine {
-            0% {
-                text-shadow: 0 0 5px rgba(212, 175, 55, 0.5),
-                             0 0 10px rgba(212, 175, 55, 0.3);
-            }
-            100% {
-                text-shadow: 0 0 15px rgba(255, 223, 0, 1),
-                             0 0 25px rgba(255, 215, 0, 0.8),
-                             0 0 35px rgba(255, 215, 0, 0.6);
-            }
-        }
-
-        /* LOGIN SECTION */
-        .login-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--mahidol-blue) 0%, var(--mahidol-blue-dark) 100%);
-        }
-
-        .login-card {
+        /* Glassmorphism */
+        .glass-card {
             background: rgba(255, 255, 255, 0.95);
-            padding: 40px 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 450px;
-            border-top: 5px solid var(--mahidol-gold);
-            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
-        .login-header {
-            background: var(--mahidol-blue);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-        }
-
-        .login-header h2 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            line-height: 1.4;
-        }
-
-        .login-header h3 {
-            font-size: 1rem;
-            color: var(--mahidol-gold);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--mahidol-blue);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--mahidol-blue);
-            box-shadow: 0 0 5px rgba(0, 45, 98, 0.3);
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: var(--mahidol-gold);
-            color: var(--mahidol-blue-dark);
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.1s;
-        }
-
-        .btn-login:hover {
-            background: #c29d2b;
-        }
-
-        .btn-login:active {
-            transform: scale(0.98);
-        }
-
-        .error-msg {
-            color: #d9534f;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            display: none;
-        }
-
-        /* MAIN DASHBOARD SECTION */
-        .dashboard {
-            display: none; /* Hidden by default */
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Navbar Header */
-        .navbar {
-            background: var(--mahidol-blue);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .menu-btn {
-            font-size: 1.5rem;
-            background: none;
-            border: none;
-            color: var(--mahidol-gold);
-            cursor: pointer;
-        }
-
-        .nav-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
-
-        /* Side Navigation Drawer */
-        .side-nav {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background: var(--mahidol-blue-dark);
-            color: white;
-            transition: 0.3s ease;
-            z-index: 1000;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.5);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .side-nav.active {
-            left: 0;
-        }
-
-        .side-nav-header {
-            padding: 20px;
-            background: var(--mahidol-blue);
-            border-bottom: 2px solid var(--mahidol-gold);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .side-nav-menu {
-            list-style: none;
-            padding: 10px 0;
-        }
-
-        .side-nav-menu li a {
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            transition: background 0.2s;
-        }
-
-        .side-nav-menu li a:hover {
-            background: rgba(212, 175, 55, 0.2);
-            color: var(--mahidol-gold);
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 999;
-        }
-
-        .overlay.active {
-            display: block;
-        }
-
-        /* Dashboard Content Area */
-        .main-content {
-            flex: 1;
-            padding: 25px 15px;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .welcome-card {
-            background: white;
-            padding: 30px 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-            border-left: 6px solid var(--mahidol-gold);
-        }
-
-        .welcome-card h1 {
-            color: var(--mahidol-blue);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .welcome-card p.subtitle {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-        }
-
-        .coming-soon-box {
-            background: #fff8e1;
-            border: 1px dashed var(--mahidol-gold);
-            padding: 15px;
-            border-radius: 8px;
-            color: #856404;
-            font-weight: 600;
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        /* Menu Grid Buttons */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .grid-btn {
-            background: white;
-            border: 1px solid #e0e0e0;
-            padding: 20px 15px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-
-        .grid-btn i {
-            font-size: 2rem;
-            color: var(--mahidol-blue);
-        }
-
-        .grid-btn span {
-            font-weight: 600;
-            color: #333;
-            font-size: 0.95rem;
-        }
-
-        .grid-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-color: var(--mahidol-gold);
-        }
-
-        .grid-btn:hover i {
-            color: var(--mahidol-gold);
-        }
-
-        /* Footer */
-        footer {
-            background: var(--mahidol-blue-dark);
-            color: white;
-            text-align: center;
-            padding: 15px;
-            font-size: 0.85rem;
-            margin-top: auto;
-            border-top: 3px solid var(--mahidol-gold);
-        }
-
-        /* Responsive Tweaks */
-        @media (max-width: 600px) {
-            .top-bar {
-                flex-direction: column;
-                text-align: center;
-            }
-            .top-bar-links {
-                justify-content: center;
-            }
-            .welcome-card h1 {
-                font-size: 1.25rem;
-            }
-            .login-card {
-                padding: 25px 20px;
-            }
+        /* Drawer Overlay Smooth Fade */
+        .drawer-backdrop {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
     </style>
 </head>
-<body>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <!-- Top Links Bar -->
-    <div class="top-bar">
-        <div class="top-bar-links">
-            <a href="https://www.sieduit.org/pn.siriraj/" target="_blank">
-                <i class="fa-solid =>-globe"></i> เข้าสู่เว็บไซต์หลักของหลักสูตร
-            </a>
-            <span>|</span>
-            <a href="https://sivwork.ekoapp.com/login" target="_blank">
-                <i class="fa-solid fa-briefcase"></i> Si vWORK
-            </a>
-        </div>
-        <div>
-            <select class="lang-switch" id="langSwitch" onchange="changeLanguage()">
-                <option value="th">ไทย</option>
-                <option value="en">English</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- 1. LOGIN PAGE CONTAINER -->
-    <div class="login-container" id="loginPage">
-        <div class="login-card">
-            <div class="login-header">
-                <h2 class="glow-text" id="txt-title1">คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</h2>
-                <h3 class="glow-text" id="txt-title2">Practical Nurse</h3>
-            </div>
-
-            <form id="loginForm" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label for="username" id="lbl-username">กรุณาใส่ชื่อผู้ใช้</label>
-                    <input type="text" id="username" class="form-control" placeholder="ชื่อผู้ใช้" required autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label for="password" id="lbl-password">รหัสผ่าน</label>
-                    <input type="password" id="password" class="form-control" placeholder="รหัสผ่าน" required>
-                </div>
-                <button type="submit" class="btn-login" id="btn-login-text">ล็อกอิน</button>
-                <div class="error-msg" id="errorMsg">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!</div>
-            </form>
-        </div>
-    </div>
-
-    <!-- 2. MAIN DASHBOARD PAGE -->
-    <div class="dashboard" id="dashboardPage">
-        
-        <!-- Header / Navbar -->
-        <div class="navbar">
-            <div class="nav-left">
-                <button class="menu-btn" onclick="toggleMenu()">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <div class="nav-title">Practical Nurse SI74</div>
-            </div>
-            <div>
-                <button onclick="logout()" style="background:none; border:none; color:white; cursor:pointer;" title="ออกจากระบบ">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Side Navigation Drawer (7 Tabs) -->
-        <div class="side-nav" id="sideNav">
-            <div class="side-nav-header">
-                <span style="font-weight: bold; color: var(--mahidol-gold);">เมนูระบบ</span>
-                <button class="close-btn" onclick="toggleMenu()">&times;</button>
-            </div>
-            <ul class="side-nav-menu">
-                <li><a href="#"><i class="fa-solid fa-house"></i> หน้าหลัก</a></li>
-                <li><a href="#"><i class="fa-solid fa-user-group"></i> ข้อมูลศิษย์เก่า SIPN74</a></li>
-                <li><a href="#"><i class="fa-solid fa-bullhorn"></i> ประกาศ / ข่าวสารภายใน</a></li>
-                <li><a href="#"><i class="fa-solid fa-calendar-days"></i> ตารางกิจกรรมรุ่น</a></li>
-                <li><a href="#"><i class="fa-solid fa-folder-open"></i> คลังเอกสาร & สื่อ</a></li>
-                <li><a href="#"><i class="fa-solid fa-comments"></i> เว็บบอร์ดพูดคุย</a></li>
-                <li><a href="#"><i class="fa-solid fa-gear"></i> ตั้งค่าบัญชีผู้ใช้</a></li>
-            </ul>
-        </div>
-        <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-        <!-- Main Content Body -->
-        <div class="main-content">
-            <div class="welcome-card">
-                <h1 id="txt-welcome">ยินดีต้อนรับ Practical Nurse ศิษย์เก่า SIPN74</h1>
-                <p class="subtitle" id="txt-subwelcome">เว็บไซต์นี้เป็นเว็บที่จัดทำขึ้นในรุ่น 74 เท่านั้น เพื่อใช้งานภายใน</p>
-                
-                <div class="coming-soon-box" id="txt-comingsoon">
-                    <i class="fa-solid fa-clock"></i> แล้วเจอกันเร็วๆนี้
-                </div>
-            </div>
-
-            <!-- Action Menu Grid -->
-            <div class="menu-grid">
-                <div class="grid-btn" onclick="alert('ระบบค้นหาเพื่อนจะเปิดใช้งานเร็วๆ นี้')">
-                    <i class="fa-solid fa-user-check"></i>
-                    <span id="btn-search">ค้นหาเพื่อนในรุ่น</span>
-                </div>
-                <div class="grid-btn" onclick="alert('ระบบลงทะเบียนเชื่อมต่อกำลังเตรียมการ')">
-                    <i class="fa-solid fa-network-wired"></i>
-                    <span id="btn-connect">ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น</span>
-                </div>
-                <div class="grid-btn" onclick="alert('หน้าระบบเปลี่ยนรหัสผ่าน')">
-                    <i class="fa-solid fa-key"></i>
-                    <span id="btn-changepass">เปลี่ยนรหัสผ่านผู้ใช้</span>
-                </div>
-                <div class="grid-btn" onclick="alert('ลงทะเบียนเข้าใช้งานระบบสำเร็จแล้ว')">
-                    <i class="fa-solid fa-address-card"></i>
-                    <span id="btn-register">ลงทะเบียนเข้าใช้งานระบบ</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer>
-            Practical Nurse @2567 สงวนลิขสิทธิ์ทุกประการ @NRT SIPN74
-        </footer>
-    </div>
-
-    <!-- JavaScript Logic -->
-    <script>
-        // Check Login Credentials
-        function handleLogin(event) {
-            event.preventDefault();
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
-            const errorMsg = document.getElementById('errorMsg');
-
-            // Fixed User and Password as requested
-            if (user === '6770649' && pass === 'Si1323') {
-                errorMsg.style.display = 'none';
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('dashboardPage').style.display = 'flex';
-            } else {
-                errorMsg.style.display = 'block';
-            }
-        }
-
-        // Toggle Side Navigation Bar
-        function toggleMenu() {
-            const sideNav = document.getElementById('sideNav');
-            const overlay = document.getElementById('overlay');
-            sideNav.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-
-        // Logout Function
-        function logout() {
-            document.getElementById('dashboardPage').style.display = 'none';
-            document.getElementById('loginPage').style.display = 'flex';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-        }
-
-        // Language Switcher Logic (Simple Thai/EN Toggle)
-        function changeLanguage() {
-            const lang = document.getElementById('langSwitch').value;
+    <!-- ==================== EKG LOADING OVERLAY ==================== -->
+    <div id="ekgLoader" class="fixed inset-0 bg-siriraj-darkNavy/95 text-white z-[9999] flex flex-col items-center justify-center p-6 transition-all duration-500 opacity-0 pointer-events-none">
+        <div class="max-w-md w-full flex flex-col items-center text-center">
             
-            if (lang === 'en') {
-                document.getElementById('txt-title1').innerText = "Faculty of Medicine Siriraj Hospital, Mahidol University";
-                document.getElementById('txt-title2').innerText = "Practical Nurse";
-                document.getElementById('lbl-username').innerText = "Please Enter Username";
-                document.getElementById('username').placeholder = "Username";
-                document.getElementById('lbl-password').innerText = "Password";
-                document.getElementById('password').placeholder = "Password";
-                document.getElementById('btn-login-text').innerText = "Login";
-                document.getElementById('txt-welcome').innerText = "Welcome Practical Nurse Alumni SIPN74";
-                document.getElementById('txt-subwelcome').innerText = "This website is created exclusively for Batch 74 internal use only.";
-                document.getElementById('txt-comingsoon').innerHTML = '<i class="fa-solid fa-clock"></i> See you soon!';
-                document.getElementById('btn-search').innerText = "Search Classmates";
-                document.getElementById('btn-connect').innerText = "Register Internal Network";
-                document.getElementById('btn-changepass').innerText = "Change Password";
-                document.getElementById('btn-register').innerText = "Register Access";
+            <!-- Logo in loader -->
+            <div class="w-24 h-24 mb-6 bg-white rounded-full p-2 shadow-2xl flex items-center justify-center ring-4 ring-siriraj-gold/50">
+                <img src="image_2.png" alt="Mahidol Siriraj Logo" class="w-full h-full object-contain">
+            </div>
+
+            <h3 class="text-2xl font-bold font-prompt text-white mb-1" id="ekgTitle">กำลังเข้าสู่ระบบศิริราชเน็ตเวิร์ก</h3>
+            <p class="text-slate-300 text-sm mb-6" id="ekgSubtitle">กรุณารอสักครู่ ระบบกำลังเชื่อมโยงฐานข้อมูลการใช้บริการ...</p>
+
+            <!-- EKG Graphic Container -->
+            <div class="w-full bg-slate-900/80 rounded-2xl p-4 border border-slate-700/80 mb-6 relative overflow-hidden shadow-inner">
+                <!-- Grid background lines -->
+                <div class="absolute inset-0 opacity-20 bg-[linear-gradient(to_right,#0284c7_1px,transparent_1px),linear-gradient(to_bottom,#0284c7_1px,transparent_1px)] bg-[size:16px_16px]"></div>
+                
+                <svg viewBox="0 0 500 120" class="w-full h-24 relative z-10">
+                    <!-- Baseline -->
+                    <path d="M 0 60 L 500 60" stroke="#1e293b" stroke-width="2" fill="none" />
+                    <!-- Animated Heartbeat Wave -->
+                    <path id="ekgPath" d="M 0 60 L 70 60 L 80 50 L 90 70 L 100 60 L 140 60 L 150 15 L 165 105 L 180 35 L 195 70 L 205 60 L 260 60 L 270 50 L 280 70 L 290 60 L 330 60 L 340 10 L 355 110 L 370 30 L 385 70 L 395 60 L 500 60" 
+                          stroke="#0284c7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" class="ekg-line drop-shadow-[0_0_8px_rgba(2,132,199,0.8)]" />
+                </svg>
+
+                <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-800 text-xs font-mono text-cyan-400">
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        EKG SIGNAL: ACTIVE
+                    </span>
+                    <span id="ekgTimeRem">15s</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-800 rounded-full h-4 overflow-hidden p-0.5 border border-slate-700 mb-3 relative">
+                <div id="ekgProgressBar" class="bg-gradient-to-r from-cyan-500 via-siriraj-gold to-emerald-400 h-full rounded-full transition-all duration-300 w-0"></div>
+            </div>
+
+            <div class="flex justify-between w-full text-xs font-prompt text-slate-300 px-1">
+                <span id="ekgStatusText">กำลังเริ่มต้นระบบ...</span>
+                <span id="ekgPercent" class="font-bold text-cyan-400 text-base font-mono">0%</span>
+            </div>
+
+            <!-- Quick Skip Button (Optional for convenience) -->
+            <button onclick="fastForwardEKG()" class="mt-6 text-xs text-slate-400 hover:text-white underline transition">
+                ข้ามการโหลด (Skip Wait)
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ==================== VIEW 1: LOGIN PAGE ==================== -->
+    <div id="viewLogin" class="min-h-screen w-full flex items-center justify-center p-4 bg-gradient-to-br from-siriraj-darkNavy via-siriraj-navy to-slate-900 relative">
+        <!-- Abstract Background Glows -->
+        <div class="absolute top-10 left-10 w-96 h-96 bg-siriraj-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-md w-full glass-card rounded-3xl shadow-2xl p-8 relative z-10 border border-white/20">
+            <!-- Logo Header -->
+            <div class="flex flex-col items-center text-center mb-8">
+                <div class="w-32 h-32 mb-3 bg-white rounded-full p-2 shadow-lg ring-4 ring-siriraj-gold/40 flex items-center justify-center hover:scale-105 transition-transform duration-300">
+                    <img src="image_2.png" alt="มหาวิทยาลัยมหิดล คณะแพทยศาสตร์ศิริราชพยาบาล" class="w-full h-full object-contain">
+                </div>
+                <h1 class="text-xl font-bold font-prompt text-siriraj-navy mt-2">ระบบศิริราชเชื่อมต่อเครือข่ายศิษย์เก่า</h1>
+                <p class="text-xs text-slate-500 mt-1">Siriraj Alumni & Classmates Network Platform</p>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">
+                        <i class="fa-solid fa-id-card text-siriraj-navy mr-1"></i> ชื่อผู้ใช้งาน / เลข SAP / รหัสนักศึกษา
+                    </label>
+                    <input type="text" id="loginUsername" required placeholder="เช่น 10023456 หรือ s6401099" 
+                           class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy focus:border-transparent outline-none transition text-sm bg-slate-50/50">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">
+                        <i class="fa-solid fa-lock text-siriraj-navy mr-1"></i> รหัสผ่าน
+                    </label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" 
+                           class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy focus:border-transparent outline-none transition text-sm bg-slate-50/50">
+                </div>
+
+                <div class="flex items-center justify-between text-xs pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer text-slate-600">
+                        <input type="checkbox" class="rounded border-slate-300 text-siriraj-navy focus:ring-siriraj-navy">
+                        จดจำการเข้าสู่ระบบ
+                    </label>
+                    <a href="javascript:void(0)" onclick="switchView('viewPassword')" class="text-siriraj-blue font-medium hover:underline">ลืมรหัสผ่าน?</a>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-siriraj-navy to-siriraj-blue hover:from-siriraj-darkNavy hover:to-siriraj-navy text-white rounded-xl font-prompt font-semibold shadow-lg shadow-siriraj-navy/30 hover:shadow-xl transition-all flex items-center justify-center gap-2 mt-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    เข้าสู่ระบบ (15s EKG Process)
+                </button>
+            </form>
+
+            <div class="mt-6 pt-6 border-t border-slate-200/80 text-center space-y-2">
+                <p class="text-xs text-slate-600">ยังไม่มีบัญชีใช้งานในระบบ?</p>
+                <div class="flex gap-2">
+                    <button onclick="switchView('viewRegister')" class="flex-1 py-2 px-3 text-xs font-prompt font-semibold text-siriraj-navy bg-siriraj-lightBg hover:bg-slate-200 rounded-lg transition border border-slate-300">
+                        <i class="fa-solid fa-user-plus mr-1"></i> ลงทะเบียนระบบ
+                    </button>
+                    <button onclick="switchView('viewClassConnect')" class="flex-1 py-2 px-3 text-xs font-prompt font-semibold text-siriraj-gold bg-amber-50 hover:bg-amber-100 rounded-lg transition border border-amber-200">
+                        <i class="fa-solid fa-link mr-1"></i> เชื่อมต่อภายในรุ่น
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== MAIN SYSTEM APP LAYOUT ==================== -->
+    <div id="mainApp" class="min-h-screen flex-col hidden">
+
+        <!-- TOP BAR / NAVIGATION BAR -->
+        <header class="bg-siriraj-navy text-white sticky top-0 z-40 shadow-lg border-b border-siriraj-gold/30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                
+                <!-- Left Section: Hamburger Button & Logo/Title -->
+                <div class="flex items-center gap-3">
+                    <!-- Hamburger Menu Button (3 Lines) -->
+                    <button onclick="toggleDrawer()" class="p-2 rounded-lg hover:bg-white/10 text-white transition focus:outline-none ring-1 ring-white/20" title="เปิดเมนูหลัก">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- Header Brand Logo -->
+                    <div class="flex items-center gap-2.5 cursor-pointer" onclick="navigateTo('viewDashboard')">
+                        <div class="w-10 h-10 bg-white rounded-full p-1 shadow-md flex items-center justify-center shrink-0">
+                            <img src="image_2.png" alt="Logo" class="w-full h-full object-contain">
+                        </div>
+                        <div class="hidden sm:block">
+                            <h1 class="text-sm font-bold font-prompt leading-tight text-white">มหาวิทยาลัยมหิดล ศิริราชพยาบาล</h1>
+                            <p class="text-[11px] text-siriraj-lightGold font-prompt">ระบบค้นหาและเชื่อมต่อศิษย์เก่าศิริราช</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Section: User Profile & Actions -->
+                <div class="flex items-center gap-3">
+                    <!-- Class Batch Badge -->
+                    <span class="hidden md:inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-siriraj-gold/20 text-siriraj-lightGold border border-siriraj-gold/40 font-prompt">
+                        <i class="fa-solid fa-graduation-cap mr-1.5"></i> ศิริราชรุ่นที่ 128
+                    </span>
+
+                    <!-- Quick Notifications -->
+                    <button class="p-2 rounded-full hover:bg-white/10 relative text-slate-200">
+                        <i class="fa-regular fa-bell text-lg"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+
+                    <!-- User Avatar & Dropdown -->
+                    <div class="flex items-center gap-2 pl-2 border-l border-white/20">
+                        <div class="w-9 h-9 rounded-full bg-siriraj-gold text-siriraj-darkNavy font-bold flex items-center justify-center text-sm font-prompt shadow">
+                            นพ.
+                        </div>
+                        <div class="hidden md:block text-left">
+                            <div class="text-xs font-semibold font-prompt text-white">นพ. ศิริชัย วงศ์สว่าง</div>
+                            <div class="text-[10px] text-slate-300">SAP: 10048291</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- DRAWER SIDEBAR NAVIGATION -->
+        <div id="drawerBackdrop" onclick="toggleDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 drawer-backdrop opacity-0 pointer-events-none transition-all"></div>
+        
+        <aside id="drawerSidebar" class="fixed top-0 left-0 w-80 h-full bg-siriraj-darkNavy text-slate-100 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+            
+            <!-- Drawer Header -->
+            <div class="p-5 border-b border-slate-700/80 bg-gradient-to-r from-siriraj-navy to-siriraj-darkNavy flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white rounded-full p-1 shadow">
+                        <img src="image_2.png" alt="Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <h2 class="font-bold font-prompt text-sm text-white">เมนูใช้งานหลัก</h2>
+                        <p class="text-[11px] text-slate-300">Siriraj Network Navigation</p>
+                    </div>
+                </div>
+                <button onclick="toggleDrawer()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Drawer User Info Box -->
+            <div class="p-4 mx-4 mt-4 bg-slate-800/80 rounded-2xl border border-slate-700 flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-siriraj-gold text-siriraj-darkNavy font-bold flex items-center justify-center text-base font-prompt shrink-0 shadow">
+                    หมอ
+                </div>
+                <div class="overflow-hidden">
+                    <div class="font-semibold font-prompt text-sm text-white truncate">นพ. ศิริชัย วงศ์สว่าง</div>
+                    <div class="text-xs text-cyan-400 font-mono">SAP ID: 10048291</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5">สาขาอายุรศาสตร์หัวใจ</div>
+                </div>
+            </div>
+
+            <!-- Drawer Menu Links -->
+            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+                <p class="text-[11px] font-semibold text-slate-400 px-3 uppercase tracking-wider mb-2 font-prompt">การใช้งานระบบ</p>
+
+                <a href="javascript:void(0)" onclick="navigateTo('viewDashboard')" class="drawer-link flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-siriraj-navy hover:text-white transition text-slate-300 font-prompt text-sm">
+                    <i class="fa-solid fa-house text-siriraj-gold w-5 text-center"></i>
+                    <span>หน้าหลัก (Dashboard)</span>
+                </a>
+
+                <a href="javascript:void(0)" onclick="navigateTo('viewSearch')" class="drawer-link flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-siriraj-navy hover:text-white transition text-slate-300 font-prompt text-sm">
+                    <i class="fa-solid fa-user-doctor text-cyan-400 w-5 text-center"></i>
+                    <span>ค้นหาเพื่อนในรุ่น</span>
+                </a>
+
+                <a href="javascript:void(0)" onclick="navigateTo('viewClassConnect')" class="drawer-link flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-siriraj-navy hover:text-white transition text-slate-300 font-prompt text-sm">
+                    <i class="fa-solid fa-id-badge text-emerald-400 w-5 text-center"></i>
+                    <span>ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น</span>
+                </a>
+
+                <a href="javascript:void(0)" onclick="navigateTo('viewRegister')" class="drawer-link flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-siriraj-navy hover:text-white transition text-slate-300 font-prompt text-sm">
+                    <i class="fa-solid fa-user-plus text-amber-400 w-5 text-center"></i>
+                    <span>ลงทะเบียนเข้าใช้งานระบบ</span>
+                </a>
+
+                <p class="text-[11px] font-semibold text-slate-400 px-3 uppercase tracking-wider pt-4 mb-2 font-prompt">ตั้งค่าบัญชี</p>
+
+                <a href="javascript:void(0)" onclick="navigateTo('viewPassword')" class="drawer-link flex items-center gap-3 px-3.5 py-3 rounded-xl hover:bg-siriraj-navy hover:text-white transition text-slate-300 font-prompt text-sm">
+                    <i class="fa-solid fa-key text-purple-400 w-5 text-center"></i>
+                    <span>เปลี่ยนรหัสผ่านผู้ใช้</span>
+                </a>
+            </nav>
+
+            <!-- Drawer Footer Logout -->
+            <div class="p-4 border-t border-slate-800">
+                <button onclick="handleLogout()" class="w-full py-2.5 px-4 bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white rounded-xl font-prompt text-sm transition flex items-center justify-center gap-2 border border-red-500/30">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    ออกจากระบบ
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+            <!-- PAGE: DASHBOARD (หน้าหลัก) -->
+            <div id="viewDashboard" class="space-y-6">
+                <!-- Banner Welcome -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-siriraj-navy via-siriraj-blue to-slate-900 text-white p-6 sm:p-8 shadow-xl border border-siriraj-gold/30">
+                    <div class="relative z-10 max-w-2xl">
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-siriraj-gold/30 text-siriraj-lightGold border border-siriraj-gold/50 mb-3 font-prompt">
+                            ยินดีต้อนรับสู่เครือข่ายศิริราช
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-bold font-prompt mb-2">ยินดีต้อนรับ, นพ. ศิริชัย วงศ์สว่าง</h2>
+                        <p class="text-slate-200 text-sm font-light leading-relaxed">
+                            ระบบศูนย์กลางการเชื่อมโยงข้อมูลศิษย์เก่าแพทย์ศิริราช ค้นหาเพื่อนร่วมรุ่น ลงทะเบียนยืนยันตัวตน และอัปเดตข้อมูลการติดต่อสถาบัน
+                        </p>
+                    </div>
+
+                    <!-- Watermark Logo -->
+                    <img src="image_2.png" alt="Siriraj Logo" class="absolute -right-10 -bottom-10 w-72 h-72 opacity-15 pointer-events-none rounded-full bg-white p-2">
+                </div>
+
+                <!-- Quick Action Grid (กดแล้วโหลด EKG 2-3s แล้วเข้าหน้านั้นเลย) -->
+                <div>
+                    <h3 class="text-lg font-bold font-prompt text-siriraj-navy mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-siriraj-gold"></i> เมนูบริการด่วน
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        
+                        <!-- Card 1: ค้นหาเพื่อนในรุ่น -->
+                        <div onclick="navigateTo('viewSearch')" class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 cursor-pointer group hover:-translate-y-1">
+                            <div class="w-12 h-12 rounded-2xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-magnifying-glass font-bold"></i>
+                            </div>
+                            <h4 class="font-bold font-prompt text-slate-800 text-base group-hover:text-cyan-600 transition">ค้นหาเพื่อนในรุ่น</h4>
+                            <p class="text-xs text-slate-500 mt-1">ค้นหาจากชื่อ, รหัสนักศึกษา, เลข SAP หรือรุ่นการศึกษา</p>
+                            <div class="mt-4 text-xs font-semibold text-cyan-600 flex items-center gap-1">
+                                เข้าสู่ระบบค้นหา <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น -->
+                        <div onclick="navigateTo('viewClassConnect')" class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 cursor-pointer group hover:-translate-y-1">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-link font-bold"></i>
+                            </div>
+                            <h4 class="font-bold font-prompt text-slate-800 text-base group-hover:text-emerald-600 transition">ลงทะเบียนเชื่อมต่อรุ่น</h4>
+                            <p class="text-xs text-slate-500 mt-1">ยืนยันตัวตนด้วย SAP/รหัสนักศึกษา เพื่อเชื่อมโยงฐานข้อมูลรุ่น</p>
+                            <div class="mt-4 text-xs font-semibold text-emerald-600 flex items-center gap-1">
+                                ลงทะเบียนเชื่อมต่อ <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: ลงทะเบียนเข้าใช้งานระบบ -->
+                        <div onclick="navigateTo('viewRegister')" class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 cursor-pointer group hover:-translate-y-1">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-user-plus font-bold"></i>
+                            </div>
+                            <h4 class="font-bold font-prompt text-slate-800 text-base group-hover:text-amber-600 transition">ลงทะเบียนใช้งาน</h4>
+                            <p class="text-xs text-slate-500 mt-1">สร้างสิทธิ์เข้าใช้งานระบบตามวัตถุประสงค์ผู้ใช้งาน</p>
+                            <div class="mt-4 text-xs font-semibold text-amber-600 flex items-center gap-1">
+                                กรอกแบบฟอร์ม <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: เปลี่ยนรหัสผ่านผู้ใช้ -->
+                        <div onclick="navigateTo('viewPassword')" class="glass-card p-5 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 cursor-pointer group hover:-translate-y-1">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-key font-bold"></i>
+                            </div>
+                            <h4 class="font-bold font-prompt text-slate-800 text-base group-hover:text-purple-600 transition">เปลี่ยนรหัสผ่าน</h4>
+                            <p class="text-xs text-slate-500 mt-1">ตั้งค่ารหัสผ่านใหม่เพื่อความปลอดภัยของข้อมูลส่วนบุคคล</p>
+                            <div class="mt-4 text-xs font-semibold text-purple-600 flex items-center gap-1">
+                                จัดการรหัสผ่าน <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Recent Activities & Statistics Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
+                    <!-- Left 2 Cols: Stat summary -->
+                    <div class="lg:col-span-2 glass-card rounded-2xl p-6 border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold font-prompt text-slate-800 text-base">สถิติเครือข่ายศิษย์เก่าในรุ่นที่ 128</h3>
+                            <span class="text-xs text-slate-500">อัปเดตล่าสุด: วันนี้</span>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                                <div class="text-2xl font-bold font-prompt text-siriraj-navy">248</div>
+                                <div class="text-xs text-slate-500 mt-1">สมาชิกในรุ่นทั้งหมด</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <div class="text-2xl font-bold font-prompt text-emerald-600">215</div>
+                                <div class="text-xs text-slate-600 mt-1">ยืนยันตัวตนแล้ว</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                                <div class="text-2xl font-bold font-prompt text-amber-600">33</div>
+                                <div class="text-xs text-slate-600 mt-1">รอเชื่อมต่อข้อมูล</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                            <span>ต้องการอัปเดตข้อมูลรุ่นหรือแจ้งกิจกรรม?</span>
+                            <button onclick="navigateTo('viewClassConnect')" class="text-siriraj-blue font-semibold hover:underline">คลิกที่นี่เพื่อดำเนินการ</button>
+                        </div>
+                    </div>
+
+                    <!-- Right Col: System Notice -->
+                    <div class="glass-card rounded-2xl p-6 border border-slate-200 shadow-sm bg-gradient-to-b from-amber-50/50 to-white">
+                        <h3 class="font-bold font-prompt text-amber-900 text-base mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-amber-600"></i> ประกาศสำคัญจากระบบ
+                        </h3>
+                        <ul class="space-y-3 text-xs text-slate-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>
+                                <span>ขอเชิญชวนศิษย์เก่าตรวจสอบและอัปเดตสถานะที่อยู่สถานที่ทำงานปัจจุบัน</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check-circle text-emerald-500 mt-0.5 shrink-0"></i>
+                                <span>การเชื่อมต่อระบบใหม่ใช้เวลาประมวลผลสัญญาณ EKG ยืนยันสิทธิ์เพื่อความปลอดภัย</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- PAGE: SEARCH CLASSMATES (ค้นหาเพื่อนในรุ่น) -->
+            <div id="viewSearch" class="space-y-6 hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div>
+                        <h2 class="text-xl font-bold font-prompt text-siriraj-navy flex items-center gap-2">
+                            <i class="fa-solid fa-user-doctor text-cyan-600"></i> ค้นหาเพื่อนในรุ่น (Classmate Search)
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-1">ค้นหาแพทย์ศิริราชร่วมรุ่นด้วย รหัสนักศึกษา, เลข SAP ID, ชื่อ-นามสกุล หรือภาควิชา</p>
+                    </div>
+                    <button onclick="navigateTo('viewClassConnect')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition flex items-center gap-2 shrink-0 font-prompt">
+                        <i class="fa-solid fa-user-check"></i> ไม่พบชื่อ? ลงทะเบียนเชื่อมต่อ
+                    </button>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="glass-card p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">คำค้นหาหลัก</label>
+                            <input type="text" id="searchInput" onkeyup="filterClassmates()" placeholder="พิมพ์ ชื่อ, นามสกุล, SAP หรือ รหัส..." 
+                                   class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">รุ่นการศึกษา</label>
+                            <select id="searchBatch" onchange="filterClassmates()" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none bg-white">
+                                <option value="">ทุกรุ่นการศึกษา</option>
+                                <option value="128" selected>ศิริราช รุ่นที่ 128</option>
+                                <option value="127">ศิริราช รุ่นที่ 127</option>
+                                <option value="126">ศิริราช รุ่นที่ 126</option>
+                                <option value="125">ศิริราช รุ่นที่ 125</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">สาขา / ภาควิชา</label>
+                            <select id="searchSpecialty" onchange="filterClassmates()" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none bg-white">
+                                <option value="">ทุกสาขา / ภาควิชา</option>
+                                <option value="อายุรศาสตร์">อายุรศาสตร์</option>
+                                <option value="ศัลยศาสตร์">ศัลยศาสตร์</option>
+                                <option value="กุมารเวชศาสตร์">กุมารเวชศาสตร์</option>
+                                <option value="สูติศาสตร์-นรีเวชวิทยา">สูติศาสตร์-นรีเวชวิทยา</option>
+                                <option value="ออร์โธปิดิกส์">ออร์โธปิดิกส์</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-end">
+                            <button onclick="resetSearch()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition font-prompt flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-rotate-left"></i> รีเซ็ตตัวกรอง
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Classmates Cards Grid -->
+                <div id="classmatesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Cards populated dynamically via JavaScript -->
+                </div>
+            </div>
+
+
+            <!-- PAGE: CLASS CONNECT REGISTRATION (ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น) -->
+            <div id="viewClassConnect" class="space-y-6 hidden max-w-4xl mx-auto">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                    <h2 class="text-xl font-bold font-prompt text-siriraj-navy">ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น</h2>
+                    <p class="text-xs text-slate-500 mt-1 max-w-lg mx-auto">
+                        ระบบค้นหาและยืนยันสิทธิ์จากฐานข้อมูลด้วย เลข SAP หรือ รหัสนักศึกษา เพื่อเชื่อมโยงโปรไฟล์เข้ากับเพื่อนร่วมรุ่น
+                    </p>
+                </div>
+
+                <!-- Step 1: Verification Form -->
+                <div class="glass-card p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold font-prompt text-base text-slate-800 mb-4 border-b pb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-siriraj-navy text-white text-xs flex items-center justify-center font-mono">1</span>
+                        ค้นหาและยืนยันตัวตนในฐานข้อมูล
+                    </h3>
+
+                    <form onsubmit="handleVerifyClassmate(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">
+                                    ระบุ เลข SAP หรือ รหัสนักศึกษา <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="verifySapId" required placeholder="เช่น 10048291 หรือ 6401002" 
+                                       class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">
+                                    เลือกรุ่นการศึกษา <span class="text-red-500">*</span>
+                                </label>
+                                <select required class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none bg-white">
+                                    <option value="128">ศิริราช รุ่นที่ 128</option>
+                                    <option value="127">ศิริราช รุ่นที่ 127</option>
+                                    <option value="126">ศิริราช รุ่นที่ 126</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">ชื่อจริง (ภาษาไทย)</label>
+                                <input type="text" placeholder="ระบุชื่อจริง" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">นามสกุล (ภาษาไทย)</label>
+                                <input type="text" placeholder="ระบุนามสกุล" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-prompt font-semibold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบข้อมูลและเริ่มเชื่อมต่อ
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Verification Match Result Box (Hidden by default) -->
+                    <div id="verifyResult" class="mt-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 hidden">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-circle-check text-emerald-600 text-xl mt-0.5"></i>
+                            <div>
+                                <h4 class="font-bold text-sm text-emerald-900 font-prompt">พบบุคลากรในฐานข้อมูลศิริราช!</h4>
+                                <p class="text-xs text-emerald-800 mt-0.5">นพ. ศิริชัย วงศ์สว่าง (SAP ID: 10048291) - ศิริราชรุ่นที่ 128</p>
+                                <p class="text-xs text-slate-600 mt-2">คำขอเชื่อมต่อรุ่นได้รับการยืนยันเสร็จสมบูรณ์เรียบร้อยแล้ว</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- PAGE: USER REGISTRATION (ลงทะเบียนเข้าใช้งานระบบ) -->
+            <div id="viewRegister" class="space-y-6 hidden max-w-3xl mx-auto">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <h2 class="text-xl font-bold font-prompt text-siriraj-navy">ลงทะเบียนเข้าใช้งานระบบ (System Registration)</h2>
+                    <p class="text-xs text-slate-500 mt-1">สร้างบัญชีผู้ใช้งานใหม่โดยเลือกลักษณะวัตถุประสงค์การใช้งานระบบ</p>
+                </div>
+
+                <div class="glass-card p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                    <form onsubmit="handleUserRegister(event)" class="space-y-4">
+                        
+                        <!-- Purpose Selector -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 font-prompt mb-2">
+                                วัตถุประสงค์การใช้งานระบบ <span class="text-red-500">*</span>
+                            </label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <label class="border border-slate-300 rounded-xl p-3 flex flex-col items-center text-center cursor-pointer hover:border-siriraj-navy transition bg-white">
+                                    <input type="radio" name="purpose" value="alumni" checked class="mb-2 text-siriraj-navy">
+                                    <span class="text-xs font-bold font-prompt text-slate-800">ศิษย์เก่าแพทย์ศิริราช</span>
+                                    <span class="text-[10px] text-slate-500 mt-0.5">สำหรับศิษย์เก่าทุกรุ่น</span>
+                                </label>
+                                <label class="border border-slate-300 rounded-xl p-3 flex flex-col items-center text-center cursor-pointer hover:border-siriraj-navy transition bg-white">
+                                    <input type="radio" name="purpose" value="staff" class="mb-2 text-siriraj-navy">
+                                    <span class="text-xs font-bold font-prompt text-slate-800">บุคลากรปัจจุบัน</span>
+                                    <span class="text-[10px] text-slate-500 mt-0.5">อาจารย์ / แพทย์ประจำบ้าน</span>
+                                </label>
+                                <label class="border border-slate-300 rounded-xl p-3 flex flex-col items-center text-center cursor-pointer hover:border-siriraj-navy transition bg-white">
+                                    <input type="radio" name="purpose" value="other" class="mb-2 text-siriraj-navy">
+                                    <span class="text-xs font-bold font-prompt text-slate-800">เจ้าหน้าที่ระบบ</span>
+                                    <span class="text-[10px] text-slate-500 mt-0.5">ประสานงานคณะฯ</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- User Info -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">คำนำหน้า - ชื่อ - นามสกุล <span class="text-red-500">*</span></label>
+                                <input type="text" required placeholder="นพ. สุขุม วิทยะ" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">เลข SAP / รหัสนักศึกษา <span class="text-red-500">*</span></label>
+                                <input type="text" required placeholder="ระบุเพื่อยืนยันสิทธิ์" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">อีเมลติดต่อ (E-mail) <span class="text-red-500">*</span></label>
+                                <input type="email" required placeholder="doctor@mahidol.ac.th" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">เบอร์โทรศัพท์ <span class="text-red-500">*</span></label>
+                                <input type="tel" required placeholder="081-234-5678" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">กำหนดรหัสผ่าน <span class="text-red-500">*</span></label>
+                                <input type="password" required placeholder="อย่างน้อย 8 ตัวอักษร" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">ยืนยันรหัสผ่าน <span class="text-red-500">*</span></label>
+                                <input type="password" required placeholder="กรอกรหัสผ่านซ้ำอีกครั้ง" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            </div>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-3 bg-siriraj-navy hover:bg-siriraj-darkNavy text-white font-prompt font-semibold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> ยืนยันการลงทะเบียน
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- PAGE: CHANGE PASSWORD (เปลี่ยนรหัสผ่านผู้ใช้) -->
+            <div id="viewPassword" class="space-y-6 hidden max-w-xl mx-auto">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <h2 class="text-xl font-bold font-prompt text-siriraj-navy">เปลี่ยนรหัสผ่านผู้ใช้ (Change Password)</h2>
+                    <p class="text-xs text-slate-500 mt-1">อัปเดตรหัสผ่านใหม่เพื่อความปลอดภัยของบัญชีผู้ใช้ศิริราชเน็ตเวิร์ก</p>
+                </div>
+
+                <div class="glass-card p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
+                    <form onsubmit="handleChangePassword(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">รหัสผ่านปัจจุบัน <span class="text-red-500">*</span></label>
+                            <input type="password" required placeholder="••••••••" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">รหัสผ่านใหม่ <span class="text-red-500">*</span></label>
+                            <input type="password" id="newPass" required placeholder="••••••••" onkeyup="checkPassStrength()" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                            <div class="mt-2 flex items-center gap-2">
+                                <div class="h-1.5 flex-1 bg-slate-200 rounded-full overflow-hidden">
+                                    <div id="strengthBar" class="h-full w-0 bg-red-500 transition-all duration-300"></div>
+                                </div>
+                                <span id="strengthText" class="text-[10px] text-slate-500 font-mono">ความปลอดภัย: น้อย</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 font-prompt mb-1">ยืนยันรหัสผ่านใหม่ <span class="text-red-500">*</span></label>
+                            <input type="password" required placeholder="••••••••" class="w-full px-4 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-siriraj-navy outline-none">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-prompt font-semibold text-xs rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-lock"></i> บันทึกการเปลี่ยนรหัสผ่าน
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-siriraj-darkNavy text-slate-400 text-xs py-6 border-t border-slate-800 mt-12">
+            <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                <div class="flex items-center gap-3">
+                    <img src="image_2.png" alt="Logo" class="w-8 h-8 object-contain bg-white rounded-full p-0.5">
+                    <div>
+                        <div class="font-bold text-slate-200 font-prompt">คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล</div>
+                        <div class="text-[11px] text-slate-400">Siriraj Alumni Connection System © 2026</div>
+                    </div>
+                </div>
+                <div class="flex gap-4 text-slate-400">
+                    <a href="javascript:void(0)" class="hover:text-white transition">ข้อกำหนดการใช้งาน</a>
+                    <span>•</span>
+                    <a href="javascript:void(0)" class="hover:text-white transition">นโยบายความเป็นส่วนตัว (PDPA)</a>
+                    <span>•</span>
+                    <a href="javascript:void(0)" class="hover:text-white transition">ติดต่อผู้ดูแลระบบ</a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- SUCCESS NOTIFICATION MODAL -->
+    <div id="alertModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full text-center shadow-2xl border border-slate-100 transform scale-95 transition-all" id="alertCard">
+            <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner" id="alertIcon">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="font-bold font-prompt text-slate-800 text-base" id="alertTitle">สำเร็จ!</h3>
+            <p class="text-xs text-slate-600 mt-1" id="alertMessage">ดำเนินการทำรายการเรียบร้อยแล้ว</p>
+            <button onclick="closeAlert()" class="mt-5 w-full py-2.5 bg-siriraj-navy text-white text-xs font-prompt font-semibold rounded-xl hover:bg-siriraj-darkNavy transition">
+                ตกลง
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // Classmates Mock Data
+        const mockClassmates = [
+            { id: 1, name: "นพ. ศิริชัย วงศ์สว่าง", sap: "10048291", studentId: "6401001", batch: "128", specialty: "อายุรศาสตร์", subSpecialty: "อายุรศาสตร์หัวใจ", hospital: "โรงพยาบาลศิริราช", email: "sirichai.w@mahidol.ac.th" },
+            { id: 2, name: "พญ. ณิชาภัทร เมธากุล", sap: "10048292", studentId: "6401002", batch: "128", specialty: "กุมารเวชศาสตร์", subSpecialty: "กุมารเวชศาสตร์โรคหัวใจ", hospital: "โรงพยาบาลศิริราช ปิยมหาราชการุณย์", email: "nichapat.m@mahidol.ac.th" },
+            { id: 3, name: "นพ. กิตติศักดิ์ เจริญพร", sap: "10048293", studentId: "6401003", batch: "128", specialty: "ศัลยศาสตร์", subSpecialty: "ศัลยศาสตร์หัวใจและทรวงอก", hospital: "โรงพยาบาลจุฬาลงกรณ์", email: "kittisak.c@hospital.or.th" },
+            { id: 4, name: "พญ. ธนพร วรเวช", sap: "10048294", studentId: "6401004", batch: "128", specialty: "สูติศาสตร์-นรีเวชวิทยา", subSpecialty: "เวชศาสตร์มารดาและทารก", hospital: "โรงพยาบาลรามาธิบดี", email: "thanaporn.w@mahidol.ac.th" },
+            { id: 5, name: "นพ. ปริญญา วงศ์รัตน์", sap: "10048295", studentId: "6401005", batch: "128", specialty: "ออร์โธปิดิกส์", subSpecialty: "เวชศาสตร์การกีฬา", hospital: "โรงพยาบาลกรุงเทพ", email: "parinya.w@bangkokhospital.com" },
+            { id: 6, name: "พญ. ชลธิชา สุขเจริญ", sap: "10048296", studentId: "6401006", batch: "127", specialty: "อายุรศาสตร์", subSpecialty: "อายุรศาสตร์โรคไต", hospital: "โรงพยาบาลศิริราช", email: "chonthicha.s@mahidol.ac.th" }
+        ];
+
+        let ekgInterval = null;
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', () => {
+            renderClassmates(mockClassmates);
+        });
+
+        // Toggle Drawer Sidebar
+        function toggleDrawer() {
+            const drawer = document.getElementById('drawerSidebar');
+            const backdrop = document.getElementById('drawerBackdrop');
+            
+            if (drawer.classList.contains('-translate-x-full')) {
+                drawer.classList.remove('-translate-x-full');
+                backdrop.classList.remove('opacity-0', 'pointer-events-none');
             } else {
-                document.getElementById('txt-title1').innerText = "คณะแพทยศาสตร์ศิริราชพยาบาล มหาวิทยาลัยมหิดล";
-                document.getElementById('txt-title2').innerText = "Practical Nurse";
-                document.getElementById('lbl-username').innerText = "กรุณาใส่ชื่อผู้ใช้";
-                document.getElementById('username').placeholder = "ชื่อผู้ใช้";
-                document.getElementById('lbl-password').innerText = "รหัสผ่าน";
-                document.getElementById('password').placeholder = "รหัสผ่าน";
-                document.getElementById('btn-login-text').innerText = "ล็อกอิน";
-                document.getElementById('txt-welcome').innerText = "ยินดีต้อนรับ Practical Nurse ศิษย์เก่า SIPN74";
-                document.getElementById('txt-subwelcome').innerText = "เว็บไซต์นี้เป็นเว็บที่จัดทำขึ้นในรุ่น74 เท่านั้น เพื่อใช้งานภายใน";
-                document.getElementById('txt-comingsoon').innerHTML = '<i class="fa-solid fa-clock"></i> แล้วเจอกันเร็วๆนี้';
-                document.getElementById('btn-search').innerText = "ค้นหาเพื่อนในรุ่น";
-                document.getElementById('btn-connect').innerText = "ลงทะเบียนเพื่อเชื่อมต่อภายในรุ่น";
-                document.getElementById('btn-changepass').innerText = "เปลี่ยนรหัสผ่านผู้ใช้";
-                document.getElementById('btn-register').innerText = "ลงทะเบียนเข้าใช้งานระบบ";
+                drawer.classList.add('-translate-x-full');
+                backdrop.classList.add('opacity-0', 'pointer-events-none');
             }
+        }
+
+        // Handle Login Submission (15 Seconds EKG Loading)
+        function handleLogin(e) {
+            e.preventDefault();
+            startEKGLoader(15, "กำลังยืนยันสิทธิ์และประมวลผลสัญญาณ EKG...", () => {
+                document.getElementById('viewLogin').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('flex');
+                showView('viewDashboard');
+            });
+        }
+
+        // Navigate between views (2-3 Seconds EKG Loading)
+        function navigateTo(targetViewId) {
+            const drawer = document.getElementById('drawerSidebar');
+            if (!drawer.classList.contains('-translate-x-full')) {
+                toggleDrawer();
+            }
+
+            // Quick EKG loader (2.5 Seconds) for main page navigation
+            startEKGLoader(2.5, "กำลังสลับหน้าการใช้งาน...", () => {
+                showView(targetViewId);
+            });
+        }
+
+        // Switch View directly without loader (internal)
+        function switchView(targetViewId) {
+            if (targetViewId === 'viewLogin') {
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('flex');
+                document.getElementById('viewLogin').classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('viewLogin').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('flex');
+            showView(targetViewId);
+        }
+
+        function showView(viewId) {
+            const views = ['viewDashboard', 'viewSearch', 'viewClassConnect', 'viewRegister', 'viewPassword'];
+            views.forEach(v => {
+                const el = document.getElementById(v);
+                if (el) el.classList.add('hidden');
+            });
+
+            const activeEl = document.getElementById(viewId);
+            if (activeEl) {
+                activeEl.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Start EKG Loader with customizable timer (15s or 2-3s)
+        function startEKGLoader(seconds, statusTextStr, callback) {
+            const loader = document.getElementById('ekgLoader');
+            const pBar = document.getElementById('ekgProgressBar');
+            const percentText = document.getElementById('ekgPercent');
+            const statusText = document.getElementById('ekgStatusText');
+            const timeRemText = document.getElementById('ekgTimeRem');
+
+            if (ekgInterval) clearInterval(ekgInterval);
+
+            // Show Loader Overlay
+            loader.classList.remove('opacity-0', 'pointer-events-none');
+            pBar.style.width = '0%';
+            percentText.innerText = '0%';
+            statusText.innerText = statusTextStr;
+
+            let currentProgress = 0;
+            const updateInterval = 100; // 100ms interval
+            const totalSteps = (seconds * 1000) / updateInterval;
+            const stepIncrement = 100 / totalSteps;
+
+            let stepsCount = 0;
+
+            ekgInterval = setInterval(() => {
+                stepsCount++;
+                currentProgress += stepIncrement;
+
+                if (currentProgress >= 100) {
+                    currentProgress = 100;
+                    clearInterval(ekgInterval);
+                    
+                    pBar.style.width = '100%';
+                    percentText.innerText = '100%';
+                    timeRemText.innerText = '0s';
+
+                    setTimeout(() => {
+                        loader.classList.add('opacity-0', 'pointer-events-none');
+                        if (callback) callback();
+                    }, 400);
+                } else {
+                    pBar.style.width = `${currentProgress.toFixed(1)}%`;
+                    percentText.innerText = `${Math.round(currentProgress)}%`;
+                    
+                    const remSec = Math.ceil(seconds - (stepsCount * updateInterval / 1000));
+                    timeRemText.innerText = `${remSec}s`;
+                }
+            }, updateInterval);
+
+            // Store callback globally for fast-forward
+            window.currentEkgCallback = callback;
+        }
+
+        // Skip / Fast forward EKG Loader
+        function fastForwardEKG() {
+            if (ekgInterval) clearInterval(ekgInterval);
+            const loader = document.getElementById('ekgLoader');
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            if (window.currentEkgCallback) {
+                window.currentEkgCallback();
+            }
+        }
+
+        // Render Classmates Cards
+        function renderClassmates(data) {
+            const container = document.getElementById('classmatesGrid');
+            if (!container) return;
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
+                        <i class="fa-solid fa-user-slash text-4xl text-slate-300 mb-3"></i>
+                        <h4 class="font-bold text-slate-600 font-prompt">ไม่พบข้อมูลเพื่อนในเงื่อนไขการค้นหา</h4>
+                        <p class="text-xs text-slate-400 mt-1">ลองเปลี่ยนคำค้นหา หรือใช้เลข SAP / รหัสนักศึกษา</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.map(item => `
+                <div class="glass-card rounded-2xl p-5 border border-slate-200 hover:shadow-lg transition group">
+                    <div class="flex items-start gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-siriraj-navy text-white font-bold flex items-center justify-center font-prompt shrink-0 shadow">
+                            ${item.name.substring(0, 3)}
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <h4 class="font-bold font-prompt text-slate-800 text-sm truncate group-hover:text-siriraj-blue transition">${item.name}</h4>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-semibold font-prompt">รุ่นที่ ${item.batch}</span>
+                                <span class="text-[11px] text-slate-500 font-mono">SAP: ${item.sap}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-stethoscope text-siriraj-navy w-4 text-center"></i>
+                            <span class="truncate">${item.specialty} (${item.subSpecialty})</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-hospital text-emerald-600 w-4 text-center"></i>
+                            <span class="truncate">${item.hospital}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-slate-400 w-4 text-center"></i>
+                            <span class="truncate font-mono text-[11px]">${item.email}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex gap-2">
+                        <button onclick="showAlert('เชื่อมต่อข้อมูลเรียบร้อย', 'ส่งข้อความติดต่อ ${item.name} ผ่านระบบเรียบร้อย')" class="flex-1 py-1.5 bg-siriraj-navy hover:bg-siriraj-darkNavy text-white rounded-lg text-xs font-prompt font-semibold transition">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> ติดต่อ
+                        </button>
+                        <button onclick="showAlert('บันทึกเพื่อนเรียบร้อย', 'เพิ่ม ${item.name} ในรายการโปรดของคุณ')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-prompt transition">
+                            <i class="fa-solid fa-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Classmates
+        function filterClassmates() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const batch = document.getElementById('searchBatch').value;
+            const specialty = document.getElementById('searchSpecialty').value;
+
+            const filtered = mockClassmates.filter(item => {
+                const matchQuery = item.name.toLowerCase().includes(query) || 
+                                   item.sap.includes(query) || 
+                                   item.studentId.includes(query);
+                const matchBatch = !batch || item.batch === batch;
+                const matchSpecialty = !specialty || item.specialty === specialty;
+
+                return matchQuery && matchBatch && matchSpecialty;
+            });
+
+            renderClassmates(filtered);
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchBatch').value = '';
+            document.getElementById('searchSpecialty').value = '';
+            renderClassmates(mockClassmates);
+        }
+
+        // Handlers for forms
+        function handleVerifyClassmate(e) {
+            e.preventDefault();
+            document.getElementById('verifyResult').classList.remove('hidden');
+            showAlert("ยืนยันตัวตนสำเร็จ", "ระบบตรวจสอบพบข้อมูลในฐานข้อมูลศิริราชและทำการเชื่อมต่อรุ่นเรียบร้อยแล้ว");
+        }
+
+        function handleUserRegister(e) {
+            e.preventDefault();
+            showAlert("ลงทะเบียนเรียบร้อย", "เจ้าหน้าที่ได้รับการลงทะเบียนของคุณแล้ว ระบบจะจัดส่งรายละเอียดเข้าใช้งานทางอีเมล");
+        }
+
+        function handleChangePassword(e) {
+            e.preventDefault();
+            showAlert("เปลี่ยนรหัสผ่านสำเร็จ", "รหัสผ่านใหม่ของคุณมีผลใช้งานในระบบทันที");
+        }
+
+        function handleLogout() {
+            toggleDrawer();
+            switchView('viewLogin');
+            showAlert("ออกจากระบบแล้ว", "คุณได้ทำการออกจากระบบศิริราชเน็ตเวิร์กเรียบร้อย");
+        }
+
+        function checkPassStrength() {
+            const pass = document.getElementById('newPass').value;
+            const bar = document.getElementById('strengthBar');
+            const text = document.getElementById('strengthText');
+
+            if (pass.length === 0) {
+                bar.style.width = '0%';
+                bar.className = 'h-full w-0 bg-red-500 transition-all duration-300';
+                text.innerText = 'ความปลอดภัย: น้อย';
+            } else if (pass.length < 6) {
+                bar.style.width = '30%';
+                bar.className = 'h-full bg-red-500 transition-all duration-300';
+                text.innerText = 'ความปลอดภัย: น้อย';
+            } else if (pass.length < 10) {
+                bar.style.width = '65%';
+                bar.className = 'h-full bg-amber-500 transition-all duration-300';
+                text.innerText = 'ความปลอดภัย: ปานกลาง';
+            } else {
+                bar.style.width = '100%';
+                bar.className = 'h-full bg-emerald-500 transition-all duration-300';
+                text.innerText = 'ความปลอดภัย: สูงมาก';
+            }
+        }
+
+        // Alert Modal Helper
+        function showAlert(title, message) {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            
+            const modal = document.getElementById('alertModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeAlert() {
+            const modal = document.getElementById('alertModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
         }
     </script>
 </body>
