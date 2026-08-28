@@ -31,7 +31,6 @@
             -webkit-print-color-adjust: exact;
         }
 
-        /* 🔘 ปุ่มกดโหลดด้านนอกกรอบ */
         .external-actions {
             width: 100%;
             max-width: 800px;
@@ -72,7 +71,6 @@
             background-color: #333333;
         }
 
-        /* 📱 Wrapper สำหรับแสดงผลบนมือถือ */
         .preview-wrapper {
             width: 100%;
             padding: 16px 8px;
@@ -81,22 +79,20 @@
             overflow-x: auto;
         }
 
-        /* 📄 ขนาดกระดาษ A5 แนวนอนจริง */
         .receipt-container {
             width: 210mm;
             height: 148mm;
             background-color: #ffffff;
-            padding: 6mm 8mm;
+            padding: 8mm 10mm;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             border-radius: 2px;
             font-size: 8.5pt;
-            line-height: 1.15;
+            line-height: 1.45; /* เพิ่มระยะห่างบรรทัดให้โปร่งขึ้น */
             position: relative;
             flex-shrink: 0;
             overflow: hidden;
         }
 
-        /* 💦 ลายน้ำ (Watermark) ทั่วกระดาษ */
         .watermark-bg {
             position: absolute;
             top: -20%;
@@ -133,7 +129,6 @@
             justify-content: space-between;
         }
 
-        /* 📲 Responsive: ย่อให้พอดีหน้าจอมือถืออัตโนมัติ */
         @media screen and (max-width: 768px) {
             .preview-wrapper {
                 padding: 8px 0;
@@ -152,12 +147,11 @@
             }
         }
 
-        /* Layout & Table Styling (ขาว-ดำ เป็นหลัก) */
         .header-container {
             width: 100%;
             border-bottom: 2px solid #000000;
-            padding-bottom: 3px;
-            margin-bottom: 4px;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .top-table {
@@ -165,48 +159,48 @@
             border-collapse: collapse;
         }
 
-        .dept-title-th { font-size: 13pt; font-weight: 700; color: #000000; letter-spacing: 0.5px; }
-        .dept-title-en { font-size: 8pt; font-weight: 600; color: #000000; letter-spacing: 0.8px; text-transform: uppercase; }
-        .doc-title-th { font-size: 13pt; font-weight: 700; text-align: right; color: #000000; }
-        .doc-title-en { font-size: 8pt; font-weight: 600; text-align: right; color: #000000; text-transform: uppercase; }
+        .dept-title-th { font-size: 13pt; font-weight: 700; color: #000000; letter-spacing: 0.5px; line-height: 1.3; }
+        .dept-title-en { font-size: 8pt; font-weight: 600; color: #000000; letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
+        .doc-title-th { font-size: 13pt; font-weight: 700; text-align: right; color: #000000; line-height: 1.3; }
+        .doc-title-en { font-size: 8pt; font-weight: 600; text-align: right; color: #000000; text-transform: uppercase; margin-top: 2px; }
 
         .patient-box {
             width: 100%;
             border: 1px solid #000000;
-            padding: 4px 6px;
-            margin-bottom: 4px;
+            padding: 6px 10px;
+            margin-bottom: 8px;
             background-color: #ffffff;
         }
 
         .info-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
-        .info-table td { padding: 1px 2px; vertical-align: middle; }
+        .info-table td { padding: 3px 4px; vertical-align: middle; }
         .label { font-weight: 600; color: #000000; }
         .val-highlight { font-weight: 700; font-size: 9.5pt; color: #000000; }
         
         .barcode-container { text-align: right; vertical-align: middle; }
         svg.barcode { height: 22px; width: 115px; }
 
-        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
         .items-table th {
             border-top: 1.5px solid #000000;
             border-bottom: 1.5px solid #000000;
             background-color: #ffffff;
-            padding: 3px 4px;
+            padding: 5px 6px;
             font-size: 8pt;
             font-weight: 700;
             color: #000000;
             text-align: left;
         }
-        .items-table td { padding: 2px 4px; border-bottom: 1px dashed #666666; font-size: 8pt; color: #000000; }
+        .items-table td { padding: 4px 6px; border-bottom: 1px dashed #666666; font-size: 8pt; color: #000000; }
         .code-col { font-family: 'Courier New', Courier, monospace; font-size: 7.5pt; color: #000000; }
         .desc-th { font-weight: 600; color: #000000; display: inline-block; }
-        .desc-en { color: #333333; font-size: 7pt; margin-left: 4px; display: inline-block; }
+        .desc-en { color: #333333; font-size: 7.5pt; margin-left: 6px; display: inline-block; }
 
         .text-right { text-align: right; }
         .text-center { text-align: center; }
 
-        .summary-table { width: 100%; border-collapse: collapse; margin-top: 1px; }
-        .summary-table td { padding: 3px 4px; }
+        .summary-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+        .summary-table td { padding: 5px 6px; }
         .grand-total {
             border-top: 1.5px solid #000000;
             border-bottom: 2px double #000000;
@@ -215,18 +209,18 @@
             background-color: #ffffff;
         }
 
-        .footer-table { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 7.5pt; }
-        .footer-table td { vertical-align: bottom; }
+        .footer-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 7.5pt; }
+        .footer-table td { vertical-align: bottom; padding: 2px 0; }
         .sig-box { text-align: center; width: 150px; float: right; }
-        .sig-line { border-bottom: 1px solid #000000; height: 16px; margin-bottom: 2px; }
+        .sig-line { border-bottom: 1px solid #000000; height: 18px; margin-bottom: 4px; }
         
         .remark-box {
             font-size: 7.5pt;
             color: #000000;
-            line-height: 1.2;
+            line-height: 1.4;
             border-top: 1px solid #000000;
-            padding-top: 3px;
-            margin-top: 3px;
+            padding-top: 5px;
+            margin-top: 6px;
         }
         .dispense-notice {
             font-weight: 700;
@@ -234,7 +228,6 @@
             text-decoration: underline;
         }
 
-        /* Style สำหรับการพิมพ์ */
         @media print {
             body { background: none; }
             .external-actions { display: none !important; }
@@ -251,7 +244,6 @@
 </head>
 <body>
 
-    <!-- 🔘 ปุ่มกดโหลดด้านนอก -->
     <div class="external-actions">
         <div class="action-title">ตัวอย่างใบเสร็จรับเงิน (Preview)</div>
         <button class="btn-download" onclick="window.print()">
@@ -263,11 +255,9 @@
         </button>
     </div>
 
-    <!-- 📲 ตัวอย่างแสดงบนหน้าจอ -->
     <div class="preview-wrapper">
         <div class="receipt-container">
             
-            <!-- 💦 ลายน้ำภาษาอังกฤษกระจายทั่วกระดาษ -->
             <div class="watermark-bg">
                 <div class="watermark-row"><span>ACCIDENT & EMERGENCY</span><span>ACCIDENT & EMERGENCY</span><span>ACCIDENT & EMERGENCY</span></div>
                 <div class="watermark-row"><span>ACCIDENT & EMERGENCY</span><span>ACCIDENT & EMERGENCY</span><span>ACCIDENT & EMERGENCY</span></div>
@@ -309,7 +299,7 @@
                             </tr>
                             <tr>
                                 <td><span class="label">ประเภท:</span> ผู้ป่วยนอก / ชำระเงินเอง (Self-Pay)</td>
-                                <td><span class="label">วันที่:</span> 28/08/2569 15:28 น.</td>
+                                <td><span class="label">วันที่:</span> 28/08/2569 08:31 น.</td>
                                 <td class="text-right" style="font-size: 7.5pt;"><strong>เลขที่:</strong> REC6708-9412</td>
                             </tr>
                         </table>
@@ -382,7 +372,7 @@
                     <!-- Summary Table -->
                     <table class="summary-table">
                         <tr class="grand-total">
-                            <td width="55%" style="font-size: 8.5pt;"><strong>ตัวอักษร:</strong> (สามพันแปดร้อยยี่สิบบาทถ้วน)</td>
+                            <td width="55%" style="font-size: 8.5pt;">(สามพันแปดร้อยยี่สิบบาทถ้วน)</td>
                             <td width="25%" class="text-right"><strong>รวมเงินทั้งสิ้น (TOTAL):</strong></td>
                             <td width="20%" class="text-right" style="font-size: 9.5pt;">3,820.00 THB</td>
                         </tr>
@@ -394,7 +384,7 @@
                     <table class="footer-table">
                         <tr>
                             <td width="60%">
-                                <div style="font-size: 7pt;">
+                                <div style="font-size: 7.5pt; line-height: 1.4;">
                                     * ใบเสร็จรับเงินฉบับนี้จะสมบูรณ์ต่อเมื่อมีลายมือชื่อเจ้าหน้าที่ผู้รับเงินสมบูรณ์<br>
                                     <strong>สถานะการชำระเงิน:</strong> [ X ] ชำระเงินเรียบร้อยแล้ว (PAID)
                                 </div>
@@ -403,7 +393,7 @@
                                 <div class="sig-box">
                                     <div class="sig-line"></div>
                                     <div style="font-weight: 600;">( เจ้าหน้าที่การเงิน / Cashier )</div>
-                                    <div style="font-size: 7pt;">ผู้รับเงิน / Collector</div>
+                                    <div style="font-size: 7.5pt; margin-top: 2px;">ผู้รับเงิน / Collector</div>
                                 </div>
                             </td>
                         </tr>
