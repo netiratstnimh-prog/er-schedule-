@@ -2,139 +2,244 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบร้องขอการโอนเงิน (Money Request)</title>
-    <!-- Tailwind CSS สำหรับตกแต่ง UI -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Library สำหรับเจน PromptPay QR Code -->
-    <script src="https://cdn.jsdelivr.net/npm/promptpay-qr@0.5.0/site/promptpay-qr.min.js"></script>
-    <!-- Library สำหรับสร้างภาพ QR Code -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <title>Medical Receipt / ใบเสร็จรับเงิน</title>
+    <style>
+        @page {
+            size: A5 landscape;
+            margin: 10mm;
+            background-color: #ffffff;
+        }
+        
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', 'Tohoma', sans-serif;
+            color: #2b2b2b;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+            line-height: 1.4;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #1a365d;
+            padding-bottom: 10px;
+        }
+
+        .title-main {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1a365d;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .title-sub {
+            font-size: 12pt;
+            font-weight: bold;
+            color: #4a5568;
+            margin: 0;
+        }
+
+        .info-box {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+
+        .info-box td {
+            padding: 8px 12px;
+            font-size: 9.5pt;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .items-table th {
+            background-color: #2b6cb0;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: left;
+            padding: 6px 10px;
+            font-size: 9pt;
+            text-transform: uppercase;
+        }
+
+        .items-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 9pt;
+        }
+
+        .items-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        .total-row td {
+            font-weight: bold;
+            background-color: #edf2f7;
+            border-top: 2px solid #cbd5e0;
+            border-bottom: 2px solid #cbd5e0;
+            font-size: 10pt;
+            color: #1a365d;
+        }
+
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background-color: #c6f6d5;
+            color: #22543d;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid #9ae6b4;
+            font-size: 9pt;
+        }
+
+        .signature-box {
+            text-align: center;
+            width: 200px;
+            float: right;
+        }
+
+        .signature-line {
+            border-bottom: 1px dashed #a0aec0;
+            margin-bottom: 5px;
+            height: 30px;
+        }
+
+        .desc-th { font-weight: 600; color: #2d3748; }
+        .desc-en { font-size: 8pt; color: #718096; }
+    </style>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<body>
 
-    <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8 max-w-md w-full">
-        <!-- หน้าจอที่ 1: ฟอร์มสร้างคำขอ -->
-        <div id="create-section">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">💸 สร้างคำขอโอนเงิน</h2>
-            <form id="request-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">เบอร์พร้อมเพย์ / เลขบัตรประชาชน</label>
-                    <input type="text" id="pp-id" placeholder="08XXXXXXXX" required 
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+    <table class="header-table">
+        <tr>
+            <td>
+                <div class="title-main">Accident & Emergency Center</div>
+                <div class="title-sub">ศูนย์อุบัติเหตุ</div>
+            </td>
+            <td class="text-right" style="vertical-align: bottom;">
+                <div style="font-size: 14pt; font-weight: bold; color: #2b6cb0;">RECEIPT / MEDICAL BILL</div>
+                <div style="font-size: 10pt; color: #718096;">ใบเสร็จรับเงิน / รายการค่าใช้จ่าย</div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="info-box">
+        <tr>
+            <td width="50%">
+                <span class="info-label">HN (เลขประจำตัวผู้ป่วย):</span> 18004-65171
+            </td>
+            <td width="50%" class="text-right">
+                <span class="info-label">Date / วันที่:</span> 28 August 2026 / 28 สิงหาคม 2569
+            </td>
+        </tr>
+    </table>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th width="8%" class="text-center">#</th>
+                <th width="67%">Description / รายการค่าใช้จ่าย</th>
+                <th width="25%" class="text-right">Amount (THB / บาท)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center">1</td>
+                <td>
+                    <div class="desc-th">ค่าบริการโรงพยาบาล (ผู้ป่วยนอก)</div>
+                    <div class="desc-en">Outpatient Hospital Service Fee</div>
+                </td>
+                <td class="text-right">300.00</td>
+            </tr>
+            <tr>
+                <td class="text-center">2</td>
+                <td>
+                    <div class="desc-th">ค่าตรวจวินิจฉัยและปรึกษาแพทย์</div>
+                    <div class="desc-en">Professional Doctor Fee</div>
+                </td>
+                <td class="text-right">500.00</td>
+            </tr>
+            <tr>
+                <td class="text-center">3</td>
+                <td>
+                    <div class="desc-th">ค่าหัตถการเย็บแผล (รวมยาชา อุปกรณ์ และห้องหัตถการ)</div>
+                    <div class="desc-en">Wound Suturing Procedure (incl. Anesthetics & Supplies)</div>
+                </td>
+                <td class="text-right">1,200.00</td>
+            </tr>
+            <tr>
+                <td class="text-center">4</td>
+                <td>
+                    <div class="desc-th">ค่าทำแผล / ล้างแผล</div>
+                    <div class="desc-en">Wound Dressing / Cleaning Fee</div>
+                </td>
+                <td class="text-right">350.00</td>
+            </tr>
+            <tr>
+                <td class="text-center">5</td>
+                <td>
+                    <div class="desc-th">ยาทาแผลภายนอก (ยาฆ่าเชื้อ)</div>
+                    <div class="desc-en">Topical Antibiotic Ointment</div>
+                </td>
+                <td class="text-right">220.00</td>
+            </tr>
+            <tr>
+                <td class="text-center">6</td>
+                <td>
+                    <div class="desc-th">เวชภัณฑ์และอุปกรณ์ทำแผลกลับบ้าน</div>
+                    <div class="desc-en">Medical Supplies & Home Care Dressing Kit</div>
+                </td>
+                <td class="text-right">180.00</td>
+            </tr>
+            <tr class="total-row">
+                <td colspan="2" class="text-right">TOTAL AMOUNT DUE / รวมเงินทั้งสิ้น</td>
+                <td class="text-right">2,750.00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="footer-table">
+        <tr>
+            <td style="vertical-align: middle;">
+                <span class="info-label">Status / สถานะ:</span> 
+                <span class="status-badge">PAID / ชำระเงินเรียบร้อยแล้ว</span>
+            </td>
+            <td class="text-right">
+                <div class="signature-box">
+                    <div class="signature-line"></div>
+                    <div style="font-size: 8pt; color: #718096;">Authorized Cashier / เจ้าหน้าที่ผู้รับเงิน</div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">จำนวนเงิน (บาท)</label>
-                    <input type="number" step="0.01" id="amount" placeholder="0.00" required 
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">หมายเหตุ (ระบุหรือไม่ก็ได้)</label>
-                    <input type="text" id="note" placeholder="ค่าอาหาร, ค่าสินค้า" 
-                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                </div>
-                <button type="submit" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition duration-200">
-                    สร้างลิงก์ชำระเงิน
-                </button>
-            </form>
-        </div>
+            </td>
+        </tr>
+    </table>
 
-        <!-- หน้าจอที่ 2: แสดง QR Code และการชำระเงิน -->
-        <div id="payment-section" class="hidden text-center space-y-4">
-            <h2 class="text-xl font-bold text-gray-800">รายการร้องขอการโอนเงิน</h2>
-            <p id="display-note" class="text-sm text-gray-500 font-medium"></p>
-            
-            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                <span class="text-sm text-gray-600">ยอดที่ต้องชำระ</span>
-                <div class="text-3xl font-extrabold text-blue-600 mt-1">
-                    ฿<span id="display-amount">0.00</span>
-                </div>
-            </div>
-
-            <!-- แสดง QR Code -->
-            <div class="flex justify-center my-4">
-                <canvas id="qr-canvas" class="border p-2 rounded-lg bg-white shadow-sm"></canvas>
-            </div>
-
-            <p class="text-xs text-gray-400">สแกน QR Code ด้วยแอปธนาคารใดก็ได้เพื่อโอนเงิน</p>
-
-            <div class="pt-4 border-t flex gap-2">
-                <button id="copy-btn" onclick="copyShareLink()" 
-                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2 rounded-lg transition">
-                    📋 คัดลอกลิงก์
-                </button>
-                <button onclick="resetForm()" 
-                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium py-2 rounded-lg transition">
-                    ➕ สร้างรายการใหม่
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const form = document.getElementById('request-form');
-        const createSection = document.getElementById('create-section');
-        const paymentSection = document.getElementById('payment-section');
-
-        // อ่านข้อมูลจาก URL Parameters (ถ้ามีผู้กดเปิดผ่านลิงก์แชร์)
-        window.onload = function() {
-            const params = new URLSearchParams(window.location.search);
-            const target = params.get('target');
-            const amount = params.get('amount');
-            const note = params.get('note');
-
-            if (target && amount) {
-                renderPaymentView(target, amount, note);
-            }
-        };
-
-        // เมื่อกด Submit ฟอร์มสร้างคำขอ
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const target = document.getElementById('pp-id').value;
-            const amount = document.getElementById('amount').value;
-            const note = document.getElementById('note').value;
-
-            // อัปเดต URL Param โดยไม่ Reload หน้า
-            const newUrl = `${window.location.pathname}?target=${encodeURIComponent(target)}&amount=${encodeURIComponent(amount)}&note=${encodeURIComponent(note)}`;
-            window.history.pushState({path: newUrl}, '', newUrl);
-
-            renderPaymentView(target, amount, note);
-        });
-
-        // แสดงหน้า QR Code ชำระเงิน
-        function renderPaymentView(target, amount, note) {
-            createSection.classList.add('hidden');
-            paymentSection.classList.remove('hidden');
-
-            document.getElementById('display-amount').textContent = parseFloat(amount).toLocaleString('th-TH', {minimumFractionDigits: 2});
-            document.getElementById('display-note').textContent = note ? `(หมายเหตุ: ${note})` : '';
-
-            // สร้าง Payload PromptPay
-            const payload = promptpayQr(target, { amount: parseFloat(amount) });
-
-            // วาด QR Code บน Canvas
-            QRCode.toCanvas(document.getElementById('qr-canvas'), payload, { width: 220 }, function (error) {
-                if (error) console.error(error);
-            });
-        }
-
-        // คัดลอกลิงก์ส่งให้เพื่อน
-        function copyShareLink() {
-            navigator.clipboard.writeText(window.location.href);
-            const btn = document.getElementById('copy-btn');
-            btn.textContent = '✅ คัดลอกเรียบร้อย!';
-            setTimeout(() => { btn.textContent = '📋 คัดลอกลิงก์'; }, 2000);
-        }
-
-        // กลับไปหน้าสร้างคำขอใหม่
-        function resetForm() {
-            window.history.pushState({path: window.location.pathname}, '', window.location.pathname);
-            paymentSection.classList.add('hidden');
-            createSection.classList.remove('hidden');
-            form.reset();
-        }
-    </script>
 </body>
 </html>
