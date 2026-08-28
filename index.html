@@ -308,48 +308,48 @@
                                 <td class="code-col">DF001</td>
                                 <td><span class="desc-th">ค่าบริการโรงพยาบาล (ผู้ป่วยนอก)</span><span class="desc-en">Hospital Service Fee (OPD)</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">300.00</td>
-                                <td class="text-right">300.00</td>
+                                <td class="text-right">500.00</td>
+                                <td class="text-right">500.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">2</td>
                                 <td class="code-col">DOC02</td>
                                 <td><span class="desc-th">ค่าตรวจวินิจฉัยและปรึกษาแพทย์เฉพาะทาง</span><span class="desc-en">Professional Doctor Fee</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">500.00</td>
-                                <td class="text-right">500.00</td>
+                                <td class="text-right">1,000.00</td>
+                                <td class="text-right">1,000.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">3</td>
                                 <td class="code-col">OR104</td>
                                 <td><span class="desc-th">ค่าหัตถการเย็บแผล (รวมยาชา อุปกรณ์ และห้องหัตถการ)</span><span class="desc-en">Wound Suturing</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">1,500.00</td>
-                                <td class="text-right">1,500.00</td>
+                                <td class="text-right">2,500.00</td>
+                                <td class="text-right">2,500.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">4</td>
                                 <td class="code-col">NS021</td>
                                 <td><span class="desc-th">ค่าทำแผล / ล้างทำความสะอาดแผล</span><span class="desc-en">Wound Cleaning & Dressing</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">350.00</td>
-                                <td class="text-right">350.00</td>
+                                <td class="text-right">480.00</td>
+                                <td class="text-right">480.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">5</td>
                                 <td class="code-col">XR001</td>
                                 <td><span class="desc-th">ค่าเอกซเรย์ทั่วไป (X-Ray 1 ฟิล์ม)</span><span class="desc-en">General X-Ray Fee (1 View)</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">800.00</td>
-                                <td class="text-right">800.00</td>
+                                <td class="text-right">1,200.00</td>
+                                <td class="text-right">1,200.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">6</td>
                                 <td class="code-col">SUP05</td>
                                 <td><span class="desc-th">ชุดอุปกรณ์ทำแผลกลับบ้าน</span><span class="desc-en">Sterile Dressing Kit</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">240.00</td>
-                                <td class="text-right">240.00</td>
+                                <td class="text-right">500.00</td>
+                                <td class="text-right">500.00</td>
                             </tr>
                         </tbody>
                     </table>
@@ -357,9 +357,9 @@
                     <!-- Summary Table -->
                     <table class="summary-table">
                         <tr class="grand-total">
-                            <td width="55%" style="font-size: 8.5pt;">(สามพันหกร้อยเก้าสิบบาทถ้วน)</td>
+                            <td width="55%" style="font-size: 8.5pt;">(หกพันหนึ่งร้อยแปดสิบบาทถ้วน)</td>
                             <td width="25%" class="text-right"><strong>รวมเงินทั้งสิ้น (TOTAL):</strong></td>
-                            <td width="20%" class="text-right" style="font-size: 9.5pt;">3,690.00 THB</td>
+                            <td width="20%" class="text-right" style="font-size: 9.5pt;">6,180.00 THB</td>
                         </tr>
                     </table>
                 </div>
@@ -409,15 +409,14 @@
         function downloadPDF() {
             const element = document.getElementById('receipt-content');
             
-            // ตั้งค่าป้องกันตัวอักษรตัดขาด และจัดหน้า A5 แนวนอน
             const opt = {
                 margin:       [4, 4, 4, 4],
-                filename:     'Receipt_3690.pdf',
+                filename:     'Receipt_6180.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { 
                     scale: 2, 
                     useCORS: true,
-                    letterRendering: true, // ป้องกันอักษรตัดขาด
+                    letterRendering: true,
                     scrollX: 0,
                     scrollY: 0
                 },
