@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ใบเสร็จรับเงิน / Official Receipt</title>
-    <!-- ไลบรารีสำหรับแปลง HTML เป็นไฟล์ PDF ดาวน์โหลดได้จริง -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <style>
@@ -77,7 +76,7 @@
             padding: 20px;
             display: flex;
             justify-content: center;
-            overflow: auto; /* รองรับการซูมและเลื่อนหน้าจอบนมือถือ */
+            overflow: auto;
         }
 
         .receipt-container {
@@ -285,7 +284,7 @@
                             </tr>
                             <tr>
                                 <td><span class="label">ประเภท:</span> ผู้ป่วยนอก / ชำระเงินเอง (Self-Pay)</td>
-                                <td><span class="label">วันที่:</span> 28/08/2569 08:31 น.</td>
+                                <td><span class="label">วันที่:</span> 28/08/2569 08:37 น.</td>
                                 <td class="text-right" style="font-size: 7.5pt;"><strong>เลขที่:</strong> REC6708-9412</td>
                             </tr>
                         </table>
@@ -317,40 +316,40 @@
                                 <td class="code-col">DOC02</td>
                                 <td><span class="desc-th">ค่าตรวจวินิจฉัยและปรึกษาแพทย์เฉพาะทาง</span><span class="desc-en">Professional Doctor Fee</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">600.00</td>
-                                <td class="text-right">600.00</td>
+                                <td class="text-right">500.00</td>
+                                <td class="text-right">500.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">3</td>
                                 <td class="code-col">OR104</td>
                                 <td><span class="desc-th">ค่าหัตถการเย็บแผล (รวมยาชา อุปกรณ์ และห้องหัตถการ)</span><span class="desc-en">Wound Suturing</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">1,800.00</td>
-                                <td class="text-right">1,800.00</td>
+                                <td class="text-right">1,500.00</td>
+                                <td class="text-right">1,500.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">4</td>
                                 <td class="code-col">NS021</td>
                                 <td><span class="desc-th">ค่าทำแผล / ล้างทำความสะอาดแผล</span><span class="desc-en">Wound Cleaning & Dressing</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">450.00</td>
-                                <td class="text-right">450.00</td>
+                                <td class="text-right">350.00</td>
+                                <td class="text-right">350.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">5</td>
                                 <td class="code-col">XR001</td>
                                 <td><span class="desc-th">ค่าเอกซเรย์ทั่วไป (X-Ray 1 ฟิล์ม)</span><span class="desc-en">General X-Ray Fee (1 View)</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">850.00</td>
-                                <td class="text-right">850.00</td>
+                                <td class="text-right">800.00</td>
+                                <td class="text-right">800.00</td>
                             </tr>
                             <tr>
                                 <td class="text-center">6</td>
                                 <td class="code-col">SUP05</td>
                                 <td><span class="desc-th">ชุดอุปกรณ์ทำแผลกลับบ้าน</span><span class="desc-en">Sterile Dressing Kit</span></td>
                                 <td class="text-center">1</td>
-                                <td class="text-right">250.00</td>
-                                <td class="text-right">250.00</td>
+                                <td class="text-right">240.00</td>
+                                <td class="text-right">240.00</td>
                             </tr>
                         </tbody>
                     </table>
@@ -358,9 +357,9 @@
                     <!-- Summary Table -->
                     <table class="summary-table">
                         <tr class="grand-total">
-                            <td width="55%" style="font-size: 8.5pt;">(สี่พันสองร้อยห้าสิบบาทถ้วน)</td>
+                            <td width="55%" style="font-size: 8.5pt;">(สามพันหกร้อยเก้าสิบบาทถ้วน)</td>
                             <td width="25%" class="text-right"><strong>รวมเงินทั้งสิ้น (TOTAL):</strong></td>
-                            <td width="20%" class="text-right" style="font-size: 9.5pt;">4,250.00 THB</td>
+                            <td width="20%" class="text-right" style="font-size: 9.5pt;">3,690.00 THB</td>
                         </tr>
                     </table>
                 </div>
@@ -401,20 +400,27 @@
                     format: "CODE128",
                     width: 1.2,
                     height: 22,
-                    displayValue: false, // ปิดการแสดงตัวเลขล่างบาร์โค้ด
+                    displayValue: false,
                     margin: 0
                 });
             } catch(e) {}
         };
 
-        // ฟังก์ชั่นสำหรับสร้างและบันทึกไฟล์ PDF จริง
         function downloadPDF() {
             const element = document.getElementById('receipt-content');
+            
+            // ตั้งค่าป้องกันตัวอักษรตัดขาด และจัดหน้า A5 แนวนอน
             const opt = {
-                margin:       [4, 6, 4, 6],
-                filename:     'Receipt_18004-65171.pdf',
+                margin:       [4, 4, 4, 4],
+                filename:     'Receipt_3690.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true,
+                    letterRendering: true, // ป้องกันอักษรตัดขาด
+                    scrollX: 0,
+                    scrollY: 0
+                },
                 jsPDF:        { unit: 'mm', format: 'a5', orientation: 'landscape' }
             };
 
