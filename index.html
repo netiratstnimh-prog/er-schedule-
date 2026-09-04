@@ -8,91 +8,117 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf.js สำหรับสร้าง PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Google Font (Courier Prime สำหรับสไตล์สลิป & Sarabun) -->
+    <!-- html2pdf.js & html2canvas for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- JsBarcode Library สำหรับสร้างบาร์โค้ดที่สแกนได้จริง -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Sarabun', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #0f172a;
+            color: #f8fafc;
         }
 
-        /* สำหรับแต่งทรงกระดาษสลิป ATM (80mm Thermal Receipt Style) */
-        .slip-paper {
-            width: 80mm;
-            min-height: 120mm;
-            padding: 8mm 6mm;
+        /* ทรงกระดาษสลิป Thermal 80mm */
+        .slip-container {
+            width: 300px;
             background: #ffffff;
+            color: #0f172a;
             font-family: 'Courier Prime', 'Sarabun', monospace;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            position: relative;
+            padding: 18px 14px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            margin: auto;
         }
 
-        /* เอฟเฟกต์รอยหยักก้นสลิป */
-        .slip-zigzag {
-            background: radial-gradient(circle, transparent, transparent 50%, #ffffff 50%, #ffffff 100%);
-            background-size: 10px 10px;
+        /* เอฟเฟกต์ไฟสแกนเนอร์วิ่ง */
+        .scanner-line {
+            width: 100%;
+            height: 3px;
+            background: #06b6d4;
+            box-shadow: 0 0 12px #06b6d4, 0 0 20px #06b6d4;
+            position: absolute;
+            animation: scan 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 95%; }
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 pb-10">
+<body class="min-h-screen pb-10">
 
-    <!-- Header Navigation -->
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30">
         <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-receipt text-amber-400 text-2xl"></i>
-                <h1 class="text-lg font-bold tracking-wide">Expense Slip Generator</h1>
+                <i class="fa-solid fa-print text-cyan-400 text-2xl"></i>
+                <h1 class="text-lg font-bold tracking-wide">Slip Printer & Scanner System</h1>
             </div>
             <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-300 border border-slate-700">
-                <i class="fa-regular fa-clock mr-1 text-amber-400"></i> <span id="current-date"></span>
+                <i class="fa-solid fa-circle-dot text-emerald-400 mr-1 animate-pulse"></i> พร้อมใช้งาน
             </div>
         </div>
     </header>
 
     <!-- Main Dashboard -->
-    <main class="max-w-5xl mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+    <main class="max-w-5xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- ฝั่งซ้าย: ฟอร์มป้อนข้อมูล & ตารางสรุป (7 Cols) -->
-        <div class="md:col-span-7 space-y-6">
+        <!-- ฝั่งซ้าย: ฟอร์มกรอกข้อมูล & ตั้งค่าสลิป (7 Cols) -->
+        <div class="lg:col-span-7 space-y-6">
 
-            <!-- Card 1: ฟอร์มเพิ่มรายการ -->
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-pen text-amber-500"></i> บันทึกรายการค่าใช้จ่าย
+            <!-- Card 1: ตั้งค่าหัวข้อสลิปสดๆ -->
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                <h2 class="text-sm font-bold text-cyan-400 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i> ตั้งค่าข้อมูลหัวสลิป (Header)
                 </h2>
-                <form id="expense-form" onsubmit="addItem(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">ชื่อใบเสร็จ / หัวข้อ</label>
+                        <input type="text" id="input-slip-title" value="RECEIPT / SLIP" oninput="updateSlipHeader()" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">วันที่ / เวลา</label>
+                        <input type="text" id="input-slip-date" placeholder="ปล่อยว่างไว้เพื่อใช้วันที่ปัจจุบัน" oninput="updateSlipHeader()" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: ฟอร์มเพิ่มรายการ -->
+            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
+                <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-cart-plus text-cyan-400"></i> เพิ่มรายการค่าใช้จ่าย
+                </h2>
+                <form id="expense-form" onsubmit="addItem(event)" class="space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div class="sm:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">รายละเอียดรายการ</label>
-                            <input type="text" id="item-title" required placeholder="เช่น ค่ากาแฟ, ค่าถอนเงิน, ค่าเดินทาง" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-slate-800 outline-none">
+                            <label class="block text-xs text-slate-400 mb-1">รายการ</label>
+                            <input type="text" id="item-title" required placeholder="เช่น ค่าอาหาร, ค่าบริการ" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">จำนวนเงิน (บาท)</label>
-                            <input type="number" id="item-amount" step="0.01" min="0.01" required placeholder="0.00" class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-slate-800 outline-none">
+                            <label class="block text-xs text-slate-400 mb-1">จำนวนเงิน (บาท)</label>
+                            <input type="number" id="item-amount" step="0.01" min="0.01" required placeholder="0.00" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
                         </div>
                     </div>
-
-                    <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-lg shadow transition-all flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-plus text-xs"></i> เพิ่มรายการ
+                    <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-sm rounded-lg transition-all flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> บันทึกรายการ
                     </button>
                 </form>
             </div>
 
-            <!-- Card 2: ตารางรายการที่บันทึก -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-3.5 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-                    <h3 class="font-bold text-sm text-slate-700">รายการทั้งหมด</h3>
-                    <button onclick="clearAllItems()" class="text-xs text-rose-600 hover:underline flex items-center gap-1">
-                        <i class="fa-solid fa-trash-can"></i> ล้างข้อมูล
-                    </button>
+            <!-- Card 3: ตารางรายการที่เพิ่มไว้ -->
+            <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+                <div class="p-3.5 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+                    <h3 class="font-bold text-sm text-slate-200">รายการทั้งหมด</h3>
+                    <button onclick="clearAllItems()" class="text-xs text-rose-400 hover:underline">ล้างข้อมูล</button>
                 </div>
-
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-600">
-                        <thead class="bg-slate-100 text-slate-500 uppercase text-xs">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/50 text-slate-400 text-xs">
                             <tr>
                                 <th class="p-3 pl-4">#</th>
                                 <th class="p-3">รายการ</th>
@@ -100,73 +126,68 @@
                                 <th class="p-3 text-center">จัดการ</th>
                             </tr>
                         </thead>
-                        <tbody id="expense-table-body" class="divide-y divide-slate-100">
-                            <!-- รายการสร้างผ่าน JS -->
+                        <tbody id="expense-table-body" class="divide-y divide-slate-700/50">
+                            <!-- JS Render -->
                         </tbody>
                     </table>
                 </div>
-
-                <!-- สรุปยอดรวมด้านล่างสุด -->
-                <div class="p-4 bg-slate-900 text-white flex justify-between items-center">
-                    <span class="font-medium text-sm text-slate-300">ยอดรวมทั้งสิ้น:</span>
-                    <span id="grand-total" class="font-bold text-amber-400 text-xl">0.00 ฿</span>
+                <div class="p-4 bg-slate-900 flex justify-between items-center">
+                    <span class="text-sm font-medium text-slate-400">ยอดรวมสุทธิ:</span>
+                    <span id="grand-total" class="font-bold text-cyan-400 text-xl">0.00 ฿</span>
                 </div>
             </div>
 
         </div>
 
-        <!-- ฝั่งขวา: พรีวิวสลิป ATM / ใบเสร็จ & ปุ่มดาวน์โหลด (5 Cols) -->
-        <div class="md:col-span-5 flex flex-col items-center space-y-4">
+        <!-- ฝั่งขวา: ตัวอย่างสลิปที่จะพิมพ์ (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col items-center space-y-4">
 
-            <!-- ปุ่มดาวน์โหลด PDF -->
-            <button onclick="exportSlipPDF()" class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-print"></i> พิมพ์ / ออกสลิป PDF
+            <!-- ปุ่มสั่งพิมพ์ -->
+            <button onclick="startPrintingProcess()" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-base rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-print"></i> พิมพ์สลิป (รับเอฟเฟกต์สแกนเนอร์)
             </button>
 
-            <!-- ตัวอย่างกระดาษสลิป ATM -->
-            <div class="w-full flex justify-center overflow-auto p-4 bg-slate-300 rounded-2xl border border-slate-400">
+            <!-- กล่องพรีวิวสลิป -->
+            <div class="w-full p-4 bg-slate-950 rounded-2xl border border-slate-800 flex justify-center overflow-hidden">
                 
-                <div id="slip-render-area" class="slip-paper rounded-t-sm text-slate-900 border-t-4 border-slate-900">
+                <!-- ตัวสลิปพิมพ์จริงที่จะถูกจับภาพแปลงเป็น PDF -->
+                <div id="slip-render-area" class="slip-container">
                     
                     <!-- Slip Header -->
                     <div class="text-center pb-3 mb-3 border-b border-dashed border-slate-400 space-y-1">
-                        <div class="inline-flex items-center justify-center w-8 h-8 bg-slate-900 text-white rounded-full mb-1">
-                            <i class="fa-solid fa-receipt text-xs"></i>
-                        </div>
-                        <h2 class="font-bold text-sm tracking-tighter uppercase">TRANSACTION SLIP</h2>
-                        <p class="text-[10px] text-slate-500">ใบบันทึกรายการค่าใช้จ่าย</p>
-                        <p class="text-[9px] text-slate-400" id="slip-date-time">-</p>
+                        <h2 id="slip-display-title" class="font-bold text-base tracking-tighter uppercase text-slate-900">RECEIPT / SLIP</h2>
+                        <p id="slip-display-date" class="text-[10px] text-slate-600">DATE: -</p>
                     </div>
 
-                    <!-- Slip Body Table -->
+                    <!-- Slip Table -->
                     <table class="w-full text-left text-[11px] mb-3">
                         <thead>
-                            <tr class="border-b border-slate-300 text-slate-500">
+                            <tr class="border-b border-slate-400 text-slate-700">
                                 <th class="pb-1">รายการ</th>
                                 <th class="pb-1 text-right">จำนวน (บาท)</th>
                             </tr>
                         </thead>
-                        <tbody id="slip-table-body" class="divide-y divide-dotted divide-slate-200">
-                            <!-- รายการสลิปแบบย่อ -->
+                        <tbody id="slip-table-body" class="divide-y divide-dotted divide-slate-300">
+                            <!-- JS Render -->
                         </tbody>
                     </table>
 
-                    <!-- Slip Summary Total -->
-                    <div class="border-t-2 border-slate-900 pt-2 mb-4 space-y-1">
+                    <!-- Summary -->
+                    <div class="border-t-2 border-slate-900 pt-2 mb-3">
                         <div class="flex justify-between font-bold text-xs">
                             <span>TOTAL:</span>
                             <span id="slip-total-amount">0.00 ฿</span>
                         </div>
                     </div>
 
-                    <!-- Slip Footer & Barcode Effect -->
-                    <div class="text-center text-[9px] text-slate-500 space-y-2 pt-2 border-t border-dashed border-slate-300">
-                        <p>*** THANK YOU ***</p>
-                        <!-- Simulated Barcode -->
-                        <div class="font-mono text-xs tracking-widest text-slate-800 font-bold select-none opacity-80">
-                            ||| | ||||| || |||| ||| |||
+                    <!-- Real Scannable Barcode -->
+                    <div class="text-center pt-2 border-t border-dashed border-slate-400">
+                        <p class="text-[9px] text-slate-500 mb-1">SCAN TO CHECK PRICE</p>
+                        <!-- Canvas สำหรับเรนเดอร์บาร์โค้ดจริง -->
+                        <div class="flex justify-center">
+                            <svg id="barcode-canvas"></svg>
                         </div>
-                        <p class="text-[8px] text-slate-400">REF: <span id="slip-ref-code">000000</span></p>
+                        <p class="text-[8px] text-slate-400 mt-1">*** THANK YOU ***</p>
                     </div>
 
                 </div>
@@ -177,25 +198,52 @@
 
     </main>
 
-    <!-- JavaScript Control Logic -->
+    <!-- POPUP MODAL: เอฟเฟกต์สแกนเนอร์และเครื่องพิมพ์ -->
+    <div id="printer-modal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full text-center relative overflow-hidden shadow-2xl">
+            <!-- เส้นแสงสแกนเนอร์ -->
+            <div class="scanner-line"></div>
+
+            <div class="my-4">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-cyan-950 border border-cyan-500/50 rounded-full text-cyan-400 text-3xl mb-3 animate-bounce">
+                    <i class="fa-solid fa-print"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-1">กำลังพิมพ์สลิปและสแกนเนอร์...</h3>
+                <p id="scanner-status" class="text-xs text-cyan-400 font-mono">Initializing Thermal Printer...</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden mb-2 border border-slate-700">
+                <div id="print-progress-bar" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full w-0 transition-all duration-200"></div>
+            </div>
+            <div id="print-percentage" class="text-xl font-bold font-mono text-white">0%</div>
+
+            <p class="text-[11px] text-slate-500 mt-4">* กรุณารอสักครู่ ระบบกำลังสร้างไฟล์ PDF สลิป (10-15 วินาที)</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
     <script>
         let items = [];
 
-        // แสดงเวลาปัจจุบัน
-        function updateDateTime() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('th-TH', { year: '2-digit', month: '2-digit', day: '2-digit' });
-            const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('current-date').innerText = `${dateStr} ${timeStr}`;
-            document.getElementById('slip-date-time').innerText = `DATE: ${dateStr} TIME: ${timeStr}`;
+        // อัปเดตข้อมูล Header ของสลิป
+        function updateSlipHeader() {
+            const titleInput = document.getElementById('input-slip-title').value || 'RECEIPT / SLIP';
+            const dateInput = document.getElementById('input-slip-date').value;
+
+            document.getElementById('slip-display-title').innerText = titleInput;
+
+            if (dateInput.trim() !== "") {
+                document.getElementById('slip-display-date').innerText = dateInput;
+            } else {
+                const now = new Date();
+                const d = now.toLocaleDateString('th-TH', { year: '2-digit', month: '2-digit', day: '2-digit' });
+                const t = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('slip-display-date').innerText = `DATE: ${d} TIME: ${t}`;
+            }
         }
-        setInterval(updateDateTime, 1000);
-        updateDateTime();
 
-        // สุ่มรหัสอ้างอิงสลิป
-        document.getElementById('slip-ref-code').innerText = Math.floor(100000 + Math.random() * 900000);
-
-        // เพิ่มรายการใหม่
+        // เพิ่มรายการ
         function addItem(e) {
             e.preventDefault();
             const title = document.getElementById('item-title').value;
@@ -214,7 +262,7 @@
             renderItems();
         }
 
-        // ล้างรายการทั้งหมด
+        // ล้างข้อมูล
         function clearAllItems() {
             if (confirm('คุณต้องการลบรายการทั้งหมดใช่หรือไม่?')) {
                 items = [];
@@ -222,7 +270,7 @@
             }
         }
 
-        // คำนวณยอดรวม และแสดงผลลงตาราง + สลิป
+        // คำนวณยอดรวม และสร้างบาร์โค้ด
         function renderItems() {
             const tableBody = document.getElementById('expense-table-body');
             const slipTableBody = document.getElementById('slip-table-body');
@@ -233,60 +281,144 @@
             let total = 0;
 
             if (items.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">ไม่มีรายการ</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">ไม่มีรายการ</td></tr>`;
                 slipTableBody.innerHTML = `<tr><td colspan="2" class="text-center py-3 text-slate-400">NO ITEMS</td></tr>`;
             } else {
                 items.forEach((item, index) => {
                     total += item.amount;
                     const formattedAmount = item.amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-                    // Render ลง Dashboard Table
+                    // Dashboard Table
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50";
                     tr.innerHTML = `
-                        <td class="p-3 pl-4 font-medium text-slate-400">${index + 1}</td>
-                        <td class="p-3 font-medium text-slate-800">${item.title}</td>
-                        <td class="p-3 text-right font-bold text-slate-700">${formattedAmount}</td>
+                        <td class="p-3 pl-4 text-slate-500">${index + 1}</td>
+                        <td class="p-3 text-slate-200 font-medium">${item.title}</td>
+                        <td class="p-3 text-right font-bold text-cyan-400">${formattedAmount}</td>
                         <td class="p-3 text-center">
-                            <button onclick="deleteItem(${item.id})" class="text-slate-400 hover:text-rose-600 transition-colors">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
+                            <button onclick="deleteItem(${item.id})" class="text-slate-500 hover:text-rose-400"><i class="fa-solid fa-xmark"></i></button>
                         </td>
                     `;
                     tableBody.appendChild(tr);
 
-                    // Render ลง Slip Table
+                    // Slip Table
                     const slipTr = document.createElement('tr');
                     slipTr.innerHTML = `
-                        <td class="py-1.5 pr-2 truncate max-w-[120px]">${item.title}</td>
-                        <td class="py-1.5 text-right font-bold">${formattedAmount}</td>
+                        <td class="py-1 pr-2 truncate max-w-[130px] text-slate-900">${item.title}</td>
+                        <td class="py-1 text-right font-bold text-slate-900">${formattedAmount}</td>
                     `;
                     slipTableBody.appendChild(slipTr);
                 });
             }
 
-            // แสดงยอดรวม
             const formattedTotal = total.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ฿';
             document.getElementById('grand-total').innerText = formattedTotal;
             document.getElementById('slip-total-amount').innerText = formattedTotal;
+
+            // สร้างบาร์โค้ดจริงบรรจุยอดเงินสุทธิ
+            generateScannableBarcode(total);
+            updateSlipHeader();
         }
 
-        // ส่งออกสลิปเป็นไฟล์ PDF ขนาดกระดาษสลิป (80mm)
-        function exportSlipPDF() {
-            const element = document.getElementById('slip-render-area');
-
-            const opt = {
-                margin:       0,
-                filename:     `Expense_Slip_${Date.now()}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 3 }, // เรนเดอร์ความละเอียดสูงให้สลิปชัด
-                jsPDF:        { unit: 'mm', format: [80, 160], orientation: 'portrait' } // กำหนดขนาดหน้ากระดาษสลิป 80mm x 160mm
-            };
-
-            html2pdf().set(opt).from(element).save();
+        // ฟังก์ชันสร้าง บาร์โค้ด สแกนเนอร์สแกนแล้วเจอราคาจริง
+        function generateScannableBarcode(totalAmount) {
+            const barcodeValue = `TOTAL: ${totalAmount.toFixed(2)} THB`;
+            
+            try {
+                JsBarcode("#barcode-canvas", barcodeValue, {
+                    format: "CODE128",
+                    lineColor: "#000000",
+                    width: 1.2,
+                    height: 35,
+                    displayValue: true,
+                    fontSize: 9,
+                    margin: 2
+                });
+            } catch (err) {
+                console.error("Barcode generation error:", err);
+            }
         }
 
-        // เริ่มต้นเรนเดอร์
+        // เอฟเฟกต์พิมพ์สแกนเนอร์ 10-15 วินาที พร้อมส่งออก PDF ที่แสดงผลแน่นอน 100%
+        function startPrintingProcess() {
+            if (items.length === 0) {
+                alert("กรุณาเพิ่มรายการอย่างน้อย 1 รายการก่อนพิมพ์สลิปครับ");
+                return;
+            }
+
+            const modal = document.getElementById('printer-modal');
+            const progressBar = document.getElementById('print-progress-bar');
+            const progressPercent = document.getElementById('print-percentage');
+            const statusText = document.getElementById('scanner-status');
+
+            modal.classList.remove('hidden');
+
+            let progress = 0;
+            const totalTime = 12000; // 12 วินาที
+            const intervalTime = 120; // อัปเดตทุก 120ms
+            const step = 100 / (totalTime / intervalTime);
+
+            const statuses = [
+                "Initializing Thermal Printer...",
+                "Connecting to Scanner Hardware...",
+                "Encoding Scannable Barcode...",
+                "Printing Receipt Paper...",
+                "Scanning Document Quality...",
+                "Generating PDF Output..."
+            ];
+
+            const timer = setInterval(() => {
+                progress += step;
+                if (progress > 100) progress = 100;
+
+                progressBar.style.width = `${progress}%`;
+                progressPercent.innerText = `${Math.floor(progress)}%`;
+
+                // สลับข้อความสถานะ
+                const statusIdx = Math.floor((progress / 100) * statuses.length);
+                if (statuses[statusIdx]) {
+                    statusText.innerText = statuses[statusIdx];
+                }
+
+                if (progress >= 100) {
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        generatePDFDocument();
+                        modal.classList.add('hidden');
+                    }, 500);
+                }
+            }, intervalTime);
+        }
+
+        // ส่งออกเป็น PDF โดยใช้ HTML2Canvas direct render ป้องกันปัญหา PDF ว่างเปล่า
+        function generatePDFDocument() {
+            const slipElement = document.getElementById('slip-render-area');
+
+            html2canvas(slipElement, {
+                scale: 3, // เพิ่มความละเอียดภาพสลิปให้คมชัด
+                useCORS: true,
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                
+                // กำหนดขนาดสลิปใน PDF (80mm x ความสูงตามสัดส่วน)
+                const pdfWidth = 80;
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: [pdfWidth, pdfHeight]
+                });
+
+                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save(`Slip_Expense_${Date.now()}.pdf`);
+            }).catch(err => {
+                alert("เกิดข้อผิดพลาดในการสร้าง PDF: " + err.message);
+            });
+        }
+
+        // เริ่มต้นเรนเดอร์ระบบ
         renderItems();
     </script>
 </body>
