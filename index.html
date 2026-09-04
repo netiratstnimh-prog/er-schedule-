@@ -3,423 +3,540 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบันทึกรายการค่าใช้จ่าย & พิมพ์สลิป</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf.js & html2canvas for PDF Generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- JsBarcode Library สำหรับสร้างบาร์โค้ดที่สแกนได้จริง -->
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+    <title>ระบบสร้างตารางเวรทางการแพทย์ (A5 Landscape Generator)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #eff6ff;
+            --secondary: #0d9488;
+            --bg-gray: #f8fafc;
+            --border-color: #cbd5e1;
+            --text-main: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             font-family: 'Sarabun', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
         }
 
-        /* ทรงกระดาษสลิป Thermal 80mm */
-        .slip-container {
-            width: 300px;
-            background: #ffffff;
-            color: #0f172a;
-            font-family: 'Courier Prime', 'Sarabun', monospace;
-            padding: 18px 14px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-            margin: auto;
+        body {
+            background-color: #64748b;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* เอฟเฟกต์ไฟสแกนเนอร์วิ่ง */
-        .scanner-line {
+        /* Editor Control Panel (Screen Only) */
+        .control-panel {
+            background: white;
             width: 100%;
-            height: 3px;
-            background: #06b6d4;
-            box-shadow: 0 0 12px #06b6d4, 0 0 20px #06b6d4;
-            position: absolute;
-            animation: scan 1.8s ease-in-out infinite alternate;
+            max-width: 1000px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            margin-bottom: 25px;
         }
 
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 95%; }
+        .control-panel h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .form-group input, .form-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: var(--primary-light);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .legend-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .shift-btn {
+            padding: 6px 12px;
+            border: 1px solid transparent;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .shift-btn.active {
+            box-shadow: 0 0 0 2px #000;
+            transform: scale(1.05);
+        }
+
+        /* Shift Color Themes */
+        .shift-TCH { background-color: #fecaca; color: #991b1b; }
+        .shift-OFF { background-color: #e2e8f0; color: #475569; }
+        .shift-DAY { background-color: #fef08a; color: #854d0e; }
+        .shift-NIGHT { background-color: #ddd6fe; color: #5b21b6; }
+        .shift-VAC { background-color: #bbf7d0; color: #166534; }
+        .shift-EMERGENCY { background-color: #fed7aa; color: #9a3412; }
+
+        .btn-print {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-print:hover {
+            background-color: #1e40af;
+        }
+
+        /* Printable A5 Landscape Container */
+        .page-container {
+            background: white;
+            width: 210mm;
+            height: 148mm;
+            padding: 10mm;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
+
+        /* Paper Header */
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 6px;
+            margin-bottom: 6px;
+        }
+
+        .hospital-info h1 {
+            font-size: 18px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .hospital-info p {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .staff-info {
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .staff-info span {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            flex-grow: 1;
+            margin-bottom: 6px;
+        }
+
+        .day-header {
+            background-color: #f1f5f9;
+            text-align: center;
+            font-weight: 700;
+            font-size: 11px;
+            padding: 3px 0;
+            color: #334155;
+            border-radius: 3px;
+        }
+
+        .day-cell {
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 2px 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 0;
+            cursor: pointer;
+            position: relative;
+            background-color: #fff;
+            transition: background 0.1s;
+        }
+
+        .day-cell:hover {
+            border-color: var(--primary);
+        }
+
+        .day-cell.empty {
+            background-color: #fafafa;
+            border-color: #f1f5f9;
+            cursor: default;
+        }
+
+        .day-number {
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .shift-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 3px;
+            border-radius: 3px;
+            text-align: center;
+            line-height: 1.1;
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .shift-time {
+            font-size: 7.5px;
+            color: #475569;
+            text-align: center;
+            font-weight: 500;
+            margin-top: 1px;
+        }
+
+        /* Footer & Summary */
+        .paper-footer {
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+        }
+
+        .summary-table {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            background: #f8fafc;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .summary-item strong {
+            color: var(--primary);
+        }
+
+        .signature-area {
+            display: flex;
+            gap: 20px;
+            font-size: 10px;
+            color: #475569;
+        }
+
+        /* Print Settings for A5 Landscape */
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+
+            .control-panel {
+                display: none !important;
+            }
+
+            .page-container {
+                box-shadow: none;
+                margin: 0;
+                width: 210mm;
+                height: 148mm;
+                page-break-after: always;
+            }
+
+            @page {
+                size: A5 landscape;
+                margin: 0;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen pb-10">
+<body>
 
-    <!-- Header -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30">
-        <div class="max-w-5xl mx-auto px-4 py-3.5 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-print text-cyan-400 text-2xl"></i>
-                <h1 class="text-lg font-bold tracking-wide">Slip Printer & Scanner System</h1>
+    <!-- Editor Control Panel -->
+    <div class="control-panel">
+        <h2>🏥 ตั้งค่าตารางเวรปฏิบัติงาน (A5 Landscape)</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>ชื่อโรงพยาบาล / หน่วยงาน</label>
+                <input type="text" id="hospitalName" value="โรงพยาบาลศูนย์การแพทย์สมเด็จพระสังฆราช" oninput="updateHeader()">
             </div>
-            <div class="text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-300 border border-slate-700">
-                <i class="fa-solid fa-circle-dot text-emerald-400 mr-1 animate-pulse"></i> พร้อมใช้งาน
+            <div class="form-group">
+                <label>ชื่อผู้ขึ้นเวร (เจ้าหน้าที่)</label>
+                <input type="text" id="staffName" value="พว. สมศรี ใจดี (พยาบาลวิชาชีพ)" oninput="updateHeader()">
+            </div>
+            <div class="form-group">
+                <label>แผนก / ฝ่าย</label>
+                <input type="text" id="department" value="แผนกผู้ป่วยนอก (OPD)" oninput="updateHeader()">
+            </div>
+            <div class="form-group">
+                <label>เลือกเดือน / ปี</label>
+                <input type="month" id="monthPicker" value="2026-09" onchange="renderCalendar()">
+            </div>
+            <div class="form-group">
+                <label>ช่วงเวลาปฏิบัติงานมาตรฐาน</label>
+                <select id="shiftTimeSelect">
+                    <option value="7-19">เวร 7-19 (12 ชม.)</option>
+                    <option value="9-17">เวร 9-17 (8 ชม.)</option>
+                    <option value="8-16">เวร 8-16 (8 ชม.)</option>
+                    <option value="16-24">เวร 16-24 (8 ชม.)</option>
+                    <option value="24-8">เวร 24-8 (8 ชม.)</option>
+                </select>
             </div>
         </div>
-    </header>
 
-    <!-- Main Dashboard -->
-    <main class="max-w-5xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- ฝั่งซ้าย: ฟอร์มกรอกข้อมูล & ตั้งค่าสลิป (7 Cols) -->
-        <div class="lg:col-span-7 space-y-6">
-
-            <!-- Card 1: ตั้งค่าหัวข้อสลิปสดๆ -->
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
-                <h2 class="text-sm font-bold text-cyan-400 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-sliders"></i> ตั้งค่าข้อมูลหัวสลิป (Header)
-                </h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">ชื่อใบเสร็จ / หัวข้อ</label>
-                        <input type="text" id="input-slip-title" value="RECEIPT / SLIP" oninput="updateSlipHeader()" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">วันที่ / เวลา</label>
-                        <input type="text" id="input-slip-date" placeholder="ปล่อยว่างไว้เพื่อใช้วันที่ปัจจุบัน" oninput="updateSlipHeader()" class="w-full px-3 py-1.5 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
-                    </div>
-                </div>
+        <div class="actions-bar">
+            <div class="legend-selector">
+                <span style="font-size:13px; font-weight:600; margin-right:5px;">เลือกประเภทเวรที่จะระบุ:</span>
+                <button class="shift-btn shift-TCH active" onclick="selectShift('TCH', this)">🔴 TCH</button>
+                <button class="shift-btn shift-OFF" onclick="selectShift('OFF', this)">⚪ OFF</button>
+                <button class="shift-btn shift-DAY" onclick="selectShift('DAY', this)">🟡 DAY</button>
+                <button class="shift-btn shift-NIGHT" onclick="selectShift('NIGHT', this)">🟣 NIGHT</button>
+                <button class="shift-btn shift-VAC" onclick="selectShift('VAC', this)">🟢 Vac (ลาพักผ่อน)</button>
+                <button class="shift-btn shift-EMERGENCY" onclick="selectShift('EMERGENCY', this)">🟠 ลาฉุกเฉิน</button>
             </div>
 
-            <!-- Card 2: ฟอร์มเพิ่มรายการ -->
-            <div class="bg-slate-800 p-5 rounded-2xl border border-slate-700">
-                <h2 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-cart-plus text-cyan-400"></i> เพิ่มรายการค่าใช้จ่าย
-                </h2>
-                <form id="expense-form" onsubmit="addItem(event)" class="space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs text-slate-400 mb-1">รายการ</label>
-                            <input type="text" id="item-title" required placeholder="เช่น ค่าอาหาร, ค่าบริการ" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs text-slate-400 mb-1">จำนวนเงิน (บาท)</label>
-                            <input type="number" id="item-amount" step="0.01" min="0.01" required placeholder="0.00" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded text-sm text-white focus:outline-none focus:border-cyan-500">
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-sm rounded-lg transition-all flex justify-center items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> บันทึกรายการ
-                    </button>
-                </form>
-            </div>
-
-            <!-- Card 3: ตารางรายการที่เพิ่มไว้ -->
-            <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
-                <div class="p-3.5 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
-                    <h3 class="font-bold text-sm text-slate-200">รายการทั้งหมด</h3>
-                    <button onclick="clearAllItems()" class="text-xs text-rose-400 hover:underline">ล้างข้อมูล</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm text-slate-300">
-                        <thead class="bg-slate-900/50 text-slate-400 text-xs">
-                            <tr>
-                                <th class="p-3 pl-4">#</th>
-                                <th class="p-3">รายการ</th>
-                                <th class="p-3 text-right">จำนวนเงิน</th>
-                                <th class="p-3 text-center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expense-table-body" class="divide-y divide-slate-700/50">
-                            <!-- JS Render -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="p-4 bg-slate-900 flex justify-between items-center">
-                    <span class="text-sm font-medium text-slate-400">ยอดรวมสุทธิ:</span>
-                    <span id="grand-total" class="font-bold text-cyan-400 text-xl">0.00 ฿</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- ฝั่งขวา: ตัวอย่างสลิปที่จะพิมพ์ (5 Cols) -->
-        <div class="lg:col-span-5 flex flex-col items-center space-y-4">
-
-            <!-- ปุ่มสั่งพิมพ์ -->
-            <button onclick="startPrintingProcess()" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-base rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-print"></i> พิมพ์สลิป (รับเอฟเฟกต์สแกนเนอร์)
+            <button class="btn-print" onclick="window.print()">
+                🖨️ ส่งออก / พิมพ์กระดาษ A5
             </button>
-
-            <!-- กล่องพรีวิวสลิป -->
-            <div class="w-full p-4 bg-slate-950 rounded-2xl border border-slate-800 flex justify-center overflow-hidden">
-                
-                <!-- ตัวสลิปพิมพ์จริงที่จะถูกจับภาพแปลงเป็น PDF -->
-                <div id="slip-render-area" class="slip-container">
-                    
-                    <!-- Slip Header -->
-                    <div class="text-center pb-3 mb-3 border-b border-dashed border-slate-400 space-y-1">
-                        <h2 id="slip-display-title" class="font-bold text-base tracking-tighter uppercase text-slate-900">RECEIPT / SLIP</h2>
-                        <p id="slip-display-date" class="text-[10px] text-slate-600">DATE: -</p>
-                    </div>
-
-                    <!-- Slip Table -->
-                    <table class="w-full text-left text-[11px] mb-3">
-                        <thead>
-                            <tr class="border-b border-slate-400 text-slate-700">
-                                <th class="pb-1">รายการ</th>
-                                <th class="pb-1 text-right">จำนวน (บาท)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="slip-table-body" class="divide-y divide-dotted divide-slate-300">
-                            <!-- JS Render -->
-                        </tbody>
-                    </table>
-
-                    <!-- Summary -->
-                    <div class="border-t-2 border-slate-900 pt-2 mb-3">
-                        <div class="flex justify-between font-bold text-xs">
-                            <span>TOTAL:</span>
-                            <span id="slip-total-amount">0.00 ฿</span>
-                        </div>
-                    </div>
-
-                    <!-- Real Scannable Barcode -->
-                    <div class="text-center pt-2 border-t border-dashed border-slate-400">
-                        <p class="text-[9px] text-slate-500 mb-1">SCAN TO CHECK PRICE</p>
-                        <!-- Canvas สำหรับเรนเดอร์บาร์โค้ดจริง -->
-                        <div class="flex justify-center">
-                            <svg id="barcode-canvas"></svg>
-                        </div>
-                        <p class="text-[8px] text-slate-400 mt-1">*** THANK YOU ***</p>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
-
-    <!-- POPUP MODAL: เอฟเฟกต์สแกนเนอร์และเครื่องพิมพ์ -->
-    <div id="printer-modal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full text-center relative overflow-hidden shadow-2xl">
-            <!-- เส้นแสงสแกนเนอร์ -->
-            <div class="scanner-line"></div>
-
-            <div class="my-4">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-cyan-950 border border-cyan-500/50 rounded-full text-cyan-400 text-3xl mb-3 animate-bounce">
-                    <i class="fa-solid fa-print"></i>
-                </div>
-                <h3 class="text-lg font-bold text-white mb-1">กำลังพิมพ์สลิปและสแกนเนอร์...</h3>
-                <p id="scanner-status" class="text-xs text-cyan-400 font-mono">Initializing Thermal Printer...</p>
-            </div>
-
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden mb-2 border border-slate-700">
-                <div id="print-progress-bar" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full w-0 transition-all duration-200"></div>
-            </div>
-            <div id="print-percentage" class="text-xl font-bold font-mono text-white">0%</div>
-
-            <p class="text-[11px] text-slate-500 mt-4">* กรุณารอสักครู่ ระบบกำลังสร้างไฟล์ PDF สลิป (10-15 วินาที)</p>
         </div>
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- Printable Canvas -->
+    <div class="page-container" id="printableArea">
+        <div>
+            <!-- Header -->
+            <div class="paper-header">
+                <div class="hospital-info">
+                    <h1 id="dispHospital">โรงพยาบาลศูนย์การแพทย์สมเด็จพระสังฆราช</h1>
+                    <p>ตารางปฏิบัติงานบุคลากรทางการแพทย์ประจำเดือน <span id="dispMonthYear" style="font-weight:600; color:#1e3a8a;"></span></p>
+                </div>
+                <div class="staff-info">
+                    <div>ชื่อผู้ขึ้นเวร: <span id="dispStaff">พว. สมศรี ใจดี (พยาบาลวิชาชีพ)</span></div>
+                    <div>แผนก: <span id="dispDept">แผนกผู้ป่วยนอก (OPD)</span></div>
+                </div>
+            </div>
+
+            <!-- Days Header -->
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px;">
+                <div class="day-header" style="color:#e11d48;">อา.</div>
+                <div class="day-header">จ.</div>
+                <div class="day-header">อ.</div>
+                <div class="day-header">พ.</div>
+                <div class="day-header">พฤ.</div>
+                <div class="day-header">ศ.</div>
+                <div class="day-header" style="color:#e11d48;">ส.</div>
+            </div>
+
+            <!-- Calendar Days Grid -->
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <!-- Summary Footer -->
+        <div class="paper-footer">
+            <div class="summary-table" id="summaryContainer"></div>
+            <div class="signature-area">
+                <div>ลงชื่อผู้จัดทำ: ...................................</div>
+                <div>ลงชื่อหัวหน้าแผนก: ...................................</div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        let items = [];
+        let currentShift = 'TCH';
+        let scheduleData = {};
 
-        // อัปเดตข้อมูล Header ของสลิป
-        function updateSlipHeader() {
-            const titleInput = document.getElementById('input-slip-title').value || 'RECEIPT / SLIP';
-            const dateInput = document.getElementById('input-slip-date').value;
+        const shiftDetails = {
+            'TCH': { name: 'TCH', class: 'shift-TCH' },
+            'OFF': { name: 'OFF', class: 'shift-OFF' },
+            'DAY': { name: 'DAY', class: 'shift-DAY' },
+            'NIGHT': { name: 'NIGHT', class: 'shift-NIGHT' },
+            'VAC': { name: 'Vac', class: 'shift-VAC' },
+            'EMERGENCY': { name: 'ลาฉุกเฉิน', class: 'shift-EMERGENCY' }
+        };
 
-            document.getElementById('slip-display-title').innerText = titleInput;
-
-            if (dateInput.trim() !== "") {
-                document.getElementById('slip-display-date').innerText = dateInput;
-            } else {
-                const now = new Date();
-                const d = now.toLocaleDateString('th-TH', { year: '2-digit', month: '2-digit', day: '2-digit' });
-                const t = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-                document.getElementById('slip-display-date').innerText = `DATE: ${d} TIME: ${t}`;
-            }
+        function selectShift(type, btn) {
+            currentShift = type;
+            document.querySelectorAll('.shift-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
         }
 
-        // เพิ่มรายการ
-        function addItem(e) {
-            e.preventDefault();
-            const title = document.getElementById('item-title').value;
-            const amount = parseFloat(document.getElementById('item-amount').value);
-
-            if (title && amount) {
-                items.push({ id: Date.now(), title, amount });
-                document.getElementById('expense-form').reset();
-                renderItems();
-            }
+        function updateHeader() {
+            document.getElementById('dispHospital').innerText = document.getElementById('hospitalName').value || 'ชื่อโรงพยาบาล';
+            document.getElementById('dispStaff').innerText = document.getElementById('staffName').value || '-';
+            document.getElementById('dispDept').innerText = document.getElementById('department').value || '-';
         }
 
-        // ลบรายการ
-        function deleteItem(id) {
-            items = items.filter(item => item.id !== id);
-            renderItems();
-        }
+        function renderCalendar() {
+            const monthVal = document.getElementById('monthPicker').value;
+            if (!monthVal) return;
 
-        // ล้างข้อมูล
-        function clearAllItems() {
-            if (confirm('คุณต้องการลบรายการทั้งหมดใช่หรือไม่?')) {
-                items = [];
-                renderItems();
-            }
-        }
+            const [year, month] = monthVal.split('-').map(Number);
+            const dateObj = new Date(year, month - 1, 1);
+            const thaiMonth = dateObj.toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
+            document.getElementById('dispMonthYear').innerText = thaiMonth;
 
-        // คำนวณยอดรวม และสร้างบาร์โค้ด
-        function renderItems() {
-            const tableBody = document.getElementById('expense-table-body');
-            const slipTableBody = document.getElementById('slip-table-body');
-            
-            tableBody.innerHTML = '';
-            slipTableBody.innerHTML = '';
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const firstDayIndex = new Date(year, month - 1, 1).getDay();
 
-            let total = 0;
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
 
-            if (items.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500">ไม่มีรายการ</td></tr>`;
-                slipTableBody.innerHTML = `<tr><td colspan="2" class="text-center py-3 text-slate-400">NO ITEMS</td></tr>`;
-            } else {
-                items.forEach((item, index) => {
-                    total += item.amount;
-                    const formattedAmount = item.amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-                    // Dashboard Table
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="p-3 pl-4 text-slate-500">${index + 1}</td>
-                        <td class="p-3 text-slate-200 font-medium">${item.title}</td>
-                        <td class="p-3 text-right font-bold text-cyan-400">${formattedAmount}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="deleteItem(${item.id})" class="text-slate-500 hover:text-rose-400"><i class="fa-solid fa-xmark"></i></button>
-                        </td>
-                    `;
-                    tableBody.appendChild(tr);
-
-                    // Slip Table
-                    const slipTr = document.createElement('tr');
-                    slipTr.innerHTML = `
-                        <td class="py-1 pr-2 truncate max-w-[130px] text-slate-900">${item.title}</td>
-                        <td class="py-1 text-right font-bold text-slate-900">${formattedAmount}</td>
-                    `;
-                    slipTableBody.appendChild(slipTr);
-                });
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'day-cell empty';
+                grid.appendChild(emptyCell);
             }
 
-            const formattedTotal = total.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ฿';
-            document.getElementById('grand-total').innerText = formattedTotal;
-            document.getElementById('slip-total-amount').innerText = formattedTotal;
-
-            // สร้างบาร์โค้ดจริงบรรจุยอดเงินสุทธิ
-            generateScannableBarcode(total);
-            updateSlipHeader();
-        }
-
-        // ฟังก์ชันสร้าง บาร์โค้ด สแกนเนอร์สแกนแล้วเจอราคาจริง
-        function generateScannableBarcode(totalAmount) {
-            const barcodeValue = `TOTAL: ${totalAmount.toFixed(2)} THB`;
-            
-            try {
-                JsBarcode("#barcode-canvas", barcodeValue, {
-                    format: "CODE128",
-                    lineColor: "#000000",
-                    width: 1.2,
-                    height: 35,
-                    displayValue: true,
-                    fontSize: 9,
-                    margin: 2
-                });
-            } catch (err) {
-                console.error("Barcode generation error:", err);
-            }
-        }
-
-        // เอฟเฟกต์พิมพ์สแกนเนอร์ 10-15 วินาที พร้อมส่งออก PDF ที่แสดงผลแน่นอน 100%
-        function startPrintingProcess() {
-            if (items.length === 0) {
-                alert("กรุณาเพิ่มรายการอย่างน้อย 1 รายการก่อนพิมพ์สลิปครับ");
-                return;
-            }
-
-            const modal = document.getElementById('printer-modal');
-            const progressBar = document.getElementById('print-progress-bar');
-            const progressPercent = document.getElementById('print-percentage');
-            const statusText = document.getElementById('scanner-status');
-
-            modal.classList.remove('hidden');
-
-            let progress = 0;
-            const totalTime = 12000; // 12 วินาที
-            const intervalTime = 120; // อัปเดตทุก 120ms
-            const step = 100 / (totalTime / intervalTime);
-
-            const statuses = [
-                "Initializing Thermal Printer...",
-                "Connecting to Scanner Hardware...",
-                "Encoding Scannable Barcode...",
-                "Printing Receipt Paper...",
-                "Scanning Document Quality...",
-                "Generating PDF Output..."
-            ];
-
-            const timer = setInterval(() => {
-                progress += step;
-                if (progress > 100) progress = 100;
-
-                progressBar.style.width = `${progress}%`;
-                progressPercent.innerText = `${Math.floor(progress)}%`;
-
-                // สลับข้อความสถานะ
-                const statusIdx = Math.floor((progress / 100) * statuses.length);
-                if (statuses[statusIdx]) {
-                    statusText.innerText = statuses[statusIdx];
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (!scheduleData[dateKey]) {
+                    scheduleData[dateKey] = { type: 'OFF', time: '-' };
                 }
 
-                if (progress >= 100) {
-                    clearInterval(timer);
-                    setTimeout(() => {
-                        generatePDFDocument();
-                        modal.classList.add('hidden');
-                    }, 500);
+                const cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.onclick = () => assignShift(dateKey);
+
+                const currentData = scheduleData[dateKey];
+                const shiftInfo = shiftDetails[currentData.type] || shiftDetails['OFF'];
+
+                cell.innerHTML = `
+                    <div class="day-number">${day}</div>
+                    ${currentData.type !== 'OFF' ? `
+                        <div class="shift-badge ${shiftInfo.class}">${shiftInfo.name}</div>
+                        <div class="shift-time">${currentData.time}</div>
+                    ` : `
+                        <div class="shift-badge shift-OFF">OFF</div>
+                        <div class="shift-time">&nbsp;</div>
+                    `}
+                `;
+                grid.appendChild(cell);
+            }
+
+            calculateSummary(daysInMonth, year, month);
+        }
+
+        function assignShift(dateKey) {
+            const selectedTime = document.getElementById('shiftTimeSelect').value;
+            const timeVal = (currentShift === 'OFF' || currentShift === 'VAC' || currentShift === 'EMERGENCY') ? '-' : `เวร ${selectedTime}`;
+
+            scheduleData[dateKey] = {
+                type: currentShift,
+                time: timeVal
+            };
+
+            renderCalendar();
+        }
+
+        function calculateSummary(totalDays, year, month) {
+            let counts = { 'TCH': 0, 'OFF': 0, 'DAY': 0, 'NIGHT': 0, 'VAC': 0, 'EMERGENCY': 0 };
+            let totalHours = 0;
+
+            for (let day = 1; day <= totalDays; day++) {
+                const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const item = scheduleData[dateKey];
+                if (item) {
+                    counts[item.type] = (counts[item.type] || 0) + 1;
+                    if (item.type === 'TCH') {
+                        totalHours += item.time.includes('9-17') ? 8 : 12;
+                    } else if (item.type === 'DAY' || item.type === 'NIGHT') {
+                        totalHours += 8;
+                    }
                 }
-            }, intervalTime);
+            }
+
+            const dutyDays = totalDays - counts['OFF'] - counts['VAC'] - counts['EMERGENCY'];
+
+            document.getElementById('summaryContainer').innerHTML = `
+                <div class="summary-item">จำนวนวันทั้งหมด: <strong>${totalDays} วัน</strong></div>
+                <div class="summary-item">ขึ้นเวร: <strong>${dutyDays} วัน (${totalHours} ชม.)</strong></div>
+                <div class="summary-item">วันหยุด (OFF): <strong>${counts['OFF']} วัน</strong></div>
+                <div class="summary-item">วันลา (Vac/ฉุกเฉิน): <strong>${counts['VAC'] + counts['EMERGENCY']} วัน</strong></div>
+            `;
         }
 
-        // ส่งออกเป็น PDF โดยใช้ HTML2Canvas direct render ป้องกันปัญหา PDF ว่างเปล่า
-        function generatePDFDocument() {
-            const slipElement = document.getElementById('slip-render-area');
-
-            html2canvas(slipElement, {
-                scale: 3, // เพิ่มความละเอียดภาพสลิปให้คมชัด
-                useCORS: true,
-                backgroundColor: "#ffffff"
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                
-                // กำหนดขนาดสลิปใน PDF (80mm x ความสูงตามสัดส่วน)
-                const pdfWidth = 80;
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: [pdfWidth, pdfHeight]
-                });
-
-                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-                pdf.save(`Slip_Expense_${Date.now()}.pdf`);
-            }).catch(err => {
-                alert("เกิดข้อผิดพลาดในการสร้าง PDF: " + err.message);
-            });
-        }
-
-        // เริ่มต้นเรนเดอร์ระบบ
-        renderItems();
+        window.onload = () => {
+            updateHeader();
+            renderCalendar();
+        };
     </script>
 </body>
 </html>
