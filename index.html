@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจัดตารางเวรปฏิบัติงานทางการแพทย์</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- โหลด html2canvas สำหรับแปลงตารางเป็นรูปภาพ PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -31,7 +33,6 @@
             align-items: center;
         }
 
-        /* Control Panel (Screen View) */
         .control-panel {
             background: #ffffff;
             width: 100%;
@@ -79,10 +80,6 @@
             background-color: #fff;
         }
 
-        .form-group input:focus, .form-group select:focus {
-            border-color: var(--primary);
-        }
-
         .actions-bar {
             display: flex;
             justify-content: space-between;
@@ -116,15 +113,12 @@
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.15s, border-color 0.15s;
         }
 
         .shift-btn.active {
-            border-color: #000;
             outline: 2px solid #000;
         }
 
-        /* Shift Colors - Clean Tone */
         .shift-TCH { background-color: #fecaca; color: #991b1b; }
         .shift-OFF { background-color: #f1f5f9; color: #475569; }
         .shift-DAY { background-color: #fef08a; color: #854d0e; }
@@ -132,32 +126,50 @@
         .shift-VAC { background-color: #dcfce7; color: #166534; }
         .shift-EMERGENCY { background-color: #ffedd5; color: #9a3412; }
 
-        .btn-print {
-            background-color: var(--primary);
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-export {
+            background-color: #0d9488;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 16px;
             border-radius: 4px;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
         }
 
-        .btn-print:hover {
-            background-color: var(--primary-hover);
+        .btn-print {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
         }
 
-        /* Printable Canvas (A5 Landscape) */
+        /* Paper Canvas A5 Landscape */
+        .page-wrapper {
+            background: #e2e8f0;
+            padding: 10px;
+        }
+
         .page-container {
             background: white;
-            width: 210mm;
-            height: 148mm;
-            padding: 10mm;
+            width: 800px;
+            height: 560px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-sizing: border-box;
             border: 1px solid #cbd5e1;
+            margin: 0 auto;
         }
 
         .paper-header {
@@ -165,29 +177,24 @@
             justify-content: space-between;
             align-items: flex-start;
             border-bottom: 2px solid var(--primary);
-            padding-bottom: 6px;
-            margin-bottom: 8px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .hospital-info h1 {
-            font-size: 16px;
+            font-size: 18px;
             color: var(--primary);
             font-weight: 700;
         }
 
         .hospital-info p {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
         .staff-info {
             text-align: right;
-            font-size: 12px;
-        }
-
-        .staff-info span {
-            font-weight: 600;
-            color: var(--text-main);
+            font-size: 13px;
         }
 
         .calendar-grid {
@@ -195,14 +202,14 @@
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
             flex-grow: 1;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .day-header {
             background-color: #f8fafc;
             text-align: center;
             font-weight: 700;
-            font-size: 11px;
+            font-size: 12px;
             padding: 4px 0;
             color: var(--text-muted);
             border: 1px solid #e2e8f0;
@@ -211,7 +218,7 @@
         .day-cell {
             border: 1px solid #cbd5e1;
             border-radius: 2px;
-            padding: 3px 4px;
+            padding: 4px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -226,36 +233,32 @@
         }
 
         .day-number {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--text-main);
-            line-height: 1;
         }
 
         .shift-badge {
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 700;
             padding: 2px 0;
             text-align: center;
             border-radius: 2px;
-            line-height: 1;
-            margin-top: 2px;
         }
 
         .shift-time {
-            font-size: 8px;
+            font-size: 9px;
             color: var(--text-muted);
             text-align: center;
-            margin-top: 2px;
         }
 
         .paper-footer {
             border-top: 1px solid var(--border-color);
-            padding-top: 6px;
+            padding-top: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 11px;
+            font-size: 12px;
         }
 
         .summary-table {
@@ -263,43 +266,32 @@
             gap: 12px;
         }
 
-        .summary-item {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .summary-item strong {
-            color: var(--primary);
-        }
-
         .signature-area {
             display: flex;
-            gap: 24px;
-            font-size: 11px;
+            gap: 20px;
             color: var(--text-muted);
         }
 
-        /* Direct Print Optimization for A5 Landscape */
         @media print {
-            body {
-                background: none;
-                padding: 0;
-                margin: 0;
+            body * {
+                visibility: hidden;
             }
-
-            .control-panel {
-                display: none !important;
+            .page-wrapper, .page-wrapper * {
+                visibility: visible;
             }
-
-            .page-container {
-                border: none;
+            .page-wrapper {
+                position: absolute;
+                left: 0;
+                top: 0;
                 width: 100%;
-                height: 100vh;
-                padding: 8mm;
-                page-break-after: avoid;
-                page-break-inside: avoid;
+                padding: 0;
+                background: none;
             }
-
+            .page-container {
+                width: 100%;
+                height: 98vh;
+                border: none;
+            }
             @page {
                 size: A5 landscape;
                 margin: 0;
@@ -352,41 +344,46 @@
                 <button class="shift-btn shift-EMERGENCY" onclick="selectShift('EMERGENCY', this)">ลาฉุกเฉิน</button>
             </div>
 
-            <button class="btn-print" onclick="triggerPrint()">ส่งออก / พิมพ์เอกสาร A5</button>
+            <div class="btn-group">
+                <button class="btn-export" onclick="downloadImage()">โหลดรูปภาพ (PNG)</button>
+                <button class="btn-print" onclick="window.print()">พิมพ์เอกสาร A5</button>
+            </div>
         </div>
     </div>
 
-    <div class="page-container">
-        <div>
-            <div class="paper-header">
-                <div class="hospital-info">
-                    <h1 id="dispHospital">โรงพยาบาลศูนย์การแพทย์</h1>
-                    <p>ตารางปฏิบัติงานบุคลากรทางการแพทย์ประจำเดือน <span id="dispMonthYear"></span></p>
+    <div class="page-wrapper">
+        <div class="page-container" id="printableArea">
+            <div>
+                <div class="paper-header">
+                    <div class="hospital-info">
+                        <h1 id="dispHospital">โรงพยาบาลศูนย์การแพทย์</h1>
+                        <p>ตารางปฏิบัติงานบุคลากรทางการแพทย์ประจำเดือน <span id="dispMonthYear"></span></p>
+                    </div>
+                    <div class="staff-info">
+                        <div>ชื่อผู้ขึ้นเวร: <span id="dispStaff" style="font-weight:600;">พว. สมศรี ใจดี</span></div>
+                        <div>แผนก: <span id="dispDept" style="font-weight:600;">แผนกผู้ป่วยนอก (OPD)</span></div>
+                    </div>
                 </div>
-                <div class="staff-info">
-                    <div>ชื่อผู้ขึ้นเวร: <span id="dispStaff">พว. สมศรี ใจดี</span></div>
-                    <div>แผนก: <span id="dispDept">แผนกผู้ป่วยนอก (OPD)</span></div>
+
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px;">
+                    <div class="day-header">อา.</div>
+                    <div class="day-header">จ.</div>
+                    <div class="day-header">อ.</div>
+                    <div class="day-header">พ.</div>
+                    <div class="day-header">พฤ.</div>
+                    <div class="day-header">ศ.</div>
+                    <div class="day-header">ส.</div>
                 </div>
+
+                <div class="calendar-grid" id="calendarGrid"></div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px;">
-                <div class="day-header">อา.</div>
-                <div class="day-header">จ.</div>
-                <div class="day-header">อ.</div>
-                <div class="day-header">พ.</div>
-                <div class="day-header">พฤ.</div>
-                <div class="day-header">ศ.</div>
-                <div class="day-header">ส.</div>
-            </div>
-
-            <div class="calendar-grid" id="calendarGrid"></div>
-        </div>
-
-        <div class="paper-footer">
-            <div class="summary-table" id="summaryContainer"></div>
-            <div class="signature-area">
-                <div>ลงชื่อผู้จัดทำ: ...................................</div>
-                <div>ลงชื่อหัวหน้าแผนก: ...................................</div>
+            <div class="paper-footer">
+                <div class="summary-table" id="summaryContainer"></div>
+                <div class="signature-area">
+                    <div>ลงชื่อผู้จัดทำ: ........................</div>
+                    <div>ลงชื่อหัวหน้าแผนก: ........................</div>
+                </div>
             </div>
         </div>
     </div>
@@ -498,17 +495,21 @@
             const dutyDays = totalDays - counts['OFF'] - counts['VAC'] - counts['EMERGENCY'];
 
             document.getElementById('summaryContainer').innerHTML = `
-                <div class="summary-item">วันทั้งหมด: <strong>${totalDays} วัน</strong></div>
-                <div class="summary-item">ขึ้นเวร: <strong>${dutyDays} วัน (${totalHours} ชม.)</strong></div>
-                <div class="summary-item">วันหยุด: <strong>${counts['OFF']} วัน</strong></div>
-                <div class="summary-item">วันลา: <strong>${counts['VAC'] + counts['EMERGENCY']} วัน</strong></div>
+                <div>วันทั้งหมด: <strong>${totalDays} วัน</strong></div>
+                <div>ขึ้นเวร: <strong>${dutyDays} วัน (${totalHours} ชม.)</strong></div>
+                <div>วันหยุด: <strong>${counts['OFF']} วัน</strong></div>
+                <div>วันลา: <strong>${counts['VAC'] + counts['EMERGENCY']} วัน</strong></div>
             `;
         }
 
-        function triggerPrint() {
-            setTimeout(() => {
-                window.print();
-            }, 50);
+        function downloadImage() {
+            const area = document.getElementById('printableArea');
+            html2canvas(area, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'ตารางเวร.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
         }
 
         window.onload = () => {
