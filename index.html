@@ -3,539 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Special Nurse System</title>
+    <title>ระบบบันทึกโน้ตและรายการค่าใช้จ่าย (Expense Tracker)</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js สำหรับสร้าง PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Font (Sarabun) -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Sarabun', sans-serif;
-            background: #f0f4f8;
+            background-color: #f8fafc;
         }
-        /* Custom Animations & Effects */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        }
-        .pulse-badge {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
-        }
-        /* Style specific for A5 PDF Export */
-        #pdf-template {
-            width: 148mm;
-            min-height: 210mm;
+
+        /* สำหรับการจัดหน้ากระดาษ PDF */
+        .page-a4 {
+            width: 210mm;
+            min-height: 297mm;
             padding: 15mm;
             background: white;
-            font-size: 14px;
+            margin: auto;
+        }
+
+        .page-a5 {
+            width: 148mm;
+            min-height: 210mm;
+            padding: 10mm;
+            background: white;
+            margin: auto;
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+<body class="min-h-screen text-slate-800 pb-10">
 
-    <div id="landing-page" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-cyan-900 via-teal-800 to-slate-900 text-white p-4">
-        <div class="text-center mb-6 animate-fade-in">
-            <div class="inline-flex items-center justify-center w-24 h-24 bg-white/10 rounded-full mb-4 border-2 border-cyan-400/30 pulse-badge">
-                <i class="fa-solid fa-user-nurse text-5xl text-cyan-400"></i>
+    <!-- Header Navigation -->
+    <header class="bg-indigo-600 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-receipt text-2xl text-indigo-200"></i>
+                <h1 class="text-xl font-bold tracking-wide">Expense Notes & PDF Exporter</h1>
             </div>
-            <h1 class="text-3xl font-bold tracking-wider text-cyan-300 mb-1">SPECIAL NURSE</h1>
-            <p class="text-sm font-light text-cyan-100/80">Medical Duty & Management System</p>
+            <div class="text-xs sm:text-sm bg-indigo-700/50 px-3 py-1.5 rounded-full border border-indigo-400/30">
+                <i class="fa-regular fa-calendar-check mr-1"></i> <span id="current-date"></span>
+            </div>
         </div>
+    </header>
 
-        <button onclick="openModal('login-modal')" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold rounded-full shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 transform hover:-translate-y-1">
-            <i class="fa-solid fa-right-to-bracket mr-2"></i>เข้าสู่ระบบปฏิบัติงาน
-        </button>
+    <!-- Main Dashboard -->
+    <main class="max-w-6xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <div id="login-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div class="glass-card bg-white rounded-2xl p-6 w-full max-w-md text-slate-800 relative">
-                <button onclick="closeModal('login-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-                
-                <div class="text-center mb-6">
-                    <i class="fa-solid fa-hospital-user text-3xl text-cyan-600 mb-2"></i>
-                    <h2 class="text-xl font-bold text-slate-800">เข้าสู่ระบบ Special Nurse</h2>
-                </div>
+        <!-- ฝั่งซ้าย: ฟอร์มป้อนข้อมูล & ตารางรายการ (8 Cols) -->
+        <div class="lg:col-span-7 space-y-6">
 
-                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+            <!-- Card 1: ฟอร์มเพิ่มรายการ -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-indigo-600"></i> เพิ่มรายการค่าใช้จ่าย
+                </h2>
+                <form id="expense-form" onsubmit="addItem(event)" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium mb-1">ชื่อผู้ใช้</label>
-                        <input type="text" id="username" required placeholder="เช่น nursebk" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">รหัสผ่าน</label>
-                        <input type="password" id="password" required placeholder="••••••••" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
+                        <label class="block text-sm font-medium text-slate-700 mb-1">รายละเอียดรายการ / โน้ต</label>
+                        <input type="text" id="item-title" required placeholder="เช่น ค่าอาหารกลางวัน, ค่าอุปกรณ์สำนักงาน" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                     </div>
                     
-                    <div class="flex justify-end">
-                        <button type="button" onclick="switchModal('login-modal', 'forgot-modal')" class="text-xs text-cyan-600 hover:underline">ลืมรหัสผ่าน?</button>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">หมวดหมู่</label>
+                            <select id="item-category" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="ทั่วไป">ทั่วไป</option>
+                                <option value="อาหาร/เครื่องดื่ม">อาหาร/เครื่องดื่ม</option>
+                                <option value="การเดินทาง">การเดินทาง</option>
+                                <option value="อุปกรณ์/วัตถุดิบ">อุปกรณ์/วัตถุดิบ</option>
+                                <option value="บริการ/สาธารณูปโภค">บริการ/สาธารณูปโภค</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">จำนวนเงิน (บาท)</label>
+                            <input type="number" id="item-amount" step="0.01" min="0.01" required placeholder="0.00" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
                     </div>
 
-                    <button type="submit" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-lg shadow-md transition-all">เข้าสู่ระบบ</button>
+                    <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md transition-all flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> บันทึกรายการ
+                    </button>
                 </form>
             </div>
+
+            <!-- Card 2: ตารางแสดงรายการ -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-700">รายการที่บันทึกไว้</h3>
+                    <button onclick="clearAllItems()" class="text-xs text-rose-600 hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-trash-can"></i> ล้างข้อมูลทั้งหมด
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-100 text-slate-500 uppercase text-xs">
+                            <tr>
+                                <th class="p-3 pl-4">#</th>
+                                <th class="p-3">รายการ</th>
+                                <th class="p-3">หมวดหมู่</th>
+                                <th class="p-3 text-right">จำนวนเงิน</th>
+                                <th class="p-3 text-center">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-table-body" class="divide-y divide-slate-100">
+                            <!-- รายการจะถูกสร้างผ่าน JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- สรุปยอดรวมด้านล่างสุด -->
+                <div class="p-4 bg-indigo-50 border-t border-indigo-100 flex justify-between items-center">
+                    <span class="font-bold text-indigo-900 text-base">สรุปยอดรวมทั้งหมด:</span>
+                    <span id="grand-total" class="font-bold text-indigo-600 text-xl">0.00 บาท</span>
+                </div>
+            </div>
+
         </div>
 
-        <div id="forgot-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div class="glass-card bg-white rounded-2xl p-6 w-full max-w-md text-slate-800 relative">
-                <button onclick="closeModal('forgot-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <!-- ฝั่งขวา: การตั้งค่าส่งออก PDF & ตัวอย่างเอกสาร (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6">
 
-                <h2 class="text-lg font-bold text-slate-800 mb-2"><i class="fa-solid fa-key text-yellow-500 mr-2"></i>ลืมรหัสผ่าน</h2>
-                <p class="text-xs text-slate-500 mb-4">ระบุรหัสพนักงาน/เจ้าหน้าที่ Special Nurse เพื่อรีเซ็ตรหัสผ่าน (หากไม่มีกรุณาติดต่อแผนก IT)</p>
+            <!-- ตั้งค่ากระดาษและปุ่ม Export -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-rose-500"></i> ตัวเลือกการส่งออก PDF
+                </h2>
 
-                <form id="forgot-form" onsubmit="handleResetPassword(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-1">รหัสยืนยันตน (รหัสพนักงาน)</label>
-                        <input type="text" id="verify-code" required placeholder="ใส่ sn01" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-1">รหัสผ่านใหม่</label>
-                        <input type="password" id="new-password" required placeholder="กำหนดรหัสผ่านใหม่" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">หัวข้อเอกสาร / ชื่อโน้ต</label>
+                    <input type="text" id="doc-title" value="รายงานสรุปค่าใช้จ่าย" oninput="updatePreview()" class="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
 
-                    <div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded text-xs text-amber-800">
-                        <label class="flex items-start gap-2 cursor-pointer">
-                            <input type="checkbox" id="keep-old-pass" class="mt-0.5 rounded border-amber-400 text-amber-600 focus:ring-amber-400">
-                            <span>ต้องการเก็บรหัสผ่านเดิมไว้สำรองใช้ได้ภายใน 72 ชั่วโมง หรือไม่?</span>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">เลือกขนาดกระดาษ</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50 border-indigo-500 bg-indigo-50/30" id="label-a4">
+                            <input type="radio" name="paper-size" value="a4" checked onchange="changePaperSize('a4')" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="font-semibold text-sm">กระดาษ A4</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50" id="label-a5">
+                            <input type="radio" name="paper-size" value="a5" onchange="changePaperSize('a5')" class="text-indigo-600 focus:ring-indigo-500">
+                            <span class="font-semibold text-sm">กระดาษ A5</span>
                         </label>
                     </div>
-
-                    <div class="flex gap-2 pt-2">
-                        <button type="button" onclick="switchModal('forgot-modal', 'login-modal')" class="w-1/2 py-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50">ยกเลิก</button>
-                        <button type="submit" class="w-1/2 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg shadow-md">ยืนยันเปลี่ยนรหัส</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="dashboard-page" class="hidden min-h-screen flex flex-col">
-        <header class="bg-gradient-to-r from-cyan-800 to-teal-700 text-white sticky top-0 z-30 shadow-md">
-            <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="text-2xl hover:bg-white/10 p-2 rounded-lg transition-all">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-heart-pulse text-cyan-300 text-2xl"></i>
-                        <span class="font-bold text-lg tracking-wide hidden sm:inline">Special Nurse System</span>
-                    </div>
                 </div>
 
-                <div class="flex items-center gap-4 text-xs sm:text-sm">
-                    <div class="bg-white/10 px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-2">
-                        <i class="fa-regular fa-clock text-cyan-300"></i>
-                        <span>ปฏิบัติงาน: <strong id="duty-date"></strong> | <strong id="duty-time"></strong></span>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 bg-teal-900/50 px-3 py-1.5 rounded-lg border border-teal-400/30">
-                        <i class="fa-solid fa-user-circle text-teal-300"></i>
-                        <span id="user-display-name">nursebk</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-slate-900 text-white z-40 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col justify-between">
-            <div class="p-5">
-                <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-700">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-kit-medical text-cyan-400 text-xl"></i>
-                        <span class="font-bold text-slate-100">เมนูหลัก</span>
-                    </div>
-                    <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
-                </div>
-
-                <nav class="space-y-2">
-                    <button onclick="showSection('overview-section'); toggleSidebar();" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cyan-600/20 hover:text-cyan-400 transition-all text-left">
-                        <i class="fa-solid fa-chart-pie w-5"></i> ภาพรวมแดชบอร์ด
-                    </button>
-                    <button onclick="showSection('calc-section'); toggleSidebar();" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cyan-600/20 hover:text-cyan-400 transition-all text-left">
-                        <i class="fa-solid fa-calculator w-5"></i> ระบบคำนวณค่าเวร
-                    </button>
-                    <button onclick="showSection('leave-section'); toggleSidebar();" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cyan-600/20 hover:text-cyan-400 transition-all text-left">
-                        <i class="fa-solid fa-file-signature w-5"></i> ระบบสร้างใบลา (A5)
-                    </button>
-                </nav>
-            </div>
-
-            <div class="p-5 border-t border-slate-800">
-                <button onclick="handleLogout()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-all shadow-md">
-                    <i class="fa-solid fa-right-from-bracket"></i> ล็อกเอ้าท์ออกจากระบบ
+                <button onclick="exportPDF()" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg shadow-lg hover:shadow-rose-500/30 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> ดาวน์โหลดเป็น PDF
                 </button>
             </div>
+
+            <!-- ตัวอย่างเอกสาร (Preview Area) -->
+            <div class="bg-slate-200 p-4 rounded-2xl border border-slate-300 flex justify-center overflow-auto max-h-[550px]">
+                
+                <!-- PDF Rendering Template -->
+                <div id="pdf-render-area" class="page-a4 shadow-md text-slate-800 transition-all duration-300">
+                    <!-- PDF Header -->
+                    <div class="border-b-2 border-indigo-600 pb-4 mb-4 flex justify-between items-start">
+                        <div>
+                            <h1 id="pdf-header-title" class="text-xl font-bold text-indigo-900">รายงานสรุปค่าใช้จ่าย</h1>
+                            <p class="text-xs text-slate-500 mt-1">ออกโดยระบบบันทึกโน้ตและค่าใช้จ่ายอัตโนมัติ</p>
+                        </div>
+                        <div class="text-right text-xs text-slate-500">
+                            <p>วันที่พิมพ์: <span id="pdf-print-date">-</span></p>
+                            <p>ขนาดกระดาษ: <span id="pdf-paper-tag" class="uppercase font-bold text-indigo-600">A4</span></p>
+                        </div>
+                    </div>
+
+                    <!-- PDF Items Table -->
+                    <table class="w-full text-left text-xs mb-6">
+                        <thead>
+                            <tr class="border-b border-slate-300 bg-slate-50 text-slate-700">
+                                <th class="py-2 px-2">ลำดับ</th>
+                                <th class="py-2 px-2">รายการ / โน้ต</th>
+                                <th class="py-2 px-2">หมวดหมู่</th>
+                                <th class="py-2 px-2 text-right">จำนวนเงิน</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdf-table-body" class="divide-y divide-slate-200">
+                            <!-- สแนปโคลนนิ่งรายการมาแสดงที่นี่ -->
+                        </tbody>
+                    </table>
+
+                    <!-- PDF Total Footer -->
+                    <div class="border-t-2 border-slate-800 pt-3 flex justify-between items-center text-sm font-bold">
+                        <span>ยอดรวมสุทธิทั้งสิ้น (Total):</span>
+                        <span id="pdf-grand-total" class="text-indigo-700 text-base">0.00 บาท</span>
+                    </div>
+
+                    <!-- Signature Placeholder -->
+                    <div class="mt-12 grid grid-cols-2 gap-4 text-center text-xs text-slate-500">
+                        <div>
+                            <p class="mb-10">........................................................</p>
+                            <p>( ผู้จัดทำรายการ )</p>
+                        </div>
+                        <div>
+                            <p class="mb-10">........................................................</p>
+                            <p>( ผู้ตรวจสอบ / อนุมัติ )</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
-        <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
-            
-            <div id="overview-section" class="space-y-6">
-                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-gauge-high text-cyan-600"></i> แผงควบคุมและสรุปสถานะ
-                </h2>
+    </main>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold uppercase text-slate-400 mb-1">วันที่ขึ้นเวรเดือนนี้</p>
-                                <h3 class="text-3xl font-bold text-cyan-600">22 วัน</h3>
-                            </div>
-                            <div class="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600 text-xl">
-                                <i class="fa-solid fa-calendar-check"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold uppercase text-slate-400 mb-1">วันลาสะสม</p>
-                                <h3 class="text-3xl font-bold text-amber-500">2 วัน</h3>
-                            </div>
-                            <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 text-xl">
-                                <i class="fa-solid fa-user-clock"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition-all">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-xs font-semibold uppercase text-slate-400 mb-1">วันหยุดคงเหลือ</p>
-                                <h3 class="text-3xl font-bold text-emerald-500">6 วัน</h3>
-                            </div>
-                            <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 text-xl">
-                                <i class="fa-solid fa-bed"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center">
-                        <h3 class="font-bold text-slate-700">ตารางการเวรล่าสุด</h3>
-                        <span class="text-xs bg-cyan-100 text-cyan-800 px-2.5 py-1 rounded-full font-medium">อัปเดตเรียลไทม์</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-600">
-                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
-                                <tr>
-                                    <th class="p-3 pl-4">วันที่</th>
-                                    <th class="p-3">กะงาน (Shift)</th>
-                                    <th class="p-3">แผนก</th>
-                                    <th class="p-3">สถานะ</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                <tr>
-                                    <td class="p-3 pl-4 font-medium text-slate-800">วันนี้</td>
-                                    <td class="p-3">เวรเช้า (07:00 - 15:00)</td>
-                                    <td class="p-3">ICU ผู้ใหญ่</td>
-                                    <td class="p-3"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs">กำลังปฏิบัติงาน</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3 pl-4 font-medium text-slate-800">พรุ่งนี้</td>
-                                    <td class="p-3">เวรดึก (23:00 - 07:00)</td>
-                                    <td class="p-3">ห้องฉุกเฉิน (ER)</td>
-                                    <td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs">รอดำเนินการ</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div id="calc-section" class="hidden space-y-6">
-                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-cyan-600"></i> ระบบคำนวณค่าเวร Special Nurse
-                </h2>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">รูปแบบอัตราจ้าง</label>
-                            <select id="calc-type" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
-                                <option value="hourly">รายชั่วโมง</option>
-                                <option value="daily">รายวัน</option>
-                                <option value="weekly">รายสัปดาห์</option>
-                                <option value="monthly">รายเดือน</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">จำนวนหน่วย (ชั่วโมง/วัน/สัปดาห์/เดือน)</label>
-                            <input type="number" id="calc-units" value="8" min="1" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">อัตราค่าจ้าง (บาท)</label>
-                            <input type="number" id="calc-rate" value="120" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">หัก % (เช่นภาษี หัก ณ ที่จ่าย / ค่าธรรมเนียม)</label>
-                            <input type="number" id="calc-deduct" value="3" min="0" max="100" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 outline-none">
-                        </div>
-                        <button onclick="calculateSalary()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-lg shadow transition-all">คำนวณสุทธิ</button>
-                    </div>
-
-                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 flex flex-col justify-between">
-                        <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider">สรุปยอดรายได้ค่าเวร</h3>
-                        <div class="space-y-3 my-4">
-                            <div class="flex justify-between text-sm">
-                                <span class="text-slate-600">รายได้รวมก่อนหัก:</span>
-                                <span id="res-gross" class="font-semibold text-slate-800">0.00 บาท</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-slate-600">หักส่วนลด (%):</span>
-                                <span id="res-deduction" class="font-semibold text-rose-500">0.00 บาท</span>
-                            </div>
-                            <hr class="border-slate-200">
-                            <div class="flex justify-between text-lg font-bold">
-                                <span class="text-slate-800">รายได้สุทธิ:</span>
-                                <span id="res-net" class="text-emerald-600">0.00 บาท</span>
-                            </div>
-                        </div>
-                        <p class="text-xs text-slate-400 text-center">* หมายเหตุ: การคำนวณนี้เป็นประมาณการเบื้องต้น</p>
-                    </div>
-                </div>
-            </div>
-
-            <div id="leave-section" class="hidden space-y-6">
-                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-file-signature text-cyan-600"></i> ระบบสร้างใบลาออนไลน์ (ขนาด A5)
-                </h2>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
-                        <h3 class="font-bold text-slate-700 border-b pb-2">กรอกข้อมูลการลา</h3>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">ประเภทการลา</label>
-                            <select id="leave-type" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-cyan-500">
-                                <option value="ลาป่วย">ลาป่วย</option>
-                                <option value="ลากิจ">ลากิจ</option>
-                                <option value="ลาพักร้อน">ลาพักร้อน</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">ตั้งแต่วันที่</label>
-                                <input type="date" id="leave-start" class="w-full px-3 py-2 border rounded-lg outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">ถึงวันที่</label>
-                                <input type="date" id="leave-end" class="w-full px-3 py-2 border rounded-lg outline-none">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">สาเหตุการลา</label>
-                            <textarea id="leave-reason" rows="3" placeholder="ระบุเหตุผลรายละเอียด..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
-                        </div>
-                        <button onclick="updatePdfPreview()" class="w-full py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-lg">อัปเดตตัวอย่างเอกสาร</button>
-                    </div>
-
-                    <div class="flex flex-col items-center">
-                        <div class="mb-3 flex gap-2">
-                            <button onclick="exportToPDF()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-medium rounded-lg shadow flex items-center gap-2">
-                                <i class="fa-solid fa-file-pdf"></i> ส่งออกเป็นไฟล์ PDF (A5)
-                            </button>
-                        </div>
-
-                        <div class="border shadow-lg rounded bg-white overflow-hidden scale-90 sm:scale-100 transform origin-top">
-                            <div id="pdf-template" class="text-slate-800 flex flex-col justify-between">
-                                <div>
-                                    <div class="flex items-center justify-between border-b-2 border-slate-800 pb-3 mb-4">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fa-solid fa-user-nurse text-3xl text-cyan-700"></i>
-                                            <div>
-                                                <h1 class="font-bold text-base leading-tight">ใบขออนุมัติลาหยุดงาน</h1>
-                                                <p class="text-xs text-slate-500">แผนกพยาบาลพิเศษ (Special Nurse)</p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right text-xs">
-                                            <p class="font-bold">ขนาดเอกสาร: A5</p>
-                                            <p id="pdf-doc-date">วันที่สั่งพิมพ์: -</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="space-y-3 text-xs">
-                                        <p><strong>ชื่อ-นามสกุล ผู้ขอลา:</strong> <span id="pdf-user-name" class="border-b border-dotted border-slate-400 px-2">nursebk</span></p>
-                                        <p><strong>มีความประสงค์ขอ:</strong> <span id="pdf-leave-type" class="border-b border-dotted border-slate-400 px-2">ลาป่วย</span></p>
-                                        <p><strong>ตั้งแต่วันที่:</strong> <span id="pdf-start-date" class="border-b border-dotted border-slate-400 px-2">-</span> <strong>ถึงวันที่:</strong> <span id="pdf-end-date" class="border-b border-dotted border-slate-400 px-2">-</span></p>
-                                        <div class="mt-2">
-                                            <p><strong>เนื่องจาก (สาเหตุ):</strong></p>
-                                            <div id="pdf-reason" class="p-2 bg-slate-50 border rounded mt-1 min-h-[60px]">ระบุสาเหตุ...</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-4 text-center text-xs mt-8 pt-4 border-t border-slate-200">
-                                    <div>
-                                        <p class="mb-8">ลงชื่อ........................................................ผู้ขอลา</p>
-                                        <p>( <span id="pdf-sign-name">nursebk</span> )</p>
-                                    </div>
-                                    <div>
-                                        <p class="mb-8">ลงชื่อ........................................................ผู้อนุมัติ</p>
-                                        <p>( หัวหน้าแผนก Special Nurse )</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                </div>
-            </div>
-
-        </main>
-    </div>
-
+    <!-- JavaScript Control Logic -->
     <script>
-        // Global Auth State Management
-        let authState = {
-            username: "nursebk",
-            password: "1234567",
-            oldPasswordBackup: null,
-            backupExpiry: null,
-            verifyCode: "sn01"
-        };
+        let items = [];
+        let selectedPaperSize = 'a4';
 
-        // Realtime Clock Updater
-        function updateClock() {
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' });
-            const timeStr = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            
-            const dEl = document.getElementById('duty-date');
-            const tEl = document.getElementById('duty-time');
-            if(dEl) dEl.innerText = dateStr;
-            if(tEl) tEl.innerText = timeStr;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+        // แสดงวันที่ปัจจุบัน
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('th-TH', {
+            year: 'numeric', month: 'long', day: 'numeric'
+        });
 
-        // Modal Controls
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function switchModal(fromId, toId) { closeModal(fromId); openModal(toId); }
-
-        // Sidebar Navigation
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            sb.classList.toggle('-translate-x-full');
-        }
-
-        function showSection(sectionId) {
-            ['overview-section', 'calc-section', 'leave-section'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
-
-        // Login System
-        function handleLogin(e) {
+        // เพิ่มรายการใหม่
+        function addItem(e) {
             e.preventDefault();
-            const uInput = document.getElementById('username').value;
-            const pInput = document.getElementById('password').value;
+            const title = document.getElementById('item-title').value;
+            const category = document.getElementById('item-category').value;
+            const amount = parseFloat(document.getElementById('item-amount').value);
 
-            // Check primary password or active backup password (72 hrs check)
-            const isBackupValid = authState.oldPasswordBackup && 
-                                  pInput === authState.oldPasswordBackup && 
-                                  new Date() < authState.backupExpiry;
-
-            if (uInput === authState.username && (pInput === authState.password || isBackupValid)) {
-                closeModal('login-modal');
-                document.getElementById('landing-page').classList.add('hidden');
-                document.getElementById('dashboard-page').classList.remove('hidden');
-                document.getElementById('user-display-name').innerText = authState.username;
-            } else {
-                alert('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง!');
+            if (title && amount) {
+                items.push({ id: Date.now(), title, category, amount });
+                document.getElementById('expense-form').reset();
+                renderItems();
             }
         }
 
-        // Reset Password System (Real-time update)
-        function handleResetPassword(e) {
-            e.preventDefault();
-            const vCode = document.getElementById('verify-code').value;
-            const newPass = document.getElementById('new-password').value;
-            const keepOld = document.getElementById('keep-old-pass').checked;
+        // ลบรายการ
+        function deleteItem(id) {
+            items = items.filter(item => item.id !== id);
+            renderItems();
+        }
 
-            if (vCode !== authState.verifyCode) {
-                alert('รหัสยืนยันไม่ถูกต้อง! หากไม่มีกรุณาติดต่อแผนก IT');
-                return;
+        // ล้างรายการทั้งหมด
+        function clearAllItems() {
+            if (confirm('คุณต้องการลบรายการทั้งหมดใช่หรือไม่?')) {
+                items = [];
+                renderItems();
             }
-
-            if (keepOld) {
-                authState.oldPasswordBackup = authState.password;
-                // Set Expiry 72 Hours from now
-                authState.backupExpiry = new Date(Date.now() + (72 * 60 * 60 * 1000));
-            } else {
-                authState.oldPasswordBackup = null;
-            }
-
-            // Realtime Update Password
-            authState.password = newPass;
-
-            alert('เปลี่ยนรหัสผ่านสำเร็จแล้ว! คุณสามารถใช้รหัสผ่านใหม่ในการเข้าสู่ระบบได้ทันที');
-            switchModal('forgot-modal', 'login-modal');
         }
 
-        // Logout
-        function handleLogout() {
-            document.getElementById('dashboard-page').classList.add('hidden');
-            document.getElementById('landing-page').classList.remove('hidden');
-            document.getElementById('login-form').reset();
-            openModal('login-modal');
-        }
-
-        // Calculator Logic
-        function calculateSalary() {
-            const units = parseFloat(document.getElementById('calc-units').value) || 0;
-            const rate = parseFloat(document.getElementById('calc-rate').value) || 0;
-            const deductPercent = parseFloat(document.getElementById('calc-deduct').value) || 0;
-
-            const gross = units * rate;
-            const deduction = (gross * deductPercent) / 100;
-            const net = gross - deduction;
-
-            document.getElementById('res-gross').innerText = gross.toLocaleString('th-TH', {minimumFractionDigits: 2}) + " บาท";
-            document.getElementById('res-deduction').innerText = deduction.toLocaleString('th-TH', {minimumFractionDigits: 2}) + " บาท";
-            document.getElementById('res-net').innerText = net.toLocaleString('th-TH', {minimumFractionDigits: 2}) + " บาท";
-        }
-
-        // Leave PDF Preview Update
-        function updatePdfPreview() {
-            const lType = document.getElementById('leave-type').value;
-            const lStart = document.getElementById('leave-start').value || '-';
-            const lEnd = document.getElementById('leave-end').value || '-';
-            const lReason = document.getElementById('leave-reason').value || 'ไม่ได้ระบุ';
-
-            document.getElementById('pdf-leave-type').innerText = lType;
-            document.getElementById('pdf-start-date').innerText = lStart;
-            document.getElementById('pdf-end-date').innerText = lEnd;
-            document.getElementById('pdf-reason').innerText = lReason;
-            document.getElementById('pdf-user-name').innerText = authState.username;
-            document.getElementById('pdf-sign-name').innerText = authState.username;
-            document.getElementById('pdf-doc-date').innerText = "วันที่สั่งพิมพ์: " + new Date().toLocaleDateString('th-TH');
-        }
-
-        // Export PDF Function (A5 Size Configured)
-        function exportToPDF() {
-            updatePdfPreview();
-            const element = document.getElementById('pdf-template');
+        // สรุปผลและ Render รายการลงใน Dashboard & PDF Preview
+        function renderItems() {
+            const tableBody = document.getElementById('expense-table-body');
+            const pdfTableBody = document.getElementById('pdf-table-body');
             
+            tableBody.innerHTML = '';
+            pdfTableBody.innerHTML = '';
+
+            let total = 0;
+
+            if (items.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">ยังไม่มีรายการที่ถูกบันทึก</td></tr>`;
+                pdfTableBody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-400">ไม่มีข้อมูลรายการ</td></tr>`;
+            } else {
+                items.forEach((item, index) => {
+                    total += item.amount;
+                    const formattedAmount = item.amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                    // Render ลง Dashboard Table
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50";
+                    tr.innerHTML = `
+                        <td class="p-3 pl-4 font-medium text-slate-400">${index + 1}</td>
+                        <td class="p-3 font-medium text-slate-800">${item.title}</td>
+                        <td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs">${item.category}</span></td>
+                        <td class="p-3 text-right font-bold text-slate-700">${formattedAmount}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteItem(${item.id})" class="text-slate-400 hover:text-rose-600 transition-colors">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+
+                    // Render ลง PDF Preview Table
+                    const pdfTr = document.createElement('tr');
+                    pdfTr.innerHTML = `
+                        <td class="py-2 px-2 text-slate-500">${index + 1}</td>
+                        <td class="py-2 px-2 font-medium">${item.title}</td>
+                        <td class="py-2 px-2 text-slate-500">${item.category}</td>
+                        <td class="py-2 px-2 text-right font-bold">${formattedAmount}</td>
+                    `;
+                    pdfTableBody.appendChild(pdfTr);
+                });
+            }
+
+            // คำนวณยอดรวมแสดงผล
+            const formattedTotal = total.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' บาท';
+            document.getElementById('grand-total').innerText = formattedTotal;
+            document.getElementById('pdf-grand-total').innerText = formattedTotal;
+
+            updatePreview();
+        }
+
+        // อัปเดตตัวอย่าง PDF Preview
+        function updatePreview() {
+            const title = document.getElementById('doc-title').value || 'รายงานสรุปค่าใช้จ่าย';
+            document.getElementById('pdf-header-title').innerText = title;
+            document.getElementById('pdf-print-date').innerText = new Date().toLocaleDateString('th-TH');
+            document.getElementById('pdf-paper-tag').innerText = selectedPaperSize.toUpperCase();
+        }
+
+        // สลับขนาดกระดาษ (A4 / A5)
+        function changePaperSize(size) {
+            selectedPaperSize = size;
+            const pdfRenderArea = document.getElementById('pdf-render-area');
+            const labelA4 = document.getElementById('label-a4');
+            const labelA5 = document.getElementById('label-a5');
+
+            if (size === 'a4') {
+                pdfRenderArea.className = 'page-a4 shadow-md text-slate-800 transition-all duration-300';
+                labelA4.classList.add('border-indigo-500', 'bg-indigo-50/30');
+                labelA5.classList.remove('border-indigo-500', 'bg-indigo-50/30');
+            } else {
+                pdfRenderArea.className = 'page-a5 shadow-md text-slate-800 transition-all duration-300';
+                labelA5.classList.add('border-indigo-500', 'bg-indigo-50/30');
+                labelA4.classList.remove('border-indigo-500', 'bg-indigo-50/30');
+            }
+
+            updatePreview();
+        }
+
+        // ส่งออกเป็นไฟล์ PDF
+        function exportPDF() {
+            updatePreview();
+            const element = document.getElementById('pdf-render-area');
+            const docTitle = document.getElementById('doc-title').value || 'Expense_Report';
+
             const opt = {
                 margin:       0,
-                filename:     `ใบลา_SpecialNurse_${authState.username}.pdf`,
+                filename:     `${docTitle}_${selectedPaperSize.toUpperCase()}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
+                jsPDF:        { unit: 'mm', format: selectedPaperSize, orientation: 'portrait' }
             };
 
             html2pdf().set(opt).from(element).save();
         }
+
+        // เรียกใช้งาน Render ตั้งต้น
+        renderItems();
     </script>
 </body>
 </html>
-
