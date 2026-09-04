@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสร้างตารางเวรทางการแพทย์ (A5 Landscape Generator)</title>
+    <title>ระบบจัดตารางเวรปฏิบัติงานทางการแพทย์</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #1e3a8a;
-            --primary-light: #eff6ff;
-            --secondary: #0d9488;
-            --bg-gray: #f8fafc;
+            --primary-hover: #1d4ed8;
+            --bg-gray: #f1f5f9;
             --border-color: #cbd5e1;
             --text-main: #0f172a;
+            --text-muted: #475569;
         }
 
         * {
@@ -23,7 +23,7 @@
         }
 
         body {
-            background-color: #64748b;
+            background-color: #e2e8f0;
             color: var(--text-main);
             padding: 20px;
             display: flex;
@@ -31,32 +31,30 @@
             align-items: center;
         }
 
-        /* Editor Control Panel (Screen Only) */
+        /* Control Panel (Screen View) */
         .control-panel {
-            background: white;
+            background: #ffffff;
             width: 100%;
-            max-width: 1000px;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            margin-bottom: 25px;
+            max-width: 950px;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
         }
 
-        .control-panel h2 {
+        .panel-title {
             color: var(--primary);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
-            font-size: 20px;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+            gap: 16px;
             margin-bottom: 20px;
         }
 
@@ -68,21 +66,21 @@
 
         .form-group label {
             font-weight: 600;
-            font-size: 14px;
-            color: #334155;
+            font-size: 13px;
+            color: var(--text-muted);
         }
 
         .form-group input, .form-group select {
             padding: 8px 12px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 14px;
             outline: none;
+            background-color: #fff;
         }
 
         .form-group input:focus, .form-group select:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.2);
         }
 
         .actions-bar {
@@ -90,10 +88,11 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
-            background: var(--primary-light);
-            padding: 15px;
-            border-radius: 8px;
+            gap: 16px;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
         }
 
         .legend-selector {
@@ -103,85 +102,82 @@
             align-items: center;
         }
 
+        .legend-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-right: 4px;
+        }
+
         .shift-btn {
-            padding: 6px 12px;
-            border: 1px solid transparent;
-            border-radius: 20px;
+            padding: 6px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            transition: background 0.15s, border-color 0.15s;
         }
 
         .shift-btn.active {
-            box-shadow: 0 0 0 2px #000;
-            transform: scale(1.05);
+            border-color: #000;
+            outline: 2px solid #000;
         }
 
-        /* Shift Color Themes */
+        /* Shift Colors - Clean Tone */
         .shift-TCH { background-color: #fecaca; color: #991b1b; }
-        .shift-OFF { background-color: #e2e8f0; color: #475569; }
+        .shift-OFF { background-color: #f1f5f9; color: #475569; }
         .shift-DAY { background-color: #fef08a; color: #854d0e; }
-        .shift-NIGHT { background-color: #ddd6fe; color: #5b21b6; }
-        .shift-VAC { background-color: #bbf7d0; color: #166534; }
-        .shift-EMERGENCY { background-color: #fed7aa; color: #9a3412; }
+        .shift-NIGHT { background-color: #e9d5ff; color: #581c87; }
+        .shift-VAC { background-color: #dcfce7; color: #166534; }
+        .shift-EMERGENCY { background-color: #ffedd5; color: #9a3412; }
 
         .btn-print {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px 24px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: 4px;
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .btn-print:hover {
-            background-color: #1e40af;
+            background-color: var(--primary-hover);
         }
 
-        /* Printable A5 Landscape Container */
+        /* Printable Canvas (A5 Landscape) */
         .page-container {
             background: white;
             width: 210mm;
             height: 148mm;
             padding: 10mm;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative;
             box-sizing: border-box;
-            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
         }
 
-        /* Paper Header */
         .paper-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             border-bottom: 2px solid var(--primary);
             padding-bottom: 6px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .hospital-info h1 {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary);
             font-weight: 700;
         }
 
         .hospital-info p {
             font-size: 12px;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
         .staff-info {
@@ -194,41 +190,33 @@
             color: var(--text-main);
         }
 
-        /* Calendar Grid */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 3px;
+            gap: 4px;
             flex-grow: 1;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .day-header {
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             text-align: center;
             font-weight: 700;
             font-size: 11px;
-            padding: 3px 0;
-            color: #334155;
-            border-radius: 3px;
+            padding: 4px 0;
+            color: var(--text-muted);
+            border: 1px solid #e2e8f0;
         }
 
         .day-cell {
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
-            padding: 2px 4px;
+            border: 1px solid #cbd5e1;
+            border-radius: 2px;
+            padding: 3px 4px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 0;
             cursor: pointer;
-            position: relative;
             background-color: #fff;
-            transition: background 0.1s;
-        }
-
-        .day-cell:hover {
-            border-color: var(--primary);
         }
 
         .day-cell.empty {
@@ -240,55 +228,44 @@
         .day-number {
             font-size: 11px;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-main);
             line-height: 1;
         }
 
         .shift-badge {
             font-size: 9px;
             font-weight: 700;
-            padding: 2px 3px;
-            border-radius: 3px;
+            padding: 2px 0;
             text-align: center;
-            line-height: 1.1;
-            margin-top: 1px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            border-radius: 2px;
+            line-height: 1;
+            margin-top: 2px;
         }
 
         .shift-time {
-            font-size: 7.5px;
-            color: #475569;
+            font-size: 8px;
+            color: var(--text-muted);
             text-align: center;
-            font-weight: 500;
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
-        /* Footer & Summary */
         .paper-footer {
-            border-top: 1px dashed #cbd5e1;
-            padding-top: 4px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .summary-table {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .summary-item {
-            background: #f8fafc;
-            padding: 3px 8px;
-            border-radius: 4px;
-            border: 1px solid #e2e8f0;
-            display: flex;
-            gap: 4px;
-            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
         .summary-item strong {
@@ -297,16 +274,17 @@
 
         .signature-area {
             display: flex;
-            gap: 20px;
-            font-size: 10px;
-            color: #475569;
+            gap: 24px;
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
-        /* Print Settings for A5 Landscape */
+        /* Direct Print Optimization for A5 Landscape */
         @media print {
             body {
                 background: none;
                 padding: 0;
+                margin: 0;
             }
 
             .control-panel {
@@ -314,11 +292,12 @@
             }
 
             .page-container {
-                box-shadow: none;
-                margin: 0;
-                width: 210mm;
-                height: 148mm;
-                page-break-after: always;
+                border: none;
+                width: 100%;
+                height: 100vh;
+                padding: 8mm;
+                page-break-after: avoid;
+                page-break-inside: avoid;
             }
 
             @page {
@@ -330,17 +309,17 @@
 </head>
 <body>
 
-    <!-- Editor Control Panel -->
     <div class="control-panel">
-        <h2>🏥 ตั้งค่าตารางเวรปฏิบัติงาน (A5 Landscape)</h2>
+        <div class="panel-title">ตั้งค่าตารางเวรปฏิบัติงาน</div>
+        
         <div class="form-grid">
             <div class="form-group">
                 <label>ชื่อโรงพยาบาล / หน่วยงาน</label>
-                <input type="text" id="hospitalName" value="โรงพยาบาลศูนย์การแพทย์สมเด็จพระสังฆราช" oninput="updateHeader()">
+                <input type="text" id="hospitalName" value="โรงพยาบาลศูนย์การแพทย์" oninput="updateHeader()">
             </div>
             <div class="form-group">
-                <label>ชื่อผู้ขึ้นเวร (เจ้าหน้าที่)</label>
-                <input type="text" id="staffName" value="พว. สมศรี ใจดี (พยาบาลวิชาชีพ)" oninput="updateHeader()">
+                <label>ชื่อผู้ขึ้นเวร</label>
+                <input type="text" id="staffName" value="พว. สมศรี ใจดี" oninput="updateHeader()">
             </div>
             <div class="form-group">
                 <label>แผนก / ฝ่าย</label>
@@ -351,7 +330,7 @@
                 <input type="month" id="monthPicker" value="2026-09" onchange="renderCalendar()">
             </div>
             <div class="form-group">
-                <label>ช่วงเวลาปฏิบัติงานมาตรฐาน</label>
+                <label>ช่วงเวลาปฏิบัติงาน</label>
                 <select id="shiftTimeSelect">
                     <option value="7-19">เวร 7-19 (12 ชม.)</option>
                     <option value="9-17">เวร 9-17 (8 ชม.)</option>
@@ -364,52 +343,45 @@
 
         <div class="actions-bar">
             <div class="legend-selector">
-                <span style="font-size:13px; font-weight:600; margin-right:5px;">เลือกประเภทเวรที่จะระบุ:</span>
-                <button class="shift-btn shift-TCH active" onclick="selectShift('TCH', this)">🔴 TCH</button>
-                <button class="shift-btn shift-OFF" onclick="selectShift('OFF', this)">⚪ OFF</button>
-                <button class="shift-btn shift-DAY" onclick="selectShift('DAY', this)">🟡 DAY</button>
-                <button class="shift-btn shift-NIGHT" onclick="selectShift('NIGHT', this)">🟣 NIGHT</button>
-                <button class="shift-btn shift-VAC" onclick="selectShift('VAC', this)">🟢 Vac (ลาพักผ่อน)</button>
-                <button class="shift-btn shift-EMERGENCY" onclick="selectShift('EMERGENCY', this)">🟠 ลาฉุกเฉิน</button>
+                <span class="legend-label">เลือกประเภทเวร:</span>
+                <button class="shift-btn shift-TCH active" onclick="selectShift('TCH', this)">TCH</button>
+                <button class="shift-btn shift-OFF" onclick="selectShift('OFF', this)">OFF</button>
+                <button class="shift-btn shift-DAY" onclick="selectShift('DAY', this)">DAY</button>
+                <button class="shift-btn shift-NIGHT" onclick="selectShift('NIGHT', this)">NIGHT</button>
+                <button class="shift-btn shift-VAC" onclick="selectShift('VAC', this)">Vac</button>
+                <button class="shift-btn shift-EMERGENCY" onclick="selectShift('EMERGENCY', this)">ลาฉุกเฉิน</button>
             </div>
 
-            <button class="btn-print" onclick="window.print()">
-                🖨️ ส่งออก / พิมพ์กระดาษ A5
-            </button>
+            <button class="btn-print" onclick="triggerPrint()">ส่งออก / พิมพ์เอกสาร A5</button>
         </div>
     </div>
 
-    <!-- Printable Canvas -->
-    <div class="page-container" id="printableArea">
+    <div class="page-container">
         <div>
-            <!-- Header -->
             <div class="paper-header">
                 <div class="hospital-info">
-                    <h1 id="dispHospital">โรงพยาบาลศูนย์การแพทย์สมเด็จพระสังฆราช</h1>
-                    <p>ตารางปฏิบัติงานบุคลากรทางการแพทย์ประจำเดือน <span id="dispMonthYear" style="font-weight:600; color:#1e3a8a;"></span></p>
+                    <h1 id="dispHospital">โรงพยาบาลศูนย์การแพทย์</h1>
+                    <p>ตารางปฏิบัติงานบุคลากรทางการแพทย์ประจำเดือน <span id="dispMonthYear"></span></p>
                 </div>
                 <div class="staff-info">
-                    <div>ชื่อผู้ขึ้นเวร: <span id="dispStaff">พว. สมศรี ใจดี (พยาบาลวิชาชีพ)</span></div>
+                    <div>ชื่อผู้ขึ้นเวร: <span id="dispStaff">พว. สมศรี ใจดี</span></div>
                     <div>แผนก: <span id="dispDept">แผนกผู้ป่วยนอก (OPD)</span></div>
                 </div>
             </div>
 
-            <!-- Days Header -->
-            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 3px;">
-                <div class="day-header" style="color:#e11d48;">อา.</div>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 4px;">
+                <div class="day-header">อา.</div>
                 <div class="day-header">จ.</div>
                 <div class="day-header">อ.</div>
                 <div class="day-header">พ.</div>
                 <div class="day-header">พฤ.</div>
                 <div class="day-header">ศ.</div>
-                <div class="day-header" style="color:#e11d48;">ส.</div>
+                <div class="day-header">ส.</div>
             </div>
 
-            <!-- Calendar Days Grid -->
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
 
-        <!-- Summary Footer -->
         <div class="paper-footer">
             <div class="summary-table" id="summaryContainer"></div>
             <div class="signature-area">
@@ -526,11 +498,17 @@
             const dutyDays = totalDays - counts['OFF'] - counts['VAC'] - counts['EMERGENCY'];
 
             document.getElementById('summaryContainer').innerHTML = `
-                <div class="summary-item">จำนวนวันทั้งหมด: <strong>${totalDays} วัน</strong></div>
+                <div class="summary-item">วันทั้งหมด: <strong>${totalDays} วัน</strong></div>
                 <div class="summary-item">ขึ้นเวร: <strong>${dutyDays} วัน (${totalHours} ชม.)</strong></div>
-                <div class="summary-item">วันหยุด (OFF): <strong>${counts['OFF']} วัน</strong></div>
-                <div class="summary-item">วันลา (Vac/ฉุกเฉิน): <strong>${counts['VAC'] + counts['EMERGENCY']} วัน</strong></div>
+                <div class="summary-item">วันหยุด: <strong>${counts['OFF']} วัน</strong></div>
+                <div class="summary-item">วันลา: <strong>${counts['VAC'] + counts['EMERGENCY']} วัน</strong></div>
             `;
+        }
+
+        function triggerPrint() {
+            setTimeout(() => {
+                window.print();
+            }, 50);
         }
 
         window.onload = () => {
