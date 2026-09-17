@@ -3,345 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบันทึกค่าใช้จ่าย & พิมพ์สลิปใบเสร็จ</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>Happy Anniversary Alin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2563eb;
-            --bg-color: #f3f4f6;
+            --primary-pink: #ff758c;
+            --secondary-pink: #ff7eb3;
+            --dark-bg: #1a0b16;
+            --glow-color: rgba(255, 117, 140, 0.8);
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Kanit', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, 'Sarabun';
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            margin-top: 0;
-            color: #1e293b;
-            font-size: 1.25rem;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: bold;
-            margin-bottom: 4px;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-        }
-
-        .item-row {
+            background: linear-gradient(135deg, var(--dark-bg), #3a1c31);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
             display: flex;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-
-        .item-row input[type="text"] { flex: 2; }
-        .item-row input[type="number"] { flex: 1; }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-
-        .btn-add { background: #10b981; color: white; width: 100%; margin-top: 5px; }
-        .btn-add:hover { background: #059669; }
-        .btn-remove { background: #ef4444; color: white; padding: 8px 12px; }
-        .btn-remove:hover { background: #dc2626; }
-        .btn-print { background: var(--primary-color); color: white; flex: 1; }
-        .btn-print:hover { background: #1d4ed8; }
-        .btn-img { background: #8b5cf6; color: white; flex: 1; }
-        .btn-img:hover { background: #7c3aed; }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        /* --- Receipt Printable Thermal Styling --- */
-        .receipt-wrapper {
-            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            background: #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
         }
 
-        #receipt {
-            width: 80mm; /* Standard Thermal Paper Size */
-            background: #ffffff;
-            padding: 15px;
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            color: #000;
-        }
-
-        .receipt-header {
-            text-align: center;
-            border-bottom: 1px dashed #000;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-        }
-
-        .receipt-title { font-size: 14pt; font-weight: bold; margin: 0; }
-        .receipt-sub { font-size: 8pt; margin: 2px 0; }
-
-        .receipt-meta {
-            font-size: 8pt;
-            border-bottom: 1px dashed #000;
-            padding-bottom: 8px;
-            margin-bottom: 10px;
-        }
-
-        .receipt-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 9pt;
-            margin-bottom: 10px;
-        }
-
-        .receipt-table th { text-align: left; border-bottom: 1px solid #000; padding-bottom: 4px; }
-        .receipt-table td { padding: 4px 0; border-bottom: 1px dotted #ccc; }
-        .receipt-table .num { text-align: right; }
-
-        .receipt-summary {
-            border-top: 1px dashed #000;
-            padding-top: 6px;
-            font-size: 9pt;
-        }
-
-        .summary-line {
+        /* --- Intro & Password Screen --- */
+        #intro-screen {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 3px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            position: absolute;
+            z-index: 10;
+            background: radial-gradient(circle, #2e0f24 0%, var(--dark-bg) 100%);
+            transition: opacity 1s ease-in-out;
         }
 
-        .summary-line.total {
-            font-size: 11pt;
-            font-weight: bold;
-            border-top: 1px solid #000;
-            border-bottom: 2px double #000;
-            padding: 4px 0;
-            margin-top: 5px;
-        }
-
-        .receipt-footer {
+        .glow-text {
+            font-size: 2.5rem;
             text-align: center;
-            font-size: 8pt;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 2s ease-in-out;
+            color: #fff;
+            text-shadow: 0 0 10px var(--primary-pink), 0 0 20px var(--primary-pink), 0 0 40px var(--secondary-pink);
+            line-height: 1.5;
+        }
+
+        .glow-text.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #password-section {
+            margin-top: 40px;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #password-section.show {
+            opacity: 1;
+        }
+
+        input[type="password"] {
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: 2px solid var(--primary-pink);
+            background: transparent;
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 117, 140, 0.4);
+        }
+
+        button {
+            padding: 10px 25px;
+            border-radius: 25px;
+            border: none;
+            background: linear-gradient(45deg, var(--primary-pink), var(--secondary-pink));
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--glow-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--glow-color);
+        }
+
+        /* --- Main Content Screen --- */
+        #main-content {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .couple-img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px var(--primary-pink);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .message-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            box-shadow: 0 0 15px rgba(255, 117, 140, 0.2);
+        }
+
+        /* --- Wish Section --- */
+        #wish-form {
+            display: none;
             margin-top: 15px;
-            border-top: 1px dashed #000;
-            padding-top: 8px;
+            flex-direction: column;
+            gap: 10px;
+            animation: fadeIn 0.5s;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid var(--primary-pink);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+        }
+
+        #display-wishes {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .wish-item {
+            background: rgba(255, 117, 140, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary-pink);
+            animation: fadeIn 0.5s;
+        }
+
+        /* --- Wheel Section --- */
+        #wheel-container {
+            display: none;
+            margin-top: 40px;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 1s;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--glow-color);
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid white;
+            z-index: 10;
+            filter: drop-shadow(0 0 5px var(--primary-pink));
+        }
+
+        /* Floating Hearts Effect */
+        .heart {
+            position: fixed;
+            color: var(--primary-pink);
+            font-size: 1.5rem;
+            opacity: 0.6;
+            animation: floatUp 5s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card">
-        <h2>📝 กรอกข้อมูลค่าใช้จ่าย</h2>
-        
-        <div class="form-group">
-            <label>หัวข้อ/ชื่อร้าน/แผนก:</label>
-            <input type="text" id="inputTitle" value="สลิปบันทึกค่าใช้จ่าย" oninput="updateReceipt()">
+    <!-- Intro & Password Screen -->
+    <div id="intro-screen">
+        <div class="glow-text" id="intro-text">
+            Always better together<br>อลีน<br>120826
         </div>
-
-        <div class="form-group">
-            <label>เลขที่รายการ:</label>
-            <input type="text" id="inputNo" value="EXP-001" oninput="updateReceipt()">
-        </div>
-
-        <label>รายการค่าใช้จ่าย & จำนวนเงิน (บาท):</label>
-        <div id="itemsContainer">
-            <div class="item-row">
-                <input type="text" class="item-name" value="ค่าอุปกรณ์สำนักงาน" placeholder="ชื่อรายการ" oninput="updateReceipt()">
-                <input type="number" class="item-amount" value="350" placeholder="จำนวนเงิน" oninput="updateReceipt()">
-                <button class="btn btn-remove" onclick="removeItem(this)">X</button>
-            </div>
-        </div>
-
-        <button class="btn btn-add" onclick="addItem()">+ เพิ่มรายการ</button>
-
-        <div class="actions">
-            <button class="btn btn-print" onclick="downloadPDF()">📄 บันทึกเป็น PDF</button>
-            <button class="btn btn-img" onclick="downloadImage()">🖼️ บันทึกเป็น รูปภาพ</button>
+        <div id="password-section">
+            <input type="password" id="pwd" placeholder="ใส่รหัสวันครบรอบของเรา">
+            <button onclick="checkPassword()">เข้าสู่ระบบความรัก 💖</button>
         </div>
     </div>
 
-    <div class="card">
-        <h2>🧾 ตัวอย่างสลิป (Preview)</h2>
-        <div class="receipt-wrapper">
-            <div id="receipt">
-                <div class="receipt-header">
-                    <div class="receipt-title" id="slipTitle">สลิปบันทึกค่าใช้จ่าย</div>
-                    <div class="receipt-sub">EXPENSE RECEIPT</div>
-                </div>
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- YouTube Background Music (Hidden) -->
+        <iframe id="bg-music" width="0" height="0" src="" frameborder="0" allow="autoplay; encrypted-media"></iframe>
 
-                <div class="receipt-meta">
-                    <div><strong>วันที่:</strong> <span id="slipDate"></span></div>
-                    <div><strong>เลขที่:</strong> <span id="slipNo">EXP-001</span></div>
-                </div>
+        <img src="image.png" alt="Our Memory" class="couple-img">
+        
+        <div class="message-box">
+            ครบรอบ1เดือนของเราแล้วนะเบ้บ<br>
+            ได้เรียนรู้ อะไรหลายๆ สิ่งหลายๆอย่างมาด้วยกัน ร้องไห้ ด้วยกัน 🥺<br>
+            เค้ายอมรับว่าบางครั้งเค้างี่เง่า เอาแต่ใจตลอด ^^<br>
+            เค้าแค่ อยากให้เบ้บ เอาใจ ง้อเค้าเเหละ55555<br>
+            เค้าไม่มี อะไรจะพูดแล้ว อะ เพราะเราก็อยู่ด้วยกัน เห็นหน้าด้วยกันทุกวัน<br>
+            รอวันที่เรา ประสบความสำเร็จ และ ได้อยู่ด้วยกัน เที่ยว กิน มีความสุขไปด้วยกันนะ<br>
+            อย่าเพิ่งเบื่อกันก่อนละ เพราะฉันจะไม่ปล่อยเธอไปอิอิ^^ 💖
+        </div>
 
-                <table class="receipt-table">
-                    <thead>
-                        <tr>
-                            <th>รายการ</th>
-                            <th class="num">จำนวนเงิน</th>
-                        </tr>
-                    </thead>
-                    <tbody id="slipItems">
-                        </tbody>
-                </table>
+        <!-- Wish Button & Form -->
+        <button id="btn-show-wish" onclick="showWishForm()">💌 อวยพรให้ เบ้บ</button>
+        
+        <div id="wish-form">
+            <textarea id="wish-text" placeholder="พิมพ์ความในใจถึงเบ้บตรงนี้เลย..."></textarea>
+            <button onclick="saveWish()">บันทึกข้อความ</button>
+        </div>
 
-                <div class="receipt-summary">
-                    <div class="summary-line total">
-                        <span>ยอดเงินสุทธิ:</span>
-                        <span id="slipTotal">0.00</span>
-                    </div>
-                </div>
+        <div id="display-wishes"></div>
 
-                <div class="receipt-footer">
-                    <p>บันทึกระบบค่าใช้จ่ายภายใน</p>
-                    <p>*** ขอบคุณครับ ***</p>
-                </div>
+        <!-- Wheel Button -->
+        <button id="btn-show-wheel" style="display: none; margin-top: 30px;" onclick="showWheel()">🎡 วงล้อสุ่มกิจกรรมของเรา</button>
+
+        <!-- Wheel Container -->
+        <div id="wheel-container">
+            <div class="wheel-wrapper">
+                <div class="pointer"></div>
+                <canvas id="wheelCanvas" width="400" height="400"></canvas>
             </div>
+            <button onclick="spinWheel()" id="spin-btn">หมุนเลย!</button>
         </div>
     </div>
-</div>
 
-<script>
-    // ตั้งค่าวันที่ปัจจุบัน
-    document.getElementById('slipDate').innerText = new Date().toLocaleDateString('th-TH', {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit'
-    });
+    <script>
+        // --- 1. เอฟเฟคเปิดตัวหน้าแรก ---
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('intro-text').classList.add('show');
+            }, 500);
 
-    // เพิ่มแถวรายการ
-    function addItem() {
-        const container = document.getElementById('itemsContainer');
-        const row = document.createElement('div');
-        row.className = 'item-row';
-        row.innerHTML = `
-            <input type="text" class="item-name" placeholder="ชื่อรายการ" oninput="updateReceipt()">
-            <input type="number" class="item-amount" placeholder="จำนวนเงิน" oninput="updateReceipt()">
-            <button class="btn btn-remove" onclick="removeItem(this)">X</button>
-        `;
-        container.appendChild(row);
-        updateReceipt();
-    }
-
-    // ลบแถวรายการ
-    function removeItem(btn) {
-        const rows = document.querySelectorAll('.item-row');
-        if (rows.length > 1) {
-            btn.parentElement.remove();
-            updateReceipt();
-        } else {
-            alert('ต้องมีอย่างน้อย 1 รายการ');
-        }
-    }
-
-    // อัปเดตข้อมูลบนใบเสร็จ & คำนวณยอดเงินสุทธิ
-    function updateReceipt() {
-        document.getElementById('slipTitle').innerText = document.getElementById('inputTitle').value || 'สลิปบันทึกค่าใช้จ่าย';
-        document.getElementById('slipNo').innerText = document.getElementById('inputNo').value || '-';
-
-        const names = document.querySelectorAll('.item-name');
-        const amounts = document.querySelectorAll('.item-amount');
-        const tbody = document.getElementById('slipItems');
-        
-        tbody.innerHTML = '';
-        let grandTotal = 0;
-
-        names.forEach((nameInput, index) => {
-            const name = nameInput.value.trim() || 'รายการไม่ระบุ';
-            const amount = parseFloat(amounts[index].value) || 0;
-            grandTotal += amount;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${name}</td>
-                <td class="num">${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        document.getElementById('slipTotal').innerText = grandTotal.toLocaleString('th-TH', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }) + ' บาท';
-    }
-
-    // บันทึกเป็น PDF
-    function downloadPDF() {
-        const element = document.getElementById('receipt');
-        const opt = {
-            margin:       0,
-            filename:     'expense-slip-' + Date.now() + '.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 3 },
-            jsPDF:        { unit: 'mm', format: [80, 150], orientation: 'portrait' }
+            setTimeout(() => {
+                document.getElementById('password-section').classList.add('show');
+            }, 3000);
+            
+            createFloatingHearts();
         };
-        html2pdf().set(opt).from(element).save();
-    }
 
-    // บันทึกเป็น รูปภาพ (PNG)
-    function downloadImage() {
-        const element = document.getElementById('receipt');
-        html2canvas(element, { scale: 3 }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = 'expense-slip-' + Date.now() + '.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        });
-    }
+        // --- 2. ระบบรหัสผ่าน & เล่นเพลง ---
+        function checkPassword() {
+            const pwd = document.getElementById('pwd').value;
+            if (pwd === '120826') {
+                // ซ่อนหน้า Intro
+                document.getElementById('intro-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('intro-screen').style.display = 'none';
+                    document.getElementById('main-content').style.display = 'block';
+                    
+                    // สั่งเล่นเพลง YouTube อัตโนมัติ (ใส่ลิงก์ใน src ตอนคลิกเพื่อเลี่ยงระบบบล็อก AutoPlay)
+                    const musicIframe = document.getElementById('bg-music');
+                    musicIframe.src = "https://www.youtube.com/embed/-h_yBTriuaY?autoplay=1&loop=1&playlist=-h_yBTriuaY";
+                    
+                    loadWishes();
+                    drawWheel();
+                }, 1000);
+            } else {
+                alert('รหัสผ่านไม่ถูกต้องน้าา ลองนึกดูดีๆ วันครบรอบเราไง 🥺');
+            }
+        }
 
-    // เริ่มต้นอัปเดตสลิปครั้งแรก
-    updateReceipt();
-</script>
+        // --- 3. ระบบกล่องข้อความอวยพร (Real-time ด้วย LocalStorage) ---
+        function showWishForm() {
+            document.getElementById('wish-form').style.display = 'flex';
+            document.getElementById('btn-show-wish').style.display = 'none';
+        }
 
+        function saveWish() {
+            const text = document.getElementById('wish-text').value;
+            if (text.trim() === '') return alert('พิมพ์อะไรหน่อยสิเบ้บ!');
+
+            // บันทึกลง LocalStorage
+            let wishes = JSON.parse(localStorage.getItem('alinWishes') || '[]');
+            const timestamp = new Date().toLocaleString('th-TH');
+            wishes.unshift({ text, time: timestamp }); // เพิ่มข้อความใหม่ไว้บนสุด
+            localStorage.setItem('alinWishes', JSON.stringify(wishes));
+
+            document.getElementById('wish-text').value = '';
+            document.getElementById('wish-form').style.display = 'none';
+            
+            // แสดงปุ่มวงล้อหลังจากบันทึกข้อความแรกเสร็จ
+            document.getElementById('btn-show-wheel').style.display = 'inline-block';
+            
+            loadWishes();
+        }
+
+        function loadWishes() {
+            const wishes = JSON.parse(localStorage.getItem('alinWishes') || '[]');
+            const container = document.getElementById('display-wishes');
+            container.innerHTML = '';
+            
+            wishes.forEach(wish => {
+                container.innerHTML += `
+                    <div class="wish-item">
+                        <p>${wish.text}</p>
+                        <small style="color: #ffb3c6; font-size: 0.8rem; margin-top: 5px; display: block;">${wish.time}</small>
+                    </div>
+                `;
+            });
+
+            if (wishes.length > 0) {
+                document.getElementById('btn-show-wheel').style.display = 'inline-block';
+                document.getElementById('btn-show-wish').style.display = 'none';
+            }
+        }
+
+        // --- 4. ระบบวงล้อสุ่มกิจกรรม ---
+        const activities = ["💦🤭", "Dinner มื้อเย็น", "เที่ยว 1 สถานที่", "เที่ยวดรีมเวิลด์", "ดูหนัง"];
+        const colors = ["#ff7eb3", "#ff758c", "#ff477e", "#f72585", "#b5179e"];
+        let currentRotation = 0;
+
+        function showWheel() {
+            document.getElementById('wheel-container').style.display = 'flex';
+            document.getElementById('btn-show-wheel').style.display = 'none';
+            // Scroll ไปด้านล่างเพื่อให้เห็นวงล้อ
+            setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
+        }
+
+        function drawWheel() {
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
+            const arcSize = (2 * Math.PI) / activities.length;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = centerX;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < activities.length; i++) {
+                const angle = i * arcSize;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, angle, angle + arcSize, false);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.save();
+                
+                // เขียน Text
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle + arcSize / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 22px Kanit";
+                ctx.fillText(activities[i], radius - 20, 10);
+                ctx.restore();
+            }
+        }
+
+        function spinWheel() {
+            const canvas = document.getElementById('wheelCanvas');
+            const btn = document.getElementById('spin-btn');
+            btn.disabled = true;
+
+            // สุ่มรอบการหมุน (หมุน 5-10 รอบ + สุ่มองศาเพิ่ม)
+            const randomDegrees = Math.floor(Math.random() * 360);
+            const extraSpins = 360 * 5; 
+            currentRotation += extraSpins + randomDegrees;
+
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            // รออนิเมชั่นจบ (4 วินาทีตาม CSS)
+            setTimeout(() => {
+                // คำนวณผลลัพธ์
+                const normalizedRotation = currentRotation % 360;
+                // Pointer ชี้อยู่ด้านบน (270 องศาเทียบกับ canvas) 
+                // ต้องชดเชยองศาเพื่อหาว่าสไลซ์ไหนมาหยุดที่ pointer
+                const arcSize = 360 / activities.length;
+                const offset = (270 - normalizedRotation + 360) % 360;
+                const resultIndex = Math.floor(offset / arcSize);
+                
+                alert(`✨ เย้! กิจกรรมที่ได้คือ: ${activities[resultIndex]} ✨`);
+                btn.disabled = false;
+            }, 4200);
+        }
+
+        // --- 5. หัวใจลอย Background ---
+        function createFloatingHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's'; // 4-7s
+                document.body.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 7000);
+            }, 800);
+        }
+    </script>
 </body>
 </html>
