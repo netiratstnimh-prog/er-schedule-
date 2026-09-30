@@ -1,285 +1,386 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ข้อความถึงคุณ</title>
-    <style>
-        /* ป้องกันการคลุมดำ/คัดลอกข้อความ */
-        * {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อชี้แจง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ป้องกันการคลุมดำ/คัดลอก */
+    * {
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
 
-        body {
-            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            line-height: 1.8;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+    body {
+      margin: 0;
+      padding: 20px 10px;
+      font-family: 'Sarabun', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-        .container {
-            max-width: 680px;
-            width: 100%;
-            background: #1e1e1e;
-            padding: 35px 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: filter 0.3s ease;
-        }
+    /* ธีมต่างๆ */
+    body.theme-light {
+      background-color: #f2f4f7;
+      color: #2b2b2b;
+    }
+    body.theme-light .paper {
+      background-color: #ffffff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e0e0e0;
+    }
 
-        p {
-            margin-bottom: 20px;
-            font-size: 1.05rem;
-            color: #d1d5db;
-            text-indent: 1.5em;
-            text-align: justify;
-        }
+    body.theme-sepia {
+      background-color: #e8e2d5;
+      color: #433422;
+    }
+    body.theme-sepia .paper {
+      background-color: #f5efe0;
+      box-shadow: 0 4px 20px rgba(67,52,34,0.12);
+      border: 1px solid #dcd1b8;
+    }
 
-        p:first-of-type {
-            text-indent: 0;
-        }
+    body.theme-dark {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    body.theme-dark .paper {
+      background-color: #1e1e1e;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      border: 1px solid #333;
+    }
 
-        /* หน้าจอล็อกเมื่อตรวจพบสิ่งผิดปกติ */
-        .lock-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.96);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            backdrop-filter: blur(15px);
-        }
+    /* แถบเครื่องมือปรับแต่ง */
+    .toolbar {
+      position: sticky;
+      top: 15px;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+    }
+    body.theme-dark .toolbar {
+      background: rgba(30, 30, 30, 0.85);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
 
-        .lock-card {
-            background: #282828;
-            padding: 30px 25px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 360px;
-            width: 90%;
-            box-shadow: 0 5px 20px rgba(255, 0, 0, 0.2);
-            border: 1px solid #333;
-        }
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        .lock-card h3 {
-            color: #ef4444;
-            margin-bottom: 12px;
-            font-size: 1.25rem;
-        }
+    .btn-group-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-right: 4px;
+      opacity: 0.8;
+    }
 
-        .lock-card p {
-            font-size: 0.95rem;
-            color: #9ca3af;
-            text-indent: 0;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+    .btn {
+      border: 1px solid #ccc;
+      background: #fff;
+      color: #333;
+      padding: 6px 12px;
+      border-radius: 18px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: #eee;
+    }
+    body.theme-dark .btn {
+      border-color: #444;
+      background: #2a2a2a;
+      color: #fff;
+    }
+    body.theme-dark .btn:hover {
+      background: #3a3a3a;
+    }
 
-        .pin-input {
-            width: 100%;
-            padding: 12px;
-            font-size: 1.2rem;
-            text-align: center;
-            letter-spacing: 5px;
-            border: 1px solid #4b5563;
-            border-radius: 6px;
-            background: #121212;
-            color: #fff;
-            margin-bottom: 15px;
-            outline: none;
-        }
+    /* สไตล์หน้ากระดาษ */
+    .paper {
+      width: 100%;
+      max-width: 720px;
+      padding: 50px 45px;
+      border-radius: 8px;
+      line-height: 1.85;
+      font-size: 17px;
+      margin-bottom: 50px;
+      transition: font-size 0.2s, background-color 0.3s;
+    }
 
-        .pin-input:focus {
-            border-color: #ef4444;
-        }
+    @media (max-width: 600px) {
+      .paper {
+        padding: 30px 20px;
+      }
+    }
 
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background-color: #dc2626;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
+    .paper p {
+      margin-bottom: 1.2em;
+      text-indent: 2.5em;
+      text-align: justify;
+    }
 
-        .btn-submit:hover {
-            background-color: #b91c1c;
-        }
+    /* ซ่อนเนื้อหาเมื่อสั่งพิมพ์ */
+    @media print {
+      body { display: none !important; }
+    }
 
-        .error-msg {
-            color: #f87171;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            display: none;
-        }
+    /* หน้าจอล็อก */
+    .lock-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(20px);
+      z-index: 999999;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
 
-        .hidden {
-            display: none !important;
-        }
+    .lock-overlay.active {
+      display: flex;
+    }
 
-        .blurred {
-            filter: blur(25px);
-        }
-    </style>
+    .lock-card {
+      background: #1c1c1e;
+      padding: 32px 28px;
+      border-radius: 16px;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      border: 1px solid #2c2c2e;
+    }
+
+    .lock-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .lock-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #ff453a;
+    }
+
+    .lock-desc {
+      font-size: 13px;
+      color: #a1a1a6;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .pin-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 20px;
+      text-align: center;
+      letter-spacing: 6px;
+      border-radius: 8px;
+      border: 1px solid #3a3a3c;
+      background: #000;
+      color: #fff;
+      margin-bottom: 15px;
+      outline: none;
+    }
+
+    .pin-input:focus {
+      border-color: #0a84ff;
+    }
+
+    .unlock-btn {
+      width: 100%;
+      padding: 12px;
+      background: #0a84ff;
+      border: none;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .unlock-btn:hover {
+      background: #0071e3;
+    }
+
+    .error-msg {
+      color: #ff453a;
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+  </style>
 </head>
-<body oncontextmenu="return false;">
+<body class="theme-light">
 
-    <div class="container" id="content">
-        <p>ก่อนจะตำหนิหรือตัดสินผม อยากให้คุณลองหันกลับมามองตัวเองก่อนสักครั้ง ว่าสิ่งที่คุณทำมาตลอดชีวิตนั้น คุณมั่นใจจริง ๆ หรือว่าเป็นสิ่งที่ดีและถูกต้องทั้งหมด</p>
-
-        <p>ผมไม่เคยอยากเข้าไปยุ่งเกี่ยวกับชีวิตคุณเลยด้วยซ้ำ ที่ผ่านมา ผมเคยคิดเพียงว่าตัวเองคงโชคร้ายที่ต้องเกิดมาอยู่ในสถานการณ์แบบนี้ และต้องทนกับผลของการกระทำหลายอย่างที่ผมไม่ได้เป็นคนเลือก</p>
-
-        <p>ตั้งแต่ผมยังเด็กจนเติบโตขึ้นมา หลายเหตุการณ์ที่เกิดขึ้น คุณอาจมองว่าเป็นเรื่องเล็ก หรืออาจคิดว่าตัวเองไม่ได้ทำอะไรผิด แต่สำหรับผม สิ่งเหล่านั้นทิ้งผลกระทบไว้ในชีวิตมากกว่าที่คุณเคยรู้ และบางส่วนของมันก็มีส่วนทำให้ผมต้องต่อสู้กับสภาพจิตใจของตัวเองมาจนถึงทุกวันนี้</p>
-
-        <p>แต่ผมไม่ได้เขียนข้อความนี้เพื่อเรียกร้องให้คุณรู้สึกผิด เพราะต่อให้คุณไม่ยอมรับ ผมก็ไม่ได้สูญเสียอะไรไปมากกว่าที่สูญเสียไปแล้ว</p>
-
-        <p>คุณเคยคิดไหมว่า สิ่งที่เรียกว่า “ผู้นำครอบครัว” ไม่ได้หมายถึงคนที่มีสิทธิ์ตัดสินใจทุกเรื่อง หรือคิดว่าตัวเองถูกต้องอยู่เสมอ แต่หมายถึงคนที่ต้องรับผิดชอบต่อความรู้สึกและความเป็นอยู่ของคนในครอบครัวด้วย</p>
-
-        <p>คุณเคยถามตัวเองบ้างหรือเปล่าว่า ทุกวันนี้คนที่อยู่ข้างคุณมีความสุขจริง ๆ หรือเพียงแค่กำลังอดทนอยู่</p>
-
-        <p>โดยเฉพาะแม่ของคุณ</p>
-
-        <p>คุณเคยสังเกตไหมว่าแม่กินอิ่มหรือไม่ นอนหลับดีหรือเปล่า สุขภาพเป็นอย่างไร เจ็บป่วยมานานแค่ไหน หรือมีเรื่องอะไรที่แม่ต้องเก็บไว้ในใจโดยไม่กล้าพูดกับคุณ</p>
-
-        <p>การหาอาหาร การซื้อของใช้ หรือการทำสิ่งต่าง ๆ ให้ครอบครัว อาจเป็น “หน้าที่” ที่ใคร ๆ ก็ทำได้ แต่ความใส่ใจที่เกิดจากความรักและความกตัญญูนั้น เป็นคนละเรื่องกัน</p>
-
-        <p>บางครั้งคนเราทำหน้าที่ครบทุกอย่าง แต่กลับไม่เคยถามเลยว่า คนที่ตัวเองทำหน้าที่ให้นั้น เขามีความสุขหรือไม่</p>
-
-        <p>คุณอาจคิดว่าสิ่งที่คุณทำให้แม่เพียงพอแล้ว และอาจมองว่าตัวเองเป็นลูกที่ทำหน้าที่ได้ดี แต่ผมอยากให้คุณลองถามแม่ด้วยตัวเองจริง ๆ สักครั้งว่า ตลอดเวลาที่ผ่านมา แม่มีความสุขกับชีวิตที่เป็นอยู่หรือเปล่า</p>
-
-        <p>เพราะคำตอบจากคนที่ต้องใช้ชีวิตอยู่กับความจริงทุกวัน อาจแตกต่างจากภาพที่คุณสร้างขึ้นในความคิดของตัวเองอย่างมาก</p>
-
-        <p>ส่วนเรื่องที่คุณจะพูดหรือด่าผม ผมไม่ได้ใส่ใจแล้ว คำพูดของคุณไม่ได้เป็นตัวกำหนดว่าชีวิตผมจะสูงหรือต่ำ และไม่ได้ทำให้สิ่งที่ผมผ่านมาหายไป</p>
-
-        <p>ผมเพียงอยากให้คุณเข้าใจว่า คนเราสามารถพูดถึงความดีของตัวเองได้มากมาย แต่สุดท้ายแล้ว สิ่งที่บอกว่าเราเป็นคนแบบไหน ไม่ใช่คำพูดที่เราพูดถึงตัวเอง แต่คือสิ่งที่คนใกล้ตัวต้องใช้ชีวิตอยู่กับมันทุกวัน</p>
-
-        <p>และบางที “เวรกรรม” ก็ไม่จำเป็นต้องรอถึงชาติหน้า ไม่จำเป็นต้องรอให้ใครตายจากไปแล้วจึงได้เห็นผลของการกระทำ</p>
-
-        <p>บางครั้งมันก็แค่ปรากฏขึ้นในชีวิตประจำวัน ผ่านความสัมพันธ์ที่พังลง ผ่านคนในครอบครัวที่ไม่มีความสุข หรือผ่านความเงียบของคนที่เคยรักเรา แต่วันหนึ่งกลับไม่อยากพูดอะไรกับเราอีกแล้ว</p>
-
-        <p>ลองกลับไปมองแม่ของคุณให้ดี ๆ สักครั้งนะครับ</p>
-
-        <p>ลองถามตัวเองว่า วันนี้แม่กินอิ่มไหม นอนหลับหรือเปล่า สุขภาพเป็นอย่างไร มีความสุขจริงหรือไม่ และที่ผ่านมาแม่ต้องอดทนกับอะไรบ้าง</p>
-
-        <p>เพราะบางที สิ่งที่คุณคิดว่าเป็น “ความดี” ที่ตัวเองทำมาตลอด อาจไม่ใช่สิ่งเดียวกับที่คนที่ได้รับมันรู้สึกก็ได้</p>
-
-        <p>ผมไม่ได้ต้องการให้คุณตอบผม และไม่ได้ต้องการให้คุณยอมรับว่าผมถูก</p>
-
-        <p>ผมแค่อยากให้คุณลองอยู่กับคำถามเหล่านี้เงียบ ๆ สักครั้ง แล้วตอบตัวเองอย่างซื่อสัตย์ที่สุด</p>
-
-        <p>เพราะสุดท้ายแล้ว คนที่คุณหลอกได้อาจเป็นคนอื่น แต่คนที่รู้ดีที่สุดว่าตัวเองเคยทำอะไรไว้ คือคุณเอง</p>
+  <!-- แถบควบคุม -->
+  <div class="toolbar">
+    <div class="btn-group">
+      <span class="btn-group-title">ขนาดอักษร:</span>
+      <button class="btn" onclick="changeFontSize(-1)">A-</button>
+      <button class="btn" onclick="resetFontSize()">ปกติ</button>
+      <button class="btn" onclick="changeFontSize(1)">A+</button>
     </div>
-
-    <!-- หน้าจอล็อก -->
-    <div id="lock-screen" class="lock-overlay hidden">
-        <div class="lock-card">
-            <h3>⚠️ ระบบรักษาความปลอดภัย</h3>
-            <p>ตรวจพบการพยายามบันทึกภาพ สลับหน้าจอ หรือกระทำผิดเงื่อนไข กรุณากรอกรหัสผ่านเพื่ออ่านต่อ</p>
-            <input type="password" id="pin-input" class="pin-input" maxlength="4" placeholder="••••" autocomplete="off">
-            <button id="unlock-btn" class="btn-submit">ปลดล็อก</button>
-            <p id="error-msg" class="error-msg">รหัสผ่านไม่ถูกต้อง</p>
-        </div>
+    <div class="btn-group">
+      <span class="btn-group-title">ธีม:</span>
+      <button class="btn" onclick="setTheme('theme-light')">⚪ สว่าง</button>
+      <button class="btn" onclick="setTheme('theme-sepia')">📜 ถนอมสายตา</button>
+      <button class="btn" onclick="setTheme('theme-dark')">⚫ มืด</button>
     </div>
+  </div>
 
-    <script>
-        const SECRET_PIN = "1323";
-        const lockScreen = document.getElementById('lock-screen');
-        const content = document.getElementById('content');
-        const pinInput = document.getElementById('pin-input');
-        const unlockBtn = document.getElementById('unlock-btn');
-        const errorMsg = document.getElementById('error-msg');
+  <!-- กระดาษข้อความ -->
+  <div class="paper" id="paper">
+    <p>ผมขอชี้แจงเรื่องนี้สักครั้งนะครับ และหลังจากนี้ผมคงไม่จำเป็นต้องอธิบายอะไรเพิ่มเติมอีก</p>
+    <p>เรื่องที่ผมโทรขอแม่ครั้งละ 600–700 บาท ไม่ได้หมายความว่าผมต้องการเบียดเบียนแม่ หรือใช้แม่เป็นที่พึ่งทางการเงินแต่อย่างใด ช่วงที่ผ่านมา ผมอยู่ในช่วงเปลี่ยนงานและเปลี่ยนโรงพยาบาล ทำให้เกิดช่วงว่างงานจนต้องใช้ชีวิตแบบเดือนชนเดือน ยังตั้งตัวไม่ได้ อีกทั้งตอนออกจากศิริราช ผมยังมีภาระต้องชดใช้ทุนคืนเนื่องจากอยู่ไม่ครบตามสัญญา</p>
+    <p>ตอนนี้ผมเริ่มตั้งตัวได้แล้ว เพียงแต่ยังอยู่ในช่วงรอเงินเดือนและจัดการภาระต่าง ๆ ที่มีอยู่ ดังนั้นก่อนจะมองว่าผมเป็นภาระของแม่ อยากให้มองบริบททั้งหมดก่อนที่จะตัดสินใครจากเรื่องเพียงด้านเดียว</p>
+    <p>และก่อนที่จะมาตั้งคำถามว่าแม่มีความสุขหรือไม่ ผมอยากให้ลองกลับไปถามคนในครอบครัวของแม่เองบ้างว่า ทุกวันนี้แม่ใช้ชีวิตอย่างไร กินอิ่มไหม นอนหลับดีหรือเปล่า เจ็บป่วยตรงไหนบ้าง และมีใครเคยถามแม่จริง ๆ หรือไม่ว่า “วันนี้แม่ไหวไหม” หรือ “แม่อยากกินอะไร”</p>
+    <p>เพราะทุกครั้งที่แม่โทรหาผม สิ่งที่แม่เล่าไม่ใช่เรื่องของผมเป็นหลัก แต่กลับเป็นปัญหาและเรื่องราวต่าง ๆ ภายในครอบครัวของลูก ๆ แม่เสียมากกว่า</p>
+    <p>แม่มีอาการเจ็บป่วยและทรมานกับอาการต่าง ๆ มานานเป็นปี แต่ผมกลับไม่ค่อยเห็นว่ามีใครสนใจสภาพร่างกายและจิตใจของแม่อย่างจริงจัง จะพาแม่ไปหาหมอ มีใครถามไหมว่าแม่อยากกินอะไร วันนี้กินอะไรได้หรือเปล่า หรืออย่างน้อยมีใครถามแม่บ้างไหมว่า “แม่มีความสุขหรือเปล่า”</p>
+    <p>ถ้าคนที่กำลังตั้งคำถามกับผม ลองสลับบทบาทมาเป็นคนที่ต้องรับฟังเรื่องเหล่านี้ทุกครั้งที่แม่โทรมา ผมเชื่อว่าคงเข้าใจความรู้สึกของแม่ได้มากขึ้น</p>
+    <p>ผมไม่ได้บอกว่าผมเป็นคนเดียวที่รักหรือดูแลแม่ และผมไม่ได้ต้องการเอาตัวเองไปเปรียบเทียบกับใคร แต่จากสิ่งที่ผมได้รับฟังมาตลอด ผมรู้ว่าอย่างน้อยเวลาที่แม่มีปัญหาทางใจ แม่รู้สึกว่าผมเป็นคนที่สามารถโทรหาและพูดคุยด้วยได้โดยไม่ต้องกลัวว่าจะถูกตัดสิน</p>
+    <p>บางครั้งคนเป็นแม่อาจไม่ได้พูดทุกอย่างออกมาตรง ๆ เพราะไม่อยากให้ลูกเป็นห่วง ไม่อยากสร้างความหนักใจให้ลูก หรือไม่อยากทำให้ลูก ๆ ทะเลาะกัน แต่การที่แม่เลือกโทรมาเล่าให้ผมฟัง ไม่ได้แปลว่าผมเป็นต้นเหตุของปัญหาเสมอไป บางครั้งมันอาจหมายถึงว่าแม่ไม่มีพื้นที่อื่นให้ระบายความรู้สึกเหล่านั้น</p>
+    <p>ส่วนเรื่องที่ผมต้องรับฟังปัญหาต่าง ๆ ทั้งที่ไม่ใช่เรื่องของผม ผมก็เหนื่อยเหมือนกันครับ</p>
+    <p>ผมเองต่อสู้กับภาวะซึมเศร้ามาเป็นเวลานาน และสิ่งที่เกิดขึ้นในครอบครัวนี้ตลอดหลายปีที่ผ่านมา ไม่ใช่เรื่องเล็กสำหรับผม หลายเหตุการณ์สร้างบาดแผลที่ฝังอยู่ในใจ และบางอย่างก็เป็นความเจ็บปวดที่ผมไม่สามารถลืมได้ง่าย ๆ</p>
+    <p>ผมไม่เคยแกล้งทำเป็นป่วย และไม่เคยเอาโรคมาเป็นข้ออ้างเพื่อให้ใครสงสาร แต่สิ่งที่ผมผ่านมาทั้งหมดคือสิ่งที่ผมต้องอยู่กับมันจริง ๆ</p>
+    <p>โดยเฉพาะสิ่งที่เกิดขึ้นระหว่างผมกับลุงคนนี้ ผมผ่านมันมาหลายครั้ง หลายเหตุการณ์ และหลายครั้งผมต้องเป็นฝ่ายเก็บความรู้สึกเอาไว้ เพราะไม่อยากให้เรื่องบานปลาย แต่การที่ผมเงียบ ไม่ได้หมายความว่าผมไม่เจ็บ และไม่ได้หมายความว่าสิ่งที่เกิดขึ้นนั้นถูกต้อง</p>
+    <p>ผมไม่ได้ต้องการให้ใครเกลียดใคร และไม่ได้ต้องการให้ใครเข้าข้างผมด้วยซ้ำ หลังจากวันนี้ใครจะคิดกับผมอย่างไรก็เป็นสิทธิ์ของแต่ละคน</p>
+    <p>แต่สิ่งหนึ่งที่ผมอยากทำ คือพูดในสิ่งที่แม่อาจไม่กล้าพูดด้วยตัวเอง</p>
+    <p>ผมเคยบอกแม่ไว้แล้วว่า ถ้าวันหนึ่งแม่ไม่กล้าพูด ผมจะพูดแทนแม่เอง</p>
+    <p>และสิ่งที่ผมอยากให้ทุกคนลองถามแม่จริง ๆ ไม่ใช่ถามผ่านความคิดเห็นของคนอื่น แต่ถามจากปากแม่เองว่า</p>
+    <p>“ทุกวันนี้แม่มีความสุขจริง ๆ หรือเปล่า”</p>
+    <p>เพราะความสุขของแม่ไม่ได้วัดจากว่าใครเป็นคนโทรหาแม่บ่อยที่สุด หรือใครเป็นคนสร้างปัญหาให้แม่น้อยที่สุด แต่มันอยู่ที่ว่า ในแต่ละวันแม่ได้กินอิ่ม นอนหลับ มีคนดูแลเวลาป่วย และมีใครสักคนที่ทำให้แม่รู้สึกว่าตัวเองยังมีคุณค่าและมีที่พึ่งหรือไม่</p>
+    <p>สุดท้าย เรื่องหนี้ที่ผมเป็นคนสร้างขึ้น ผมรับผิดชอบเองทั้งหมดครับ</p>
+    <p>ผมไม่เคยโยนภาระให้ใคร และไม่ได้ต้องการให้ใครมารับผิดชอบแทน เพราะฉะนั้นเรื่องนี้ผมขอรับผิดชอบด้วยตัวเอง และขอให้ทุกคนหยุดนำเรื่องหนี้ของผมมาเป็นเหตุผลในการตำหนิหรือตัดสินผมเสียที</p>
+    <p>ผมพูดมาทั้งหมดนี้ไม่ใช่เพื่อเอาชนะใคร แต่เพราะผมคิดว่าถึงเวลาที่ทุกคนควรหยุดพูดจากมุมของตัวเอง แล้วลองฟังความรู้สึกของคนที่อยู่ตรงกลางบ้าง</p>
+    <p>บางครั้งคนที่เงียบที่สุด อาจเป็นคนที่เจ็บมานานที่สุดก็ได้ครับ</p>
+  </div>
 
-        let isLocked = false;
+  <!-- หน้าจอล็อกเมื่อสลับหน้าจอหรือแคปจอ -->
+  <div class="lock-overlay" id="lockOverlay">
+    <div class="lock-card">
+      <div class="lock-icon">🔒</div>
+      <div class="lock-title">ระบบล็อกหน้าจอ</div>
+      <div class="lock-desc">ตรวจพบการสลับหน้าจอ บันทึกภาพ หรือออกจากหน้าต่างเพื่อป้องกันข้อมูล กรุณาใส่รหัสผ่านเพื่ออ่านต่อ</div>
+      <input type="password" id="pinInput" class="pin-input" placeholder="••••" maxlength="10">
+      <button class="unlock-btn" onclick="checkPIN()">ปลดล็อก</button>
+      <div class="error-msg" id="errorMsg">รหัสผ่านไม่ถูกต้อง</div>
+    </div>
+  </div>
 
-        function triggerLock() {
-            if (!isLocked) {
-                isLocked = true;
-                content.classList.add('blurred');
-                lockScreen.classList.remove('hidden');
-                pinInput.value = '';
-                errorMsg.style.display = 'none';
-                
-                // ล้างคลิปบอร์ดกรณีพยายามกด PrintScreen
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText('');
-                }
-            }
-        }
+  <script>
+    // การปรับขนาดอักษร
+    let currentFontSize = 17;
+    const paper = document.getElementById('paper');
 
-        function unlock() {
-            if (pinInput.value === SECRET_PIN) {
-                isLocked = false;
-                content.classList.remove('blurred');
-                lockScreen.classList.add('hidden');
-                errorMsg.style.display = 'none';
-            } else {
-                errorMsg.style.display = 'block';
-                pinInput.value = '';
-                pinInput.focus();
-            }
-        }
+    function changeFontSize(delta) {
+      currentFontSize = Math.max(13, Math.min(28, currentFontSize + delta));
+      paper.style.fontSize = currentFontSize + 'px';
+    }
 
-        // 1. ตรวจจับการสลับแท็บ / ย่อหน้าจอ / สลับแอป (Blur & VisibilityChange)
-        window.addEventListener('blur', triggerLock);
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                triggerLock();
-            }
-        });
+    function resetFontSize() {
+      currentFontSize = 17;
+      paper.style.fontSize = '17px';
+    }
 
-        // 2. ตรวจจับการกดปุ่ม shortcut แคปหน้าจอ / อัดวิดีโอ / PrintScreen / คัดลอก
-        document.addEventListener('keydown', (e) => {
-            // PrintScreen
-            if (e.key === 'PrintScreen' || e.keyCode === 44) {
-                e.preventDefault();
-                triggerLock();
-            }
+    // การเปลี่ยนธีม
+    function setTheme(themeName) {
+      document.body.className = themeName;
+    }
 
-            // Ctrl+P (Print), Ctrl+S (Save), Ctrl+U (View Source), Ctrl+C (Copy), Ctrl+A (Select All)
-            if ((e.ctrlKey || e.metaKey) && ['p', 's', 'u', 'c', 'a'].includes(e.key.toLowerCase())) {
-                e.preventDefault();
-                triggerLock();
-            }
+    // ระบบล็อกหน้าจอ
+    const lockOverlay = document.getElementById('lockOverlay');
+    const pinInput = document.getElementById('pinInput');
+    const errorMsg = document.getElementById('errorMsg');
+    const CORRECT_PIN = '1323';
 
-            // F12 หรือ Developer Tools (Ctrl+Shift+I / Cmd+Option+I)
-            if (e.key === 'F12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && ['i', 'j', 'c'].includes(e.key.toLowerCase()))) {
-                e.preventDefault();
-                triggerLock();
-            }
+    function lockScreen() {
+      lockOverlay.classList.add('active');
+      pinInput.value = '';
+      errorMsg.style.display = 'none';
+      pinInput.focus();
+    }
 
-            // ปุ่มลัด Screenshot บน Mac (Cmd + Shift + 3 / 4 / 5)
-            if (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
-                e.preventDefault();
-                triggerLock();
-            }
-        });
+    function checkPIN() {
+      if (pinInput.value === CORRECT_PIN) {
+        lockOverlay.classList.remove('active');
+        pinInput.value = '';
+        errorMsg.style.display = 'none';
+      } else {
+        errorMsg.style.display = 'block';
+        pinInput.value = '';
+        pinInput.focus();
+      }
+    }
 
-        // 3. ปุ่มปลดล็อก
-        unlockBtn.addEventListener('click', unlock);
-        pinInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                unlock();
-            }
-        });
-    </script>
+    // ปลดล็อกเมื่อกด Enter
+    pinInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        checkPIN();
+      }
+    });
+
+    // ดักจับการสลับหน้าต่าง/สลับแอป (Screen Record/Screenshot Protection Trigger)
+    window.addEventListener('blur', function() {
+      lockScreen();
+    });
+
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        lockScreen();
+      }
+    });
+
+    // ดักจับปุ่มคีย์บอร์ดที่ใช้แคปหน้าจอ / สั่งพิมพ์
+    document.addEventListener('keydown', function(e) {
+      // ปุ่ม PrintScreen
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        lockScreen();
+      }
+      // Ctrl + P (Print)
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+        e.preventDefault();
+        lockScreen();
+      }
+      // Shortcut แคปหน้าจอของ Mac (Cmd + Shift + 3 / 4 / 5)
+      if (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
+        lockScreen();
+      }
+    });
+
+    // ป้องกันการคลิกขวา
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+  </script>
 </body>
 </html>
