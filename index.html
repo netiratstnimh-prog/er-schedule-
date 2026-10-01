@@ -4,110 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Security: basic CSP for GitHub Pages prototype -->
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self';
-                 script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com;
-                 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-                 font-src https://fonts.gstatic.com;
-                 img-src 'self' data:;
-                 connect-src 'self';
-                 object-src 'none';
-                 base-uri 'self';
-                 form-action 'self';">
-
-  <meta name="referrer" content="no-referrer">
-  <meta name="robots" content="noindex,nofollow">
-
   <title>RN-PN Duty Management</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: "Prompt", sans-serif;
-      background:
-        radial-gradient(circle at top left, #164e63 0%, transparent 35%),
-        radial-gradient(circle at bottom right, #312e81 0%, transparent 35%),
-        #020617;
-      color: #e2e8f0;
-      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #020617;
+      color: white;
     }
 
     .glass {
-      background: rgba(15, 23, 42, .75);
-      border: 1px solid rgba(148, 163, 184, .15);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(255,255,255,.1);
+      backdrop-filter: blur(15px);
     }
 
     .card {
-      background: rgba(15, 23, 42, .82);
-      border: 1px solid rgba(148, 163, 184, .12);
-      border-radius: 18px;
+      background: #0f172a;
+      border: 1px solid #1e293b;
+    }
+
+    input, select {
+      background: #020617 !important;
+      color: white !important;
+      border: 1px solid #334155 !important;
     }
 
     .hidden {
       display: none !important;
-    }
-
-    input,
-    select,
-    textarea {
-      background: #0f172a !important;
-      color: #e2e8f0 !important;
-      border: 1px solid #334155 !important;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #06b6d4 !important;
-      box-shadow: 0 0 0 2px rgba(6, 182, 212, .15);
-    }
-
-    button {
-      transition: .15s ease;
-    }
-
-    button:active {
-      transform: scale(.97);
-    }
-
-    .toast {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 9999;
-      max-width: 360px;
-    }
-
-    .shift-card {
-      transition: .15s ease;
-    }
-
-    .shift-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(6, 182, 212, .35);
-    }
-
-    @media (max-width: 640px) {
-      .toast {
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-        max-width: none;
-      }
     }
   </style>
 </head>
@@ -115,237 +42,268 @@
 <body>
 
 <!-- =========================
-     LOCK SCREEN
+     LOGIN
 ========================= -->
 
-<section id="lockScreen"
-  class="min-h-screen flex items-center justify-center px-4">
+<div id="loginPage"
+     class="min-h-screen flex items-center justify-center p-5">
 
-  <div class="glass rounded-3xl p-7 w-full max-w-md shadow-2xl">
+  <div class="glass w-full max-w-md rounded-3xl p-7">
 
-    <div class="text-center mb-7">
-      <div class="mx-auto w-16 h-16 rounded-2xl bg-cyan-500/15
-                  flex items-center justify-center mb-4">
-        <span class="text-3xl">🔐</span>
+    <div class="text-center mb-8">
+
+      <div class="text-5xl mb-4">
+        🔐
       </div>
 
       <h1 class="text-2xl font-bold">
         RN-PN Duty System
       </h1>
 
-      <p class="text-slate-400 text-sm mt-2">
+      <p class="text-slate-400 mt-2">
         ระบบจัดการตารางเวรพยาบาลพิเศษ
       </p>
+
     </div>
+
 
     <form id="loginForm">
 
       <label class="block text-sm text-slate-300 mb-2">
-        PIN สำหรับการทดลอง
+        PIN
       </label>
 
       <input
-        id="pinInput"
+        id="pin"
         type="password"
         inputmode="numeric"
-        autocomplete="off"
         maxlength="8"
-        class="w-full rounded-xl px-4 py-3 text-center text-xl tracking-[.5em]"
-        placeholder="••••"
-        aria-label="PIN">
+        autocomplete="off"
+        class="w-full rounded-xl px-4 py-4 text-center text-2xl tracking-widest"
+        placeholder="••••">
 
       <button
         type="submit"
-        class="w-full mt-4 py-3 rounded-xl
+        class="w-full mt-4 py-4 rounded-xl
                bg-cyan-600 hover:bg-cyan-500
-               font-semibold">
+               font-bold">
 
         เข้าสู่ระบบ
+
       </button>
 
-      <p id="loginError"
-         class="text-red-400 text-sm text-center mt-3 min-h-[20px]">
+      <p id="loginMessage"
+         class="text-center text-red-400 text-sm mt-4">
       </p>
 
     </form>
 
-    <div class="mt-6 p-4 rounded-xl bg-amber-500/10
-                border border-amber-500/20">
 
-      <p class="text-amber-300 text-xs leading-relaxed">
-        ⚠️ โหมดทดลอง GitHub Pages
-        ระบบนี้ไม่มี Backend ดังนั้น PIN ไม่ถือเป็น
-        การรักษาความปลอดภัยระดับโรงพยาบาล
+    <div class="mt-6 rounded-xl bg-amber-500/10
+                border border-amber-500/20 p-4">
+
+      <p class="text-amber-300 text-xs">
+        ⚠️ Demo สำหรับ GitHub Pages
+      </p>
+
+      <p class="text-slate-400 text-xs mt-1">
+        ไม่ควรใส่ข้อมูลผู้ป่วยหรือข้อมูลลับจริง
       </p>
 
     </div>
 
   </div>
-</section>
+
+</div>
 
 
 <!-- =========================
-     MAIN APPLICATION
+     APPLICATION
 ========================= -->
 
-<main id="app" class="hidden">
+<div id="app" class="hidden min-h-screen">
 
   <!-- HEADER -->
-  <header class="sticky top-0 z-40 glass border-b border-white/10">
 
-    <div class="max-w-7xl mx-auto px-4 py-4">
+  <header class="sticky top-0 z-50
+                 bg-slate-950/95
+                 border-b border-slate-800">
 
-      <div class="flex items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto
+                px-4 py-4
+                flex items-center
+                justify-between">
 
-        <div>
-          <h1 class="font-bold text-lg">
-            RN-PN Duty Management
-          </h1>
+      <div>
 
-          <p class="text-xs text-slate-400">
-            ระบบจัดการตารางเวร • Demo Secure Version
-          </p>
-        </div>
+        <h1 class="font-bold text-lg">
+          RN-PN Duty Management
+        </h1>
 
-        <button
-          id="logoutBtn"
-          class="px-4 py-2 rounded-xl
-                 bg-red-500/10 text-red-300
-                 border border-red-500/20
-                 text-sm">
-
-          🔒 ออกจากระบบ
-        </button>
+        <p class="text-xs text-slate-500">
+          ระบบจัดการตารางเวร
+        </p>
 
       </div>
 
+      <button
+        id="logout"
+        class="px-4 py-2 rounded-lg
+               bg-red-500/10
+               text-red-300">
+
+        🔒 Logout
+
+      </button>
+
     </div>
+
   </header>
 
 
-  <div class="max-w-7xl mx-auto px-4 py-6">
+  <main class="max-w-7xl mx-auto px-4 py-6">
 
-    <!-- SECURITY NOTICE -->
-    <div class="mb-6 p-4 rounded-2xl
-                bg-amber-500/10
-                border border-amber-500/20">
 
-      <div class="flex gap-3">
-        <div>⚠️</div>
+    <!-- STATS -->
 
-        <div>
-          <p class="font-semibold text-amber-300">
-            GitHub Pages Demo
-          </p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
 
-          <p class="text-sm text-slate-400 mt-1">
-            ห้ามใส่ข้อมูลผู้ป่วย เลขบัตรประชาชน
-            รหัสผ่านจริง หรือ API Key ในระบบนี้
-          </p>
-        </div>
+      <div class="card rounded-2xl p-5">
+
+        <p class="text-slate-400 text-sm">
+          เวรทั้งหมด
+        </p>
+
+        <p id="total"
+           class="text-3xl font-bold mt-2">
+          0
+        </p>
+
+      </div>
+
+
+      <div class="card rounded-2xl p-5">
+
+        <p class="text-slate-400 text-sm">
+          RN วันนี้
+        </p>
+
+        <p id="rnToday"
+           class="text-3xl font-bold mt-2">
+          0
+        </p>
+
+      </div>
+
+
+      <div class="card rounded-2xl p-5">
+
+        <p class="text-slate-400 text-sm">
+          PN วันนี้
+        </p>
+
+        <p id="pnToday"
+           class="text-3xl font-bold mt-2">
+          0
+        </p>
+
+      </div>
+
+
+      <div class="card rounded-2xl p-5">
+
+        <p class="text-slate-400 text-sm">
+          เวรดึก
+        </p>
+
+        <p id="night"
+           class="text-3xl font-bold mt-2">
+          0
+        </p>
+
       </div>
 
     </div>
 
 
-    <!-- STATS -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <!-- NAV -->
 
-      <div class="card p-5">
-        <p class="text-slate-400 text-sm">เวรทั้งหมด</p>
-        <p id="statTotal" class="text-3xl font-bold mt-2">0</p>
-      </div>
-
-      <div class="card p-5">
-        <p class="text-slate-400 text-sm">RN วันนี้</p>
-        <p id="statRN" class="text-3xl font-bold mt-2">0</p>
-      </div>
-
-      <div class="card p-5">
-        <p class="text-slate-400 text-sm">PN วันนี้</p>
-        <p id="statPN" class="text-3xl font-bold mt-2">0</p>
-      </div>
-
-      <div class="card p-5">
-        <p class="text-slate-400 text-sm">เวรดึก</p>
-        <p id="statNight" class="text-3xl font-bold mt-2">0</p>
-      </div>
-
-    </section>
-
-
-    <!-- TABS -->
-    <div class="flex gap-2 overflow-x-auto mb-6">
+    <div class="flex gap-2 mb-6">
 
       <button
-        data-tab="roster"
-        class="tab-btn px-5 py-3 rounded-xl
-               bg-cyan-600 text-white whitespace-nowrap">
+        class="navButton active px-5 py-3 rounded-xl
+               bg-cyan-600"
+        data-page="schedule">
+
         📋 ตารางเวร
+
       </button>
 
+
       <button
-        data-tab="add"
-        class="tab-btn px-5 py-3 rounded-xl
-               bg-slate-800 whitespace-nowrap">
+        class="navButton px-5 py-3 rounded-xl
+               bg-slate-800"
+        data-page="add">
+
         ➕ เพิ่มเวร
-      </button>
 
-      <button
-        data-tab="security"
-        class="tab-btn px-5 py-3 rounded-xl
-               bg-slate-800 whitespace-nowrap">
-        🛡️ ความปลอดภัย
       </button>
 
     </div>
 
 
     <!-- =========================
-         ROSTER TAB
+         SCHEDULE
     ========================= -->
 
-    <section id="tab-roster">
+    <section id="schedulePage">
 
-      <div class="card p-5 mb-5">
+      <div class="card rounded-2xl p-5 mb-5">
 
-        <div class="grid md:grid-cols-4 gap-3">
+        <div class="grid md:grid-cols-3 gap-4">
 
           <div>
-            <label class="text-xs text-slate-400">
+
+            <label class="text-sm text-slate-400">
               วันที่
             </label>
 
             <input
               id="filterDate"
               type="date"
-              class="w-full rounded-xl px-3 py-2 mt-1">
+              class="w-full rounded-xl px-3 py-3 mt-1">
+
           </div>
 
+
           <div>
-            <label class="text-xs text-slate-400">
+
+            <label class="text-sm text-slate-400">
               ตำแหน่ง
             </label>
 
             <select
               id="filterRole"
-              class="w-full rounded-xl px-3 py-2 mt-1">
+              class="w-full rounded-xl px-3 py-3 mt-1">
 
               <option value="">ทั้งหมด</option>
               <option value="RN">RN</option>
               <option value="PN">PN</option>
 
             </select>
+
           </div>
 
+
           <div>
-            <label class="text-xs text-slate-400">
+
+            <label class="text-sm text-slate-400">
               เวร
             </label>
 
             <select
               id="filterShift"
-              class="w-full rounded-xl px-3 py-2 mt-1">
+              class="w-full rounded-xl px-3 py-3 mt-1">
 
               <option value="">ทั้งหมด</option>
               <option value="เช้า">เช้า 07–15</option>
@@ -355,18 +313,6 @@
               <option value="OFF">OFF</option>
 
             </select>
-          </div>
-
-          <div class="flex items-end">
-
-            <button
-              id="resetFilter"
-              class="w-full rounded-xl py-2
-                     bg-slate-700 hover:bg-slate-600">
-
-              ล้างตัวกรอง
-
-            </button>
 
           </div>
 
@@ -375,28 +321,35 @@
       </div>
 
 
-      <div id="rosterList" class="grid gap-4"></div>
+      <div id="scheduleList"
+           class="space-y-4">
+      </div>
 
     </section>
 
 
     <!-- =========================
-         ADD DUTY
+         ADD
     ========================= -->
 
-    <section id="tab-add" class="hidden">
+    <section id="addPage"
+             class="hidden">
 
-      <div class="card p-6 max-w-3xl">
+      <div class="card rounded-2xl p-6 max-w-3xl">
 
         <h2 class="text-xl font-bold mb-5">
           เพิ่มเวร
         </h2>
 
-        <form id="dutyForm" class="grid md:grid-cols-2 gap-4">
+
+        <form id="addForm"
+              class="grid md:grid-cols-2 gap-4">
+
 
           <div>
+
             <label class="text-sm text-slate-400">
-              ชื่อบุคลากร
+              ชื่อ
             </label>
 
             <input
@@ -404,11 +357,13 @@
               required
               maxlength="80"
               class="w-full rounded-xl px-3 py-3 mt-1"
-              placeholder="เช่น สมชาย ใจดี">
+              placeholder="ชื่อบุคลากร">
+
           </div>
 
 
           <div>
+
             <label class="text-sm text-slate-400">
               ตำแหน่ง
             </label>
@@ -418,28 +373,40 @@
               required
               class="w-full rounded-xl px-3 py-3 mt-1">
 
-              <option value="">เลือก</option>
-              <option value="RN">RN</option>
-              <option value="PN">PN</option>
+              <option value="">
+                เลือกตำแหน่ง
+              </option>
+
+              <option value="RN">
+                RN
+              </option>
+
+              <option value="PN">
+                PN
+              </option>
 
             </select>
+
           </div>
 
 
           <div>
+
             <label class="text-sm text-slate-400">
               วันที่
             </label>
 
             <input
-              id="date"
+              id="dutyDate"
               type="date"
               required
               class="w-full rounded-xl px-3 py-3 mt-1">
+
           </div>
 
 
           <div>
+
             <label class="text-sm text-slate-400">
               เวร
             </label>
@@ -449,20 +416,39 @@
               required
               class="w-full rounded-xl px-3 py-3 mt-1">
 
-              <option value="">เลือกเวร</option>
-              <option value="เช้า">เช้า 07:00–15:00</option>
-              <option value="บ่าย">บ่าย 15:00–23:00</option>
-              <option value="ดึก">ดึก 19:00–07:00</option>
-              <option value="OT">OT</option>
-              <option value="OFF">OFF</option>
+              <option value="">
+                เลือกเวร
+              </option>
+
+              <option value="เช้า">
+                เช้า 07:00–15:00
+              </option>
+
+              <option value="บ่าย">
+                บ่าย 15:00–23:00
+              </option>
+
+              <option value="ดึก">
+                ดึก 19:00–07:00
+              </option>
+
+              <option value="OT">
+                OT
+              </option>
+
+              <option value="OFF">
+                OFF
+              </option>
 
             </select>
+
           </div>
 
 
           <div>
+
             <label class="text-sm text-slate-400">
-              หอผู้ป่วย / แผนก
+              แผนก
             </label>
 
             <select
@@ -470,7 +456,10 @@
               required
               class="w-full rounded-xl px-3 py-3 mt-1">
 
-              <option value="">เลือก</option>
+              <option value="">
+                เลือกแผนก
+              </option>
+
               <option>ICU</option>
               <option>ER</option>
               <option>OR</option>
@@ -478,13 +467,14 @@
               <option>OPD</option>
               <option>CCU</option>
               <option>VIP Ward</option>
-              <option>อื่น ๆ</option>
 
             </select>
+
           </div>
 
 
           <div>
+
             <label class="text-sm text-slate-400">
               หมายเหตุ
             </label>
@@ -494,16 +484,17 @@
               maxlength="200"
               class="w-full rounded-xl px-3 py-3 mt-1"
               placeholder="ไม่บังคับ">
+
           </div>
 
 
           <div class="md:col-span-2">
 
             <button
-              type="submit"
-              class="w-full py-3 rounded-xl
-                     bg-cyan-600 hover:bg-cyan-500
-                     font-semibold">
+              class="w-full py-4 rounded-xl
+                     bg-cyan-600
+                     hover:bg-cyan-500
+                     font-bold">
 
               บันทึกเวร
 
@@ -517,748 +508,426 @@
 
     </section>
 
+  </main>
 
-    <!-- =========================
-         SECURITY TAB
-    ========================= -->
-
-    <section id="tab-security" class="hidden">
-
-      <div class="grid md:grid-cols-2 gap-5">
-
-        <div class="card p-6">
-
-          <h2 class="font-bold text-lg mb-4">
-            🛡️ สิ่งที่เวอร์ชันนี้ปรับ
-          </h2>
-
-          <ul class="space-y-3 text-sm text-slate-300">
-
-            <li>✅ ไม่มี API Key อยู่ในระบบ</li>
-
-            <li>✅ ไม่มี LINE Token จริงใน Frontend</li>
-
-            <li>✅ ไม่ปลดล็อกเพียงเพราะ QR อ่านไม่สำเร็จ</li>
-
-            <li>✅ ไม่มี NFC จำลองที่กดแล้วเข้าได้</li>
-
-            <li>✅ Escape ข้อมูลก่อนแสดงผล</li>
-
-            <li>✅ จำกัดความยาว Input</li>
-
-            <li>✅ จำกัดจำนวนครั้งในการใส่ PIN</li>
-
-            <li>✅ Session หมดอายุอัตโนมัติ</li>
-
-            <li>✅ มีปุ่ม Logout</li>
-
-            <li>✅ ไม่ใส่ข้อมูลผู้ป่วยใน Demo</li>
-
-          </ul>
-
-        </div>
-
-
-        <div class="card p-6">
-
-          <h2 class="font-bold text-lg mb-4">
-            ⚠️ สิ่งที่ยังไม่ปลอดภัยระดับ Production
-          </h2>
-
-          <ul class="space-y-3 text-sm text-slate-400">
-
-            <li>❌ PIN ยังอยู่ในฝั่ง Client ในรูป Hash</li>
-
-            <li>❌ localStorage สามารถถูกแก้ไขได้</li>
-
-            <li>❌ ไม่มี Backend</li>
-
-            <li>❌ ไม่มี Database Server</li>
-
-            <li>❌ ไม่มี User Account จริง</li>
-
-            <li>❌ ไม่มี Role Permission ฝั่ง Server</li>
-
-            <li>❌ ไม่มี Audit Log ที่เชื่อถือได้</li>
-
-            <li>❌ ไม่ควรใช้กับข้อมูลผู้ป่วย</li>
-
-          </ul>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </div>
-
-
-  <!-- TOAST -->
-  <div id="toast" class="toast hidden">
-    <div id="toastMessage"
-         class="glass rounded-xl px-5 py-4 shadow-2xl">
-    </div>
-  </div>
-
-</main>
+</div>
 
 
 <script>
-"use strict";
 
-/*
-==========================================================
- RN-PN DUTY MANAGEMENT
- GitHub Pages Demo
-==========================================================
+/* ========================================
+   DEMO CONFIG
+======================================== */
 
-IMPORTANT:
-This is NOT production authentication.
-
-The PIN is represented as SHA-256 hash so that the
-plain PIN isn't directly visible in the JavaScript.
-
-However, because this is client-side code, someone with
-access to the site can still inspect or bypass it.
-
-For real security:
-Frontend -> Backend -> Authentication -> Database
-
-==========================================================
-*/
+// PIN สำหรับทดลอง
+const DEMO_PIN = "7391";
 
 
-/* =========================
-   CONFIG
-========================= */
-
-const CONFIG = Object.freeze({
-
-  // Demo PIN: 7391
-  PIN_HASH:
-    "e25f201f9014599e00073db598a2603a9c05766965336d9b9c68c3d4081ee9a3",
-
-  SESSION_MINUTES: 30,
-
-  MAX_LOGIN_ATTEMPTS: 5,
-
-  LOCKOUT_MINUTES: 5,
-
-  STORAGE_KEY: "rn_pn_demo_duties_v2"
-
-});
+// Session 30 นาที
+const SESSION_TIME = 30 * 60 * 1000;
 
 
-/* =========================
-   STATE
-========================= */
-
-let duties = [];
-
-let failedAttempts = 0;
-
-let lockedUntil = 0;
-
-let sessionTimer = null;
+// Storage
+const STORAGE_KEY = "RN_PN_DUTIES_DEMO";
 
 
-/* =========================
-   SECURITY HELPERS
-========================= */
+/* ========================================
+   ELEMENTS
+======================================== */
 
-async function sha256(text) {
+const loginPage =
+  document.getElementById("loginPage");
 
-  const data = new TextEncoder().encode(text);
+const app =
+  document.getElementById("app");
 
-  const hashBuffer =
-    await crypto.subtle.digest("SHA-256", data);
+const loginForm =
+  document.getElementById("loginForm");
 
-  return Array
-    .from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("");
-
-}
+const loginMessage =
+  document.getElementById("loginMessage");
 
 
-function escapeHtml(value) {
-
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-}
-
-
-function showToast(message, type = "normal") {
-
-  const toast = document.getElementById("toast");
-  const msg = document.getElementById("toastMessage");
-
-  msg.textContent = message;
-
-  toast.classList.remove("hidden");
-
-  if (type === "error") {
-    msg.className =
-      "glass rounded-xl px-5 py-4 shadow-2xl text-red-300";
-  } else {
-    msg.className =
-      "glass rounded-xl px-5 py-4 shadow-2xl text-slate-100";
-  }
-
-  setTimeout(() => {
-    toast.classList.add("hidden");
-  }, 3000);
-
-}
-
-
-/* =========================
+/* ========================================
    DATE
-========================= */
+======================================== */
 
-function localDateString(date = new Date()) {
+function today() {
 
-  const y = date.getFullYear();
+  const d = new Date();
 
-  const m = String(date.getMonth() + 1)
-    .padStart(2, "0");
+  const year =
+    d.getFullYear();
 
-  const d = String(date.getDate())
-    .padStart(2, "0");
+  const month =
+    String(d.getMonth() + 1)
+      .padStart(2, "0");
 
-  return `${y}-${m}-${d}`;
+  const day =
+    String(d.getDate())
+      .padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 
 }
 
 
-/* =========================
+/* ========================================
+   SAFE TEXT
+======================================== */
+
+function safeText(value) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    String(value ?? "");
+
+  return div.innerHTML;
+
+}
+
+
+/* ========================================
    STORAGE
-========================= */
+======================================== */
 
-function loadDuties() {
+function getDuties() {
 
   try {
 
-    const raw =
-      localStorage.getItem(CONFIG.STORAGE_KEY);
+    const data =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
 
-    if (!raw) {
+    if (!data) {
 
-      duties = createDemoData();
+      return [];
 
-      saveDuties();
-
-      return;
     }
 
-    const parsed = JSON.parse(raw);
+    const parsed =
+      JSON.parse(data);
 
-    if (!Array.isArray(parsed)) {
-      throw new Error("Invalid data");
-    }
+    return Array.isArray(parsed)
+      ? parsed
+      : [];
 
-    duties = parsed
-      .filter(item =>
-        item &&
-        typeof item === "object" &&
-        typeof item.name === "string" &&
-        typeof item.role === "string" &&
-        typeof item.date === "string"
-      )
-      .slice(0, 1000);
+  } catch {
 
-  } catch (error) {
-
-    console.error(error);
-
-    duties = createDemoData();
-
-    saveDuties();
+    return [];
 
   }
 
 }
 
 
-function saveDuties() {
+function saveDuties(data) {
 
-  try {
-
-    localStorage.setItem(
-      CONFIG.STORAGE_KEY,
-      JSON.stringify(duties)
-    );
-
-  } catch (error) {
-
-    showToast(
-      "ไม่สามารถบันทึกข้อมูลใน Browser ได้",
-      "error"
-    );
-
-  }
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
 
 }
 
 
-/* =========================
-   DEMO DATA
-========================= */
+/* ========================================
+   LOGIN
+======================================== */
 
-function createDemoData() {
+loginForm.addEventListener(
+  "submit",
+  function(event) {
 
-  const today = new Date();
+    event.preventDefault();
 
-  const tomorrow = new Date();
+    const entered =
+      document
+        .getElementById("pin")
+        .value
+        .trim();
 
-  tomorrow.setDate(today.getDate() + 1);
 
-  return [
+    if (entered === DEMO_PIN) {
 
-    {
-      id: crypto.randomUUID(),
-      name: "สมศรี มีสุข",
-      role: "RN",
-      date: localDateString(today),
-      shift: "เช้า",
-      ward: "ICU",
-      note: ""
-    },
+      sessionStorage.setItem(
+        "RN_PN_LOGIN",
+        Date.now()
+      );
 
-    {
-      id: crypto.randomUUID(),
-      name: "วิภาดา วงศ์ไทย",
-      role: "RN",
-      date: localDateString(today),
-      shift: "บ่าย",
-      ward: "VIP Ward",
-      note: ""
-    },
+      loginPage.classList.add(
+        "hidden"
+      );
 
-    {
-      id: crypto.randomUUID(),
-      name: "ณัฐกาญจน์ สายชล",
-      role: "PN",
-      date: localDateString(today),
-      shift: "เช้า",
-      ward: "ER",
-      note: ""
-    },
+      app.classList.remove(
+        "hidden"
+      );
 
-    {
-      id: crypto.randomUUID(),
-      name: "กมลวรรณ รักษาดี",
-      role: "PN",
-      date: localDateString(today),
-      shift: "ดึก",
-      ward: "IPD",
-      note: ""
-    },
+      loginMessage.textContent = "";
 
-    {
-      id: crypto.randomUUID(),
-      name: "ธนกร บุญประเสริฐ",
-      role: "RN",
-      date: localDateString(tomorrow),
-      shift: "OT",
-      ward: "CCU",
-      note: ""
-    },
+      initialize();
 
-    {
-      id: crypto.randomUUID(),
-      name: "ปิยะดา นิลอุบล",
-      role: "PN",
-      date: localDateString(tomorrow),
-      shift: "OFF",
-      ward: "OPD",
-      note: ""
+    } else {
+
+      loginMessage.textContent =
+        "PIN ไม่ถูกต้อง";
+
+      document
+        .getElementById("pin")
+        .value = "";
+
     }
 
-  ];
+  }
+);
 
-}
 
+/* ========================================
+   LOGOUT
+======================================== */
 
-/* =========================
-   SESSION
-========================= */
+document
+  .getElementById("logout")
+  .addEventListener(
+    "click",
+    function() {
 
-function startSession() {
+      sessionStorage.removeItem(
+        "RN_PN_LOGIN"
+      );
 
-  sessionStorage.setItem(
-    "rn_pn_authenticated",
-    "true"
+      app.classList.add(
+        "hidden"
+      );
+
+      loginPage.classList.remove(
+        "hidden"
+      );
+
+      document
+        .getElementById("pin")
+        .value = "";
+
+    }
   );
 
-  sessionStorage.setItem(
-    "rn_pn_session_start",
-    String(Date.now())
-  );
 
-  document
-    .getElementById("lockScreen")
-    .classList.add("hidden");
+/* ========================================
+   SESSION CHECK
+======================================== */
 
-  document
-    .getElementById("app")
-    .classList.remove("hidden");
+function checkSession() {
 
-  startSessionTimer();
-
-}
-
-
-function isAuthenticated() {
-
-  const authenticated =
-    sessionStorage.getItem(
-      "rn_pn_authenticated"
-    );
-
-  const start =
+  const loginTime =
     Number(
       sessionStorage.getItem(
-        "rn_pn_session_start"
+        "RN_PN_LOGIN"
       )
     );
 
+
+  if (!loginTime) {
+
+    return false;
+
+  }
+
+
   if (
-    authenticated !== "true" ||
-    !start
+    Date.now() - loginTime >
+    SESSION_TIME
   ) {
-    return false;
-  }
 
-  const elapsed =
-    Date.now() - start;
-
-  const timeout =
-    CONFIG.SESSION_MINUTES *
-    60 *
-    1000;
-
-  if (elapsed > timeout) {
-
-    logout();
+    sessionStorage.removeItem(
+      "RN_PN_LOGIN"
+    );
 
     return false;
+
   }
+
 
   return true;
 
 }
 
 
-function startSessionTimer() {
-
-  clearInterval(sessionTimer);
-
-  sessionTimer =
-    setInterval(() => {
-
-      if (!isAuthenticated()) {
-        clearInterval(sessionTimer);
-      }
-
-    }, 10000);
-
-}
-
-
-function logout() {
-
-  sessionStorage.removeItem(
-    "rn_pn_authenticated"
-  );
-
-  sessionStorage.removeItem(
-    "rn_pn_session_start"
-  );
-
-  clearInterval(sessionTimer);
-
-  document
-    .getElementById("app")
-    .classList.add("hidden");
-
-  document
-    .getElementById("lockScreen")
-    .classList.remove("hidden");
-
-  document
-    .getElementById("pinInput")
-    .value = "";
-
-  showToast("ออกจากระบบแล้ว");
-
-}
-
-
-/* =========================
-   LOGIN
-========================= */
+/* ========================================
+   NAVIGATION
+======================================== */
 
 document
-  .getElementById("loginForm")
-  .addEventListener("submit", async event => {
-
-    event.preventDefault();
-
-    const now = Date.now();
-
-    const input =
-      document
-        .getElementById("pinInput")
-        .value
-        .trim();
-
-    const error =
-      document
-        .getElementById("loginError");
-
-
-    if (now < lockedUntil) {
-
-      const seconds =
-        Math.ceil(
-          (lockedUntil - now) / 1000
-        );
-
-      error.textContent =
-        `ระบบถูกล็อกชั่วคราว ${seconds} วินาที`;
-
-      return;
-    }
-
-
-    if (
-      !/^\d{4,8}$/.test(input)
-    ) {
-
-      error.textContent =
-        "กรุณาใส่ PIN 4–8 หลัก";
-
-      return;
-    }
-
-
-    const hash =
-      await sha256(input);
-
-
-    if (
-      hash === CONFIG.PIN_HASH
-    ) {
-
-      failedAttempts = 0;
-
-      error.textContent = "";
-
-      loadDuties();
-
-      startSession();
-
-      renderRoster();
-
-      updateStats();
-
-      showToast("เข้าสู่ระบบสำเร็จ");
-
-      return;
-    }
-
-
-    failedAttempts++;
-
-    document
-      .getElementById("pinInput")
-      .value = "";
-
-
-    if (
-      failedAttempts >=
-      CONFIG.MAX_LOGIN_ATTEMPTS
-    ) {
-
-      lockedUntil =
-        Date.now() +
-        CONFIG.LOCKOUT_MINUTES *
-        60 *
-        1000;
-
-      failedAttempts = 0;
-
-      error.textContent =
-        "ใส่ PIN ผิดหลายครั้ง ระบบถูกล็อกชั่วคราว";
-
-      return;
-    }
-
-
-    error.textContent =
-      "PIN ไม่ถูกต้อง";
-
-  });
-
-
-/* =========================
-   LOGOUT
-========================= */
-
-document
-  .getElementById("logoutBtn")
-  .addEventListener("click", logout);
-
-
-/* =========================
-   TABS
-========================= */
-
-document
-  .querySelectorAll(".tab-btn")
+  .querySelectorAll(".navButton")
   .forEach(button => {
 
-    button.addEventListener("click", () => {
+    button.addEventListener(
+      "click",
+      function() {
 
-      const target =
-        button.dataset.tab;
-
-      document
-        .querySelectorAll("[id^='tab-']")
-        .forEach(section => {
-
-          section.classList.add("hidden");
-
-        });
+        const page =
+          this.dataset.page;
 
 
-      document
-        .getElementById(
-          `tab-${target}`
-        )
-        .classList.remove("hidden");
-
-
-      document
-        .querySelectorAll(".tab-btn")
-        .forEach(btn => {
-
-          btn.classList.remove(
-            "bg-cyan-600",
-            "text-white"
+        document
+          .getElementById("schedulePage")
+          .classList.toggle(
+            "hidden",
+            page !== "schedule"
           );
 
-          btn.classList.add(
-            "bg-slate-800"
+
+        document
+          .getElementById("addPage")
+          .classList.toggle(
+            "hidden",
+            page !== "add"
           );
 
-        });
+
+        document
+          .querySelectorAll(".navButton")
+          .forEach(btn => {
+
+            btn.classList.remove(
+              "bg-cyan-600"
+            );
+
+            btn.classList.add(
+              "bg-slate-800"
+            );
+
+          });
 
 
-      button.classList.remove(
-        "bg-slate-800"
-      );
+        this.classList.remove(
+          "bg-slate-800"
+        );
 
-      button.classList.add(
-        "bg-cyan-600",
-        "text-white"
-      );
+        this.classList.add(
+          "bg-cyan-600"
+        );
 
-    });
+      }
+    );
 
   });
 
 
-/* =========================
-   RENDER ROSTER
-========================= */
+/* ========================================
+   RENDER
+======================================== */
 
-function renderRoster() {
+function render() {
 
-  const container =
+  const list =
     document.getElementById(
-      "rosterList"
+      "scheduleList"
     );
 
 
-  const date =
+  const filterDate =
     document.getElementById(
       "filterDate"
     ).value;
 
-  const role =
+
+  const filterRole =
     document.getElementById(
       "filterRole"
     ).value;
 
-  const shift =
+
+  const filterShift =
     document.getElementById(
       "filterShift"
     ).value;
 
 
-  let filtered =
+  let duties =
+    getDuties();
+
+
+  duties =
     duties.filter(duty => {
 
-      if (date && duty.date !== date) {
+      if (
+        filterDate &&
+        duty.date !== filterDate
+      ) {
+
         return false;
+
       }
 
-      if (role && duty.role !== role) {
+
+      if (
+        filterRole &&
+        duty.role !== filterRole
+      ) {
+
         return false;
+
       }
 
-      if (shift && duty.shift !== shift) {
+
+      if (
+        filterShift &&
+        duty.shift !== filterShift
+      ) {
+
         return false;
+
       }
+
 
       return true;
 
     });
 
 
-  filtered.sort(
-    (a, b) =>
-      a.date.localeCompare(b.date)
-  );
+  if (duties.length === 0) {
 
-
-  if (!filtered.length) {
-
-    container.innerHTML = `
-      <div class="card p-8 text-center">
+    list.innerHTML = `
+      <div class="card rounded-2xl p-10 text-center">
         <div class="text-4xl mb-3">📭</div>
         <p class="text-slate-400">
-          ไม่พบข้อมูลเวร
+          ยังไม่มีข้อมูลเวร
         </p>
       </div>
     `;
 
+    updateStats();
+
     return;
+
   }
 
 
-  container.innerHTML =
-    filtered.map(duty => {
+  list.innerHTML =
+    duties.map(duty => {
 
-      const shiftClass =
-        duty.shift === "ดึก"
-          ? "text-indigo-300"
-          : duty.shift === "OFF"
-            ? "text-green-300"
-            : "text-cyan-300";
+      let shiftColor =
+        "text-cyan-300";
+
+
+      if (duty.shift === "ดึก") {
+        shiftColor =
+          "text-indigo-300";
+      }
+
+
+      if (duty.shift === "OFF") {
+        shiftColor =
+          "text-green-300";
+      }
 
 
       return `
-        <article
-          class="shift-card card p-5">
+
+        <div class="card rounded-2xl p-5">
 
           <div class="flex flex-col md:flex-row
                       md:items-center
@@ -1266,33 +935,449 @@ function renderRoster() {
 
             <div>
 
-              <div class="flex items-center gap-2 mb-2">
+              <div class="flex gap-2 mb-2">
 
-                <span class="px-2 py-1 rounded-lg
-                             bg-slate-700 text-xs">
-                  ${escapeHtml(duty.role)}
+                <span class="text-xs
+                             bg-slate-700
+                             px-2 py-1
+                             rounded-lg">
+
+                  ${safeText(duty.role)}
+
                 </span>
 
-                <span class="text-xs text-slate-500">
-                  ${escapeHtml(duty.id)}
+                <span class="text-xs
+                             text-slate-500">
+
+                  ${safeText(duty.date)}
+
                 </span>
 
               </div>
 
-              <h3 class="text-lg font-semibold">
-                ${escapeHtml(duty.name)}
+
+              <h3 class="font-bold text-lg">
+
+                ${safeText(duty.name)}
+
               </h3>
 
-              <p class="text-sm text-slate-400 mt-1">
-                ${escapeHtml(duty.date)}
-                • ${escapeHtml(duty.ward)}
+
+              <p class="text-sm
+                        text-slate-400 mt-1">
+
+                ${safeText(duty.ward)}
+
               </p>
 
             </div>
 
 
-            <div class="flex items-center gap-3">
+            <div class="flex
+                        items-center
+                        justify-between
+                        md:justify-end
+                        gap-5">
 
               <div class="text-right">
 
-                <p class="font-semibold
+                <div class="font-bold
+                            ${shiftColor}">
+
+                  ${safeText(duty.shift)}
+
+                </div>
+
+
+                <div class="text-xs
+                            text-slate-500">
+
+                  ${
+                    duty.shift === "ดึก"
+                      ? "19:00–07:00"
+                      : ""
+                  }
+
+                </div>
+
+              </div>
+
+
+              <button
+                onclick="deleteDuty('${safeText(duty.id)}')"
+                class="px-3 py-2
+                       rounded-lg
+                       bg-red-500/10
+                       text-red-300">
+
+                ลบ
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+          ${
+            duty.note
+              ? `
+                <div class="mt-4 pt-4
+                            border-t
+                            border-slate-800
+                            text-sm
+                            text-slate-400">
+
+                  📝 ${safeText(duty.note)}
+
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+
+      `;
+
+    }).join("");
+
+
+  updateStats();
+
+}
+
+
+/* ========================================
+   ADD DUTY
+======================================== */
+
+document
+  .getElementById("addForm")
+  .addEventListener(
+    "submit",
+    function(event) {
+
+      event.preventDefault();
+
+
+      if (!checkSession()) {
+
+        alert(
+          "Session หมดอายุ กรุณาเข้าสู่ระบบใหม่"
+        );
+
+        return;
+
+      }
+
+
+      const name =
+        document
+          .getElementById("name")
+          .value
+          .trim();
+
+
+      const role =
+        document
+          .getElementById("role")
+          .value;
+
+
+      const date =
+        document
+          .getElementById("dutyDate")
+          .value;
+
+
+      const shift =
+        document
+          .getElementById("shift")
+          .value;
+
+
+      const ward =
+        document
+          .getElementById("ward")
+          .value;
+
+
+      const note =
+        document
+          .getElementById("note")
+          .value
+          .trim();
+
+
+      if (
+        !name ||
+        !role ||
+        !date ||
+        !shift ||
+        !ward
+      ) {
+
+        alert(
+          "กรุณากรอกข้อมูลให้ครบ"
+        );
+
+        return;
+
+      }
+
+
+      const duties =
+        getDuties();
+
+
+      duties.push({
+
+        id:
+          "DUTY-" +
+          Date.now(),
+
+        name,
+
+        role,
+
+        date,
+
+        shift,
+
+        ward,
+
+        note
+
+      });
+
+
+      saveDuties(duties);
+
+
+      this.reset();
+
+
+      document
+        .getElementById("dutyDate")
+        .value =
+        today();
+
+
+      render();
+
+
+      document
+        .querySelector(
+          '[data-page="schedule"]'
+        )
+        .click();
+
+
+      alert(
+        "เพิ่มเวรเรียบร้อยแล้ว"
+      );
+
+    }
+  );
+
+
+/* ========================================
+   DELETE
+======================================== */
+
+function deleteDuty(id) {
+
+  if (!checkSession()) {
+
+    alert(
+      "Session หมดอายุ"
+    );
+
+    return;
+
+  }
+
+
+  const duties =
+    getDuties();
+
+
+  const duty =
+    duties.find(
+      item =>
+        item.id === id
+    );
+
+
+  if (!duty) {
+    return;
+  }
+
+
+  const confirmDelete =
+    confirm(
+      `ต้องการลบเวรของ ${duty.name} หรือไม่?`
+    );
+
+
+  if (!confirmDelete) {
+    return;
+  }
+
+
+  const newDuties =
+    duties.filter(
+      item =>
+        item.id !== id
+    );
+
+
+  saveDuties(newDuties);
+
+
+  render();
+
+}
+
+
+/* ========================================
+   STATS
+======================================== */
+
+function updateStats() {
+
+  const duties =
+    getDuties();
+
+
+  const currentDate =
+    today();
+
+
+  document
+    .getElementById("total")
+    .textContent =
+    duties.length;
+
+
+  document
+    .getElementById("rnToday")
+    .textContent =
+    duties.filter(
+      d =>
+        d.date === currentDate &&
+        d.role === "RN"
+    ).length;
+
+
+  document
+    .getElementById("pnToday")
+    .textContent =
+    duties.filter(
+      d =>
+        d.date === currentDate &&
+        d.role === "PN"
+    ).length;
+
+
+  document
+    .getElementById("night")
+    .textContent =
+    duties.filter(
+      d =>
+        d.shift === "ดึก"
+    ).length;
+
+}
+
+
+/* ========================================
+   FILTER
+======================================== */
+
+[
+  "filterDate",
+  "filterRole",
+  "filterShift"
+].forEach(id => {
+
+  document
+    .getElementById(id)
+    .addEventListener(
+      "change",
+      render
+    );
+
+});
+
+
+/* ========================================
+   INITIALIZE
+======================================== */
+
+function initialize() {
+
+  document
+    .getElementById("dutyDate")
+    .value =
+    today();
+
+
+  render();
+
+}
+
+
+/* ========================================
+   AUTO SESSION TIMEOUT
+======================================== */
+
+setInterval(
+  function() {
+
+    if (
+      !app.classList.contains("hidden") &&
+      !checkSession()
+    ) {
+
+      app.classList.add(
+        "hidden"
+      );
+
+      loginPage.classList.remove(
+        "hidden"
+      );
+
+      alert(
+        "Session หมดอายุ กรุณาเข้าสู่ระบบใหม่"
+      );
+
+    }
+
+  },
+  10000
+);
+
+
+/* ========================================
+   AUTO LOGIN IF SESSION EXISTS
+======================================== */
+
+if (checkSession()) {
+
+  loginPage.classList.add(
+    "hidden"
+  );
+
+  app.classList.remove(
+    "hidden"
+  );
+
+  initialize();
+
+}
+
+</script>
+
+</body>
+</html>
