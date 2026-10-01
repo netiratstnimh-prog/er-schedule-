@@ -3,113 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RN-PN Duty Management System</title>
 
-  <title>RN-PN Duty Management</title>
-
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Prompt & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #020617;
-      color: white;
+      font-family: 'Prompt', 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
     }
 
-    .glass {
-      background: rgba(15, 23, 42, 0.92);
-      border: 1px solid rgba(255,255,255,.1);
-      backdrop-filter: blur(15px);
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
     }
 
-    .card {
-      background: #0f172a;
-      border: 1px solid #1e293b;
+    .modern-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .modern-card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
     }
 
     input, select {
-      background: #020617 !important;
-      color: white !important;
-      border: 1px solid #334155 !important;
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid #cbd5e1 !important;
+      transition: all 0.2s ease-in-out;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #6366f1 !important;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
     }
 
     .hidden {
       display: none !important;
     }
+
+    .ai-gradient-btn {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      transition: all 0.3s ease;
+    }
+
+    .ai-gradient-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.4);
+    }
   </style>
 </head>
 
-<body>
+<body class="min-h-screen antialiased selection:bg-indigo-500 selection:text-white">
 
 <!-- =========================
-     LOGIN
+     LOGIN PAGE
 ========================= -->
+<div id="loginPage" class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-slate-100">
 
-<div id="loginPage"
-     class="min-h-screen flex items-center justify-center p-5">
-
-  <div class="glass w-full max-w-md rounded-3xl p-7">
+  <div class="glass-card w-full max-w-md rounded-3xl p-8 shadow-xl shadow-slate-200/50">
 
     <div class="text-center mb-8">
-
-      <div class="text-5xl mb-4">
-        🔐
+      <div class="w-16 h-16 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-sm">
+        🩺
       </div>
-
-      <h1 class="text-2xl font-bold">
+      <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
         RN-PN Duty System
       </h1>
-
-      <p class="text-slate-400 mt-2">
-        ระบบจัดการตารางเวรพยาบาลพิเศษ
+      <p class="text-sm text-slate-500 mt-1 font-normal">
+        ระบบจัดการตารางเวรพยาบาลและผู้ช่วยพยาบาล
       </p>
-
     </div>
 
-
-    <form id="loginForm">
-
-      <label class="block text-sm text-slate-300 mb-2">
-        PIN
-      </label>
-
-      <input
-        id="pin"
-        type="password"
-        inputmode="numeric"
-        maxlength="8"
-        autocomplete="off"
-        class="w-full rounded-xl px-4 py-4 text-center text-2xl tracking-widest"
-        placeholder="••••">
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">
+          ระบุรหัส PIN เข้าใช้งาน
+        </label>
+        <input
+          id="pin"
+          type="password"
+          inputmode="numeric"
+          maxlength="8"
+          autocomplete="off"
+          class="w-full rounded-2xl px-4 py-3.5 text-center text-2xl tracking-[0.5em] font-bold text-slate-800 shadow-sm"
+          placeholder="••••">
+      </div>
 
       <button
         type="submit"
-        class="w-full mt-4 py-4 rounded-xl
-               bg-cyan-600 hover:bg-cyan-500
-               font-bold">
-
+        class="w-full py-3.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg shadow-indigo-500/25 transition-all">
         เข้าสู่ระบบ
-
       </button>
 
-      <p id="loginMessage"
-         class="text-center text-red-400 text-sm mt-4">
+      <p id="loginMessage" class="text-center text-rose-500 text-sm font-medium mt-2">
       </p>
-
     </form>
 
-
-    <div class="mt-6 rounded-xl bg-amber-500/10
-                border border-amber-500/20 p-4">
-
-      <p class="text-amber-300 text-xs">
-        ⚠️ Demo สำหรับ GitHub Pages
-      </p>
-
-      <p class="text-slate-400 text-xs mt-1">
-        ไม่ควรใส่ข้อมูลผู้ป่วยหรือข้อมูลลับจริง
-      </p>
-
+    <div class="mt-8 rounded-2xl bg-amber-50/80 border border-amber-200/60 p-4">
+      <div class="flex gap-2">
+        <span class="text-amber-600 text-sm">💡</span>
+        <div>
+          <p class="text-amber-800 font-semibold text-xs">
+            Demo สำหรับระบบจำลอง (PIN: 7391)
+          </p>
+          <p class="text-amber-600/80 text-[11px] mt-0.5">
+            ไม่ควรใส่ข้อมูลผู้ป่วยหรือข้อมูลส่วนบุคคลจริงลงในระบบ
+          </p>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -118,348 +134,278 @@
 
 
 <!-- =========================
-     APPLICATION
+     MAIN APPLICATION
 ========================= -->
-
-<div id="app" class="hidden min-h-screen">
+<div id="app" class="hidden min-h-screen flex flex-col">
 
   <!-- HEADER -->
-
-  <header class="sticky top-0 z-50
-                 bg-slate-950/95
-                 border-b border-slate-800">
-
-    <div class="max-w-7xl mx-auto
-                px-4 py-4
-                flex items-center
-                justify-between">
-
-      <div>
-
-        <h1 class="font-bold text-lg">
-          RN-PN Duty Management
-        </h1>
-
-        <p class="text-xs text-slate-500">
-          ระบบจัดการตารางเวร
-        </p>
-
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-500/20">
+          RN
+        </div>
+        <div>
+          <h1 class="font-bold text-slate-800 text-base leading-tight">
+            RN-PN Duty Management
+          </h1>
+          <p class="text-xs text-slate-400">
+            ระบบจัดการตารางเวรอัจฉริยะ
+          </p>
+        </div>
       </div>
 
-      <button
-        id="logout"
-        class="px-4 py-2 rounded-lg
-               bg-red-500/10
-               text-red-300">
+      <div class="flex items-center gap-3">
+        <!-- AI BUTTON HEADER -->
+        <button
+          onclick="openAiModal()"
+          class="ai-gradient-btn px-4 py-2 rounded-xl text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm">
+          <span class="text-base">✨</span>
+          <span class="hidden sm:inline">ผู้ช่วย AI</span>
+          <span class="sm:hidden">AI</span>
+        </button>
 
-        🔒 Logout
-
-      </button>
+        <button
+          id="logout"
+          class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 text-xs sm:text-sm font-medium transition-all">
+          🔒 ออกจากระบบ
+        </button>
+      </div>
 
     </div>
-
   </header>
 
 
-  <main class="max-w-7xl mx-auto px-4 py-6">
+  <!-- MAIN CONTENT -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full">
 
+    <!-- STATS CARDS -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
-    <!-- STATS -->
-
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-
-      <div class="card rounded-2xl p-5">
-
-        <p class="text-slate-400 text-sm">
-          เวรทั้งหมด
-        </p>
-
-        <p id="total"
-           class="text-3xl font-bold mt-2">
+      <div class="modern-card rounded-2xl p-5 border border-slate-200">
+        <div class="flex justify-between items-start">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            เวรทั้งหมด
+          </p>
+          <span class="text-lg">📋</span>
+        </div>
+        <p id="total" class="text-3xl font-extrabold text-slate-800 mt-2">
           0
         </p>
-
       </div>
 
-
-      <div class="card rounded-2xl p-5">
-
-        <p class="text-slate-400 text-sm">
-          RN วันนี้
-        </p>
-
-        <p id="rnToday"
-           class="text-3xl font-bold mt-2">
+      <div class="modern-card rounded-2xl p-5 border border-slate-200">
+        <div class="flex justify-between items-start">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            RN วันนี้
+          </p>
+          <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">RN</span>
+        </div>
+        <p id="rnToday" class="text-3xl font-extrabold text-indigo-600 mt-2">
           0
         </p>
-
       </div>
 
-
-      <div class="card rounded-2xl p-5">
-
-        <p class="text-slate-400 text-sm">
-          PN วันนี้
-        </p>
-
-        <p id="pnToday"
-           class="text-3xl font-bold mt-2">
+      <div class="modern-card rounded-2xl p-5 border border-slate-200">
+        <div class="flex justify-between items-start">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            PN วันนี้
+          </p>
+          <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">PN</span>
+        </div>
+        <p id="pnToday" class="text-3xl font-extrabold text-emerald-600 mt-2">
           0
         </p>
-
       </div>
 
-
-      <div class="card rounded-2xl p-5">
-
-        <p class="text-slate-400 text-sm">
-          เวรดึก
-        </p>
-
-        <p id="night"
-           class="text-3xl font-bold mt-2">
+      <div class="modern-card rounded-2xl p-5 border border-slate-200">
+        <div class="flex justify-between items-start">
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            เวรดึกสะสม
+          </p>
+          <span class="text-lg">🌙</span>
+        </div>
+        <p id="night" class="text-3xl font-extrabold text-purple-600 mt-2">
           0
         </p>
-
       </div>
 
     </div>
 
 
-    <!-- NAV -->
+    <!-- NAVIGATION TABS & ACTION BUTTONS -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+      
+      <div class="flex items-center gap-2 bg-slate-200/60 p-1.5 rounded-2xl">
+        <button
+          class="navButton active px-5 py-2.5 rounded-xl font-medium text-sm transition-all bg-white text-slate-800 shadow-sm"
+          data-page="schedule">
+          📋 ตารางเวร
+        </button>
 
-    <div class="flex gap-2 mb-6">
+        <button
+          class="navButton px-5 py-2.5 rounded-xl font-medium text-sm transition-all text-slate-600 hover:text-slate-900"
+          data-page="add">
+          ➕ เพิ่มเวรใหม่
+        </button>
+      </div>
 
-      <button
-        class="navButton active px-5 py-3 rounded-xl
-               bg-cyan-600"
-        data-page="schedule">
-
-        📋 ตารางเวร
-
-      </button>
-
-
-      <button
-        class="navButton px-5 py-3 rounded-xl
-               bg-slate-800"
-        data-page="add">
-
-        ➕ เพิ่มเวร
-
+      <!-- AI ASSISTANT QUICK BANNER BUTTON -->
+      <button 
+        onclick="openAiModal()"
+        class="hidden md:flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-violet-50 to-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-medium hover:bg-indigo-100/50 transition-all">
+        <span>✨ ให้ AI ช่วยวิเคราะห์ตารางเวร หรือจัดเวรอัตโนมัติ</span>
+        <span class="text-indigo-600 font-bold underline">เปิดใช้งาน →</span>
       </button>
 
     </div>
 
 
     <!-- =========================
-         SCHEDULE
+         SECTION: SCHEDULE
     ========================= -->
-
     <section id="schedulePage">
 
-      <div class="card rounded-2xl p-5 mb-5">
-
-        <div class="grid md:grid-cols-3 gap-4">
+      <!-- FILTERS -->
+      <div class="modern-card rounded-2xl p-5 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
           <div>
-
-            <label class="text-sm text-slate-400">
-              วันที่
+            <label class="block text-xs font-medium text-slate-500 mb-1.5">
+              📅 กรองตามวันที่
             </label>
-
             <input
               id="filterDate"
               type="date"
-              class="w-full rounded-xl px-3 py-3 mt-1">
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm text-slate-700">
           </div>
 
-
           <div>
-
-            <label class="text-sm text-slate-400">
-              ตำแหน่ง
+            <label class="block text-xs font-medium text-slate-500 mb-1.5">
+              👤 ตำแหน่ง
             </label>
-
             <select
               id="filterRole"
-              class="w-full rounded-xl px-3 py-3 mt-1">
-
-              <option value="">ทั้งหมด</option>
-              <option value="RN">RN</option>
-              <option value="PN">PN</option>
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm text-slate-700">
+              <option value="">ทั้งหมด (RN / PN)</option>
+              <option value="RN">RN (พยาบาลวิชาชีพ)</option>
+              <option value="PN">PN (ผู้ช่วยพยาบาล)</option>
             </select>
-
           </div>
 
-
           <div>
-
-            <label class="text-sm text-slate-400">
-              เวร
+            <label class="block text-xs font-medium text-slate-500 mb-1.5">
+              🕒 ช่วงเวร
             </label>
-
             <select
               id="filterShift"
-              class="w-full rounded-xl px-3 py-3 mt-1">
-
-              <option value="">ทั้งหมด</option>
-              <option value="เช้า">เช้า 07–15</option>
-              <option value="บ่าย">บ่าย 15–23</option>
-              <option value="ดึก">ดึก 19–07</option>
-              <option value="OT">OT</option>
-              <option value="OFF">OFF</option>
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm text-slate-700">
+              <option value="">ทุกช่วงเวร</option>
+              <option value="เช้า">เช้า (07:00–15:00)</option>
+              <option value="บ่าย">บ่าย (15:00–23:00)</option>
+              <option value="ดึก">ดึก (19:00–07:00)</option>
+              <option value="OT">OT (ล่วงเวลา)</option>
+              <option value="OFF">OFF (วันหยุด)</option>
             </select>
-
           </div>
 
         </div>
-
       </div>
 
-
-      <div id="scheduleList"
-           class="space-y-4">
+      <!-- SCHEDULE LIST CONTAINER -->
+      <div id="scheduleList" class="space-y-3">
       </div>
 
     </section>
 
 
     <!-- =========================
-         ADD
+         SECTION: ADD DUTY
     ========================= -->
+    <section id="addPage" class="hidden">
 
-    <section id="addPage"
-             class="hidden">
+      <div class="modern-card rounded-2xl p-6 sm:p-8 max-w-2xl mx-auto border border-slate-200">
 
-      <div class="card rounded-2xl p-6 max-w-3xl">
+        <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg">
+            ✍️
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">
+              ลงทะเบียนเพิ่มเวร
+            </h2>
+            <p class="text-xs text-slate-400">
+              กรอกข้อมูลการจัดเวรบุคลากรทางการแพทย์
+            </p>
+          </div>
+        </div>
 
-        <h2 class="text-xl font-bold mb-5">
-          เพิ่มเวร
-        </h2>
-
-
-        <form id="addForm"
-              class="grid md:grid-cols-2 gap-4">
-
+        <form id="addForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div>
-
-            <label class="text-sm text-slate-400">
-              ชื่อ
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+              ชื่อ - นามสกุล
             </label>
-
             <input
               id="name"
               required
               maxlength="80"
-              class="w-full rounded-xl px-3 py-3 mt-1"
-              placeholder="ชื่อบุคลากร">
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm"
+              placeholder="เช่น พว.สมศรี ใจดี">
           </div>
 
-
           <div>
-
-            <label class="text-sm text-slate-400">
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
               ตำแหน่ง
             </label>
-
             <select
               id="role"
               required
-              class="w-full rounded-xl px-3 py-3 mt-1">
-
-              <option value="">
-                เลือกตำแหน่ง
-              </option>
-
-              <option value="RN">
-                RN
-              </option>
-
-              <option value="PN">
-                PN
-              </option>
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm">
+              <option value="">เลือกตำแหน่ง</option>
+              <option value="RN">RN (Registered Nurse)</option>
+              <option value="PN">PN (Practical Nurse)</option>
             </select>
-
           </div>
 
-
           <div>
-
-            <label class="text-sm text-slate-400">
-              วันที่
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+              วันที่ขึ้นเวร
             </label>
-
             <input
               id="dutyDate"
               type="date"
               required
-              class="w-full rounded-xl px-3 py-3 mt-1">
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm">
           </div>
 
-
           <div>
-
-            <label class="text-sm text-slate-400">
-              เวร
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+              ผลัดเวร
             </label>
-
             <select
               id="shift"
               required
-              class="w-full rounded-xl px-3 py-3 mt-1">
-
-              <option value="">
-                เลือกเวร
-              </option>
-
-              <option value="เช้า">
-                เช้า 07:00–15:00
-              </option>
-
-              <option value="บ่าย">
-                บ่าย 15:00–23:00
-              </option>
-
-              <option value="ดึก">
-                ดึก 19:00–07:00
-              </option>
-
-              <option value="OT">
-                OT
-              </option>
-
-              <option value="OFF">
-                OFF
-              </option>
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm">
+              <option value="">เลือกผลัดเวร</option>
+              <option value="เช้า">เช้า (07:00–15:00)</option>
+              <option value="บ่าย">บ่าย (15:00–23:00)</option>
+              <option value="ดึก">ดึก (19:00–07:00)</option>
+              <option value="OT">OT (เวรพิเศษ)</option>
+              <option value="OFF">OFF (วันหยุดพักผ่อน)</option>
             </select>
-
           </div>
 
-
           <div>
-
-            <label class="text-sm text-slate-400">
-              แผนก
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+              แผนก / วอร์ด
             </label>
-
             <select
               id="ward"
               required
-              class="w-full rounded-xl px-3 py-3 mt-1">
-
-              <option value="">
-                เลือกแผนก
-              </option>
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm">
+              <option value="">เลือกแผนก</option>
               <option>ICU</option>
               <option>ER</option>
               <option>OR</option>
@@ -467,39 +413,26 @@
               <option>OPD</option>
               <option>CCU</option>
               <option>VIP Ward</option>
-
             </select>
-
           </div>
 
-
           <div>
-
-            <label class="text-sm text-slate-400">
-              หมายเหตุ
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">
+              หมายเหตุเพิ่มเติม
             </label>
-
             <input
               id="note"
               maxlength="200"
-              class="w-full rounded-xl px-3 py-3 mt-1"
-              placeholder="ไม่บังคับ">
-
+              class="w-full rounded-xl px-3.5 py-2.5 text-sm"
+              placeholder="ระบุหมายเหตุ (ถ้ามี)">
           </div>
 
-
-          <div class="md:col-span-2">
-
+          <div class="md:col-span-2 pt-4">
             <button
-              class="w-full py-4 rounded-xl
-                     bg-cyan-600
-                     hover:bg-cyan-500
-                     font-bold">
-
-              บันทึกเวร
-
+              type="submit"
+              class="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-md shadow-indigo-500/20 transition-all">
+              💾 บันทึกข้อมูลเวร
             </button>
-
           </div>
 
         </form>
@@ -513,868 +446,507 @@
 </div>
 
 
+<!-- =========================
+     MODAL: AI ASSISTANT WINDOW
+========================= -->
+<div id="aiModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+  <div class="bg-white w-full max-w-xl rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+    
+    <!-- MODAL HEADER -->
+    <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 text-white flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-xl">
+          ✨
+        </div>
+        <div>
+          <h3 class="font-bold text-lg leading-tight">AI Duty Assistant</h3>
+          <p class="text-xs text-indigo-100">ผู้ช่วยอัจฉริยะจัดการและวิเคราะห์ตารางเวร</p>
+        </div>
+      </div>
+      <button onclick="closeAiModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-sm">
+        ✕
+      </button>
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="p-6 space-y-6">
+      
+      <!-- AI FEATURE 1: AUTO GENERATE -->
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-indigo-200 transition-all">
+        <div class="flex items-start justify-between mb-2">
+          <div>
+            <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+              <span>🎲</span> AI สุ่มสร้างตารางเวรอัตโนมัติ
+            </h4>
+            <p class="text-xs text-slate-500 mt-0.5">
+              สร้างตัวอย่างตารางเวรสำหรับพยาบาล RN และ PN แบบกระจายผลัดเวรสมดุล
+            </p>
+          </div>
+        </div>
+        <button 
+          onclick="aiGenerateSchedule()"
+          class="mt-3 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-all">
+          ⚡ สุ่มสร้างตารางเวรตัวอย่าง (5 รายการ)
+        </button>
+      </div>
+
+      <!-- AI FEATURE 2: HEALTH CHECK & BALANCE -->
+      <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-indigo-200 transition-all">
+        <div>
+          <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+            <span>📊</span> AI ตรวจสอบสมดุลและความเหนื่อยล้า
+          </h4>
+          <p class="text-xs text-slate-500 mt-0.5">
+            วิเคราะห์อัตราส่วนเวรดึกและความสอดคล้องของตารางปัจจุบัน
+          </p>
+        </div>
+        <button 
+          onclick="aiAnalyzeSchedule()"
+          class="mt-3 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold shadow-sm transition-all">
+          🔍 เริ่มการวิเคราะห์ตารางเวร
+        </button>
+      </div>
+
+      <!-- AI RESULT OUTPUT BOX -->
+      <div id="aiResultBox" class="hidden p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100 text-xs text-slate-700 space-y-2">
+        <p class="font-bold text-indigo-900 flex items-center gap-1">
+          <span>🤖</span> ผลการวิเคราะห์จาก AI:
+        </p>
+        <div id="aiResultContent" class="text-slate-600 whitespace-pre-line leading-relaxed">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MODAL FOOTER -->
+    <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex justify-end">
+      <button 
+        onclick="closeAiModal()"
+        class="px-5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold transition-all">
+        ปิดหน้าต่าง
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- =========================
+     JAVASCRIPT LOGIC
+========================= -->
 <script>
 
 /* ========================================
-   DEMO CONFIG
-======================================== */
-
-// PIN สำหรับทดลอง
+   CONFIG & CONSTANTS
+========================= */
 const DEMO_PIN = "7391";
-
-
-// Session 30 นาที
-const SESSION_TIME = 30 * 60 * 1000;
-
-
-// Storage
+const SESSION_TIME = 30 * 60 * 1000; // 30 mins
 const STORAGE_KEY = "RN_PN_DUTIES_DEMO";
 
+/* ========================================
+   ELEMENT REFERENCES
+======================================== */
+const loginPage = document.getElementById("loginPage");
+const app = document.getElementById("app");
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
+const aiModal = document.getElementById("aiModal");
 
 /* ========================================
-   ELEMENTS
+   UTILITY FUNCTIONS
 ======================================== */
-
-const loginPage =
-  document.getElementById("loginPage");
-
-const app =
-  document.getElementById("app");
-
-const loginForm =
-  document.getElementById("loginForm");
-
-const loginMessage =
-  document.getElementById("loginMessage");
-
-
-/* ========================================
-   DATE
-======================================== */
-
 function today() {
-
   const d = new Date();
-
-  const year =
-    d.getFullYear();
-
-  const month =
-    String(d.getMonth() + 1)
-      .padStart(2, "0");
-
-  const day =
-    String(d.getDate())
-      .padStart(2, "0");
-
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
-
 }
-
-
-/* ========================================
-   SAFE TEXT
-======================================== */
 
 function safeText(value) {
-
-  const div =
-    document.createElement("div");
-
-  div.textContent =
-    String(value ?? "");
-
+  const div = document.createElement("div");
+  div.textContent = String(value ?? "");
   return div.innerHTML;
-
 }
-
 
 /* ========================================
-   STORAGE
+   STORAGE HANDLERS
 ======================================== */
-
 function getDuties() {
-
   try {
-
-    const data =
-      localStorage.getItem(
-        STORAGE_KEY
-      );
-
-    if (!data) {
-
-      return [];
-
-    }
-
-    const parsed =
-      JSON.parse(data);
-
-    return Array.isArray(parsed)
-      ? parsed
-      : [];
-
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return [];
+    const parsed = JSON.parse(data);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
-
     return [];
-
   }
-
 }
-
 
 function saveDuties(data) {
-
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(data)
-  );
-
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-
 /* ========================================
-   LOGIN
+   LOGIN & LOGOUT
 ======================================== */
+loginForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  const entered = document.getElementById("pin").value.trim();
 
-loginForm.addEventListener(
-  "submit",
-  function(event) {
-
-    event.preventDefault();
-
-    const entered =
-      document
-        .getElementById("pin")
-        .value
-        .trim();
-
-
-    if (entered === DEMO_PIN) {
-
-      sessionStorage.setItem(
-        "RN_PN_LOGIN",
-        Date.now()
-      );
-
-      loginPage.classList.add(
-        "hidden"
-      );
-
-      app.classList.remove(
-        "hidden"
-      );
-
-      loginMessage.textContent = "";
-
-      initialize();
-
-    } else {
-
-      loginMessage.textContent =
-        "PIN ไม่ถูกต้อง";
-
-      document
-        .getElementById("pin")
-        .value = "";
-
-    }
-
+  if (entered === DEMO_PIN) {
+    sessionStorage.setItem("RN_PN_LOGIN", Date.now());
+    loginPage.classList.add("hidden");
+    app.classList.remove("hidden");
+    loginMessage.textContent = "";
+    initialize();
+  } else {
+    loginMessage.textContent = "❌ PIN ไม่ถูกต้อง (ทดลองใช้: 7391)";
+    document.getElementById("pin").value = "";
   }
-);
+});
 
-
-/* ========================================
-   LOGOUT
-======================================== */
-
-document
-  .getElementById("logout")
-  .addEventListener(
-    "click",
-    function() {
-
-      sessionStorage.removeItem(
-        "RN_PN_LOGIN"
-      );
-
-      app.classList.add(
-        "hidden"
-      );
-
-      loginPage.classList.remove(
-        "hidden"
-      );
-
-      document
-        .getElementById("pin")
-        .value = "";
-
-    }
-  );
-
-
-/* ========================================
-   SESSION CHECK
-======================================== */
+document.getElementById("logout").addEventListener("click", function() {
+  sessionStorage.removeItem("RN_PN_LOGIN");
+  app.classList.add("hidden");
+  loginPage.classList.remove("hidden");
+  document.getElementById("pin").value = "";
+});
 
 function checkSession() {
-
-  const loginTime =
-    Number(
-      sessionStorage.getItem(
-        "RN_PN_LOGIN"
-      )
-    );
-
-
-  if (!loginTime) {
-
+  const loginTime = Number(sessionStorage.getItem("RN_PN_LOGIN"));
+  if (!loginTime) return false;
+  if (Date.now() - loginTime > SESSION_TIME) {
+    sessionStorage.removeItem("RN_PN_LOGIN");
     return false;
-
   }
-
-
-  if (
-    Date.now() - loginTime >
-    SESSION_TIME
-  ) {
-
-    sessionStorage.removeItem(
-      "RN_PN_LOGIN"
-    );
-
-    return false;
-
-  }
-
-
   return true;
-
 }
 
-
 /* ========================================
-   NAVIGATION
+   NAVIGATION TABS
 ======================================== */
+document.querySelectorAll(".navButton").forEach(button => {
+  button.addEventListener("click", function() {
+    const page = this.dataset.page;
 
-document
-  .querySelectorAll(".navButton")
-  .forEach(button => {
+    document.getElementById("schedulePage").classList.toggle("hidden", page !== "schedule");
+    document.getElementById("addPage").classList.toggle("hidden", page !== "add");
 
-    button.addEventListener(
-      "click",
-      function() {
-
-        const page =
-          this.dataset.page;
-
-
-        document
-          .getElementById("schedulePage")
-          .classList.toggle(
-            "hidden",
-            page !== "schedule"
-          );
-
-
-        document
-          .getElementById("addPage")
-          .classList.toggle(
-            "hidden",
-            page !== "add"
-          );
-
-
-        document
-          .querySelectorAll(".navButton")
-          .forEach(btn => {
-
-            btn.classList.remove(
-              "bg-cyan-600"
-            );
-
-            btn.classList.add(
-              "bg-slate-800"
-            );
-
-          });
-
-
-        this.classList.remove(
-          "bg-slate-800"
-        );
-
-        this.classList.add(
-          "bg-cyan-600"
-        );
-
-      }
-    );
-
-  });
-
-
-/* ========================================
-   RENDER
-======================================== */
-
-function render() {
-
-  const list =
-    document.getElementById(
-      "scheduleList"
-    );
-
-
-  const filterDate =
-    document.getElementById(
-      "filterDate"
-    ).value;
-
-
-  const filterRole =
-    document.getElementById(
-      "filterRole"
-    ).value;
-
-
-  const filterShift =
-    document.getElementById(
-      "filterShift"
-    ).value;
-
-
-  let duties =
-    getDuties();
-
-
-  duties =
-    duties.filter(duty => {
-
-      if (
-        filterDate &&
-        duty.date !== filterDate
-      ) {
-
-        return false;
-
-      }
-
-
-      if (
-        filterRole &&
-        duty.role !== filterRole
-      ) {
-
-        return false;
-
-      }
-
-
-      if (
-        filterShift &&
-        duty.shift !== filterShift
-      ) {
-
-        return false;
-
-      }
-
-
-      return true;
-
+    document.querySelectorAll(".navButton").forEach(btn => {
+      btn.classList.remove("bg-white", "text-slate-800", "shadow-sm");
+      btn.classList.add("text-slate-600");
     });
 
+    this.classList.remove("text-slate-600");
+    this.classList.add("bg-white", "text-slate-800", "shadow-sm");
+  });
+});
+
+/* ========================================
+   RENDER SCHEDULE LIST
+======================================== */
+function render() {
+  const list = document.getElementById("scheduleList");
+  const filterDate = document.getElementById("filterDate").value;
+  const filterRole = document.getElementById("filterRole").value;
+  const filterShift = document.getElementById("filterShift").value;
+
+  let duties = getDuties();
+
+  duties = duties.filter(duty => {
+    if (filterDate && duty.date !== filterDate) return false;
+    if (filterRole && duty.role !== filterRole) return false;
+    if (filterShift && duty.shift !== filterShift) return false;
+    return true;
+  });
 
   if (duties.length === 0) {
-
     list.innerHTML = `
-      <div class="card rounded-2xl p-10 text-center">
+      <div class="modern-card rounded-2xl p-12 text-center border border-dashed border-slate-300">
         <div class="text-4xl mb-3">📭</div>
-        <p class="text-slate-400">
-          ยังไม่มีข้อมูลเวร
+        <h3 class="font-bold text-slate-700 text-base">ไม่พบข้อมูลการจัดเวร</h3>
+        <p class="text-xs text-slate-400 mt-1">
+          ยังไม่มีเวรตามเงื่อนไขที่เลือก สามารถเพิ่มเวรใหม่หรือใช้ AI ช่วยสร้างได้
         </p>
       </div>
     `;
-
     updateStats();
-
     return;
-
   }
 
+  list.innerHTML = duties.map(duty => {
+    // Style configurations per shift
+    let shiftBadge = "bg-sky-50 text-sky-700 border-sky-200";
+    let shiftTime = "07:00–15:00";
 
-  list.innerHTML =
-    duties.map(duty => {
+    if (duty.shift === "บ่าย") {
+      shiftBadge = "bg-amber-50 text-amber-700 border-amber-200";
+      shiftTime = "15:00–23:00";
+    } else if (duty.shift === "ดึก") {
+      shiftBadge = "bg-purple-50 text-purple-700 border-purple-200";
+      shiftTime = "19:00–07:00";
+    } else if (duty.shift === "OT") {
+      shiftBadge = "bg-rose-50 text-rose-700 border-rose-200";
+      shiftTime = "เวรพิเศษ OT";
+    } else if (duty.shift === "OFF") {
+      shiftBadge = "bg-emerald-50 text-emerald-700 border-emerald-200";
+      shiftTime = "วันหยุด";
+    }
 
-      let shiftColor =
-        "text-cyan-300";
+    const roleBadge = duty.role === "RN" 
+      ? "bg-indigo-100 text-indigo-700 font-bold" 
+      : "bg-emerald-100 text-emerald-700 font-bold";
 
-
-      if (duty.shift === "ดึก") {
-        shiftColor =
-          "text-indigo-300";
-      }
-
-
-      if (duty.shift === "OFF") {
-        shiftColor =
-          "text-green-300";
-      }
-
-
-      return `
-
-        <div class="card rounded-2xl p-5">
-
-          <div class="flex flex-col md:flex-row
-                      md:items-center
-                      md:justify-between gap-4">
+    return `
+      <div class="modern-card rounded-2xl p-5 border border-slate-200 flex flex-col justify-between transition-all">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          
+          <div class="flex items-start gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-sm flex-shrink-0 mt-0.5">
+              ${safeText(duty.role)}
+            </div>
 
             <div>
-
-              <div class="flex gap-2 mb-2">
-
-                <span class="text-xs
-                             bg-slate-700
-                             px-2 py-1
-                             rounded-lg">
-
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-[11px] px-2 py-0.5 rounded-md ${roleBadge}">
                   ${safeText(duty.role)}
-
                 </span>
-
-                <span class="text-xs
-                             text-slate-500">
-
-                  ${safeText(duty.date)}
-
+                <span class="text-xs text-slate-400">
+                  📅 ${safeText(duty.date)}
                 </span>
-
               </div>
 
-
-              <h3 class="font-bold text-lg">
-
+              <h3 class="font-bold text-slate-800 text-base">
                 ${safeText(duty.name)}
-
               </h3>
 
-
-              <p class="text-sm
-                        text-slate-400 mt-1">
-
-                ${safeText(duty.ward)}
-
+              <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                <span>🏥 แผนก:</span> <span class="font-medium text-slate-700">${safeText(duty.ward)}</span>
               </p>
-
             </div>
-
-
-            <div class="flex
-                        items-center
-                        justify-between
-                        md:justify-end
-                        gap-5">
-
-              <div class="text-right">
-
-                <div class="font-bold
-                            ${shiftColor}">
-
-                  ${safeText(duty.shift)}
-
-                </div>
-
-
-                <div class="text-xs
-                            text-slate-500">
-
-                  ${
-                    duty.shift === "ดึก"
-                      ? "19:00–07:00"
-                      : ""
-                  }
-
-                </div>
-
-              </div>
-
-
-              <button
-                onclick="deleteDuty('${safeText(duty.id)}')"
-                class="px-3 py-2
-                       rounded-lg
-                       bg-red-500/10
-                       text-red-300">
-
-                ลบ
-
-              </button>
-
-            </div>
-
           </div>
 
+          <div class="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+            <div class="text-left sm:text-right">
+              <span class="inline-block text-xs font-semibold px-3 py-1 rounded-lg border ${shiftBadge}">
+                เวร${safeText(duty.shift)}
+              </span>
+              <p class="text-[11px] text-slate-400 mt-1">
+                ${shiftTime}
+              </p>
+            </div>
 
-          ${
-            duty.note
-              ? `
-                <div class="mt-4 pt-4
-                            border-t
-                            border-slate-800
-                            text-sm
-                            text-slate-400">
-
-                  📝 ${safeText(duty.note)}
-
-                </div>
-              `
-              : ""
-          }
+            <button
+              onclick="deleteDuty('${safeText(duty.id)}')"
+              class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-400 hover:text-rose-600 text-xs font-medium transition-all">
+              🗑️ ลบ
+            </button>
+          </div>
 
         </div>
 
-      `;
-
-    }).join("");
-
+        ${duty.note ? `
+          <div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center gap-1">
+            <span>📝</span> <span>${safeText(duty.note)}</span>
+          </div>
+        ` : ""}
+      </div>
+    `;
+  }).join("");
 
   updateStats();
-
 }
 
-
 /* ========================================
-   ADD DUTY
+   ADD DUTY FORM HANDLER
 ======================================== */
-
-document
-  .getElementById("addForm")
-  .addEventListener(
-    "submit",
-    function(event) {
-
-      event.preventDefault();
-
-
-      if (!checkSession()) {
-
-        alert(
-          "Session หมดอายุ กรุณาเข้าสู่ระบบใหม่"
-        );
-
-        return;
-
-      }
-
-
-      const name =
-        document
-          .getElementById("name")
-          .value
-          .trim();
-
-
-      const role =
-        document
-          .getElementById("role")
-          .value;
-
-
-      const date =
-        document
-          .getElementById("dutyDate")
-          .value;
-
-
-      const shift =
-        document
-          .getElementById("shift")
-          .value;
-
-
-      const ward =
-        document
-          .getElementById("ward")
-          .value;
-
-
-      const note =
-        document
-          .getElementById("note")
-          .value
-          .trim();
-
-
-      if (
-        !name ||
-        !role ||
-        !date ||
-        !shift ||
-        !ward
-      ) {
-
-        alert(
-          "กรุณากรอกข้อมูลให้ครบ"
-        );
-
-        return;
-
-      }
-
-
-      const duties =
-        getDuties();
-
-
-      duties.push({
-
-        id:
-          "DUTY-" +
-          Date.now(),
-
-        name,
-
-        role,
-
-        date,
-
-        shift,
-
-        ward,
-
-        note
-
-      });
-
-
-      saveDuties(duties);
-
-
-      this.reset();
-
-
-      document
-        .getElementById("dutyDate")
-        .value =
-        today();
-
-
-      render();
-
-
-      document
-        .querySelector(
-          '[data-page="schedule"]'
-        )
-        .click();
-
-
-      alert(
-        "เพิ่มเวรเรียบร้อยแล้ว"
-      );
-
-    }
-  );
-
-
-/* ========================================
-   DELETE
-======================================== */
-
-function deleteDuty(id) {
+document.getElementById("addForm").addEventListener("submit", function(event) {
+  event.preventDefault();
 
   if (!checkSession()) {
-
-    alert(
-      "Session หมดอายุ"
-    );
-
-    return;
-
-  }
-
-
-  const duties =
-    getDuties();
-
-
-  const duty =
-    duties.find(
-      item =>
-        item.id === id
-    );
-
-
-  if (!duty) {
+    alert("Session หมดอายุ กรุณาเข้าสู่ระบบใหม่");
     return;
   }
 
+  const name = document.getElementById("name").value.trim();
+  const role = document.getElementById("role").value;
+  const date = document.getElementById("dutyDate").value;
+  const shift = document.getElementById("shift").value;
+  const ward = document.getElementById("ward").value;
+  const note = document.getElementById("note").value.trim();
 
-  const confirmDelete =
-    confirm(
-      `ต้องการลบเวรของ ${duty.name} หรือไม่?`
-    );
-
-
-  if (!confirmDelete) {
+  if (!name || !role || !date || !shift || !ward) {
+    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
     return;
   }
 
+  const duties = getDuties();
+  duties.push({
+    id: "DUTY-" + Date.now(),
+    name,
+    role,
+    date,
+    shift,
+    ward,
+    note
+  });
 
-  const newDuties =
-    duties.filter(
-      item =>
-        item.id !== id
-    );
-
-
-  saveDuties(newDuties);
-
+  saveDuties(duties);
+  this.reset();
+  document.getElementById("dutyDate").value = today();
 
   render();
-
-}
-
-
-/* ========================================
-   STATS
-======================================== */
-
-function updateStats() {
-
-  const duties =
-    getDuties();
-
-
-  const currentDate =
-    today();
-
-
-  document
-    .getElementById("total")
-    .textContent =
-    duties.length;
-
-
-  document
-    .getElementById("rnToday")
-    .textContent =
-    duties.filter(
-      d =>
-        d.date === currentDate &&
-        d.role === "RN"
-    ).length;
-
-
-  document
-    .getElementById("pnToday")
-    .textContent =
-    duties.filter(
-      d =>
-        d.date === currentDate &&
-        d.role === "PN"
-    ).length;
-
-
-  document
-    .getElementById("night")
-    .textContent =
-    duties.filter(
-      d =>
-        d.shift === "ดึก"
-    ).length;
-
-}
-
-
-/* ========================================
-   FILTER
-======================================== */
-
-[
-  "filterDate",
-  "filterRole",
-  "filterShift"
-].forEach(id => {
-
-  document
-    .getElementById(id)
-    .addEventListener(
-      "change",
-      render
-    );
-
+  document.querySelector('[data-page="schedule"]').click();
+  alert("✅ เพิ่มข้อมูลเวรเรียบร้อยแล้ว");
 });
 
-
 /* ========================================
-   INITIALIZE
+   DELETE DUTY
 ======================================== */
+function deleteDuty(id) {
+  if (!checkSession()) {
+    alert("Session หมดอายุ");
+    return;
+  }
 
-function initialize() {
+  const duties = getDuties();
+  const duty = duties.find(item => item.id === id);
+  if (!duty) return;
 
-  document
-    .getElementById("dutyDate")
-    .value =
-    today();
-
-
-  render();
-
+  if (confirm(`คุณต้องการลบรายการเวรของ "${duty.name}" ใช่หรือไม่?`)) {
+    const newDuties = duties.filter(item => item.id !== id);
+    saveDuties(newDuties);
+    render();
+  }
 }
 
+/* ========================================
+   STATS UPDATE
+======================================== */
+function updateStats() {
+  const duties = getDuties();
+  const currentDate = today();
+
+  document.getElementById("total").textContent = duties.length;
+
+  document.getElementById("rnToday").textContent = duties.filter(
+    d => d.date === currentDate && d.role === "RN"
+  ).length;
+
+  document.getElementById("pnToday").textContent = duties.filter(
+    d => d.date === currentDate && d.role === "PN"
+  ).length;
+
+  document.getElementById("night").textContent = duties.filter(
+    d => d.shift === "ดึก"
+  ).length;
+}
 
 /* ========================================
-   AUTO SESSION TIMEOUT
+   AI MODAL & FEATURES
 ======================================== */
+function openAiModal() {
+  aiModal.classList.remove("hidden");
+  document.getElementById("aiResultBox").classList.add("hidden");
+}
 
-setInterval(
-  function() {
+function closeAiModal() {
+  aiModal.classList.add("hidden");
+}
 
-    if (
-      !app.classList.contains("hidden") &&
-      !checkSession()
-    ) {
+// AI Feature 1: Auto Generate Sample Schedule
+function aiGenerateSchedule() {
+  const sampleNamesRN = ["พว. สมศรี มีสุข", "พว. นภา วงศ์สว่าง", "พว. ธนกร พรหมดี"];
+  const sampleNamesPN = ["ผช. กานดา ใจเย็น", "ผช. วิชัย ชัยชนะ", "ผช. อารี รักษ์ดี"];
+  const shifts = ["เช้า", "บ่าย", "ดึก", "OT"];
+  const wards = ["ICU", "ER", "IPD", "OPD"];
 
-      app.classList.add(
-        "hidden"
-      );
+  const duties = getDuties();
+  const currentDate = today();
 
-      loginPage.classList.remove(
-        "hidden"
-      );
+  for (let i = 0; i < 5; i++) {
+    const isRN = i % 2 === 0;
+    const nameList = isRN ? sampleNamesRN : sampleNamesPN;
+    const randomName = nameList[Math.floor(Math.random() * nameList.length)];
+    const randomShift = shifts[Math.floor(Math.random() * shifts.length)];
+    const randomWard = wards[Math.floor(Math.random() * wards.length)];
 
-      alert(
-        "Session หมดอายุ กรุณาเข้าสู่ระบบใหม่"
-      );
+    duties.push({
+      id: "DUTY-AI-" + Date.now() + "-" + i,
+      name: randomName,
+      role: isRN ? "RN" : "PN",
+      date: currentDate,
+      shift: randomShift,
+      ward: randomWard,
+      note: "สร้างอัตโนมัติโดย AI Assistant ✨"
+    });
+  }
 
-    }
+  saveDuties(duties);
+  render();
 
-  },
-  10000
-);
+  const resultBox = document.getElementById("aiResultBox");
+  const resultContent = document.getElementById("aiResultContent");
+  resultBox.classList.remove("hidden");
+  resultContent.textContent = "✨ AI ได้สุ่มจัดตารางเวรสมดุลให้เรียบร้อยแล้วจำนวน 5 รายการสำหรับวันที่ปัจจุบัน!";
+}
 
+// AI Feature 2: Health & Balance Check
+function aiAnalyzeSchedule() {
+  const duties = getDuties();
+  const resultBox = document.getElementById("aiResultBox");
+  const resultContent = document.getElementById("aiResultContent");
+
+  resultBox.classList.remove("hidden");
+
+  if (duties.length === 0) {
+    resultContent.textContent = "⚠️ ไม่พบข้อมูลเวรในระบบ กรุณาเพิ่มเวรก่อนทำการวิเคราะห์";
+    return;
+  }
+
+  const rnCount = duties.filter(d => d.role === "RN").length;
+  const pnCount = duties.filter(d => d.role === "PN").length;
+  const nightCount = duties.filter(d => d.shift === "ดึก").length;
+  const otCount = duties.filter(d => d.shift === "OT").length;
+
+  let advice = `📈 **สรุปภาพรวมการจัดเวร:**\n`;
+  advice += `• สัดส่วน RN : PN = ${rnCount} : ${pnCount} รายการ\n`;
+  advice += `• มีเวรดึกรวม ${nightCount} ผลัด และเวร OT รวม ${otCount} ผลัด\n\n`;
+
+  if (nightCount > duties.length * 0.4) {
+    advice += `⚠️ **ข้อสังเกตจาก AI:** มีสัดส่วนเวรดึกค่อนข้างสูง (${Math.round((nightCount/duties.length)*100)}%) ควรจัดวันหยุดพักผ่อน (OFF) ชดเชยให้บุคลากรอย่างเหมาะสม`;
+  } else {
+    advice += `✅ **ข้อสังเกตจาก AI:** การกระจายผลัดเวรอยู่ในเกณฑ์สมดุลดี ไม่พบภาวะเสี่ยงภาระงานหนักเกินไป`;
+  }
+
+  resultContent.textContent = advice;
+}
 
 /* ========================================
-   AUTO LOGIN IF SESSION EXISTS
+   LISTENERS & INITIALIZATION
 ======================================== */
+["filterDate", "filterRole", "filterShift"].forEach(id => {
+  document.getElementById(id).addEventListener("change", render);
+});
+
+function initialize() {
+  document.getElementById("dutyDate").value = today();
+  render();
+}
+
+setInterval(function() {
+  if (!app.classList.contains("hidden") && !checkSession()) {
+    app.classList.add("hidden");
+    loginPage.classList.remove("hidden");
+    alert("Session หมดอายุ กรุณาเข้าสู่ระบบใหม่");
+  }
+}, 10000);
 
 if (checkSession()) {
-
-  loginPage.classList.add(
-    "hidden"
-  );
-
-  app.classList.remove(
-    "hidden"
-  );
-
+  loginPage.classList.add("hidden");
+  app.classList.remove("hidden");
   initialize();
-
 }
 
 </script>
