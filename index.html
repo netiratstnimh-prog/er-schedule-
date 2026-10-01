@@ -8,158 +8,216 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Prompt & Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        prompt: ['Prompt', 'sans-serif'],
+                        sarabun: ['Sarabun', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body { font-family: 'Sarabun', sans-serif; }
+        h1, h2, h3, h4, .font-prompt { font-family: 'Prompt', sans-serif; }
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; }
-            .print-border { border: 1px solid #cbd5e1 !important; }
-            .page-break { page-break-after: always; }
+            .print-border { border: 1px solid #e2e8f0 !important; box-shadow: none !important; }
+            #lockOverlay { display: none !important; }
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-full flex flex-col transition-colors duration-300" id="appBody">
+<body class="bg-slate-50 text-slate-800 min-h-full flex flex-col antialiased" id="appBody">
+
+    <!-- 🔒 Password Lock Screen Overlay -->
+    <div id="lockOverlay" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-white/95 rounded-3xl shadow-2xl border border-white/20 p-8 max-w-sm w-full text-center relative overflow-hidden">
+            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 shadow-inner">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h2 class="text-xl font-bold font-prompt text-slate-800 mb-1">ยืนยันตัวตน</h2>
+            <p class="text-xs text-slate-500 mb-6">โรงพยาบาลกรุงเทพ สำนักงานใหญ่</p>
+
+            <form onsubmit="handlePinSubmit(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" id="pinInput" maxlength="4" placeholder="••••" autofocus
+                        class="w-full text-center text-2xl tracking-[0.5em] font-bold py-3 px-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition placeholder:text-slate-300">
+                </div>
+                <div id="pinError" class="text-rose-500 text-xs font-medium hidden flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-triangle-exclamation"></i> รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่
+                </div>
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-prompt font-medium rounded-xl shadow-md shadow-indigo-200 transition">
+                    เข้าสู่ระบบ
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- Control Toolbar (No Print) -->
-    <header class="no-print sticky top-0 z-50 bg-blue-900 text-white shadow-lg border-b border-blue-800">
+    <header class="no-print sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
             
             <!-- Hospital Title -->
             <div class="flex items-center space-x-3">
-                <div class="p-2 bg-blue-700 rounded-lg text-amber-400">
-                    <i class="fa-solid fa-hospital text-2xl"></i>
+                <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-blue-500 rounded-xl text-white flex items-center justify-center shadow-md shadow-indigo-100">
+                    <i class="fa-solid fa-hospital text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight">โรงพยาบาลกรุงเทพ สำนักงานใหญ่</h1>
-                    <p class="text-xs text-blue-200">ระบบจัดการตารางปฏิบัติงานพยาบาล (เวรดึก 19:00 - 07:00 น.)</p>
+                    <h1 class="font-bold text-base md:text-lg font-prompt text-slate-900 leading-tight">โรงพยาบาลกรุงเทพ สำนักงานใหญ่</h1>
+                    <p class="text-xs text-slate-500 font-medium">ตารางเวรพยาบาล • เวรดึก (19:00 - 07:00 น.)</p>
                 </div>
             </div>
 
             <!-- Toolbar Action Buttons -->
             <div class="flex flex-wrap items-center gap-2">
-                <button onclick="saveSchedule()" class="px-3.5 py-1.5 rounded-lg text-sm font-medium bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                <button onclick="saveSchedule()" class="px-3.5 py-1.5 rounded-xl text-xs font-prompt font-medium bg-indigo-600 hover:bg-indigo-700 text-white transition flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-floppy-disk"></i> บันทึก
                 </button>
                 
-                <button onclick="exportJSON()" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-800 hover:bg-blue-700 text-white transition flex items-center gap-1.5" title="ส่งออกข้อมูลเป็น JSON">
+                <button onclick="exportJSON()" class="px-3 py-1.5 rounded-xl text-xs font-prompt font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1.5" title="ส่งออกไฟล์ JSON">
                     <i class="fa-solid fa-download"></i> JSON
                 </button>
                 
-                <label class="px-3 py-1.5 rounded-lg text-sm font-medium bg-blue-800 hover:bg-blue-700 text-white transition cursor-pointer flex items-center gap-1.5" title="นำเข้าข้อมูล JSON">
+                <label class="px-3 py-1.5 rounded-xl text-xs font-prompt font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer flex items-center gap-1.5" title="นำเข้าไฟล์ JSON">
                     <i class="fa-solid fa-upload"></i> นำเข้า
                     <input type="file" id="importFileInput" accept=".json" class="hidden" onchange="importJSON(event)">
                 </label>
 
-                <button onclick="printPDF()" class="px-3.5 py-1.5 rounded-lg text-sm font-medium bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold transition flex items-center gap-2 shadow-sm">
+                <button onclick="printPDF()" class="px-3.5 py-1.5 rounded-xl text-xs font-prompt font-medium bg-amber-500 hover:bg-amber-600 text-white transition flex items-center gap-1.5 shadow-sm">
                     <i class="fa-solid fa-print"></i> พิมพ์ / PDF
                 </button>
 
-                <button onclick="resetSchedule()" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-rose-700 hover:bg-rose-600 text-white transition flex items-center gap-1.5" title="รีเซ็ตกลับเป็นค่าเริ่มต้น">
-                    <i class="fa-solid fa-rotate-left"></i>
+                <button onclick="lockSystem()" class="px-3 py-1.5 rounded-xl text-xs font-prompt font-medium bg-rose-50 hover:bg-rose-100 text-rose-600 transition flex items-center gap-1.5" title="ล็อคหน้าจอ">
+                    <i class="fa-solid fa-lock"></i> ล็อค
                 </button>
             </div>
         </div>
     </header>
 
     <!-- Notification Toast -->
-    <div id="toast" class="no-print fixed bottom-5 right-5 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 border border-slate-700">
-        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
-        <span id="toastMsg" class="text-sm font-medium">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+    <div id="toast" class="no-print fixed bottom-5 right-5 bg-slate-900/90 backdrop-blur-md text-white px-4 py-3 rounded-2xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 border border-slate-700/50">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastMsg" class="text-xs font-medium">บันทึกข้อมูลเรียบร้อยแล้ว</span>
     </div>
 
     <!-- Main Schedule Container -->
-    <main class="flex-grow max-w-6xl w-full mx-auto p-4 md:p-8">
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
         
-        <!-- Header Banner & Hospital Info -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6 print-border">
-            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-100 pb-4 mb-4 gap-4">
+        <!-- Header Banner & Summary Stats Cards -->
+        <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 rounded-3xl p-6 md:p-8 text-white shadow-xl shadow-indigo-950/10 relative overflow-hidden print-border">
+            <div class="absolute -right-10 -bottom-10 w-60 h-60 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-indigo-700/50 pb-6 mb-6 gap-4 relative z-10">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold mb-2">
-                        <i class="fa-solid fa-user-nurse"></i> พยาบาลพิเศษ / Nurse Duty Roster
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-900">ตารางปฏิบัติงานพยาบาลพิเศษ</h2>
-                    <p class="text-sm text-slate-500">โรงพยาบาลกรุงเทพ สำนักงานใหญ่ (Bangkok Hospital Headquarter)</p>
-                </div>
-                <div class="text-left md:text-right">
-                    <span class="text-xs text-slate-400 block">ช่วงเวลากำหนดเวร</span>
-                    <span class="inline-block mt-1 px-3 py-1.5 bg-indigo-900 text-amber-300 font-bold text-sm rounded-lg shadow-sm">
-                        <i class="fa-solid fa-moon me-1"></i> เวรดึก (19:00 - 07:00 น.) • 12 ชม.
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-200 text-xs font-medium mb-2 backdrop-blur-sm border border-indigo-400/20">
+                        <i class="fa-solid fa-user-nurse"></i> พยาบาลพิเศษ / Duty Roster
                     </span>
+                    <h2 class="text-2xl md:text-3xl font-bold font-prompt text-white tracking-tight">ตารางปฏิบัติงานประจำเดือน</h2>
+                    <p class="text-xs md:text-sm text-indigo-200/80 mt-1">โรงพยาบาลกรุงเทพ สำนักงานใหญ่ (Bangkok Hospital Headquarter)</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl text-right">
+                        <span class="text-[11px] text-indigo-200 block font-medium">กะปฏิบัติงาน</span>
+                        <span class="text-sm font-bold text-amber-300 font-prompt">
+                            🌙 เวรดึก (19:00 - 07:00 น.)
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Dashboard Summary Statistics -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl text-center">
-                    <span class="text-xs font-semibold text-indigo-600 block mb-1">🌙 เวรดึก (19:00 - 07:00)</span>
-                    <span id="statNightCount" class="text-2xl font-extrabold text-indigo-900">26</span>
-                    <span class="text-xs text-indigo-500 font-medium"> วัน</span>
+            <!-- Soft Summary Metrics -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 relative z-10">
+                <div class="bg-white/10 backdrop-blur-md border border-white/10 p-4 rounded-2xl text-center">
+                    <span class="text-xs text-indigo-200 font-medium block mb-1">🌙 เวรดึก (19:00-07:00)</span>
+                    <span id="statNightCount" class="text-2xl md:text-3xl font-bold font-prompt text-amber-300">26</span>
+                    <span class="text-xs text-indigo-200 font-medium"> วัน</span>
                 </div>
-                <div class="bg-rose-50 border border-rose-100 p-4 rounded-xl text-center">
-                    <span class="text-xs font-semibold text-rose-600 block mb-1">🟥 วันหยุด (Off)</span>
-                    <span id="statOffCount" class="text-2xl font-extrabold text-rose-900">5</span>
-                    <span class="text-xs text-rose-500 font-medium"> วัน</span>
+                <div class="bg-white/10 backdrop-blur-md border border-white/10 p-4 rounded-2xl text-center">
+                    <span class="text-xs text-indigo-200 font-medium block mb-1">🟥 วันหยุด (Off)</span>
+                    <span id="statOffCount" class="text-2xl md:text-3xl font-bold font-prompt text-rose-300">5</span>
+                    <span class="text-xs text-indigo-200 font-medium"> วัน</span>
                 </div>
-                <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl text-center">
-                    <span class="text-xs font-semibold text-amber-700 block mb-1">⏰ ชั่วโมงทำงานรวม</span>
-                    <span id="statTotalHours" class="text-2xl font-extrabold text-amber-900">312</span>
-                    <span class="text-xs text-amber-600 font-medium"> ชั่วโมง</span>
+                <div class="bg-white/10 backdrop-blur-md border border-white/10 p-4 rounded-2xl text-center">
+                    <span class="text-xs text-indigo-200 font-medium block mb-1">⏰ ชั่วโมงรวม</span>
+                    <span id="statTotalHours" class="text-2xl md:text-3xl font-bold font-prompt text-emerald-300">312</span>
+                    <span class="text-xs text-indigo-200 font-medium"> ชม.</span>
                 </div>
-                <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
-                    <span class="text-xs font-semibold text-slate-600 block mb-1">📅 จำนวนวันทั้งหมด</span>
-                    <span class="text-2xl font-extrabold text-slate-800">31</span>
-                    <span class="text-xs text-slate-500 font-medium"> วัน</span>
+                <div class="bg-white/10 backdrop-blur-md border border-white/10 p-4 rounded-2xl text-center">
+                    <span class="text-xs text-indigo-200 font-medium block mb-1">📅 วันทั้งหมด</span>
+                    <span class="text-2xl md:text-3xl font-bold font-prompt text-white">31</span>
+                    <span class="text-xs text-indigo-200 font-medium"> วัน</span>
                 </div>
             </div>
         </div>
 
-        <!-- Schedule Grid Calendar -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 print-border">
-            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
-                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-days text-blue-600"></i> รายการปฏิบัติงานรายวัน (วันที่ 1 - 31)
-                </h3>
-                <span class="no-print text-xs text-slate-400">💡 คลิกที่สถานะเพื่อสลับเป็น "ดึก" หรือ "หยุด"</span>
+        <!-- 📅 Horizontal Calendar View Section -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 p-5 md:p-7 print-border">
+            <div class="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-indigo-600"></div>
+                    <h3 class="font-bold font-prompt text-slate-800 text-base md:text-lg">ผังปฏิทินปฏิบัติงาน (Calendar View)</h3>
+                </div>
+                <span class="no-print text-xs text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
+                    💡 คลิกที่ช่องวันเพื่อเปลี่ยนระหว่าง "เวรดึก" และ "วันหยุด"
+                </span>
+            </div>
+
+            <!-- Calendar Days Header (7 Columns: Sun - Sat) -->
+            <div class="grid grid-cols-7 gap-2 md:gap-3 mb-3 text-center text-xs font-bold font-prompt text-slate-500 uppercase tracking-wider">
+                <div class="py-2 rounded-xl bg-rose-50 text-rose-600">อาทิตย์</div>
+                <div class="py-2 rounded-xl bg-amber-50 text-amber-700">จันทร์</div>
+                <div class="py-2 rounded-xl bg-pink-50 text-pink-600">อังคาร</div>
+                <div class="py-2 rounded-xl bg-emerald-50 text-emerald-700">พุธ</div>
+                <div class="py-2 rounded-xl bg-orange-50 text-orange-700">พฤหัสบดี</div>
+                <div class="py-2 rounded-xl bg-blue-50 text-blue-600">ศุกร์</div>
+                <div class="py-2 rounded-xl bg-purple-50 text-purple-700">เสาร์</div>
             </div>
 
             <!-- Calendar Grid Layout -->
-            <div id="scheduleGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                <!-- Grid Items will be generated dynamically by JavaScript -->
+            <div id="calendarGrid" class="grid grid-cols-7 gap-2 md:gap-3">
+                <!-- Days will be dynamically rendered here -->
             </div>
         </div>
 
-        <!-- Signature Section (Visible on Print/PDF) -->
-        <div class="hidden print:block mt-12 pt-6 border-t border-slate-300">
-            <div class="grid grid-cols-3 gap-8 text-center text-sm">
+        <!-- Signature Section for Print/PDF -->
+        <div class="hidden print:block mt-12 pt-8 border-t border-slate-300">
+            <div class="grid grid-cols-3 gap-8 text-center text-xs">
                 <div>
                     <div class="h-16"></div>
                     <p class="border-t border-slate-400 pt-2 font-medium">ลงชื่อ..........................................................</p>
-                    <p class="text-xs text-slate-500 mt-1">( พยาบาลผู้ปฏิบัติงาน )</p>
+                    <p class="text-slate-500 mt-1">( พยาบาลผู้ปฏิบัติงาน )</p>
                 </div>
                 <div>
                     <div class="h-16"></div>
                     <p class="border-t border-slate-400 pt-2 font-medium">ลงชื่อ..........................................................</p>
-                    <p class="text-xs text-slate-500 mt-1">( ผู้จัดตารางเวร )</p>
+                    <p class="text-slate-500 mt-1">( ผู้จัดตารางเวร )</p>
                 </div>
                 <div>
                     <div class="h-16"></div>
                     <p class="border-t border-slate-400 pt-2 font-medium">ลงชื่อ..........................................................</p>
-                    <p class="text-xs text-slate-500 mt-1">( หัวหน้าแผนกพยาบาลพิเศษ )</p>
+                    <p class="text-slate-500 mt-1">( หัวหน้าแผนกพยาบาลพิเศษ )</p>
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
         <footer class="no-print text-center text-xs text-slate-400 py-4">
-            © โรงพยาบาลกรุงเทพ สำนักงานใหญ่ • ระบบตารางเวรพยาบาลแบบ Interactive (GitHub Ready)
+            © โรงพยาบาลกรุงเทพ สำนักงานใหญ่ • ตารางเวรพยาบาล Secure & Interactive
         </footer>
     </main>
 
     <!-- Application Script -->
     <script>
-        // Initial Schedule Data (1-31 Days) with 19:00 - 07:00 Shift
+        const CORRECT_PIN = '1323';
+        const STORAGE_KEY = 'bgh_nurse_calendar_19_07';
+
+        // Initial Schedule State (1-31 Days)
         const initialSchedule = [
             { day: 1, type: 'night' },
             { day: 2, type: 'off' },
@@ -195,12 +253,42 @@
         ];
 
         let currentSchedule = [];
-        const STORAGE_KEY = 'bgh_nurse_schedule_19_07';
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Check Lock State
+            if (sessionStorage.getItem('bgh_unlocked') === 'true') {
+                document.getElementById('lockOverlay').classList.add('hidden');
+            }
             loadSchedule();
         });
 
+        // PIN Verification
+        function handlePinSubmit(e) {
+            e.preventDefault();
+            const pinVal = document.getElementById('pinInput').value;
+            const errEl = document.getElementById('pinError');
+
+            if (pinVal === CORRECT_PIN) {
+                sessionStorage.setItem('bgh_unlocked', 'true');
+                document.getElementById('lockOverlay').classList.add('hidden');
+                document.getElementById('pinInput').value = '';
+                errEl.classList.add('hidden');
+                showToast('เข้าสู่ระบบสำเร็จ');
+            } else {
+                errEl.classList.remove('hidden');
+                document.getElementById('pinInput').value = '';
+                document.getElementById('pinInput').focus();
+            }
+        }
+
+        function lockSystem() {
+            sessionStorage.removeItem('bgh_unlocked');
+            document.getElementById('lockOverlay').classList.remove('hidden');
+            document.getElementById('pinInput').focus();
+            showToast('ล็อคหน้าจอเรียบร้อยแล้ว');
+        }
+
+        // Schedule Data Logic
         function loadSchedule() {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
@@ -212,61 +300,63 @@
             } else {
                 currentSchedule = [...initialSchedule];
             }
-            renderGrid();
+            renderCalendar();
             updateStats();
         }
 
-        function renderGrid() {
-            const grid = document.getElementById('scheduleGrid');
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
             grid.innerHTML = '';
 
             currentSchedule.forEach((item, index) => {
                 const isNight = item.type === 'night';
-                const card = document.createElement('div');
-                card.className = `p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                const cell = document.createElement('div');
+                
+                cell.className = `min-h-[90px] md:min-h-[110px] p-2.5 md:p-3 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between group relative overflow-hidden ${
                     isNight 
-                        ? 'bg-indigo-950/5 border-indigo-200 hover:bg-indigo-950/10' 
-                        : 'bg-rose-50/50 border-rose-200 hover:bg-rose-100/50'
+                        ? 'bg-gradient-to-b from-indigo-50/70 to-blue-50/40 border-indigo-200/80 hover:border-indigo-400 hover:shadow-md' 
+                        : 'bg-gradient-to-b from-rose-50/70 to-red-50/30 border-rose-200/80 hover:border-rose-400 hover:shadow-md'
                 }`;
-                card.onclick = () => toggleShift(index);
+                cell.onclick = () => toggleShift(index);
 
-                card.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg font-bold text-sm flex items-center justify-center ${
-                            isNight ? 'bg-indigo-900 text-amber-300' : 'bg-rose-600 text-white'
+                cell.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="w-6 h-6 md:w-7 md:h-7 rounded-xl font-bold font-prompt text-xs flex items-center justify-center ${
+                            isNight ? 'bg-indigo-900 text-amber-300' : 'bg-rose-500 text-white'
                         }">
                             ${item.day}
-                        </div>
-                        <div>
-                            <div class="text-xs text-slate-400 font-medium">วันที่ ${item.day}</div>
-                            <div class="font-bold text-sm ${isNight ? 'text-indigo-950' : 'text-rose-700'}">
-                                ${isNight ? '🌙 เวรดึก' : '🟥 วันหยุด'}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="inline-block text-[11px] font-semibold px-2 py-0.5 rounded ${
-                            isNight ? 'bg-indigo-100 text-indigo-800' : 'bg-rose-100 text-rose-800'
+                        </span>
+                        <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                            isNight ? 'bg-indigo-100 text-indigo-700' : 'bg-rose-100 text-rose-700'
                         }">
-                            ${isNight ? '19:00 - 07:00' : 'Off'}
+                            ${isNight ? '19:00-07:00' : 'Off'}
+                        </span>
+                    </div>
+
+                    <div class="mt-2">
+                        <div class="font-prompt font-bold text-xs md:text-sm ${isNight ? 'text-indigo-950' : 'text-rose-700'} flex items-center gap-1">
+                            ${isNight ? '🌙 เวรดึก' : '🟥 วันหยุด'}
+                        </div>
+                        <span class="text-[10px] text-slate-400 hidden md:block mt-0.5">
+                            ${isNight ? '12 ชั่วโมง' : 'พักผ่อนประจำสัปดาห์'}
                         </span>
                     </div>
                 `;
-                grid.appendChild(card);
+                grid.appendChild(cell);
             });
         }
 
         function toggleShift(index) {
             currentSchedule[index].type = currentSchedule[index].type === 'night' ? 'off' : 'night';
-            renderGrid();
+            renderCalendar();
             updateStats();
-            showToast(`เปลี่ยนวันที่ ${currentSchedule[index].day} เป็น ${currentSchedule[index].type === 'night' ? 'เวรดึก (19:00-07:00)' : 'วันหยุด'}`);
+            showToast(`เปลี่ยนวันที่ ${currentSchedule[index].day} เป็น ${currentSchedule[index].type === 'night' ? 'เวรดึก' : 'วันหยุด'}`);
         }
 
         function updateStats() {
             const nightCount = currentSchedule.filter(i => i.type === 'night').length;
             const offCount = currentSchedule.filter(i => i.type === 'off').length;
-            const totalHours = nightCount * 12; // 12 hrs per night shift (19:00 to 07:00)
+            const totalHours = nightCount * 12;
 
             document.getElementById('statNightCount').textContent = nightCount;
             document.getElementById('statOffCount').textContent = offCount;
@@ -275,24 +365,14 @@
 
         function saveSchedule() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(currentSchedule));
-            showToast('บันทึกข้อมูลตารางเวรลงเบราว์เซอร์แล้ว!');
-        }
-
-        function resetSchedule() {
-            if (confirm('ต้องการรีเซ็ตตารางเวรกลับเป็นค่าเริ่มต้นใช่หรือไม่?')) {
-                currentSchedule = JSON.parse(JSON.stringify(initialSchedule));
-                localStorage.removeItem(STORAGE_KEY);
-                renderGrid();
-                updateStats();
-                showToast('รีเซ็ตข้อมูลเรียบร้อยแล้ว');
-            }
+            showToast('บันทึกข้อมูลตารางเวรแล้ว!');
         }
 
         function exportJSON() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentSchedule, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Bangkok_Hospital_Nurse_Schedule_19_07_${Date.now()}.json`);
+            downloadAnchor.setAttribute("download", `Bangkok_Hospital_Nurse_Calendar_${Date.now()}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -310,7 +390,7 @@
                     if (Array.isArray(data) && data.length === 31) {
                         currentSchedule = data;
                         saveSchedule();
-                        renderGrid();
+                        renderCalendar();
                         updateStats();
                         showToast('นำเข้าข้อมูลสำเร็จ!');
                     } else {
