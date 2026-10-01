@@ -1,386 +1,149 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ข้อชี้แจง</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-    /* ป้องกันการคลุมดำ/คัดลอก */
-    * {
-      box-sizing: border-box;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    body {
-      margin: 0;
-      padding: 20px 10px;
-      font-family: 'Sarabun', sans-serif;
-      transition: background-color 0.3s, color 0.3s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    /* ธีมต่างๆ */
-    body.theme-light {
-      background-color: #f2f4f7;
-      color: #2b2b2b;
-    }
-    body.theme-light .paper {
-      background-color: #ffffff;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      border: 1px solid #e0e0e0;
-    }
-
-    body.theme-sepia {
-      background-color: #e8e2d5;
-      color: #433422;
-    }
-    body.theme-sepia .paper {
-      background-color: #f5efe0;
-      box-shadow: 0 4px 20px rgba(67,52,34,0.12);
-      border: 1px solid #dcd1b8;
-    }
-
-    body.theme-dark {
-      background-color: #121212;
-      color: #e0e0e0;
-    }
-    body.theme-dark .paper {
-      background-color: #1e1e1e;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      border: 1px solid #333;
-    }
-
-    /* แถบเครื่องมือปรับแต่ง */
-    .toolbar {
-      position: sticky;
-      top: 15px;
-      z-index: 100;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      padding: 10px 20px;
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      margin-bottom: 25px;
-    }
-    body.theme-dark .toolbar {
-      background: rgba(30, 30, 30, 0.85);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-
-    .btn-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-group-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin-right: 4px;
-      opacity: 0.8;
-    }
-
-    .btn {
-      border: 1px solid #ccc;
-      background: #fff;
-      color: #333;
-      padding: 6px 12px;
-      border-radius: 18px;
-      cursor: pointer;
-      font-size: 13px;
-      font-family: inherit;
-      transition: all 0.2s;
-    }
-    .btn:hover {
-      background: #eee;
-    }
-    body.theme-dark .btn {
-      border-color: #444;
-      background: #2a2a2a;
-      color: #fff;
-    }
-    body.theme-dark .btn:hover {
-      background: #3a3a3a;
-    }
-
-    /* สไตล์หน้ากระดาษ */
-    .paper {
-      width: 100%;
-      max-width: 720px;
-      padding: 50px 45px;
-      border-radius: 8px;
-      line-height: 1.85;
-      font-size: 17px;
-      margin-bottom: 50px;
-      transition: font-size 0.2s, background-color 0.3s;
-    }
-
-    @media (max-width: 600px) {
-      .paper {
-        padding: 30px 20px;
-      }
-    }
-
-    .paper p {
-      margin-bottom: 1.2em;
-      text-indent: 2.5em;
-      text-align: justify;
-    }
-
-    /* ซ่อนเนื้อหาเมื่อสั่งพิมพ์ */
-    @media print {
-      body { display: none !important; }
-    }
-
-    /* หน้าจอล็อก */
-    .lock-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(10, 10, 10, 0.95);
-      backdrop-filter: blur(20px);
-      z-index: 999999;
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .lock-overlay.active {
-      display: flex;
-    }
-
-    .lock-card {
-      background: #1c1c1e;
-      padding: 32px 28px;
-      border-radius: 16px;
-      max-width: 360px;
-      width: 90%;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      border: 1px solid #2c2c2e;
-    }
-
-    .lock-icon {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-
-    .lock-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #ff453a;
-    }
-
-    .lock-desc {
-      font-size: 13px;
-      color: #a1a1a6;
-      margin-bottom: 20px;
-      line-height: 1.4;
-    }
-
-    .pin-input {
-      width: 100%;
-      padding: 12px;
-      font-size: 20px;
-      text-align: center;
-      letter-spacing: 6px;
-      border-radius: 8px;
-      border: 1px solid #3a3a3c;
-      background: #000;
-      color: #fff;
-      margin-bottom: 15px;
-      outline: none;
-    }
-
-    .pin-input:focus {
-      border-color: #0a84ff;
-    }
-
-    .unlock-btn {
-      width: 100%;
-      padding: 12px;
-      background: #0a84ff;
-      border: none;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .unlock-btn:hover {
-      background: #0071e3;
-    }
-
-    .error-msg {
-      color: #ff453a;
-      font-size: 13px;
-      margin-top: 12px;
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบตรวจสอบรายชื่อผู้ช่วยพยาบาล (PN Verification)</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Sarabun', 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f7f6; color: #333; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h1 { text-align: center; color: #1e56a0; margin-bottom: 20px; font-size: 24px; }
+        .nav-tabs { display: flex; border-bottom: 2px solid #e0e0e0; margin-bottom: 25px; }
+        .tab-btn { flex: 1; padding: 12px; text-align: center; background: none; border: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #666; }
+        .tab-btn.active { color: #1e56a0; border-bottom: 3px solid #1e56a0; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; color: #444; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        button.btn-submit { width: 100%; padding: 12px; background: #1e56a0; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button.btn-submit:hover { background: #163e75; }
+        
+        .result-card { border: 1px solid #dcdcdc; padding: 18px; border-radius: 8px; background: #fafafa; margin-top: 20px; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .badge-verified { background: #d4edda; color: #155724; }
+        .badge-notfound { background: #f8d7da; color: #721c24; }
+        .info-row { margin: 8px 0; font-size: 15px; }
+    </style>
 </head>
-<body class="theme-light">
+<body>
 
-  <!-- แถบควบคุม -->
-  <div class="toolbar">
-    <div class="btn-group">
-      <span class="btn-group-title">ขนาดอักษร:</span>
-      <button class="btn" onclick="changeFontSize(-1)">A-</button>
-      <button class="btn" onclick="resetFontSize()">ปกติ</button>
-      <button class="btn" onclick="changeFontSize(1)">A+</button>
+<div class="container">
+    <h1>ระบบตรวจสอบรายชื่อผู้ช่วยพยาบาล (PN)</h1>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('search')">🔍 ค้นหา/ตรวจสอบรายชื่อ</button>
+        <button class="tab-btn" onclick="switchTab('register')">📝 ลงทะเบียนยืนยันวุฒิ</button>
     </div>
-    <div class="btn-group">
-      <span class="btn-group-title">ธีม:</span>
-      <button class="btn" onclick="setTheme('theme-light')">⚪ สว่าง</button>
-      <button class="btn" onclick="setTheme('theme-sepia')">📜 ถนอมสายตา</button>
-      <button class="btn" onclick="setTheme('theme-dark')">⚫ มืด</button>
+
+    <!-- แท็บที่ 1: ค้นหาข้อมูล -->
+    <div id="search" class="tab-content active">
+        <div class="form-group">
+            <label for="searchQuery">ค้นหาด้วย ชื่อ-นามสกุล หรือ เลขบัตรประชาชน:</label>
+            <input type="text" id="searchQuery" placeholder="เช่น ศิริพร ใจดี หรือ 1100200300400">
+        </div>
+        <button class="btn-submit" onclick="performSearch()">ค้นหาข้อมูล</button>
+
+        <div id="searchResult" style="display:none;"></div>
     </div>
-  </div>
 
-  <!-- กระดาษข้อความ -->
-  <div class="paper" id="paper">
-    <p>ผมขอชี้แจงเรื่องนี้สักครั้งนะครับ และหลังจากนี้ผมคงไม่จำเป็นต้องอธิบายอะไรเพิ่มเติมอีก</p>
-    <p>เรื่องที่ผมโทรขอแม่ครั้งละ 600–700 บาท ไม่ได้หมายความว่าผมต้องการเบียดเบียนแม่ หรือใช้แม่เป็นที่พึ่งทางการเงินแต่อย่างใด ช่วงที่ผ่านมา ผมอยู่ในช่วงเปลี่ยนงานและเปลี่ยนโรงพยาบาล ทำให้เกิดช่วงว่างงานจนต้องใช้ชีวิตแบบเดือนชนเดือน ยังตั้งตัวไม่ได้ อีกทั้งตอนออกจากศิริราช ผมยังมีภาระต้องชดใช้ทุนคืนเนื่องจากอยู่ไม่ครบตามสัญญา</p>
-    <p>ตอนนี้ผมเริ่มตั้งตัวได้แล้ว เพียงแต่ยังอยู่ในช่วงรอเงินเดือนและจัดการภาระต่าง ๆ ที่มีอยู่ ดังนั้นก่อนจะมองว่าผมเป็นภาระของแม่ อยากให้มองบริบททั้งหมดก่อนที่จะตัดสินใครจากเรื่องเพียงด้านเดียว</p>
-    <p>และก่อนที่จะมาตั้งคำถามว่าแม่มีความสุขหรือไม่ ผมอยากให้ลองกลับไปถามคนในครอบครัวของแม่เองบ้างว่า ทุกวันนี้แม่ใช้ชีวิตอย่างไร กินอิ่มไหม นอนหลับดีหรือเปล่า เจ็บป่วยตรงไหนบ้าง และมีใครเคยถามแม่จริง ๆ หรือไม่ว่า “วันนี้แม่ไหวไหม” หรือ “แม่อยากกินอะไร”</p>
-    <p>เพราะทุกครั้งที่แม่โทรหาผม สิ่งที่แม่เล่าไม่ใช่เรื่องของผมเป็นหลัก แต่กลับเป็นปัญหาและเรื่องราวต่าง ๆ ภายในครอบครัวของลูก ๆ แม่เสียมากกว่า</p>
-    <p>แม่มีอาการเจ็บป่วยและทรมานกับอาการต่าง ๆ มานานเป็นปี แต่ผมกลับไม่ค่อยเห็นว่ามีใครสนใจสภาพร่างกายและจิตใจของแม่อย่างจริงจัง จะพาแม่ไปหาหมอ มีใครถามไหมว่าแม่อยากกินอะไร วันนี้กินอะไรได้หรือเปล่า หรืออย่างน้อยมีใครถามแม่บ้างไหมว่า “แม่มีความสุขหรือเปล่า”</p>
-    <p>ถ้าคนที่กำลังตั้งคำถามกับผม ลองสลับบทบาทมาเป็นคนที่ต้องรับฟังเรื่องเหล่านี้ทุกครั้งที่แม่โทรมา ผมเชื่อว่าคงเข้าใจความรู้สึกของแม่ได้มากขึ้น</p>
-    <p>ผมไม่ได้บอกว่าผมเป็นคนเดียวที่รักหรือดูแลแม่ และผมไม่ได้ต้องการเอาตัวเองไปเปรียบเทียบกับใคร แต่จากสิ่งที่ผมได้รับฟังมาตลอด ผมรู้ว่าอย่างน้อยเวลาที่แม่มีปัญหาทางใจ แม่รู้สึกว่าผมเป็นคนที่สามารถโทรหาและพูดคุยด้วยได้โดยไม่ต้องกลัวว่าจะถูกตัดสิน</p>
-    <p>บางครั้งคนเป็นแม่อาจไม่ได้พูดทุกอย่างออกมาตรง ๆ เพราะไม่อยากให้ลูกเป็นห่วง ไม่อยากสร้างความหนักใจให้ลูก หรือไม่อยากทำให้ลูก ๆ ทะเลาะกัน แต่การที่แม่เลือกโทรมาเล่าให้ผมฟัง ไม่ได้แปลว่าผมเป็นต้นเหตุของปัญหาเสมอไป บางครั้งมันอาจหมายถึงว่าแม่ไม่มีพื้นที่อื่นให้ระบายความรู้สึกเหล่านั้น</p>
-    <p>ส่วนเรื่องที่ผมต้องรับฟังปัญหาต่าง ๆ ทั้งที่ไม่ใช่เรื่องของผม ผมก็เหนื่อยเหมือนกันครับ</p>
-    <p>ผมเองต่อสู้กับภาวะซึมเศร้ามาเป็นเวลานาน และสิ่งที่เกิดขึ้นในครอบครัวนี้ตลอดหลายปีที่ผ่านมา ไม่ใช่เรื่องเล็กสำหรับผม หลายเหตุการณ์สร้างบาดแผลที่ฝังอยู่ในใจ และบางอย่างก็เป็นความเจ็บปวดที่ผมไม่สามารถลืมได้ง่าย ๆ</p>
-    <p>ผมไม่เคยแกล้งทำเป็นป่วย และไม่เคยเอาโรคมาเป็นข้ออ้างเพื่อให้ใครสงสาร แต่สิ่งที่ผมผ่านมาทั้งหมดคือสิ่งที่ผมต้องอยู่กับมันจริง ๆ</p>
-    <p>โดยเฉพาะสิ่งที่เกิดขึ้นระหว่างผมกับลุงคนนี้ ผมผ่านมันมาหลายครั้ง หลายเหตุการณ์ และหลายครั้งผมต้องเป็นฝ่ายเก็บความรู้สึกเอาไว้ เพราะไม่อยากให้เรื่องบานปลาย แต่การที่ผมเงียบ ไม่ได้หมายความว่าผมไม่เจ็บ และไม่ได้หมายความว่าสิ่งที่เกิดขึ้นนั้นถูกต้อง</p>
-    <p>ผมไม่ได้ต้องการให้ใครเกลียดใคร และไม่ได้ต้องการให้ใครเข้าข้างผมด้วยซ้ำ หลังจากวันนี้ใครจะคิดกับผมอย่างไรก็เป็นสิทธิ์ของแต่ละคน</p>
-    <p>แต่สิ่งหนึ่งที่ผมอยากทำ คือพูดในสิ่งที่แม่อาจไม่กล้าพูดด้วยตัวเอง</p>
-    <p>ผมเคยบอกแม่ไว้แล้วว่า ถ้าวันหนึ่งแม่ไม่กล้าพูด ผมจะพูดแทนแม่เอง</p>
-    <p>และสิ่งที่ผมอยากให้ทุกคนลองถามแม่จริง ๆ ไม่ใช่ถามผ่านความคิดเห็นของคนอื่น แต่ถามจากปากแม่เองว่า</p>
-    <p>“ทุกวันนี้แม่มีความสุขจริง ๆ หรือเปล่า”</p>
-    <p>เพราะความสุขของแม่ไม่ได้วัดจากว่าใครเป็นคนโทรหาแม่บ่อยที่สุด หรือใครเป็นคนสร้างปัญหาให้แม่น้อยที่สุด แต่มันอยู่ที่ว่า ในแต่ละวันแม่ได้กินอิ่ม นอนหลับ มีคนดูแลเวลาป่วย และมีใครสักคนที่ทำให้แม่รู้สึกว่าตัวเองยังมีคุณค่าและมีที่พึ่งหรือไม่</p>
-    <p>สุดท้าย เรื่องหนี้ที่ผมเป็นคนสร้างขึ้น ผมรับผิดชอบเองทั้งหมดครับ</p>
-    <p>ผมไม่เคยโยนภาระให้ใคร และไม่ได้ต้องการให้ใครมารับผิดชอบแทน เพราะฉะนั้นเรื่องนี้ผมขอรับผิดชอบด้วยตัวเอง และขอให้ทุกคนหยุดนำเรื่องหนี้ของผมมาเป็นเหตุผลในการตำหนิหรือตัดสินผมเสียที</p>
-    <p>ผมพูดมาทั้งหมดนี้ไม่ใช่เพื่อเอาชนะใคร แต่เพราะผมคิดว่าถึงเวลาที่ทุกคนควรหยุดพูดจากมุมของตัวเอง แล้วลองฟังความรู้สึกของคนที่อยู่ตรงกลางบ้าง</p>
-    <p>บางครั้งคนที่เงียบที่สุด อาจเป็นคนที่เจ็บมานานที่สุดก็ได้ครับ</p>
-  </div>
-
-  <!-- หน้าจอล็อกเมื่อสลับหน้าจอหรือแคปจอ -->
-  <div class="lock-overlay" id="lockOverlay">
-    <div class="lock-card">
-      <div class="lock-icon">🔒</div>
-      <div class="lock-title">ระบบล็อกหน้าจอ</div>
-      <div class="lock-desc">ตรวจพบการสลับหน้าจอ บันทึกภาพ หรือออกจากหน้าต่างเพื่อป้องกันข้อมูล กรุณาใส่รหัสผ่านเพื่ออ่านต่อ</div>
-      <input type="password" id="pinInput" class="pin-input" placeholder="••••" maxlength="10">
-      <button class="unlock-btn" onclick="checkPIN()">ปลดล็อก</button>
-      <div class="error-msg" id="errorMsg">รหัสผ่านไม่ถูกต้อง</div>
+    <!-- แท็บที่ 2: ลงทะเบียน -->
+    <div id="register" class="tab-content">
+        <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label>ชื่อ-นามสกุล:</label>
+                <input type="text" id="regName" required placeholder="นาย/นาง/นางสาว...">
+            </div>
+            <div class="form-group">
+                <label>เลขประจำตัวประชาชน (13 หลัก):</label>
+                <input type="text" id="regIdCard" maxlength="13" required placeholder="เลข 13 หลัก">
+            </div>
+            <div class="form-group">
+                <label>สถาบันที่สำเร็จการศึกษา:</label>
+                <input type="text" id="regSchool" required placeholder="ชื่อโรงเรียน/คณะ/วิทยาลัย">
+            </div>
+            <div class="form-group">
+                <label>ปี พ.ศ. ที่สำเร็จการศึกษา:</label>
+                <input type="number" id="regYear" required placeholder="เช่น 2566">
+            </div>
+            <div class="form-group">
+                <label>เลขที่ใบประกาศนียบัตร:</label>
+                <input type="text" id="regCert" required placeholder="เช่น PN-2566-0012">
+            </div>
+            <div class="form-group">
+                <label>แนบไฟล์ใบประกาศนียบัตร/เอกสารยืนยันตัวตน (PDF/JPG):</label>
+                <input type="file" required>
+            </div>
+            <button type="submit" class="btn-submit">ส่งข้อมูลเข้าระบบตรวจสอบ</button>
+        </form>
     </div>
-  </div>
+</div>
 
-  <script>
-    // การปรับขนาดอักษร
-    let currentFontSize = 17;
-    const paper = document.getElementById('paper');
+<script>
+    // จำลองฐานข้อมูล
+    const database = [
+        { name: "ศิริพร ใจดี", idCard: "1100200300400", school: "คณะพยาบาลศาสตร์ มหาวิทยาลัยเชียงใหม่", year: "2565", cert: "PN65-0102", status: "Verified" },
+        { name: "สมชาย รักดี", idCard: "2200300400500", school: "วิทยาลัยพยาบาลบรมราชชนนี", year: "2566", cert: "PN66-0541", status: "Verified" }
+    ];
 
-    function changeFontSize(delta) {
-      currentFontSize = Math.max(13, Math.min(28, currentFontSize + delta));
-      paper.style.fontSize = currentFontSize + 'px';
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.currentTarget.classList.add('active');
     }
 
-    function resetFontSize() {
-      currentFontSize = 17;
-      paper.style.fontSize = '17px';
+    function performSearch() {
+        const query = document.getElementById('searchQuery').value.trim();
+        const resultDiv = document.getElementById('searchResult');
+        resultDiv.style.display = 'block';
+
+        if (!query) {
+            resultDiv.innerHTML = '<div class="result-card"><p>กรุณากรอกข้อมูลเพื่อค้นหา</p></div>';
+            return;
+        }
+
+        const found = database.find(item => item.name.includes(query) || item.idCard === query);
+
+        if (found) {
+            resultDiv.innerHTML = `
+                <div class="result-card">
+                    <span class="badge badge-verified">✓ ยืนยันแล้วในระบบ (Verified)</span>
+                    <div class="info-row" style="margin-top:12px;"><strong>ชื่อ-นามสกุล:</strong> ${found.name}</div>
+                    <div class="info-row"><strong>สถาบันที่จบ:</strong> ${found.school}</div>
+                    <div class="info-row"><strong>ปีที่สำเร็จการศึกษา:</strong> พ.ศ. ${found.year}</div>
+                    <div class="info-row"><strong>เลขที่ประกาศนียบัตร:</strong> ${found.cert}</div>
+                </div>
+            `;
+        } else {
+            resultDiv.innerHTML = `
+                <div class="result-card">
+                    <span class="badge badge-notfound">✕ ไม่พบข้อมูลในระบบ</span>
+                    <p style="margin-top:10px; color:#666; font-size:14px;">ไม่พบข้อมูลผู้สำเร็จการศึกษาตามเงื่อนไขที่ค้นหา กรุณาตรวจสอบการสะกดชื่อ-นามสกุล หรือติดต่อสถาบันผู้จัดอบรมเพื่อยืนยันข้อมูล</p>
+                </div>
+            `;
+        }
     }
 
-    // การเปลี่ยนธีม
-    function setTheme(themeName) {
-      document.body.className = themeName;
-    }
-
-    // ระบบล็อกหน้าจอ
-    const lockOverlay = document.getElementById('lockOverlay');
-    const pinInput = document.getElementById('pinInput');
-    const errorMsg = document.getElementById('errorMsg');
-    const CORRECT_PIN = '1323';
-
-    function lockScreen() {
-      lockOverlay.classList.add('active');
-      pinInput.value = '';
-      errorMsg.style.display = 'none';
-      pinInput.focus();
-    }
-
-    function checkPIN() {
-      if (pinInput.value === CORRECT_PIN) {
-        lockOverlay.classList.remove('active');
-        pinInput.value = '';
-        errorMsg.style.display = 'none';
-      } else {
-        errorMsg.style.display = 'block';
-        pinInput.value = '';
-        pinInput.focus();
-      }
-    }
-
-    // ปลดล็อกเมื่อกด Enter
-    pinInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        checkPIN();
-      }
-    });
-
-    // ดักจับการสลับหน้าต่าง/สลับแอป (Screen Record/Screenshot Protection Trigger)
-    window.addEventListener('blur', function() {
-      lockScreen();
-    });
-
-    document.addEventListener('visibilitychange', function() {
-      if (document.hidden) {
-        lockScreen();
-      }
-    });
-
-    // ดักจับปุ่มคีย์บอร์ดที่ใช้แคปหน้าจอ / สั่งพิมพ์
-    document.addEventListener('keydown', function(e) {
-      // ปุ่ม PrintScreen
-      if (e.key === 'PrintScreen' || e.keyCode === 44) {
-        lockScreen();
-      }
-      // Ctrl + P (Print)
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 'P')) {
+    function handleRegister(e) {
         e.preventDefault();
-        lockScreen();
-      }
-      // Shortcut แคปหน้าจอของ Mac (Cmd + Shift + 3 / 4 / 5)
-      if (e.metaKey && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
-        lockScreen();
-      }
-    });
+        const newRecord = {
+            name: document.getElementById('regName').value,
+            idCard: document.getElementById('regIdCard').value,
+            school: document.getElementById('regSchool').value,
+            year: document.getElementById('regYear').value,
+            cert: document.getElementById('regCert').value,
+            status: "Verified"
+        };
+        database.push(newRecord);
+        alert("ลงทะเบียนสำเร็จ! ข้อมูลของคุณเข้าสู่ระบบจำลองแล้ว คุณสามารถลองค้นหารายชื่อของคุณที่แท็บ 'ค้นหา' ได้ทันที");
+        switchTab('search');
+        document.getElementById('searchQuery').value = newRecord.name;
+        performSearch();
+    }
+</script>
 
-    // ป้องกันการคลิกขวา
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    });
-  </script>
 </body>
 </html>
