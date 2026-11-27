@@ -1,0 +1,130 @@
+
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MedCrew | ยืนยันตัวตนนายจ้าง</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#f2f8f8;color:#16343a}
+header{background:#087e83;color:white;text-align:center;padding:26px}
+header h1{margin:0}
+main{max-width:500px;margin:25px auto;padding:0 16px}
+.panel{background:white;padding:24px;border-radius:18px;box-shadow:0 5px 25px #1232}
+label{display:block;margin:14px 0 5px;font-weight:600}
+input,select,button{width:100%;padding:13px;border-radius:10px;font:inherit}
+input,select{border:1px solid #b9cdd0;background:white}
+button{margin-top:18px;background:#087e83;color:white;border:0;font-weight:bold}
+button:disabled{opacity:.5}
+.status{padding:12px;margin-top:15px;background:#edf5f5;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.status:empty{display:none}
+a{color:#087e83}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+<h1>♡ MedCrew</h1>
+<p>Employer Verification</p>
+</header>
+<main>
+<div class="panel">
+<h2>ยืนยันตัวตนนายจ้าง</h2>
+<p>กรอกข้อมูลสถานประกอบการเพื่อส่งคำขอตรวจสอบกับ MedCrew</p>
+<div id="loading">กำลังตรวจสอบบัญชี...</div>
+<div id="loginNotice" hidden>
+<p>กรุณาเข้าสู่ระบบก่อนยืนยันตัวตน</p>
+<a href="./register.html">เข้าสู่ระบบ / สมัครสมาชิก</a>
+</div>
+<form id="verifyForm" hidden>
+<label>ชื่อสถานประกอบการ</label>
+<input id="org" required minlength="2" maxlength="200">
+<label>ประเภทสถานประกอบการ</label>
+<select id="type" required>
+<option value="">เลือกประเภท</option>
+<option value="hospital">โรงพยาบาล</option>
+<option value="clinic">คลินิก</option>
+<option value="agency">บริษัทจัดหาบุคลากร</option>
+<option value="other">อื่น ๆ</option>
+</select>
+<label>ชื่อผู้ติดต่อ</label>
+<input id="contact" required minlength="2" maxlength="150">
+<label>เบอร์โทรศัพท์</label>
+<input id="phone" type="tel" required maxlength="30">
+<label>อีเมลติดต่อ</label>
+<input id="email" type="email">
+<label>เลขทะเบียนนิติบุคคล (ถ้ามี)</label>
+<input id="reg" maxlength="50">
+<button id="submitBtn" type="submit">ส่งคำขอยืนยันตัวตน</button>
+</form>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+<p><a href="./index.html">← กลับหน้าแรก</a></p>
+</div>
+</main>
+<script type="module">
+const URL='https://chmkujuiqodkiptcjseq.supabase.co';
+const KEY='sb_publishable_5CpOijQGj5k9JLbSAxLaiQ_-cDKlmgu';
+const $=id=>document.getElementById(id);
+const message=t=>{$('status').textContent=t};
+let db,user;
+
+try{
+ const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+ db=createClient(URL,KEY);
+ const result=await db.auth.getUser();
+ if(result.error && result.error.name!=='AuthSessionMissingError')throw result.error;
+ user=result.data.user;
+ $('loading').hidden=true;
+ if(!user){
+  $('loginNotice').hidden=false;
+ }else{
+  const profile=await db.from('profiles')
+   .select('member_type').eq('id',user.id).single();
+  if(profile.error)throw profile.error;
+  if(profile.data.member_type!=='employer'){
+   message('เฉพาะบัญชีนายจ้างเท่านั้นที่ส่งคำขอได้');
+  }else{
+   const existing=await db.from('employer_verifications')
+    .select('status').eq('user_id',user.id).maybeSingle();
+   if(existing.error)throw existing.error;
+   if(existing.data){
+    message('สถานะการยืนยันตัวตน: '+existing.data.status);
+   }else{
+    $('verifyForm').hidden=false;
+   }
+  }
+ }
+}catch(e){
+ $('loading').hidden=true;
+ message('เกิดข้อผิดพลาด: '+e.message);
+}
+
+$('verifyForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const btn=$('submitBtn');
+ btn.disabled=true;
+ message('กำลังส่งคำขอ...');
+ try{
+  const {data:{user:currentUser},error:authError}=await db.auth.getUser();
+  if(authError)throw authError;
+  if(!currentUser || currentUser.id!==user?.id)throw Error('กรุณาเข้าสู่ระบบใหม่');
+  const {error}=await db.from('employer_verifications').insert({
+   user_id:currentUser.id,
+   organization_name:$('org').value.trim(),
+   organization_type:$('type').value,
+   contact_name:$('contact').value.trim(),
+   contact_phone:$('phone').value.trim(),
+   contact_email:$('email').value.trim()||null,
+   registration_number:$('reg').value.trim()||null
+  });
+  if(error)throw error;
+  $('verifyForm').hidden=true;
+  message('ส่งคำขอสำเร็จ สถานะ: pending (รอตรวจสอบ)');
+ }catch(err){
+  message('ส่งคำขอไม่สำเร็จ: '+err.message);
+ }finally{btn.disabled=false}
+});
+</script>
+</body>
+</html>
