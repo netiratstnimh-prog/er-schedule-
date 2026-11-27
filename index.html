@@ -1,328 +1,78 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ลงทะเบียนเข้ากลุ่ม MedCrew TH</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Prompt', sans-serif;
-      background-color: #f8fafc;
-    }
-    .role-card:has(input:checked) {
-      border-color: #0284c7;
-      background-color: #f0f9ff;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
-    }
-    .role-card:has(input:checked) .check-circle {
-      border-color: #0284c7;
-      background-color: #0284c7;
-    }
-    .role-card:has(input:checked) .check-dot {
-      opacity: 1;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087e83">
+<title>MedCrew - Healthcare Jobs</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f7f8;font-family:Arial,sans-serif;color:#18333b}
+header{background:#087e83;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
+header h1{margin:0;font-size:29px}
+header p{margin:7px 0 20px}
+input,select{width:100%;padding:14px;border:1px solid #d7e3e5;border-radius:12px;font-size:16px;margin:5px 0}
+main{padding:18px;max-width:650px;margin:auto}
+button{border:0;background:#087e83;color:white;border-radius:10px;padding:12px 16px;font-size:15px;cursor:pointer}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+.card{background:white;padding:18px;border-radius:16px;margin:12px 0;box-shadow:0 2px 9px #0000000a}
+.card h3{margin:0 0 10px}
+.card p{margin:7px 0;color:#51646a}
+.salary{color:#087e83!important;font-weight:bold}
+.small{font-size:13px}
+</style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 text-slate-800">
-
-  <div class="w-full max-w-xl bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
-    
-    <!-- Header -->
-    <div class="bg-slate-900 text-white px-6 py-8 text-center relative overflow-hidden">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-medium mb-3">
-        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-        MEDICAL NETWORK & RECRUITMENT
-      </div>
-      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">MedCrew <span class="text-sky-400">TH</span></h1>
-      <p class="text-slate-300 text-sm mt-2">
-        ระบบลงทะเบียนสมัครเข้ากลุ่มสำหรับ RN / PN / NA / CG และนายจ้างประกาศหางาน<br>
-        <span class="text-slate-400 text-xs">กรุณากรอกข้อมูลของท่านให้ครบถ้วน</span>
-      </p>
-    </div>
-
-    <!-- Form Container -->
-    <form id="registerForm" class="p-6 sm:p-8 space-y-6">
-      
-      <!-- เลือกตำแหน่ง -->
-      <div>
-        <label class="block text-sm font-semibold text-slate-800 mb-3">
-          ตำแหน่งของคุณ <span class="text-rose-500">*</span>
-        </label>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          
-          <!-- RN -->
-          <label class="role-card relative flex items-center p-3.5 border border-slate-200 rounded-xl cursor-pointer transition-all hover:border-sky-300">
-            <input type="radio" name="role" value="พยาบาลวิชาชีพ RN" class="sr-only" required>
-            <div class="check-circle w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center mr-3 transition-colors">
-              <div class="check-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
-            </div>
-            <div>
-              <div class="font-medium text-sm text-slate-900">พยาบาลวิชาชีพ</div>
-              <div class="text-xs text-sky-600 font-semibold">RN</div>
-            </div>
-          </label>
-
-          <!-- PN -->
-          <label class="role-card relative flex items-center p-3.5 border border-slate-200 rounded-xl cursor-pointer transition-all hover:border-sky-300">
-            <input type="radio" name="role" value="ผู้ช่วยพยาบาล PN" class="sr-only">
-            <div class="check-circle w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center mr-3 transition-colors">
-              <div class="check-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
-            </div>
-            <div>
-              <div class="font-medium text-sm text-slate-900">ผู้ช่วยพยาบาล</div>
-              <div class="text-xs text-sky-600 font-semibold">PN</div>
-            </div>
-          </label>
-
-          <!-- NA -->
-          <label class="role-card relative flex items-center p-3.5 border border-slate-200 rounded-xl cursor-pointer transition-all hover:border-sky-300">
-            <input type="radio" name="role" value="พนักงานผู้ช่วยเหลือคนไข้ NA" class="sr-only">
-            <div class="check-circle w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center mr-3 transition-colors">
-              <div class="check-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
-            </div>
-            <div>
-              <div class="font-medium text-sm text-slate-900">พนักงานผู้ช่วยเหลือคนไข้</div>
-              <div class="text-xs text-sky-600 font-semibold">NA</div>
-            </div>
-          </label>
-
-          <!-- CG -->
-          <label class="role-card relative flex items-center p-3.5 border border-slate-200 rounded-xl cursor-pointer transition-all hover:border-sky-300">
-            <input type="radio" name="role" value="ผู้ดูแลผู้สูงอายุ CG" class="sr-only">
-            <div class="check-circle w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center mr-3 transition-colors">
-              <div class="check-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
-            </div>
-            <div>
-              <div class="font-medium text-sm text-slate-900">ผู้ดูแลผู้สูงอายุ</div>
-              <div class="text-xs text-sky-600 font-semibold">CG</div>
-            </div>
-          </label>
-
-          <!-- เจ้าของกิจการบริษัท -->
-          <label class="role-card sm:col-span-2 relative flex items-center justify-between p-3.5 border border-slate-200 rounded-xl cursor-pointer transition-all hover:border-amber-400">
-            <div class="flex items-center">
-              <input type="radio" name="role" value="เจ้าของกิจการบริษัท" id="roleOwner" class="sr-only">
-              <div class="check-circle w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center mr-3 transition-colors">
-                <div class="check-dot w-2 h-2 rounded-full bg-white opacity-0 transition-opacity"></div>
-              </div>
-              <div>
-                <div class="font-medium text-sm text-slate-900">เจ้าของกิจการบริษัท / นายจ้าง</div>
-                <div class="text-xs text-slate-500">สำหรับผู้ประกอบการ คลินิก ศูนย์ดูแล หรือจัดหาบุคลากร</div>
-              </div>
-            </div>
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
-              ⭐ ยืนยันดาว
-            </span>
-          </label>
-
-        </div>
-      </div>
-
-      <!-- ส่วนเฉพาะเจ้าของกิจการบริษัท (ซ่อนไว้จนกว่าจะเลือก) -->
-      <div id="ownerSection" class="hidden bg-amber-50/70 border border-amber-200 rounded-xl p-4 sm:p-5 space-y-4 transition-all">
-        <div class="flex items-start gap-2.5">
-          <span class="text-lg">⭐</span>
-          <div>
-            <h3 class="text-sm font-semibold text-amber-900">ข้อมูลยืนยันตัวตนบริษัท/กิจการ</h3>
-            <p class="text-xs text-amber-700 mt-0.5">เฉพาะบริษัท/กิจการ โปรไฟล์จะได้รับการยืนยันเครื่องหมายดาวเพื่อความน่าเชื่อถือในการลงประกาศงาน</p>
-          </div>
-        </div>
-
-        <div>
-          <label for="companyName" class="block text-sm font-medium text-slate-800 mb-1.5">
-            ชื่อบริษัท / กิจการ <span class="text-rose-500">*</span>
-          </label>
-          <input type="text" id="companyName" name="companyName" placeholder="เช่น ศูนย์ดูแลผู้สูงอายุ อุ่นใจแคร์ จำกัด"
-            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-slate-800 mb-1.5">
-            รูปโปรไฟล์ / โลโก้บริษัท <span class="text-rose-500">*</span>
-          </label>
-          <div class="flex items-center gap-4">
-            <div class="relative w-16 h-16 rounded-full bg-white border-2 border-dashed border-amber-300 flex items-center justify-center overflow-hidden shrink-0">
-              <img id="imagePreview" src="" alt="Preview" class="hidden w-full h-full object-cover">
-              <span id="imagePlaceholder" class="text-xs text-slate-400 text-center px-1">รูปโลโก้</span>
-              <span class="absolute -bottom-0.5 -right-0.5 bg-amber-400 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow">⭐</span>
-            </div>
-            <div class="flex-1">
-              <input type="file" id="profileImage" accept="image/*"
-                class="block w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-white hover:file:bg-amber-600 cursor-pointer">
-              <p class="text-[11px] text-slate-500 mt-1">รองรับไฟล์ JPG, PNG (ขนาดไม่เกิน 5MB)</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- กรอกอีเมล -->
-      <div>
-        <label for="email" class="block text-sm font-semibold text-slate-800 mb-1.5">
-          อีเมลสำหรับรับลิงก์เข้ากลุ่ม <span class="text-rose-500">*</span>
-        </label>
-        <input type="email" id="email" name="email" required placeholder="example@email.com"
-          class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors">
-        <p class="text-xs text-slate-500 mt-1.5">ระบบจะส่งข้อความยืนยันและลิงก์สำหรับกดเข้ากลุ่มไปยังอีเมลนี้ทันที</p>
-      </div>
-
-      <!-- หมายเหตุ -->
-      <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex gap-3 items-start">
-        <svg class="w-5 h-5 text-sky-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <div class="text-xs text-slate-600 leading-relaxed">
-          <strong class="text-slate-800">หมายเหตุ:</strong> กลุ่ม Med Crew สร้างขึ้นเพื่อจัดหางานและลงประกาศเท่านั้น ทางเราจึงขอคัดกรองผู้เข้าร่วมกลุ่มเพื่อยืนยันตัวตนเท่านั้น <span class="underline decoration-sky-400">ไม่มีการขอข้อมูลส่วนตัวใดๆ ทั้งสิ้น</span>
-        </div>
-      </div>
-
-      <!-- ปุ่มลงทะเบียน -->
-      <button type="submit" id="submitBtn"
-        class="w-full py-3.5 px-6 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white font-semibold rounded-xl shadow-md shadow-sky-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer">
-        <span id="btnText">ลงทะเบียนยืนยันส่งข้อมูล</span>
-        <svg id="btnSpinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      </button>
-
-    </form>
-
-    <!-- หน้าจอแสดงผลเมื่อส่งสำเร็จ -->
-    <div id="successScreen" class="hidden p-8 text-center space-y-4">
-      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
-        ✓
-      </div>
-      <h2 class="text-xl font-bold text-slate-900">ลงทะเบียนสำเร็จเรียบร้อย!</h2>
-      <p class="text-sm text-slate-600 leading-relaxed">
-        ระบบได้ส่งอีเมลแจ้งเตือน <strong>"ขอบคุณที่ลงทะเบียนกับทางเรา"</strong><br>
-        พร้อมลิงก์สำหรับเข้าร่วมกลุ่มไปยังอีเมล <span id="sentEmailDisplay" class="font-semibold text-sky-600"></span> เรียบร้อยแล้ว
-      </p>
-      <div class="pt-4">
-        <button type="button" onclick="location.reload()" class="text-xs text-slate-400 hover:text-slate-600 underline">
-          กลับไปหน้าลงทะเบียนอีกครั้ง
-        </button>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    // นำ URL ของ Google Apps Script Web App มาวางตรงนี้
-    const SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
-
-    const roleRadios = document.querySelectorAll('input[name="role"]');
-    const ownerSection = document.getElementById('ownerSection');
-    const companyNameInput = document.getElementById('companyName');
-    const profileImageInput = document.getElementById('profileImage');
-    const imagePreview = document.getElementById('imagePreview');
-    const imagePlaceholder = document.getElementById('imagePlaceholder');
-    const registerForm = document.getElementById('registerForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const btnText = document.getElementById('btnText');
-    const btnSpinner = document.getElementById('btnSpinner');
-    const successScreen = document.getElementById('successScreen');
-    const sentEmailDisplay = document.getElementById('sentEmailDisplay');
-
-    let base64Image = "";
-    let imageName = "";
-    let imageType = "";
-
-    // แสดง/ซ่อน ช่องกรอกบริษัทเมื่อเลือก "เจ้าของกิจการบริษัท"
-    roleRadios.forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        if (e.target.value === "เจ้าของกิจการบริษัท") {
-          ownerSection.classList.remove('hidden');
-          companyNameInput.setAttribute('required', 'true');
-          profileImageInput.setAttribute('required', 'true');
-        } else {
-          ownerSection.classList.add('hidden');
-          companyNameInput.removeAttribute('required');
-          profileImageInput.removeAttribute('required');
-          companyNameInput.value = "";
-          profileImageInput.value = "";
-          base64Image = "";
-          imagePreview.classList.add('hidden');
-          imagePlaceholder.classList.remove('hidden');
-        }
-      });
-    });
-
-    // แสดงตัวอย่างรูปโปรไฟล์และแปลงเป็น Base64
-    profileImageInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      if (file.size > 5 * 1024 * 1024) {
-        alert("ขนาดไฟล์รูปภาพต้องไม่เกิน 5MB");
-        this.value = "";
-        return;
-      }
-
-      imageName = file.name;
-      imageType = file.type;
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        imagePreview.src = event.target.result;
-        imagePreview.classList.remove('hidden');
-        imagePlaceholder.classList.add('hidden');
-        // ตัดส่วน header data:image/...;base64, ออก
-        base64Image = event.target.result.split(',')[1];
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // ส่งข้อมูลฟอร์ม
-    registerForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      if (SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") {
-        alert("กรุณาใส่ Web App URL ของ Google Apps Script ในโค้ดก่อนใช้งานจริง");
-        return;
-      }
-
-      const selectedRole = document.querySelector('input[name="role"]:checked').value;
-      const email = document.getElementById('email').value.trim();
-      const companyName = companyNameInput.value.trim();
-
-      // ล็อกปุ่มระหว่างส่ง
-      submitBtn.disabled = true;
-      btnText.textContent = "กำลังบันทึกและส่งข้อมูล...";
-      btnSpinner.classList.remove('hidden');
-
-      const payload = {
-        role: selectedRole,
-        companyName: companyName,
-        email: email,
-        imageBase64: base64Image,
-        imageName: imageName,
-        imageType: imageType
-      };
-
-      try {
-        const response = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (result.status === "success") {
-          registerForm.classList.add('hidden');
-          sentEmailDisplay.textContent = email;
-          successScreen.classList.remove('hidden');
-        } else {
-          throw new Error(result.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-        }
-      } catch (error) {
-        alert("เกิดข้อผิดพลาด: " + error.message);
-        submitBtn.disabled = false;
-        btnText.textContent = "ลงทะเบียนยืนยันส่งข้อมูล";
-        btnSpinner.classList.add('hidden');
-      }
-    });
-  </script>
+<body>
+<header>
+<h1>♡ MedCrew</h1>
+<p>Healthcare Jobs Thailand</p>
+<h2>ค้นหางานสายการแพทย์</h2>
+<input id="search" placeholder="ค้นหางาน RN, PN, NA..." oninput="render()">
+</header>
+<main>
+<h3>ตำแหน่งงาน</h3>
+<div class="filters">
+<button onclick="setType('ทั้งหมด')">ทั้งหมด</button>
+<button onclick="setType('RN')">RN</button>
+<button onclick="setType('PN')">PN</button>
+<button onclick="setType('NA')">NA</button>
+</div>
+<select id="province" onchange="render()">
+<option value="">ทุกจังหวัด</option>
+<option>กรุงเทพมหานคร</option>
+<option>นนทบุรี</option>
+<option>เชียงใหม่</option>
+</select>
+<h3>งานแนะนำ</h3>
+<p class="small">ข้อมูลตัวอย่างสำหรับทดสอบระบบ</p>
+<div id="jobs"></div>
+<button onclick="alert('ระบบลงประกาศงานจะเพิ่มในขั้นตอนถัดไป')">+ ลงประกาศงาน</button>
+</main>
+<script>
+const jobs=[
+{type:"RN",title:"พยาบาลวิชาชีพ",company:"โรงพยาบาลตัวอย่าง",province:"กรุงเทพมหานคร",salary:"25,000 - 40,000 บาท"},
+{type:"PN",title:"ผู้ช่วยพยาบาล",company:"คลินิกตัวอย่าง",province:"นนทบุรี",salary:"18,000 - 25,000 บาท"},
+{type:"NA",title:"ผู้ช่วยเหลือคนไข้",company:"ศูนย์ดูแลตัวอย่าง",province:"เชียงใหม่",salary:"14,000 - 18,000 บาท"}
+];
+let selected="ทั้งหมด";
+function setType(t){selected=t;render()}
+function render(){
+const q=document.getElementById("search").value.toLowerCase();
+const p=document.getElementById("province").value;
+const filtered=jobs.filter(j=>(selected==="ทั้งหมด"||j.type===selected)&&(!p||j.province===p)&&(j.title.toLowerCase().includes(q)||j.type.toLowerCase().includes(q)||j.company.toLowerCase().includes(q)));
+const box=document.getElementById("jobs");
+box.replaceChildren();
+filtered.forEach(j=>{
+const card=document.createElement("div");card.className="card";
+const title=document.createElement("h3");title.textContent=j.title+" ("+j.type+")";
+const company=document.createElement("p");company.textContent=j.company;
+const location=document.createElement("p");location.textContent="📍 "+j.province;
+const salary=document.createElement("p");salary.className="salary";salary.textContent=j.salary;
+card.append(title,company,location,salary);box.append(card);
+});
+if(!filtered.length){const msg=document.createElement("p");msg.textContent="ไม่พบตำแหน่งงาน";box.append(msg)}
+}
+render();
+</script>
 </body>
 </html>
