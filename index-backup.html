@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#087e83">
+<title>MedCrew - Healthcare Jobs</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f7f8;font-family:Arial,sans-serif;color:#18333b}
+header{background:#087e83;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
+header h1{margin:0;font-size:29px}
+header p{margin:7px 0 20px}
+input,select{width:100%;padding:14px;border:1px solid #d7e3e5;border-radius:12px;font-size:16px;margin:5px 0}
+main{padding:18px;max-width:650px;margin:auto}
+button{border:0;background:#087e83;color:white;border-radius:10px;padding:12px 16px;font-size:15px;cursor:pointer}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+.card{background:white;padding:18px;border-radius:16px;margin:12px 0;box-shadow:0 2px 9px #0000000a}
+.card h3{margin:0 0 10px}
+.card p{margin:7px 0;color:#51646a}
+.salary{color:#087e83!important;font-weight:bold}
+.small{font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>♡ MedCrew</h1>
+<p>Healthcare Jobs Thailand</p>
+<h2>ค้นหางานสายการแพทย์</h2>
+<input id="search" placeholder="ค้นหางาน RN, PN, NA..." oninput="render()">
+</header>
+<main>
+<h3>ตำแหน่งงาน</h3>
+<div class="filters">
+<button onclick="setType('ทั้งหมด')">ทั้งหมด</button>
+<button onclick="setType('RN')">RN</button>
+<button onclick="setType('PN')">PN</button>
+<button onclick="setType('NA')">NA</button>
+</div>
+<select id="province" onchange="render()">
+<option value="">ทุกจังหวัด</option>
+<option>กรุงเทพมหานคร</option>
+<option>นนทบุรี</option>
+<option>เชียงใหม่</option>
+</select>
+<h3>งานแนะนำ</h3>
+<p class="small">ข้อมูลตัวอย่างสำหรับทดสอบระบบ</p>
+<div id="jobs"></div>
+<button onclick="alert('ระบบลงประกาศงานจะเพิ่มในขั้นตอนถัดไป')">+ ลงประกาศงาน</button>
+</main>
+<script>
+const jobs=[
+{type:"RN",title:"พยาบาลวิชาชีพ",company:"โรงพยาบาลตัวอย่าง",province:"กรุงเทพมหานคร",salary:"25,000 - 40,000 บาท"},
+{type:"PN",title:"ผู้ช่วยพยาบาล",company:"คลินิกตัวอย่าง",province:"นนทบุรี",salary:"18,000 - 25,000 บาท"},
+{type:"NA",title:"ผู้ช่วยเหลือคนไข้",company:"ศูนย์ดูแลตัวอย่าง",province:"เชียงใหม่",salary:"14,000 - 18,000 บาท"}
+];
+let selected="ทั้งหมด";
+function setType(t){selected=t;render()}
+function render(){
+const q=document.getElementById("search").value.toLowerCase();
+const p=document.getElementById("province").value;
+const filtered=jobs.filter(j=>(selected==="ทั้งหมด"||j.type===selected)&&(!p||j.province===p)&&(j.title.toLowerCase().includes(q)||j.type.toLowerCase().includes(q)||j.company.toLowerCase().includes(q)));
+const box=document.getElementById("jobs");
+box.replaceChildren();
+filtered.forEach(j=>{
+const card=document.createElement("div");card.className="card";
+const title=document.createElement("h3");title.textContent=j.title+" ("+j.type+")";
+const company=document.createElement("p");company.textContent=j.company;
+const location=document.createElement("p");location.textContent="📍 "+j.province;
+const salary=document.createElement("p");salary.className="salary";salary.textContent=j.salary;
+card.append(title,company,location,salary);box.append(card);
+});
+if(!filtered.length){const msg=document.createElement("p");msg.textContent="ไม่พบตำแหน่งงาน";box.append(msg)}
+}
+render();
+</script>
+</body>
+</html>
