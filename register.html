@@ -1,137 +1,97 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MedCrew - สมัครสมาชิก</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MedCrew | สมาชิก</title>
 <style>
-*{box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#f1f7f7;margin:0;color:#18383b}
-header{background:#087e83;color:white;padding:24px;text-align:center}
-main{max-width:440px;margin:25px auto;padding:22px;background:white;border-radius:16px}
-input,select,button{width:100%;padding:13px;margin:8px 0;border-radius:9px;font-size:16px}
-input,select{border:1px solid #ccc}
-button{border:0;background:#087e83;color:white}
-.secondary{background:#e8f3f3;color:#087e83}
-#message{white-space:pre-wrap;overflow-wrap:anywhere}
+:root{font-family:system-ui,-apple-system,sans-serif;color:#16343a;background:#f2f8f8}*{box-sizing:border-box}body{margin:0}header{background:#087e83;color:white;padding:28px 20px;text-align:center}header h1{margin:0;font-size:30px}header p{margin:6px 0 0}main{max-width:470px;margin:24px auto;padding:0 16px}.panel{background:white;border-radius:18px;padding:22px;box-shadow:0 5px 25px #1233}label{display:block;margin:14px 0 5px;font-weight:600}input,select,button{font:inherit;width:100%;padding:13px;border-radius:10px}input,select{border:1px solid #b9cdd0;background:white}button{margin-top:16px;background:#087e83;color:white;border:0;font-weight:650;cursor:pointer}button:disabled{opacity:.55}.secondary{background:#e5f2f2;color:#087e83}.status{margin:14px 0;padding:12px;background:#f0f6f7;border-radius:9px;white-space:pre-wrap;overflow-wrap:anywhere}.status:empty{display:none}a{color:#087e83}small{color:#566b70} [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <header><h1>♡ MedCrew</h1><p>Healthcare Jobs Thailand</p></header>
-<main>
+<main><div class="panel">
 <h2 id="heading">สมัครสมาชิก</h2>
-<form id="form">
-<div id="signupFields">
-<input id="name" placeholder="ชื่อที่แสดง" maxlength="100">
-<select id="role">
-<option value="jobseeker">ผู้หางาน RN / PN / NA</option>
-<option value="employer">ผู้ประกาศงาน</option>
-</select>
-</div>
-<input id="email" type="email" placeholder="อีเมล" required>
-<input id="password" type="password" placeholder="รหัสผ่านอย่างน้อย 8 ตัว" minlength="8" required>
-<button id="submitBtn" type="submit">สมัครสมาชิก</button>
-</form>
-<button class="secondary" id="switchBtn">มีบัญชีแล้ว? เข้าสู่ระบบ</button>
-<button class="secondary" id="logoutBtn" hidden>ออกจากระบบ</button>
-<p id="message" role="status" aria-live="polite"></p>
-<a href="./index.html">กลับหน้าค้นหางาน</a>
-</main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script>
-const SUPABASE_URL="const SUPABASE_URL="https://chmkujuiqodkiptcjseq.supabase.co";";
-const SUPABASE_KEY="sb_publishable_5CpOijQGj5k9JLbSAxLaiQ_-cDKlmgu";
-const msg=document.getElementById("message");
-let client=null;
-let loginMode=false;
+<form id="authForm">
+<div id="signupFields"><label for="displayName">ชื่อที่แสดง</label><input id="displayName" maxlength="100" autocomplete="name"><label for="memberType">ประเภทสมาชิก</label><select id="memberType"><option value="jobseeker">ผู้หางาน RN / PN / NA</option><option value="employer">ผู้ประกาศงาน</option></select></div>
+<label for="email">อีเมล</label><input id="email" type="email" autocomplete="email" required>
+<label for="password">รหัสผ่าน</label><input id="password" type="password" minlength="8" autocomplete="new-password" required>
+<button id="submitButton" type="submit">สมัครสมาชิก</button></form>
+<button id="toggleButton" class="secondary" type="button">มีบัญชีแล้ว? เข้าสู่ระบบ</button>
+<div id="account" hidden><p id="accountInfo"></p><button id="logoutButton" type="button">ออกจากระบบ</button></div>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+<p><a href="./index.html">← กลับหน้าค้นหางาน</a></p>
+<small>โปรไฟล์ผู้ประกาศงานยังไม่ได้รับการยืนยันตัวตนจาก MedCrew</small>
+</div></main>
+<script type="module">
+// เปลี่ยนเพียงสองค่าด้านล่าง โดยใช้ Publishable Key เท่านั้น
 
-function show(text){msg.textContent=text}
+const SUPABASE_URL = 'https://chmkujuiqodkiptcjseq.supabase.co';
 
-if(SUPABASE_URL.startsWith("https://") &&
-   !SUPABASE_KEY.startsWith("YOUR_") &&
-   window.supabase){
- client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-}else{
- show("กรุณาตั้งค่า Supabase URL และ Publishable Key ก่อน");
+const SUPABASE_KEY = 'sb_publishable_5CpOijQGj5k9JLbSAxLaiQ_-cDKlmgu';
+const $ = id => document.getElementById(id);
+const status = message => { $('status').textContent = message; };
+let client, loginMode = false;
+const form = $('authForm');
+$('toggleButton').addEventListener('click', () => {
+  loginMode = !loginMode;
+  $('signupFields').hidden = loginMode;
+  $('heading').textContent = loginMode ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก';
+  $('submitButton').textContent = loginMode ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก';
+  $('toggleButton').textContent = loginMode ? 'ยังไม่มีบัญชี? สมัครสมาชิก' : 'มีบัญชีแล้ว? เข้าสู่ระบบ';
+  $('password').autocomplete = loginMode ? 'current-password' : 'new-password';
+  status('');
+});
+async function refresh() {
+  const {data:{user},error} = await client.auth.getUser();
+  if(error && error.name !== 'AuthSessionMissingError') throw error;
+  form.hidden = Boolean(user);
+  $('toggleButton').hidden = Boolean(user);
+  $('account').hidden = !user;
+  if(user){ $('accountInfo').textContent = 'เข้าสู่ระบบ: ' + user.email; }
 }
-
-const form=document.getElementById("form");
-const fields=document.getElementById("signupFields");
-const heading=document.getElementById("heading");
-const switchBtn=document.getElementById("switchBtn");
-const logoutBtn=document.getElementById("logoutBtn");
-const submitBtn=document.getElementById("submitBtn");
-
-switchBtn.onclick=()=>{
- loginMode=!loginMode;
- fields.hidden=loginMode;
- heading.textContent=loginMode?"เข้าสู่ระบบ":"สมัครสมาชิก";
- submitBtn.textContent=loginMode?"เข้าสู่ระบบ":"สมัครสมาชิก";
- switchBtn.textContent=loginMode?"ยังไม่มีบัญชี? สมัครสมาชิก":"มีบัญชีแล้ว? เข้าสู่ระบบ";
- show("");
-};
-
-async function refresh(){
- if(!client)return;
- const {data,error}=await client.auth.getUser();
- if(error && error.name!=="AuthSessionMissingError"){
-   console.warn(error.message);
- }
- const user=data?.user;
- form.hidden=!!user;
- switchBtn.hidden=!!user;
- logoutBtn.hidden=!user;
- if(user)show("เข้าสู่ระบบแล้ว: "+user.email);
-}
-
-form.onsubmit=async e=>{
- e.preventDefault();
- if(!client)return show("ยังไม่ได้ตั้งค่า Supabase");
- submitBtn.disabled=true;
- show("กำลังดำเนินการ...");
- try{
- const email=document.getElementById("email").value.trim();
- const password=document.getElementById("password").value;
- if(loginMode){
-   const {error}=await client.auth.signInWithPassword({email,password});
-   if(error)throw error;
-   await refresh();
- }else{
-   const name=document.getElementById("name").value.trim();
-   const role=document.getElementById("role").value;
-   if(!name)throw new Error("กรุณากรอกชื่อที่แสดง");
-   const {data,error}=await client.auth.signUp({
-     email,password,
-     options:{
-       emailRedirectTo:location.origin+location.pathname,
-       data:{display_name:name,member_type:role}
-     }
-   });
-   if(error)throw error;
-   if(data.session){
-     const {error:profileError}=await client.from("profiles").upsert({
-       id:data.user.id,display_name:name,member_type:role
-     },{onConflict:"id"});
-     if(profileError)throw profileError;
-     await refresh();
-   }else{
-     show("ส่งคำขอสมัครสมาชิกแล้ว หากได้รับอีเมลยืนยัน กรุณากดลิงก์ในอีเมลก่อนเข้าสู่ระบบ");
-   }
- }
- }catch(err){show("เกิดข้อผิดพลาด: "+err.message)}
- finally{submitBtn.disabled=false}
-};
-
-logoutBtn.onclick=async()=>{
- if(!client)return;
- const {error}=await client.auth.signOut();
- if(error)return show(error.message);
- await refresh();
- show("ออกจากระบบแล้ว");
-};
-
-refresh();
+form.addEventListener('submit', async event => {
+  event.preventDefault();
+  if(!client) return status('ยังไม่เชื่อมต่อ Supabase กรุณาตรวจสอบ URL และ Publishable Key');
+  const button = $('submitButton'); button.disabled = true;
+  status('กำลังดำเนินการ...');
+  try {
+    const email = $('email').value.trim();
+    const password = $('password').value;
+    if(loginMode){
+      const {error} = await client.auth.signInWithPassword({email,password});
+      if(error) throw error;
+      await refresh(); status('เข้าสู่ระบบสำเร็จ');
+    } else {
+      const name = $('displayName').value.trim();
+      const role = $('memberType').value;
+      if(!name) throw new Error('กรุณากรอกชื่อที่แสดง');
+      const {data,error} = await client.auth.signUp({
+        email,password,
+        options:{emailRedirectTo:location.origin+location.pathname,
+          data:{display_name:name,member_type:role}}
+      });
+      if(error) throw error;
+      if(data.session){
+        await refresh(); status('สมัครสมาชิกสำเร็จ โปรดตรวจสอบโปรไฟล์ในฐานข้อมูล');
+      } else {
+        status('ส่งคำขอสมัครแล้ว หากได้รับอีเมลยืนยัน โปรดกดลิงก์ยืนยันก่อนเข้าสู่ระบบ');
+      }
+    }
+  } catch(error){status('เกิดข้อผิดพลาด: '+(error?.message || String(error)));}
+  finally{button.disabled=false;}
+});
+$('logoutButton').addEventListener('click', async () => {
+  try{const {error}=await client.auth.signOut();if(error)throw error;await refresh();status('ออกจากระบบแล้ว');}
+  catch(error){status('เกิดข้อผิดพลาด: '+error.message);}
+});
+try{
+  if(!SUPABASE_URL.startsWith('https://') || SUPABASE_KEY.startsWith('YOUR_')){
+    throw new Error('กรุณาใส่ Supabase URL และ Publishable Key ก่อน');
+  }
+  const {createClient} = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+  client = createClient(SUPABASE_URL,SUPABASE_KEY);
+  client.auth.onAuthStateChange(() => { setTimeout(() => refresh().catch(e => status(e.message)),0); });
+  await refresh();
+} catch(error){status('ตั้งค่าหรือโหลด Supabase ไม่สำเร็จ: '+(error?.message||String(error)));}
 </script>
-</body>
-</html>
+</body></html>
