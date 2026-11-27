@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MedCrew - สมัครสมาชิก</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#f1f7f7;margin:0;color:#18383b}
+header{background:#087e83;color:white;padding:24px;text-align:center}
+main{max-width:440px;margin:25px auto;padding:22px;background:white;border-radius:16px}
+input,select,button{width:100%;padding:13px;margin:8px 0;border-radius:9px;font-size:16px}
+input,select{border:1px solid #ccc}
+button{border:0;background:#087e83;color:white}
+.secondary{background:#e8f3f3;color:#087e83}
+#message{white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header><h1>♡ MedCrew</h1><p>Healthcare Jobs Thailand</p></header>
+<main>
+<h2 id="heading">สมัครสมาชิก</h2>
+<form id="form">
+<div id="signupFields">
+<input id="name" placeholder="ชื่อที่แสดง" maxlength="100">
+<select id="role">
+<option value="jobseeker">ผู้หางาน RN / PN / NA</option>
+<option value="employer">ผู้ประกาศงาน</option>
+</select>
+</div>
+<input id="email" type="email" placeholder="อีเมล" required>
+<input id="password" type="password" placeholder="รหัสผ่านอย่างน้อย 8 ตัว" minlength="8" required>
+<button id="submitBtn" type="submit">สมัครสมาชิก</button>
+</form>
+<button class="secondary" id="switchBtn">มีบัญชีแล้ว? เข้าสู่ระบบ</button>
+<button class="secondary" id="logoutBtn" hidden>ออกจากระบบ</button>
+<p id="message" role="status" aria-live="polite"></p>
+<a href="./index.html">กลับหน้าค้นหางาน</a>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL="const SUPABASE_URL="https://chmkujuiqodkiptcjseq.supabase.co";";
+const SUPABASE_KEY="sb_publishable_5CpOijQGj5k9JLbSAxLaiQ_-cDKlmgu";
+const msg=document.getElementById("message");
+let client=null;
+let loginMode=false;
+
+function show(text){msg.textContent=text}
+
+if(SUPABASE_URL.startsWith("https://") &&
+   !SUPABASE_KEY.startsWith("YOUR_") &&
+   window.supabase){
+ client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+}else{
+ show("กรุณาตั้งค่า Supabase URL และ Publishable Key ก่อน");
+}
+
+const form=document.getElementById("form");
+const fields=document.getElementById("signupFields");
+const heading=document.getElementById("heading");
+const switchBtn=document.getElementById("switchBtn");
+const logoutBtn=document.getElementById("logoutBtn");
+const submitBtn=document.getElementById("submitBtn");
+
+switchBtn.onclick=()=>{
+ loginMode=!loginMode;
+ fields.hidden=loginMode;
+ heading.textContent=loginMode?"เข้าสู่ระบบ":"สมัครสมาชิก";
+ submitBtn.textContent=loginMode?"เข้าสู่ระบบ":"สมัครสมาชิก";
+ switchBtn.textContent=loginMode?"ยังไม่มีบัญชี? สมัครสมาชิก":"มีบัญชีแล้ว? เข้าสู่ระบบ";
+ show("");
+};
+
+async function refresh(){
+ if(!client)return;
+ const {data,error}=await client.auth.getUser();
+ if(error && error.name!=="AuthSessionMissingError"){
+   console.warn(error.message);
+ }
+ const user=data?.user;
+ form.hidden=!!user;
+ switchBtn.hidden=!!user;
+ logoutBtn.hidden=!user;
+ if(user)show("เข้าสู่ระบบแล้ว: "+user.email);
+}
+
+form.onsubmit=async e=>{
+ e.preventDefault();
+ if(!client)return show("ยังไม่ได้ตั้งค่า Supabase");
+ submitBtn.disabled=true;
+ show("กำลังดำเนินการ...");
+ try{
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("password").value;
+ if(loginMode){
+   const {error}=await client.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   await refresh();
+ }else{
+   const name=document.getElementById("name").value.trim();
+   const role=document.getElementById("role").value;
+   if(!name)throw new Error("กรุณากรอกชื่อที่แสดง");
+   const {data,error}=await client.auth.signUp({
+     email,password,
+     options:{
+       emailRedirectTo:location.origin+location.pathname,
+       data:{display_name:name,member_type:role}
+     }
+   });
+   if(error)throw error;
+   if(data.session){
+     const {error:profileError}=await client.from("profiles").upsert({
+       id:data.user.id,display_name:name,member_type:role
+     },{onConflict:"id"});
+     if(profileError)throw profileError;
+     await refresh();
+   }else{
+     show("ส่งคำขอสมัครสมาชิกแล้ว หากได้รับอีเมลยืนยัน กรุณากดลิงก์ในอีเมลก่อนเข้าสู่ระบบ");
+   }
+ }
+ }catch(err){show("เกิดข้อผิดพลาด: "+err.message)}
+ finally{submitBtn.disabled=false}
+};
+
+logoutBtn.onclick=async()=>{
+ if(!client)return;
+ const {error}=await client.auth.signOut();
+ if(error)return show(error.message);
+ await refresh();
+ show("ออกจากระบบแล้ว");
+};
+
+refresh();
+</script>
+</body>
+</html>
