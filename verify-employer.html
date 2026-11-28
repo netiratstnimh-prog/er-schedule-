@@ -19,6 +19,15 @@ button{margin-top:18px;background:#087e83;color:white;border:0;font-weight:bold}
 button:disabled{opacity:.5}
 .status{padding:12px;margin-top:15px;background:#edf5f5;border-radius:10px;white-space:pre-wrap;overflow-wrap:anywhere}
 .status:empty{display:none}
+ .verified-badge{
+  display:inline-block;
+  margin-top:12px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:#e3f5ee;
+  color:#087e83;
+  font-weight:700;
+}
 a{color:#087e83}
 [hidden]{display:none!important}
 </style>
@@ -32,6 +41,9 @@ a{color:#087e83}
 <div class="panel">
 <h2>ยืนยันตัวตนนายจ้าง</h2>
 <p>กรอกข้อมูลสถานประกอบการเพื่อส่งคำขอตรวจสอบกับ MedCrew</p>
+ <div id="verifiedBadge" class="verified-badge" hidden>
+✓ ยืนยันแล้วโดย MedCrew
+</div>
 <div id="loading">กำลังตรวจสอบบัญชี...</div>
 <div id="loginNotice" hidden>
 <p>กรุณาเข้าสู่ระบบก่อนยืนยันตัวตน</p>
@@ -89,10 +101,17 @@ try{
     .select('status').eq('user_id',user.id).maybeSingle();
    if(existing.error)throw existing.error;
    if(existing.data){
-    message('สถานะการยืนยันตัวตน: '+existing.data.status);
-   }else{
-    $('verifyForm').hidden=false;
-   }
+  if(existing.data.status === 'verified'){
+    $('verifiedBadge').hidden = false;
+    message('');
+  }else if(existing.data.status === 'pending'){
+    message('สถานะ: รอตรวจสอบโดย MedCrew');
+  }else if(existing.data.status === 'rejected'){
+    message('คำขอยืนยันตัวตนไม่ได้รับการอนุมัติ');
+  }
+}else{
+  $('verifyForm').hidden = false;
+}
   }
  }
 }catch(e){
