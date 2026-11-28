@@ -44,6 +44,22 @@ a{color:#087e83}
  <div id="verifiedBadge" class="verified-badge" hidden>
 ✓ ยืนยันแล้วโดย MedCrew
 </div>
+ <div id="documentUpload" hidden>
+  <h3>📄 เอกสารยืนยันสถานประกอบการ</h3>
+  <p>รองรับ JPG, PNG หรือ PDF ขนาดไม่เกิน 10 MB</p>
+
+  <input
+    id="documentFile"
+    type="file"
+    accept="image/jpeg,image/png,application/pdf"
+  >
+
+  <button id="uploadDocumentBtn" type="button">
+    อัปโหลดเอกสาร
+  </button>
+
+  <div id="uploadStatus" class="status"></div>
+</div>
 <div id="loading">กำลังตรวจสอบบัญชี...</div>
 <div id="loginNotice" hidden>
 <p>กรุณาเข้าสู่ระบบก่อนยืนยันตัวตน</p>
@@ -103,7 +119,8 @@ try{
    if(existing.data){
   if(existing.data.status === 'verified'){
     $('verifiedBadge').hidden = false;
-    message('');
+$('documentUpload').hidden = false;
+message('');
   }else if(existing.data.status === 'pending'){
     message('สถานะ: รอตรวจสอบโดย MedCrew');
   }else if(existing.data.status === 'rejected'){
@@ -143,6 +160,71 @@ $('verifyForm').addEventListener('submit',async e=>{
  }catch(err){
   message('ส่งคำขอไม่สำเร็จ: '+err.message);
  }finally{btn.disabled=false}
+});$('uploadDocumentBtn').addEventListener('click', async () => {
+  const btn = $('uploadDocumentBtn');
+  const file = $('documentFile').files[0];
+  const uploadStatus = $('uploadStatus');
+
+  if(!file){
+    uploadStatus.textContent = 'กรุณาเลือกไฟล์ก่อน';
+    return;
+  }
+
+  const allowedTypes = [
+    'image/jpeg',
+    'image/png',
+    'application/pdf'
+  ];
+
+  if(!allowedTypes.includes(file.type)){
+    uploadStatus.textContent = 'รองรับเฉพาะ JPG, PNG หรือ PDF';
+    return;
+  }
+
+  if(file.size > 10 * 1024 * 1024){
+    uploadStatus.textContent = 'ไฟล์ต้องมีขนาดไม่เกิน 10 MB';
+    return;
+  }
+
+  btn.disabled = true;
+  uploadStatus.textContent = 'กำลังอัปโหลด...';
+
+  try{
+    const {data:{user:currentUser},error:authError}
+      = await db.auth.getUser();
+
+    if(authError) throw authError;
+    if(!currentUser) throw new Error('กรุณาเข้าสู่ระบบใหม่');
+
+    if(!user || currentUser.id !== user.id){
+      throw new Error('เซสชันผู้ใช้ไม่ถูกต้อง');
+    }
+
+    const extension =
+      file.name.split('.').pop().toLowerCase();
+
+    const filePath =
+      `${currentUser.id}/${crypto.randomUUID()}.${extension}`;
+
+    const {error} = await db.storage
+      .from('employer-documents')
+      .upload(filePath,file,{
+        contentType:file.type,
+        upsert:false
+      });
+
+    if(error) throw error;
+
+    $('documentFile').value = '';
+    uploadStatus.textContent = '✓ อัปโหลดเอกสารสำเร็จ';
+
+  }catch(error){
+    uploadStatus.textContent =
+      'อัปโหลดไม่สำเร็จ: ' +
+      (error?.message || String(error));
+  }finally{
+    btn.disabled = false;
+  }
 });
 </script>
 </body>
